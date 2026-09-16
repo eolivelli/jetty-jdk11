@@ -32,7 +32,7 @@ import org.eclipse.jetty.session.ManagedSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.eclipse.jetty.ee9.nested.SessionHandler.ServletSessionApi.getOrCreateSession;
+import static org.eclipse.jetty.ee9.nested.SessionHandler.getOrCreateSession;
 
 public abstract class LoginAuthenticator implements Authenticator
 {

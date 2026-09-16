@@ -906,26 +906,26 @@ public class SessionHandler extends ScopedHandler implements SessionConfig.Mutab
         }
     }
 
+    public static Function<Boolean, Session> getOrCreateSession(ServletRequest servletRequest)
+    {
+        return createSession ->
+        {
+            if (servletRequest instanceof HttpServletRequest)
+            {
+                HttpServletRequest request = (HttpServletRequest)servletRequest;
+                HttpSession session = request.getSession(createSession);
+                if (session instanceof SessionHandler.ServletSessionApi)
+                {
+                    SessionHandler.ServletSessionApi sessionApi = (SessionHandler.ServletSessionApi)session;
+                    return sessionApi.getSession();
+                }
+            }
+            return null;
+        };
+    }
+
     public class ServletSessionApi implements HttpSession, Session.API
     {
-        public static Function<Boolean, Session> getOrCreateSession(ServletRequest servletRequest)
-        {
-            return createSession ->
-            {
-                if (servletRequest instanceof HttpServletRequest)
-                {
-                    HttpServletRequest request = (HttpServletRequest)servletRequest;
-                    HttpSession session = request.getSession(createSession);
-                    if (session instanceof SessionHandler.ServletSessionApi)
-                    {
-                        SessionHandler.ServletSessionApi sessionApi = (SessionHandler.ServletSessionApi)session;
-                        return sessionApi.getSession();
-                    }
-                }
-                return null;
-            };
-        }
-
         private final ManagedSession _session;
 
         private ServletSessionApi(ManagedSession session)

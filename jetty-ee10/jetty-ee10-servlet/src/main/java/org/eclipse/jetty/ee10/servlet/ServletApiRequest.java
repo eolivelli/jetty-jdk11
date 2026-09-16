@@ -900,7 +900,7 @@ public class ServletApiRequest implements HttpServletRequest
             StringBuilder cookieBuilder = new StringBuilder();
             for (Object o : cookies)
             {
-                if (!cookieBuilder.isEmpty())
+                if (cookieBuilder.length() > 0)
                     cookieBuilder.append("; ");
                 if (o instanceof Cookie)
                 {

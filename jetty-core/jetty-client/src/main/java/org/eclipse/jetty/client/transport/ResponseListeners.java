@@ -451,6 +451,44 @@ public class ResponseListeners
     private static class ContentSourceDemultiplexer implements Response.ContentSourceListener
     {
         private static final Logger LOG = LoggerFactory.getLogger(ContentSourceDemultiplexer.class);
+        private static final Content.Chunk ALREADY_READ_CHUNK = new Content.Chunk.Empty()
+        {
+            @Override
+            public ByteBuffer getByteBuffer()
+            {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean isLast()
+            {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean canRetain()
+            {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void retain()
+            {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean release()
+            {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public String toString()
+            {
+                return "AlreadyReadChunk";
+            }
+        };
 
         private final AutoLock lock = new AutoLock();
         private final List<Response.ContentSourceListener> listeners = new ArrayList<>(2);
@@ -592,44 +630,6 @@ public class ResponseListeners
 
         private class ContentSource implements Content.Source, Invocable
         {
-            private static final Content.Chunk ALREADY_READ_CHUNK = new Content.Chunk.Empty()
-            {
-                @Override
-                public ByteBuffer getByteBuffer()
-                {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public boolean isLast()
-                {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public boolean canRetain()
-                {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public void retain()
-                {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public boolean release()
-                {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public String toString()
-                {
-                    return "AlreadyReadChunk";
-                }
-            };
             private final int index;
             private final AtomicReference<Runnable> demandCallbackRef = new AtomicReference<>();
             private volatile Content.Chunk chunk;

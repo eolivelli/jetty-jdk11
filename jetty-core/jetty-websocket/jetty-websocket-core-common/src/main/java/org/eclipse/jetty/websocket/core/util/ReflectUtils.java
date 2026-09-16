@@ -432,15 +432,15 @@ public class ReflectUtils
     {
         if (superType instanceof Class<?> && subType instanceof Class<?>)
         {
-            Class<?> subClass = (Class<?>)subType;
             Class<?> superClass = (Class<?>)superType;
+            Class<?> subClass = (Class<?>)subType;
             return superClass.isAssignableFrom(subClass);
         }
 
         if (superType instanceof ParameterizedType && subType instanceof ParameterizedType)
         {
-            ParameterizedType pSubType = (ParameterizedType)subType;
             ParameterizedType pSuperType = (ParameterizedType)superType;
+            ParameterizedType pSubType = (ParameterizedType)subType;
             if (!((Class<?>)pSubType.getRawType()).isAssignableFrom((Class<?>)pSuperType.getRawType()))
                 return false;
 
@@ -459,15 +459,15 @@ public class ReflectUtils
 
         if (superType instanceof ParameterizedType && subType instanceof Class<?>)
         {
-            Class<?> subClass = (Class<?>)subType;
             ParameterizedType pSuperType = (ParameterizedType)superType;
+            Class<?> subClass = (Class<?>)subType;
             return ((Class<?>)pSuperType.getRawType()).isAssignableFrom(subClass);
         }
 
         if (superType instanceof GenericArrayType && subType instanceof GenericArrayType)
         {
-            GenericArrayType subTypeArray = (GenericArrayType)subType;
             GenericArrayType superTypeArray = (GenericArrayType)superType;
+            GenericArrayType subTypeArray = (GenericArrayType)subType;
             return isAssignableFrom(superTypeArray.getGenericComponentType(), subTypeArray.getGenericComponentType());
         }
 

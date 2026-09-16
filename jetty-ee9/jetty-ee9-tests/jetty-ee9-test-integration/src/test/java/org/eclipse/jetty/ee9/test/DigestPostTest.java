@@ -154,7 +154,8 @@ public class DigestPostTest
             assertNotNull(nonce);
 
             String rsp = newResponse("POST", "/test/", nonce);
-            String digest = String.format("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"/test/\", algorithm=%s, response=\"%s\", qop=auth, nc=%s, cnonce=\"%s\"", _user, _realm, nonce, _authenticator.getAlgorithm(), rsp, nc, cnonce);
+            String digest = String.format("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"/test/\", algorithm=%s, response=\"%s\", qop=auth, nc=%s, cnonce=\"%s\"",
+                _user, _realm, nonce, _authenticator.getAlgorithm(), rsp, nc, cnonce);
 
             try (SocketChannel socket2 = SocketChannel.open(new InetSocketAddress("localhost", _connector.getLocalPort())))
             {
@@ -198,7 +199,8 @@ public class DigestPostTest
             assertNotNull(nonce);
 
             String rsp = newResponse("POST", "/test/", nonce);
-            String digest = String.format("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"/test/\", algorithm=%s, response=\"%s\", qop=auth, nc=%s, cnonce=\"%s\"", _user, _realm, nonce, _authenticator.getAlgorithm(), rsp, nc, cnonce);
+            String digest = String.format("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"/test/\", algorithm=%s, response=\"%s\", qop=auth, nc=%s, cnonce=\"%s\"",
+                _user, _realm, nonce, _authenticator.getAlgorithm(), rsp, nc, cnonce);
 
             _servlet._received = null;
             request = String.format("POST /test/ HTTP/1.1\n" +
@@ -240,7 +242,8 @@ public class DigestPostTest
 
             String encodedUser = "UTF-8''" + _user.replace("e", "%65");
             String rsp = newResponse("POST", "/test/", nonce);
-            String digest = String.format("Digest username*=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"/test/\", algorithm=%s, response=\"%s\", qop=auth, nc=%s, cnonce=\"%s\"", encodedUser, _realm, nonce, _authenticator.getAlgorithm(), rsp, nc, cnonce);
+            String digest = String.format("Digest username*=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"/test/\", algorithm=%s, response=\"%s\", qop=auth, nc=%s, cnonce=\"%s\"",
+                encodedUser, _realm, nonce, _authenticator.getAlgorithm(), rsp, nc, cnonce);
 
             _servlet._received = null;
             request = String.format("POST /test/ HTTP/1.1\n" +

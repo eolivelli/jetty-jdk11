@@ -47,10 +47,12 @@ public class JSONTest
     // @checkstyle-disable-check : AvoidEscapedUnicodeCharactersCheck
 
     private static final String JSON_STRING = "\n" +
-        "\t\t    // ignore this ,a [ \" \n" +
+        "\t\t    " +
+        "// ignore this ,a [ \" \n" +
         "/* and this \n" +
         "/* and * // this \n" +
-        "*/{\n" +
+        "*/" +
+        "{\n" +
         "\"onehundred\" : 100  ,\n" +
         "\"small\":-0.2,\n" +
         "\"name\" : \"fred\"  ,\n" +
@@ -242,8 +244,16 @@ public class JSONTest
     public void testStripComment()
     {
         String test = "\n" +
-            "\t\t    // ignore this ,a [ \" \n" +
-            "/* { \"onehundred\" : 100  ,\"name\" : \"fred\"  ,\"empty\" : {}  ,\"map\" : {\"a\":-1.0e2}  ,\"array\" : [\"a\",-1.0e2,[],null,true,false]  ,} */\n";
+            "\t\t    " +
+            "// ignore this ,a [ \" \n" +
+            "/* " +
+            "{ " +
+            "\"onehundred\" : 100  ," +
+            "\"name\" : \"fred\"  ," +
+            "\"empty\" : {}  ," +
+            "\"map\" : {\"a\":-1.0e2}  ," +
+            "\"array\" : [\"a\",-1.0e2,[],null,true,false]  ," +
+            "} */\n";
 
         Object o = json.fromJSON(test);
         assertNull(o);

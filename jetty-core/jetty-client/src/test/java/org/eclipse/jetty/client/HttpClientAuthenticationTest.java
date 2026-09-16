@@ -688,7 +688,10 @@ public class HttpClientAuthenticationTest extends AbstractHttpClientServerTest
         assertEquals("1523430383", headerInfo.getParameter("nonce"));
 
         // test multiple authentications
-        List<Authentication.HeaderInfo> headerInfoList = aph.getHeaderInfo("Digest qop=\"auth\", realm=\"thermostat\", nonce=\"1523430383\",Digest realm=\"thermostat2\", qop=\"auth2\", nonce=\"4522530354\",Digest qop=\"auth3\", nonce=\"9523570528\", realm=\"thermostat3\",Digest qop=\"auth4\", nonce=\"3526435321\"");
+        List<Authentication.HeaderInfo> headerInfoList = aph.getHeaderInfo("Digest qop=\"auth\", realm=\"thermostat\", nonce=\"1523430383\"," +
+            "Digest realm=\"thermostat2\", qop=\"auth2\", nonce=\"4522530354\"," +
+            "Digest qop=\"auth3\", nonce=\"9523570528\", realm=\"thermostat3\"," +
+            "Digest qop=\"auth4\", nonce=\"3526435321\"");
 
         assertTrue(headerInfoList.get(0).getType().equalsIgnoreCase("Digest"));
         assertEquals("auth", headerInfoList.get(0).getParameter("qop"));

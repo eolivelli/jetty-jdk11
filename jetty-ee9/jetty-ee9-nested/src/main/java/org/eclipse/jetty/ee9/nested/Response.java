@@ -1703,7 +1703,7 @@ public class Response implements HttpServletResponse
                 }
             }
 
-            if (builder.isEmpty())
+            if (builder.length() == 0)
                 return null;
             return builder.toString();
         }

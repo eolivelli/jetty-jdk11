@@ -13,6 +13,7 @@
 
 package org.eclipse.jetty.ee9.nested;
 
+import java.util.Objects;
 import java.util.Set;
 
 import jakarta.servlet.AsyncContext;
@@ -38,13 +39,80 @@ public class ServletAttributes extends Attributes.Synthetic
             AsyncContext.ASYNC_MAPPING
         );
 
-    private record Async(
-        String requestURI,
-        String contextPath,
-        String pathInContext,
-        ServletPathMapping mapping,
-        String queryString)
+    private static final class Async
     {
+        private final String requestURI;
+        private final String contextPath;
+        private final String pathInContext;
+        private final ServletPathMapping mapping;
+        private final String queryString;
+
+        private Async(
+            String requestURI,
+            String contextPath,
+            String pathInContext,
+            ServletPathMapping mapping,
+            String queryString)
+        {
+            this.requestURI = requestURI;
+            this.contextPath = contextPath;
+            this.pathInContext = pathInContext;
+            this.mapping = mapping;
+            this.queryString = queryString;
+        }
+
+        public String requestURI()
+        {
+            return requestURI;
+        }
+
+        public String contextPath()
+        {
+            return contextPath;
+        }
+
+        public String pathInContext()
+        {
+            return pathInContext;
+        }
+
+        public ServletPathMapping mapping()
+        {
+            return mapping;
+        }
+
+        public String queryString()
+        {
+            return queryString;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Async that = (Async)obj;
+            return Objects.equals(requestURI, that.requestURI) &&
+                Objects.equals(contextPath, that.contextPath) &&
+                Objects.equals(pathInContext, that.pathInContext) &&
+                Objects.equals(mapping, that.mapping) &&
+                Objects.equals(queryString, that.queryString);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(requestURI, contextPath, pathInContext, mapping, queryString);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Async[requestURI=" + requestURI + ", contextPath=" + contextPath + ", pathInContext=" + pathInContext +
+                ", mapping=" + mapping + ", queryString=" + queryString + "]";
+        }
     }
 
     private Async _async;
@@ -60,13 +128,25 @@ public class ServletAttributes extends Attributes.Synthetic
         switch (name)
         {
             case Request.SSL_CIPHER_SUITE:
-                return getWrapped().getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData sslSessionData ? sslSessionData.cipherSuite() : null;
+            {
+                Object attribute = getWrapped().getAttribute(EndPoint.SslSessionData.ATTRIBUTE);
+                return attribute instanceof EndPoint.SslSessionData ? ((EndPoint.SslSessionData)attribute).cipherSuite() : null;
+            }
             case Request.SSL_KEY_SIZE:
-                return getWrapped().getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData sslSessionData ? sslSessionData.keySize() : null;
+            {
+                Object attribute = getWrapped().getAttribute(EndPoint.SslSessionData.ATTRIBUTE);
+                return attribute instanceof EndPoint.SslSessionData ? ((EndPoint.SslSessionData)attribute).keySize() : null;
+            }
             case Request.SSL_SESSION_ID:
-                return getWrapped().getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData sslSessionData ? sslSessionData.sslSessionId() : null;
+            {
+                Object attribute = getWrapped().getAttribute(EndPoint.SslSessionData.ATTRIBUTE);
+                return attribute instanceof EndPoint.SslSessionData ? ((EndPoint.SslSessionData)attribute).sslSessionId() : null;
+            }
             case Request.PEER_CERTIFICATES:
-                return getWrapped().getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData sslSessionData ? sslSessionData.peerCertificates() : null;
+            {
+                Object attribute = getWrapped().getAttribute(EndPoint.SslSessionData.ATTRIBUTE);
+                return attribute instanceof EndPoint.SslSessionData ? ((EndPoint.SslSessionData)attribute).peerCertificates() : null;
+            }
             case AsyncContext.ASYNC_REQUEST_URI:
                 return _async == null ? null : _async.requestURI;
             case AsyncContext.ASYNC_CONTEXT_PATH:

@@ -143,7 +143,7 @@ public class JaspiAuthenticator extends LoginAuthenticator
         Request baseRequest = Request.getBaseRequest(request);
         if (baseRequest == null)
             return null;
-        UserIdentity user = _loginService.login(username, password, baseRequest.getCoreRequest(), SessionHandler.ServletSessionApi.getOrCreateSession(request));
+        UserIdentity user = _loginService.login(username, password, baseRequest.getCoreRequest(), SessionHandler.getOrCreateSession(request));
         if (user != null)
         {
             renewSession((HttpServletRequest)request, null);

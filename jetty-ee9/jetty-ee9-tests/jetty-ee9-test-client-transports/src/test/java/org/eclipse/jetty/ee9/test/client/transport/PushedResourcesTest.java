@@ -307,8 +307,8 @@ public class PushedResourcesTest extends AbstractTest
 
         String scheme = transportType.isSecure() ? "https" : "http";
         String uri = scheme + "://localhost";
-        if (connector instanceof NetworkConnector networkConnector)
-            uri += ":" + networkConnector.getLocalPort();
+        if (connector instanceof NetworkConnector)
+            uri += ":" + ((NetworkConnector)connector).getLocalPort();
         URI theURI = URI.create(uri + "/serverpushtck/foo");
 
         ContentResponse response = client.newRequest(theURI)

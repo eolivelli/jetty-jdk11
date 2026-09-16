@@ -1245,8 +1245,9 @@ public class HttpChannelState
             if (servletContext instanceof CrossContextServletContext)
             {
                 CrossContextServletContext crossContextServletContext = (CrossContextServletContext)servletContext;
-                if (crossContextServletContext.getTargetContext().getContextHandler() instanceof ContextHandler.CoreContextHandler coreContextHandler)
-                    return  coreContextHandler.getContextHandler();
+                Object targetContextHandler = crossContextServletContext.getTargetContext().getContextHandler();
+                if (targetContextHandler instanceof ContextHandler.CoreContextHandler)
+                    return ((ContextHandler.CoreContextHandler)targetContextHandler).getContextHandler();
             }
             if (servletContext instanceof ContextHandler.APIContext)
             {

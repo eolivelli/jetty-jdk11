@@ -46,9 +46,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <argLine>@{argLine}
-            ${jetty.surefire.argLine}
-            --enable-native-access com.sun.jna</argLine>
+          <argLine>@{argLine} ${jetty.surefire.argLine}</argLine>
         </configuration>
       </plugin>
     </plugins>

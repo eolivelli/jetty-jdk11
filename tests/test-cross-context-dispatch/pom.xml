@@ -14,7 +14,6 @@
 
   <modules>
     <module>ccd-common</module>
-    <module>ccd-ee11-webapp</module>
     <module>ccd-ee10-webapp</module>
     <module>ccd-ee9-webapp</module>
     <module>ccd-ee8-webapp</module>

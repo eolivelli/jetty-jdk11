@@ -190,7 +190,7 @@ public class DistributionTests extends AbstractJettyHomeTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ee9", "ee10", "ee11"})
+    @ValueSource(strings = {"ee9", "ee10"})
     public void testQuickStartGenerationAndRun(String env) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -263,7 +263,7 @@ public class DistributionTests extends AbstractJettyHomeTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ee9", "ee10", "ee11"})
+    @ValueSource(strings = {"ee9", "ee10"})
     public void testWebAppWithProxyAndJPMS(String env) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -877,7 +877,7 @@ public class DistributionTests extends AbstractJettyHomeTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ee9", "ee10", "ee11"})
+    @ValueSource(strings = {"ee9", "ee10"})
     public void testEEFastCGIProxying(String env) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -1000,7 +1000,7 @@ public class DistributionTests extends AbstractJettyHomeTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ee9", "ee10", "ee11"})
+    @ValueSource(strings = {"ee9", "ee10"})
     public void testEEProxyModule(String env) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -1150,7 +1150,7 @@ public class DistributionTests extends AbstractJettyHomeTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ee9", "ee10", "ee11"})
+    @ValueSource(strings = {"ee9", "ee10"})
     public void testRangeRequestMultiPartRangeResponse(String env) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -1200,7 +1200,7 @@ public class DistributionTests extends AbstractJettyHomeTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ee8", "ee9", "ee10", "ee11"})
+    @ValueSource(strings = {"ee8", "ee9", "ee10"})
     public void testXmlDeployWarNotInWebapps(String env) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -1290,7 +1290,7 @@ public class DistributionTests extends AbstractJettyHomeTest
             .jettyVersion(jettyVersion)
             .build();
 
-        try (JettyHomeTester.Run configure = distribution.start("--add-modules=http,ee11-deploy"))
+        try (JettyHomeTester.Run configure = distribution.start("--add-modules=http,ee10-deploy"))
         {
             assertTrue(configure.awaitForStart());
             assertEquals(0, configure.getExitValue());
@@ -1503,7 +1503,7 @@ public class DistributionTests extends AbstractJettyHomeTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ee8", "ee9", "ee10", "ee11"})
+    @ValueSource(strings = {"ee8", "ee9", "ee10"})
     public void testEnvExtModules(String env) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -1539,7 +1539,7 @@ public class DistributionTests extends AbstractJettyHomeTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ee8", "ee9", "ee10", "ee11"})
+    @ValueSource(strings = {"ee8", "ee9", "ee10"})
     public void testLimitHandlers(String env) throws Exception
     {
         String jettyVersion = System.getProperty("jettyVersion");
@@ -1656,7 +1656,7 @@ public class DistributionTests extends AbstractJettyHomeTest
 
         List<String> modules = new ArrayList<>();
         modules.add("http");
-        List.of("ee9", "ee10", "ee11").forEach(env ->
+        List.of("ee9", "ee10").forEach(env ->
         {
             modules.add(toEnvironment("deploy", env));
             modules.add(toEnvironment("demo-simple", env));
@@ -1689,12 +1689,6 @@ public class DistributionTests extends AbstractJettyHomeTest
                     .timeout(15, TimeUnit.SECONDS)
                     .send();
                 assertEquals(HttpStatus.OK_200, ee10Response.getStatus());
-
-                ContentResponse ee11Response = client.newRequest("localhost", httpPort)
-                    .path("/ee11-demo-simple/")
-                    .timeout(15, TimeUnit.SECONDS)
-                    .send();
-                assertEquals(HttpStatus.OK_200, ee11Response.getStatus());
             }
         }
     }

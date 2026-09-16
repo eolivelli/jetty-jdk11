@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class StatisticsHandlerTest extends AbstractJettyHomeTest
 {
     @ParameterizedTest
-    @ValueSource(strings = {"ee9", "ee10", "ee11"})
+    @ValueSource(strings = {"ee9", "ee10"})
     public void testStatisticsHandler(String env) throws Exception
     {
         String jettyVersion = System.getProperty("jettyVersion");

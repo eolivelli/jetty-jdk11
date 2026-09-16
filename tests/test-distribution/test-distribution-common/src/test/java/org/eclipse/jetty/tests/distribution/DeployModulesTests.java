@@ -41,13 +41,13 @@ public class DeployModulesTests extends AbstractJettyHomeTest
             .jettyVersion(jettyVersion)
             .build();
 
-        // Add deployModule before ee11-deploy to verify that the module before/after directives are correct.
-        try (JettyHomeTester.Run run1 = distribution.start("--add-modules=http,%s,ee11-deploy".formatted(deployModule)))
+        // Add deployModule before ee10-deploy to verify that the module before/after directives are correct.
+        try (JettyHomeTester.Run run1 = distribution.start("--add-modules=http,%s,ee10-deploy".formatted(deployModule)))
         {
             assertTrue(run1.awaitFor(START_TIMEOUT, TimeUnit.SECONDS));
             assertEquals(0, run1.getExitValue());
 
-            // Create a core web application, but should be deployed as ee11.
+            // Create a core web application, but should be deployed as ee10.
             Path jettyBase = distribution.getJettyBase();
             Path coreWebApp = jettyBase.resolve("webapps").resolve("core-app");
             Path coreWebAppStatic = coreWebApp.resolve("static");
@@ -61,7 +61,7 @@ public class DeployModulesTests extends AbstractJettyHomeTest
 
                 startHttpClient();
 
-                // The web application should be deployed as ee11, not as core,
+                // The web application should be deployed as ee10, not as core,
                 // so /static/index.html is a 200 (as core would return a 404).
                 ContentResponse response = client.newRequest("localhost", httpPort)
                     .path("/core-app/static/index.html")

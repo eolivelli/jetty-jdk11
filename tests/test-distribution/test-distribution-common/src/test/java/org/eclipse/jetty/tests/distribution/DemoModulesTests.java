@@ -462,22 +462,6 @@ public class DemoModulesTests extends AbstractJettyHomeTest
                     }
                 }
 
-                // Extra tests for ee11 (Servlet 6.1.x)
-                if ("ee11".equalsIgnoreCase(env))
-                {
-                    baseURI = "http://localhost:%d/ee11-demo-spec-6-1".formatted(httpPort);
-
-                    // Test 6.1 features
-                    response = client.GET(baseURI + "/durable/test");
-                    assertEquals(HttpStatus.OK_200, response.getStatus(), new ResponseDetails(response));
-                    assertThat(response.getContentAsString(), startsWith("OK"));
-
-                    response = client.POST(baseURI + "/echo/test")
-                        .body(new ByteBufferRequestContent("text/plain", BufferUtil.toBuffer("Hello World!")))
-                        .send();
-                    assertEquals(HttpStatus.OK_200, response.getStatus(), new ResponseDetails(response));
-                    assertThat(response.getContentAsString(), is("Hello World!"));
-                }
             }
         }
     }

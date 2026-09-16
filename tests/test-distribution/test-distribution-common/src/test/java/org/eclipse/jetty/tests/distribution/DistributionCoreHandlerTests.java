@@ -113,7 +113,7 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
             .jettyVersion(jettyVersion)
             .build();
 
-        try (JettyHomeTester.Run run1 = distribution.start("--add-modules=resources,test-keystore,http,http2c,ee11-deploy,ee11-annotations,eager-content"))
+        try (JettyHomeTester.Run run1 = distribution.start("--add-modules=resources,test-keystore,http,http2c,ee10-deploy,ee10-annotations,eager-content"))
         {
             assertTrue(run1.awaitFor(START_TIMEOUT, TimeUnit.SECONDS));
             assertEquals(0, run1.getExitValue());
@@ -173,7 +173,7 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
             .jettyVersion(jettyVersion)
             .build();
 
-        try (JettyHomeTester.Run run1 = distribution.start("--add-modules=resources,test-keystore,http,http2c,ee11-deploy,ee11-annotations,eager-content"))
+        try (JettyHomeTester.Run run1 = distribution.start("--add-modules=resources,test-keystore,http,http2c,ee10-deploy,ee10-annotations,eager-content"))
         {
             assertTrue(run1.awaitFor(START_TIMEOUT, TimeUnit.SECONDS));
             assertEquals(0, run1.getExitValue());
@@ -227,7 +227,7 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
             .jettyVersion(jettyVersion)
             .build();
 
-        try (JettyHomeTester.Run run1 = distribution.start("--add-modules=resources,test-keystore,http,http2c,ee11-deploy,ee11-annotations,eager-content"))
+        try (JettyHomeTester.Run run1 = distribution.start("--add-modules=resources,test-keystore,http,http2c,ee10-deploy,ee10-annotations,eager-content"))
         {
             assertTrue(run1.awaitFor(START_TIMEOUT, TimeUnit.SECONDS));
             assertEquals(0, run1.getExitValue());
@@ -287,7 +287,7 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ee8", "ee9", "ee10", "ee11"})
+    @ValueSource(strings = {"ee8", "ee9", "ee10"})
     public void testLimitHandlers(String env) throws Exception
     {
         String jettyVersion = System.getProperty("jettyVersion");
@@ -368,8 +368,8 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
             "resources",
             "http",
             "compression-" + compressionName,
-            "ee11-webapp",
-            "ee11-deploy"
+            "ee10-webapp",
+            "ee10-deploy"
         };
         try (JettyHomeTester.Run run1 = distribution.start("--approve-all-licenses", "--add-modules=" + String.join(",", modules)))
         {

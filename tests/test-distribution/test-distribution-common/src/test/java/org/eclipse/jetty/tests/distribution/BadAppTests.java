@@ -46,7 +46,7 @@ public class BadAppTests extends AbstractJettyHomeTest
      * It is expected that the server does not start and exits with an error code
      */
     @ParameterizedTest
-    @CsvSource({"ee9", "ee10", "ee11"})
+    @CsvSource({"ee9", "ee10"})
     public void testXmlThrowOnUnavailableTrue(String env) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -87,7 +87,7 @@ public class BadAppTests extends AbstractJettyHomeTest
      */
     
     @ParameterizedTest
-    @CsvSource({"ee9", "ee10", "ee11"})
+    @CsvSource({"ee9", "ee10"})
     public void testXmlThrowOnUnavailableFalse(String env) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -131,7 +131,7 @@ public class BadAppTests extends AbstractJettyHomeTest
      */
 
     @ParameterizedTest
-    @CsvSource({"ee9", "ee10", "ee11"})
+    @CsvSource({"ee9", "ee10"})
     public void testNoXmlThrowOnUnavailableDefault(String env) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -164,7 +164,7 @@ public class BadAppTests extends AbstractJettyHomeTest
     }
 
     @ParameterizedTest
-    @CsvSource({"ee9", "ee10", "ee11"})
+    @CsvSource({"ee9", "ee10"})
     public void testBadWebSocketWebapp(String env) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();

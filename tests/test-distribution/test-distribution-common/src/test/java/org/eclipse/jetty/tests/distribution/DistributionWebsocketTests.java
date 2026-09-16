@@ -52,10 +52,7 @@ public class DistributionWebsocketTests extends AbstractJettyHomeTest
         "https,ee9,false",
         "http,ee10,false,",
         "http,ee10,true",
-        "https,ee10,false",
-        "http,ee11,false",
-        "http,ee11,true",
-        "https,ee11,false"})
+        "https,ee10,false",})
     public void testWebsocketClientInWebappProvidedByServer(String scheme, String env, String jpms) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -115,10 +112,7 @@ public class DistributionWebsocketTests extends AbstractJettyHomeTest
         "https,ee9,false",
         "http,ee10,false,",
         "http,ee10,true",
-        "https,ee10,false",
-        "http,ee11,false",
-        "http,ee11,true",
-        "https,ee11,false"})
+        "https,ee10,false",})
     public void testWebsocketClientInWebapp(String scheme, String env, String jpms) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -167,7 +161,7 @@ public class DistributionWebsocketTests extends AbstractJettyHomeTest
     }
 
     @ParameterizedTest
-    @CsvSource(value = {"ee9,false", "ee10,false", "ee10,true", "ee11,false", "ee11,true"})
+    @CsvSource(value = {"ee9,false", "ee10,false", "ee10,true"})
     public void testSimpleWebAppWithWebsocket(String env, String jpms) throws Exception
     {
         // Testing ee9 with JPMS won't work because ee9 jakarta.* jars

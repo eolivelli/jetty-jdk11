@@ -88,18 +88,6 @@
             </configuration>
           </execution>
           <execution>
-            <id>ee11</id>
-            <goals>
-              <goal>manifest</goal>
-            </goals>
-            <configuration>
-              <instructions>
-                <Jetty-Environment>ee11</Jetty-Environment>
-              </instructions>
-              <manifestLocation>${project.build.outputDirectory}/META-INF-ee11</manifestLocation>
-            </configuration>
-          </execution>
-          <execution>
             <id>ee9</id>
             <goals>
               <goal>manifest</goal>
@@ -129,21 +117,6 @@
               </descriptors>
               <archive>
                 <manifestFile>${project.build.outputDirectory}/META-INF-ee10/MANIFEST.MF</manifestFile>
-              </archive>
-            </configuration>
-          </execution>
-          <execution>
-            <id>ee11-web-bundle-assembly</id>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/assembly/ee11-web-bundle.xml</descriptor>
-              </descriptors>
-              <archive>
-                <manifestFile>${project.build.outputDirectory}/META-INF-ee11/MANIFEST.MF</manifestFile>
               </archive>
             </configuration>
           </execution>

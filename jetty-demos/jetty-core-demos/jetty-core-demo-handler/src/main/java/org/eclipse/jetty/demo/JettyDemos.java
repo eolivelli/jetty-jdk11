@@ -58,7 +58,7 @@ public class JettyDemos
                     LOG.debug("JettyDemos(prop(user.dir)) = {}", working);
                 while (dir == null && working != null)
                 {
-                    dir = asDirectory(working.resolve("jetty-ee11-demos").toString());
+                    dir = asDirectory(working.resolve("jetty-ee10-demos").toString());
                     if (dir != null && Files.exists(dir.resolve("pom.xml")))
                     {
                         demosDir = dir;

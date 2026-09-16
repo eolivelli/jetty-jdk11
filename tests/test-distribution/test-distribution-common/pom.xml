@@ -107,18 +107,6 @@
       <artifactId>jetty-util</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.jetty.ee11</groupId>
-      <artifactId>jetty-ee11-test-badinit-webapp</artifactId>
-      <version>${project.version}</version>
-      <type>war</type>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty.ee11</groupId>
-      <artifactId>jetty-ee11-test-weld-cdi-webapp</artifactId>
-      <version>${project.version}</version>
-      <type>war</type>
-    </dependency>
-    <dependency>
       <groupId>org.eclipse.jetty.ee9</groupId>
       <artifactId>jetty-ee9-test-badinit-webapp</artifactId>
       <version>${project.version}</version>
@@ -224,20 +212,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.jetty.ee11</groupId>
-      <artifactId>jetty-ee11-test-log4j2-webapp</artifactId>
-      <version>${project.version}</version>
-      <type>war</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty.ee11</groupId>
-      <artifactId>jetty-ee11-test-openid-webapp</artifactId>
-      <version>${project.version}</version>
-      <type>war</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.eclipse.jetty.ee9</groupId>
       <artifactId>jetty-ee9-test-openid-webapp</artifactId>
       <version>${project.version}</version>
@@ -299,22 +273,22 @@
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers-gcloud</artifactId>
+      <artifactId>gcloud</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers-junit-jupiter</artifactId>
+      <artifactId>junit-jupiter</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers-mariadb</artifactId>
+      <artifactId>mariadb</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers-mongodb</artifactId>
+      <artifactId>mongodb</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -464,7 +438,7 @@
     <profile>
       <id>enable-jna</id>
       <activation>
-        <jdk>[17,22)</jdk>
+        <jdk>[11,22)</jdk>
       </activation>
       <dependencies>
         <dependency>

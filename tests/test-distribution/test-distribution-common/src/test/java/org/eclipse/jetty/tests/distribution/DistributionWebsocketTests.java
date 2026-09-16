@@ -52,7 +52,7 @@ public class DistributionWebsocketTests extends AbstractJettyHomeTest
         "https,ee9,false",
         "http,ee10,false,",
         "http,ee10,true",
-        "https,ee10,false",})
+        "https,ee10,false"})
     public void testWebsocketClientInWebappProvidedByServer(String scheme, String env, String jpms) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -112,7 +112,7 @@ public class DistributionWebsocketTests extends AbstractJettyHomeTest
         "https,ee9,false",
         "http,ee10,false,",
         "http,ee10,true",
-        "https,ee10,false",})
+        "https,ee10,false"})
     public void testWebsocketClientInWebapp(String scheme, String env, String jpms) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();

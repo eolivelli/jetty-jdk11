@@ -2101,7 +2101,13 @@
                 <requireCompatibleVersionRedhat/>
                 <requireCompatibleVersionDebian/>
                 <requireCompatibleVersionOSGI/>
-                <requireUpperBoundDeps/>
+                <requireUpperBoundDeps>
+                  <excludes>
+                    <!-- Infinispan 14 (Java 11) Hot Rod client depends on the javax namespace 1.3.x version,
+                         while the EE9/EE10 modules use the jakarta namespace 2.x version -->
+                    <exclude>jakarta.transaction:jakarta.transaction-api</exclude>
+                  </excludes>
+                </requireUpperBoundDeps>
               </rules>
             </configuration>
           </execution>

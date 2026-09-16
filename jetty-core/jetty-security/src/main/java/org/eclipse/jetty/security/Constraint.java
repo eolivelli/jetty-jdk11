@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A Security constraint that is applied to a request, which contain:
@@ -300,7 +299,7 @@ public interface Constraint
     {
         return from(name, Transport.INHERIT, authorization, (roles == null || roles.length == 0)
             ? Collections.emptySet()
-            : new HashSet<>(Arrays.stream(roles).collect(Collectors.toList())));
+            : new HashSet<>(Arrays.asList(roles)));
     }
 
     static Constraint from(Transport transport, Authorization authorization, Set<String> roles)

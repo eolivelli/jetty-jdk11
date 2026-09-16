@@ -25,6 +25,7 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -520,11 +521,9 @@ public interface Request extends Attributes, Content.Source
 
         // Is there a local port?
         SocketAddress local = request.getConnectionMetaData().getLocalSocketAddress();
-        if (local instanceof InetSocketAddress && ((InetSocketAddress)local).getPort() > 0)
-        {
-            InetSocketAddress inetSocketAddress = (InetSocketAddress)local;
+        InetSocketAddress inetSocketAddress = local instanceof InetSocketAddress ? (InetSocketAddress)local : null;
+        if (inetSocketAddress != null && inetSocketAddress.getPort() > 0)
             return inetSocketAddress.getPort();
-        }
 
         return -1;
     }
@@ -539,15 +538,15 @@ public interface Request extends Attributes, Content.Source
         if (acceptable.isEmpty())
             return DEFAULT_LOCALES;
 
-        List<Locale> locales = acceptable.stream()
+        List<Locale> locales = Collections.unmodifiableList(acceptable.stream()
             .map(Locale::forLanguageTag)
             .filter(l -> !l.getLanguage().isEmpty())
-            .collect(Collectors.toList());
+            .collect(Collectors.toList()));
 
         if (locales.isEmpty())
             return DEFAULT_LOCALES;
 
-        List<Locale> known = locales.stream().filter(MimeTypes::isKnownLocale).collect(Collectors.toList());
+        List<Locale> known = Collections.unmodifiableList(locales.stream().filter(MimeTypes::isKnownLocale).collect(Collectors.toList()));
         if (known.size() == locales.size())
             return known;
         if (known.isEmpty())

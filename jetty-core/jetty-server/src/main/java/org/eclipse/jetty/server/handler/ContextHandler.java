@@ -1908,10 +1908,12 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
         @Override
         public boolean equals(Object o)
         {
-            return o instanceof VHost &&
-                Objects.equals(_vHost, ((VHost)o)._vHost) &&
-                Objects.equals(_wild, ((VHost)o)._wild) &&
-                Objects.equals(_vConnector, ((VHost)o)._vConnector);
+            if (!(o instanceof VHost))
+                return false;
+            VHost vhost = (VHost)o;
+            return Objects.equals(_vHost, vhost._vHost) &&
+                Objects.equals(_wild, vhost._wild) &&
+                Objects.equals(_vConnector, vhost._vConnector);
         }
 
         @Override

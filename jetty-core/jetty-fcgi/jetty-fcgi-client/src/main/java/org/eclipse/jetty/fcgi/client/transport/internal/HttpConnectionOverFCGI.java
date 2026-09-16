@@ -259,10 +259,8 @@ public class HttpConnectionOverFCGI extends AbstractConnection implements IConne
         switch (state)
         {
             case STATUS:
-            {
-                break;
                 // Nothing to do.
-            }
+                break;
             case HEADERS:
                 channel.responseHeaders();
                 break;
@@ -273,11 +271,9 @@ public class HttpConnectionOverFCGI extends AbstractConnection implements IConne
                 break;
             }
             case COMPLETE:
-            {
-                break;
                 // Do not call channel.responseSuccess() here to give HttpReceiverOverFCGI.read(boolean) a chance to read
                 // the chunk field before channel.responseSuccess() resets it to null.
-            }
+                break;
             default:
                 throw new IllegalStateException("Invalid state " + state);
         }

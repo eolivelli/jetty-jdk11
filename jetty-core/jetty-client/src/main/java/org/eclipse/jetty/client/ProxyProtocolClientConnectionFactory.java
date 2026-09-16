@@ -739,10 +739,8 @@ public abstract class ProxyProtocolClientConnectionFactory extends ClientConnect
                 switch (family)
                 {
                     case UNSPEC:
-                    {
-                        break;
                         // Nothing to do.
-                    }
+                        break;
                     case INET4:
                     case INET6:
                     {

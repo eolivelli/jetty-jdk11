@@ -44,7 +44,6 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ContextHandlerCollectionTest
 {
@@ -136,17 +135,16 @@ public class ContextHandlerCollectionTest
 
             LocalConnector connector;
             switch (useConnectorNum)
-                {
-                    case 0:
-                        connector = connector0;
-                        break;
-                    case 1:
-                        connector = connector1;
-                        break;
-                    default:
-                        connector = fail("Unsupported connector number: " + useConnectorNum);
-                        break;
-                }
+            {
+                case 0:
+                    connector = connector0;
+                    break;
+                case 1:
+                    connector = connector1;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported connector number: " + useConnectorNum);
+            }
 
             String rawRequest = String.format(("GET %s HTTP/1.1\r\n" +
                 "Host: %s\r\n" +

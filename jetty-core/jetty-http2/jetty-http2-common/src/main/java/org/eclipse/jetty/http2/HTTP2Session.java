@@ -2597,6 +2597,8 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
                         created = true;
                         break;
                     case LOCALLY_CLOSED:
+                        // SPEC: streams larger than GOAWAY's lastStreamId are dropped.
+                        // Allow creation of streams that may have been in-flight.
                         created = streamId <= goAwaySent.getLastStreamId();
                         break;
                     default:

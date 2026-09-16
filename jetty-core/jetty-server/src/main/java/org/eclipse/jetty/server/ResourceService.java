@@ -352,9 +352,7 @@ public class ResourceService extends ContainerLifeCycle
                             ifums = field.getValue();
                             break;
                         default:
-                        {
                             break;
-                        }
                     }
                 }
             }
@@ -694,7 +692,6 @@ public class ResourceService extends ContainerLifeCycle
                     .getPathQuery();
                 break;
             case SERVE:
-                welcomeTarget = welcomeTarget;
                 break;
             default:
                 throw new IllegalStateException();

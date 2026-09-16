@@ -53,6 +53,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EventsHandlerTest
 {
+    private static final String ATTRIBUTE_NAME = EventsHandlerTest.class.getName();
+
     private Server server;
     private ServerConnector connector;
 
@@ -82,30 +84,28 @@ public class EventsHandlerTest
         AtomicReference<String> attribute = new AtomicReference<>();
         EventsHandler eventsHandler = new EventsHandler(new EchoHandler())
         {
-            final String attributeName = EventsHandlerTest.class.getName();
-
             @Override
             protected void onBeforeHandling(Request request)
             {
-                request.setAttribute(attributeName, "testModifyRequestAttributes-1");
+                request.setAttribute(ATTRIBUTE_NAME, "testModifyRequestAttributes-1");
             }
 
             @Override
             protected void onAfterHandling(Request request, boolean handled, Throwable failure)
             {
-                request.setAttribute(attributeName, request.getAttribute(attributeName) + "2");
+                request.setAttribute(ATTRIBUTE_NAME, request.getAttribute(ATTRIBUTE_NAME) + "2");
             }
 
             @Override
             protected void onResponseBegin(Request request, int status, HttpFields headers)
             {
-                request.setAttribute(attributeName, request.getAttribute(attributeName) + "3");
+                request.setAttribute(ATTRIBUTE_NAME, request.getAttribute(ATTRIBUTE_NAME) + "3");
             }
 
             @Override
             protected void onComplete(Request request, int status, HttpFields headers, Throwable failure)
             {
-                attribute.set((String)request.getAttribute(attributeName));
+                attribute.set((String)request.getAttribute(ATTRIBUTE_NAME));
             }
         };
 

@@ -545,10 +545,8 @@ public class StreamEndPoint implements EndPoint
                     break;
                 }
                 case FAILED:
-                {
-                    break;
                     // Already failed.
-                }
+                    break;
                 default:
                     callback.failed(new IllegalStateException("unexpected state: " + current));
                     break;

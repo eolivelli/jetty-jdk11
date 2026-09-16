@@ -14,6 +14,7 @@
 package org.eclipse.jetty.server.handler;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -75,7 +76,7 @@ public class PathMappingsHandler extends Handler.AbstractContainer
     @Override
     public List<Handler> getHandlers()
     {
-        return mappings.streamResources().map(MappedResource::getResource).collect(Collectors.toList());
+        return Collections.unmodifiableList(mappings.streamResources().map(MappedResource::getResource).collect(Collectors.toList()));
     }
 
     /**

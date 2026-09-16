@@ -1310,9 +1310,7 @@ public class ContextHandlerTest
                     }
 
                     default:
-                    {
                         break;
-                    }
                 }
 
                 response.setStatus(HttpStatus.OK_200);

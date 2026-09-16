@@ -400,9 +400,7 @@ public abstract class HTTP3Stream implements Stream, CyclicTimeouts.Expirable, A
                     break;
                 }
                 case CLOSED:
-                {
                     break;
-                }
                 default:
                     throw new IllegalStateException();
             }

@@ -190,9 +190,7 @@ public interface RedirectCache
                     break;
                 }
                 default:
-                {
                     break;
-                }
             }
         }
 

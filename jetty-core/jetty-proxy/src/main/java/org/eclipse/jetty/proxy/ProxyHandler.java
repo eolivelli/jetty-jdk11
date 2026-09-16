@@ -409,7 +409,8 @@ public abstract class ProxyHandler extends Handler.Abstract
         // For example, a client with a forward proxy may want to communicate in clear-text with the
         // server (so the scheme is http), but securely with the forward proxy (so isSecure() is true).
         String protoAttr = scheme == null ? (clientToProxyRequest.isSecure() ? "https" : "http") : scheme;
-        String forwardedValue = String.format("by=%s;for=%s;host=%s;proto=%s", HttpField.PARAMETER_TOKENIZER.quote(byAttr),
+        String forwardedValue = String.format("by=%s;for=%s;host=%s;proto=%s",
+            HttpField.PARAMETER_TOKENIZER.quote(byAttr),
             HttpField.PARAMETER_TOKENIZER.quote(forAttr),
             HttpField.PARAMETER_TOKENIZER.quote(hostAttr),
             protoAttr);

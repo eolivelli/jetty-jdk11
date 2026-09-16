@@ -116,7 +116,8 @@ public class ConstraintMapping
     @Override
     public String toString()
     {
-        return String.format("%s@%x{method=%s,omissions=%s,pathSpec=%s -> %s}", TypeUtil.toShortName(getClass()),
+        return String.format("%s@%x{method=%s,omissions=%s,pathSpec=%s -> %s}",
+            TypeUtil.toShortName(getClass()),
             hashCode(),
             _method,
             _methodOmissions == null ? null : Arrays.asList(_methodOmissions),

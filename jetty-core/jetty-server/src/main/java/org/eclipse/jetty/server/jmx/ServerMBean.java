@@ -81,7 +81,8 @@ public class ServerMBean extends Handler.AbstractMBean
     public String getUpTime()
     {
         Duration upTime = Duration.ofMillis(getManagedObject().getUptimeMillis());
-        return String.format("%d:%02d:%02d:%02d.%03d", upTime.toDaysPart(),
+        return String.format("%d:%02d:%02d:%02d.%03d",
+            upTime.toDaysPart(),
             upTime.toHoursPart(),
             upTime.toMinutesPart(),
             upTime.toSecondsPart(),

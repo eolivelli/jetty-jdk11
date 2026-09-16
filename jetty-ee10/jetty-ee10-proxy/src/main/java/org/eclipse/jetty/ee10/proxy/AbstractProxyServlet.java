@@ -622,7 +622,8 @@ public abstract class AbstractProxyServlet extends HttpServlet
         String hostAttr = clientRequest.getHeader(HttpHeader.HOST.asString());
         String scheme = clientRequest.getScheme();
         String protoAttr = scheme == null ? (clientRequest.isSecure() ? "https" : "http") : scheme;
-        String forwardedValue = String.format("by=%s;for=%s;host=%s;proto=%s", HttpField.PARAMETER_TOKENIZER.quote(byAttr),
+        String forwardedValue = String.format("by=%s;for=%s;host=%s;proto=%s",
+            HttpField.PARAMETER_TOKENIZER.quote(byAttr),
             HttpField.PARAMETER_TOKENIZER.quote(forAttr),
             HttpField.PARAMETER_TOKENIZER.quote(hostAttr),
             protoAttr);

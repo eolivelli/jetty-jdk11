@@ -514,7 +514,8 @@ public class QoSHandler extends ConditionalHandler.Abstract
     @Override
     public String toString()
     {
-        return String.format("%s[maxReq=%d,maxSus=%d,sus/res/tot/exp/exc=(%d,%d)/%d/%d/%d/%d]", super.toString(),
+        return String.format("%s[maxReq=%d,maxSus=%d,sus/res/tot/exp/exc=(%d,%d)/%d/%d/%d/%d]",
+            super.toString(),
             getMaxRequestCount(),
             getMaxSuspendedRequestCount(),
             getSuspendedRequestCount(),

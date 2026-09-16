@@ -438,7 +438,8 @@ public class Utf8StringBuilder implements CharsetStringBuilder
     @Override
     public String toString()
     {
-        return String.format("%s@%x{b=%s,s=%d,cp=%d,e=%b", Utf8StringBuilder.class.getSimpleName(),
+        return String.format("%s@%x{b=%s,s=%d,cp=%d,e=%b",
+            Utf8StringBuilder.class.getSimpleName(),
             hashCode(),
             _buffer,
             _state,

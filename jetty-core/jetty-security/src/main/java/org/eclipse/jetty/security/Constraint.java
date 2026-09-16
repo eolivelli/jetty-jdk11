@@ -351,7 +351,8 @@ public interface Constraint
             @Override
             public String toString()
             {
-                return String.format("Constraint@%x{%s,%s,%s,%s}", hashCode(),
+                return String.format("Constraint@%x{%s,%s,%s,%s}",
+                    hashCode(),
                     getName(),
                     getTransport(),
                     getAuthorization(),

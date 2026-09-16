@@ -72,9 +72,10 @@ public class ContextHandlerDeepTest
                 response.getHeaders().put(HttpHeader.CONTENT_TYPE, "text/plain; charset=utf-8");
                 String msg = String.format("contextPath=%s\n" +
                     "pathInContext=%s\n" +
-                    "httpURI.getPath=%s\n", Request.getContextPath(request),
-                        Request.getPathInContext(request),
-                        request.getHttpURI().getPath());
+                    "httpURI.getPath=%s\n",
+                    Request.getContextPath(request),
+                    Request.getPathInContext(request),
+                    request.getHttpURI().getPath());
 
                 response.write(true, BufferUtil.toBuffer(msg), callback);
                 return true;

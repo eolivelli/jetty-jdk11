@@ -588,9 +588,22 @@ public class JDBCSessionDataStore extends ObjectStreamSessionDataStore
         @Override
         public String toString()
         {
-            return String.format("%s[%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s]", super.toString(),
-                _catalogName, _schemaName, _tableName, _idColumn, _contextPathColumn, _virtualHostColumn, _cookieTimeColumn, _createTimeColumn,
-                _expiryTimeColumn, _accessTimeColumn, _lastAccessTimeColumn, _lastNodeColumn, _lastSavedTimeColumn, _maxIntervalColumn);
+            return String.format("%s[%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s]",
+                super.toString(),
+                _catalogName,
+                _schemaName,
+                _tableName,
+                _idColumn,
+                _contextPathColumn,
+                _virtualHostColumn,
+                _cookieTimeColumn,
+                _createTimeColumn,
+                _expiryTimeColumn,
+                _accessTimeColumn,
+                _lastAccessTimeColumn,
+                _lastNodeColumn,
+                _lastSavedTimeColumn,
+                _maxIntervalColumn);
         }
     }
 

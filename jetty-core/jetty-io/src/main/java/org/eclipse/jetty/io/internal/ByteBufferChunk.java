@@ -43,7 +43,8 @@ public abstract class ByteBufferChunk extends RetainableByteBuffer.FixedCapacity
     @Override
     public String toString()
     {
-        return String.format("%s@%x[l=%b,b=%s]", TypeUtil.toShortName(getClass()),
+        return String.format("%s@%x[l=%b,b=%s]",
+            TypeUtil.toShortName(getClass()),
             hashCode(),
             isLast(),
             BufferUtil.toDetailString(getByteBuffer()));
@@ -197,7 +198,8 @@ public abstract class ByteBufferChunk extends RetainableByteBuffer.FixedCapacity
         @Override
         public String toString()
         {
-            return String.format("%s@%x[l=%b,b=%s]", TypeUtil.toShortName(getClass()),
+            return String.format("%s@%x[l=%b,b=%s]",
+                TypeUtil.toShortName(getClass()),
                 hashCode(),
                 isLast(),
                 getWrapped().toDetailString());

@@ -1369,8 +1369,13 @@ public abstract class AbstractSessionManager extends ContainerLifeCycle implemen
 
     private static String duplicateSession(String id0, boolean fromCookie0, String id1, boolean valid1, boolean fromCookie1)
     {
-        return String.format("Duplicate sessions: %s[%s,%s] & %s[%s,%s]", id0, "valid", fromCookie0 ? RequestedSession.ID_FROM_COOKIE : RequestedSession.ID_FROM_URI_PARAMETER,
-            id1, valid1 ? "valid" : "unknown", fromCookie1 ? RequestedSession.ID_FROM_COOKIE : RequestedSession.ID_FROM_URI_PARAMETER);
+        return String.format("Duplicate sessions: %s[%s,%s] & %s[%s,%s]",
+            id0,
+            "valid",
+            fromCookie0 ? RequestedSession.ID_FROM_COOKIE : RequestedSession.ID_FROM_URI_PARAMETER,
+            id1,
+            valid1 ? "valid" : "unknown",
+            fromCookie1 ? RequestedSession.ID_FROM_COOKIE : RequestedSession.ID_FROM_URI_PARAMETER);
     }
 
     /**

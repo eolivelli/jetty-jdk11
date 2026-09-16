@@ -520,7 +520,8 @@ public class MultiPart
         @Override
         public String toString()
         {
-            return String.format("%s@%x[name=%s,fileName=%s,length=%d]", TypeUtil.toShortName(getClass()),
+            return String.format("%s@%x[name=%s,fileName=%s,length=%d]",
+                TypeUtil.toShortName(getClass()),
                 hashCode(),
                 getName(),
                 getFileName(),
@@ -601,7 +602,8 @@ public class MultiPart
         @Override
         public String toString()
         {
-            return String.format("%s@%x[name=%s,fileName=%s,length=%d]", TypeUtil.toShortName(getClass()),
+            return String.format("%s@%x[name=%s,fileName=%s,length=%d]",
+                TypeUtil.toShortName(getClass()),
                 hashCode(),
                 getName(),
                 getFileName(),
@@ -647,7 +649,8 @@ public class MultiPart
         @Override
         public String toString()
         {
-            return String.format("%s@%x[name=%s,fileName=%s,path=%s]", TypeUtil.toShortName(getClass()),
+            return String.format("%s@%x[name=%s,fileName=%s,path=%s]",
+                TypeUtil.toShortName(getClass()),
                 hashCode(),
                 getName(),
                 getFileName(),
@@ -686,7 +689,8 @@ public class MultiPart
         @Override
         public String toString()
         {
-            return String.format("%s@%x[name=%s,fileName=%s,length=%d]", TypeUtil.toShortName(getClass()),
+            return String.format("%s@%x[name=%s,fileName=%s,length=%d]",
+                TypeUtil.toShortName(getClass()),
                 hashCode(),
                 getName(),
                 getFileName(),

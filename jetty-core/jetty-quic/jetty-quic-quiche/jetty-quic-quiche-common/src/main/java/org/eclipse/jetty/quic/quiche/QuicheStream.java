@@ -672,7 +672,8 @@ public class QuicheStream extends AbstractStream
         @Override
         public String toString()
         {
-            return String.format("%s@%x[last=%b,pending=%b,buffers=%s]", TypeUtil.toShortName(getClass()),
+            return String.format("%s@%x[last=%b,pending=%b,buffers=%s]",
+                TypeUtil.toShortName(getClass()),
                 hashCode(),
                 last,
                 pending,

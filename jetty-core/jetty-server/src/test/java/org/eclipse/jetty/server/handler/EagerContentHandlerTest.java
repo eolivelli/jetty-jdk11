@@ -192,7 +192,8 @@ public class EagerContentHandlerTest
                 new Throwable().printStackTrace(new PrintStream(out));
                 String stack = out.toString(StandardCharsets.ISO_8859_1);
                 assertThat(stack, not(containsString("DemandContentCallback.succeeded")));
-                assertThat(stack, not(containsString(String.format("%s.%s", EagerContentHandler.RetainedContentLoaderFactory.RetainedContentLoader.class.getSimpleName(),
+                assertThat(stack, not(containsString(String.format("%s.%s",
+                    EagerContentHandler.RetainedContentLoaderFactory.RetainedContentLoader.class.getSimpleName(),
                     EagerContentHandler.RetainedContentLoaderFactory.RetainedContentLoader.class.getDeclaredMethod("run").getName()))));
 
                 processing.countDown();
@@ -246,7 +247,8 @@ public class EagerContentHandlerTest
                 new Throwable().printStackTrace(new PrintStream(out));
                 String stack = out.toString(StandardCharsets.ISO_8859_1);
                 assertThat(stack, not(containsString("DemandContentCallback.succeeded")));
-                assertThat(stack, not(containsString(String.format("%s.%s", EagerContentHandler.RetainedContentLoaderFactory.RetainedContentLoader.class.getSimpleName(),
+                assertThat(stack, not(containsString(String.format("%s.%s",
+                    EagerContentHandler.RetainedContentLoaderFactory.RetainedContentLoader.class.getSimpleName(),
                     EagerContentHandler.RetainedContentLoaderFactory.RetainedContentLoader.class.getDeclaredMethod("run").getName()))));
 
                 // Check content

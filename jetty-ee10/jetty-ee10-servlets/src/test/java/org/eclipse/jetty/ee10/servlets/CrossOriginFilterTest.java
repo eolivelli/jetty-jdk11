@@ -486,7 +486,8 @@ public class CrossOriginFilterTest
             "%s: DELETE\r\n" +
             "%s: origin,x-custom,x-requested-with\r\n" +
             "Origin: http://localhost\r\n" +
-            "\r\n", CrossOriginFilter.ACCESS_CONTROL_REQUEST_METHOD_HEADER,
+            "\r\n",
+            CrossOriginFilter.ACCESS_CONTROL_REQUEST_METHOD_HEADER,
             CrossOriginFilter.ACCESS_CONTROL_REQUEST_HEADERS_HEADER);
 
         String rawResponse = connector.getResponse(request);

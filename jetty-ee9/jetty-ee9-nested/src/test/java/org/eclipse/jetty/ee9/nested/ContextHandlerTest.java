@@ -280,11 +280,12 @@ public class ContextHandlerTest
                     "coreRequest.id=%s\n" +
                     "coreRequest.connectionMetaData.id=%s\n" +
                     "coreRequest.connectionMetaData.persistent=%b\n" +
-                    "\n", org.eclipse.jetty.server.Request.getPathInContext(coreRequest),
-                        baseRequest.hashCode(),
-                        coreRequest.getId(),
-                        coreRequest.getConnectionMetaData().getId(),
-                        coreRequest.getConnectionMetaData().isPersistent()));
+                    "\n",
+                    org.eclipse.jetty.server.Request.getPathInContext(coreRequest),
+                    baseRequest.hashCode(),
+                    coreRequest.getId(),
+                    coreRequest.getConnectionMetaData().getId(),
+                    coreRequest.getConnectionMetaData().isPersistent()));
             }
         });
         _server.start();

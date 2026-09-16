@@ -602,7 +602,8 @@ public class ForwardedRequestCustomizer implements HttpConfiguration.Customizer
             @Override
             public String toString()
             {
-                return String.format("%s@%x{id=%s,remote=%s,authority=%s,%s}", TypeUtil.toShortName(this.getClass()),
+                return String.format("%s@%x{id=%s,remote=%s,authority=%s,%s}",
+                    TypeUtil.toShortName(this.getClass()),
                     hashCode(),
                     getId(),
                     remote,

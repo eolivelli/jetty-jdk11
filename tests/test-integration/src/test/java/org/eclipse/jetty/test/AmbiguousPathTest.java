@@ -54,7 +54,8 @@ public class AmbiguousPathTest
             public boolean handle(Request request, Response response, Callback callback)
             {
                 String body = String.format("Client: %s\n" +
-                    "Request URI: %s\n", Request.getRemoteAddr(request),
+                    "Request URI: %s\n",
+                    Request.getRemoteAddr(request),
                     request.getHttpURI().toString());
                 Content.Sink.write(response, true, body, callback);
                 return true;

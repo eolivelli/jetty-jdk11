@@ -89,7 +89,8 @@ public interface Dumpable
             out.append(LEGEND);
             Runtime runtime = Runtime.getRuntime();
             Instant now = Instant.now();
-            out.append(String.format("JVM: %s %s %s; OS: %s %s %s; Jetty: %s; CPUs: %d; mem(free/total/max): %,d/%,d/%,d MiB\nUTC: %s; %s: %s", System.getProperty("java.vm.vendor"),
+            out.append(String.format("JVM: %s %s %s; OS: %s %s %s; Jetty: %s; CPUs: %d; mem(free/total/max): %,d/%,d/%,d MiB\nUTC: %s; %s: %s",
+                System.getProperty("java.vm.vendor"),
                 System.getProperty("java.vm.name"),
                 System.getProperty("java.vm.version"),
                 System.getProperty("os.name"),

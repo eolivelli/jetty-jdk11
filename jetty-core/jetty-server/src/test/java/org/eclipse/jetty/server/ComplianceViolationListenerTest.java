@@ -480,7 +480,8 @@ public class ComplianceViolationListenerTest
             type = "MultiPartCompliance";
         if (event.violation() instanceof CookieCompliance.Violation)
             type = "CookieCompliance";
-        return String.format("%s.%s (%s)", type,
+        return String.format("%s.%s (%s)",
+            type,
             event.violation().getName(),
             event.allowed() ? "allowed" : "forbidden");
     }

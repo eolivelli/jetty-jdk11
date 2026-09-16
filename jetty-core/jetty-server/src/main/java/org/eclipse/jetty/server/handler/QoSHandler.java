@@ -511,8 +511,7 @@ public class QoSHandler extends ConditionalHandler.Abstract
     @Override
     public String toString()
     {
-        return "%s[maxReq=%d,maxSus=%d,sus/res/tot/exp/exc=(%d,%d)/%d/%d/%d/%d]".formatted(
-            super.toString(),
+        return String.format("%s[maxReq=%d,maxSus=%d,sus/res/tot/exp/exc=(%d,%d)/%d/%d/%d/%d]", super.toString(),
             getMaxRequestCount(),
             getMaxSuspendedRequestCount(),
             getSuspendedRequestCount(),
@@ -520,8 +519,7 @@ public class QoSHandler extends ConditionalHandler.Abstract
             getTotalResumedRequestCount(),
             getTotalRequestCount(),
             getTotalExpiredRequestCount(),
-            getTotalExceededRequestCount()
-        );
+            getTotalExceededRequestCount());
     }
 
     private class Entry implements CyclicTimeouts.Expirable, Runnable

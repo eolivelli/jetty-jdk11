@@ -59,7 +59,7 @@ public abstract class DispatchedMessageSink extends AbstractMessageSink
     {
         super(session, methodHolder, autoDemand);
         if (!autoDemand)
-            throw new IllegalArgumentException("%s must be auto-demanding".formatted(getClass().getSimpleName()));
+            throw new IllegalArgumentException(String.format("%s must be auto-demanding", getClass().getSimpleName()));
         executor = session.getWebSocketComponents().getExecutor();
     }
 
@@ -67,7 +67,7 @@ public abstract class DispatchedMessageSink extends AbstractMessageSink
     {
         super(session, methodHolder, autoDemand);
         if (!autoDemand)
-            throw new IllegalArgumentException("%s must be auto-demanding".formatted(getClass().getSimpleName()));
+            throw new IllegalArgumentException(String.format("%s must be auto-demanding", getClass().getSimpleName()));
         this.executor = session.getWebSocketComponents().getExecutor();
         this.onError = onError;
     }

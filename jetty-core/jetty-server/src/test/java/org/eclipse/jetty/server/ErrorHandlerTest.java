@@ -122,7 +122,7 @@ public class ErrorHandlerTest
                     Content.Sink.write(
                         response,
                         true,
-                        "%s Error %s : %s%n".formatted(pathInContext, request.getAttribute(ErrorHandler.ERROR_STATUS), request.getAttribute(ErrorHandler.ERROR_MESSAGE)),
+                        String.format("%s Error %s : %s%n", pathInContext, request.getAttribute(ErrorHandler.ERROR_STATUS), request.getAttribute(ErrorHandler.ERROR_MESSAGE)),
                         callback);
                     return true;
                 }
@@ -167,11 +167,9 @@ public class ErrorHandlerTest
         errorHandler.setDefaultResponseMimeType(MimeTypes.Type.APPLICATION_JSON.asString());
         server.setErrorHandler(errorHandler);
 
-        String rawResponse = connector.getResponse("""
-                        GET / HTTP/1.1
-                        Host: Localhost
-                        
-                        """);
+        String rawResponse = connector.getResponse("GET / HTTP/1.1\n" +
+            "Host: Localhost\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -484,11 +482,9 @@ public class ErrorHandlerTest
     @Test
     public void testContainsNoStacksByDefault() throws Exception
     {
-        String rawResponse = connector.getResponse("""
-                        GET /badmessage/444 HTTP/1.1
-                        Host: Localhost
-                        
-                        """);
+        String rawResponse = connector.getResponse("GET /badmessage/444 HTTP/1.1\n" +
+            "Host: Localhost\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -505,11 +501,9 @@ public class ErrorHandlerTest
         errorHandler.setShowStacks(true);
         server.setErrorHandler(errorHandler);
 
-        String rawResponse = connector.getResponse("""
-                        GET /badmessage/444 HTTP/1.1
-                        Host: Localhost
-                        
-                        """);
+        String rawResponse = connector.getResponse("GET /badmessage/444 HTTP/1.1\n" +
+            "Host: Localhost\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -522,11 +516,9 @@ public class ErrorHandlerTest
     @Test
     public void testContainsNoCausesByDefault() throws Exception
     {
-        String rawResponse = connector.getResponse("""
-                        GET /badmessage/444 HTTP/1.1
-                        Host: Localhost
-                        
-                        """);
+        String rawResponse = connector.getResponse("GET /badmessage/444 HTTP/1.1\n" +
+            "Host: Localhost\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -543,11 +535,9 @@ public class ErrorHandlerTest
         errorHandler.setShowCauses(true);
         server.setErrorHandler(errorHandler);
 
-        String rawResponse = connector.getResponse("""
-                        GET /badmessage/444 HTTP/1.1
-                        Host: Localhost
-                        
-                        """);
+        String rawResponse = connector.getResponse("GET /badmessage/444 HTTP/1.1\n" +
+            "Host: Localhost\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -569,10 +559,8 @@ public class ErrorHandlerTest
             response.write(true, null, callback);
             return true;
         });
-        String rawResponse = connector.getResponse("""
-                GET /no/host HTTP/1.1
-                
-                """);
+        String rawResponse = connector.getResponse("GET /no/host HTTP/1.1\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -826,10 +814,8 @@ public class ErrorHandlerTest
         errorHandler.put(400, "/ok/badMessage");
         server.setErrorHandler(errorHandler);
 
-        String rawResponse = connector.getResponse("""
-                GET /no/host HTTP/1.1
-                
-                """);
+        String rawResponse = connector.getResponse("GET /no/host HTTP/1.1\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -845,11 +831,9 @@ public class ErrorHandlerTest
         errorHandler.put(404, "/not/found");
         server.setErrorHandler(errorHandler);
 
-        String rawResponse = connector.getResponse("""
-                GET /not/found HTTP/1.1
-                Host: localhost
-                
-                """);
+        String rawResponse = connector.getResponse("GET /not/found HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -865,11 +849,9 @@ public class ErrorHandlerTest
         errorHandler.put(444, "/badmessage/444");
         server.setErrorHandler(errorHandler);
 
-        String rawResponse = connector.getResponse("""
-                GET /badmessage/444 HTTP/1.1
-                Host: localhost
-                
-                """);
+        String rawResponse = connector.getResponse("GET /badmessage/444 HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -904,11 +886,9 @@ public class ErrorHandlerTest
         errorHandler.put(444, "/ok/badMessage");
         context.setErrorHandler(errorHandler);
 
-        String rawResponse = connector.getResponse("""
-                GET /ctx/badmessage/444 HTTP/1.1
-                Host: localhost
-                
-                """);
+        String rawResponse = connector.getResponse("GET /ctx/badmessage/444 HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 

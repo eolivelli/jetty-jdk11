@@ -13,7 +13,6 @@
 
 package org.eclipse.jetty.security.authentication;
 
-import java.io.Serial;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
@@ -202,17 +201,17 @@ public class DigestAuthenticator extends LoginAuthenticator
 
         // RFC 7616[3.3]: only realm, domain, nonce, opaque, and qop must be quoted.
         // Parameters stale and algorithm must not be quoted.
-        String value = "Digest realm=\"%s\"".formatted(_loginService.getName());
+        String value = String.format("Digest realm=\"%s\"", _loginService.getName());
         if (!isProxyMode())
-            value += ", domain=\"%s\"".formatted(domain);
+            value += String.format(", domain=\"%s\"", domain);
         String nonce = newNonce(req);
-        value += ", nonce=\"%s\"".formatted(nonce);
-        value += ", opaque=\"%s\"".formatted(newOpaque(nonce));
-        value += ", stale=%s".formatted(stale);
-        value += ", algorithm=%s".formatted(getAlgorithm());
+        value += String.format(", nonce=\"%s\"", nonce);
+        value += String.format(", opaque=\"%s\"", newOpaque(nonce));
+        value += String.format(", stale=%s", stale);
+        value += String.format(", algorithm=%s", getAlgorithm());
         value += ", qop=\"auth\"";
         value += ", charset=UTF-8";
-        value += ", userhash=%s".formatted(isUserHashing());
+        value += String.format(", userhash=%s", isUserHashing());
 
         res.getHeaders().put(getChallengeHeader(), value);
 
@@ -526,7 +525,6 @@ public class DigestAuthenticator extends LoginAuthenticator
     // reference to the outer class, that would make it non-serializable.
     private static class Digest extends Credential
     {
-        @Serial
         private static final long serialVersionUID = -2484639019549527724L;
 
         private final String method;
@@ -604,7 +602,7 @@ public class DigestAuthenticator extends LoginAuthenticator
         @Override
         public String toString()
         {
-            return "%s@%x[u=%s]".formatted(TypeUtil.toShortName(getClass()), hashCode(), resolvedUserName);
+            return String.format("%s@%x[u=%s]", TypeUtil.toShortName(getClass()), hashCode(), resolvedUserName);
         }
     }
 }

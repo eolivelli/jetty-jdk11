@@ -262,7 +262,7 @@ public class QuotedQualityCSV extends QuotedCSV implements Iterable<String>
 
     public List<QualityValue> getQualityValues()
     {
-        return _qualities.stream().sorted().toList();
+        return _qualities.stream().sorted().collect(Collectors.toList());
     }
 
     @Override

@@ -121,11 +121,9 @@ public class HttpReceiverOverHTTPTest
     public void testReceiveNoResponseContent(HttpCompliance compliance) throws Exception
     {
         init(compliance);
-        endPoint.addInput("""
-            HTTP/1.1 200 OK
-            Content-length: 0
-                                
-            """);
+        endPoint.addInput("HTTP/1.1 200 OK\n" +
+            "Content-length: 0\n" +
+            "\n");
         CompletableFuture<ContentResponse> completable = startExchange();
         connection.getHttpChannel().receive();
 
@@ -193,11 +191,9 @@ public class HttpReceiverOverHTTPTest
     public void testReceiveResponseContentIdleTimeout(HttpCompliance compliance) throws Exception
     {
         init(compliance);
-        endPoint.addInput("""
-            HTTP/1.1 200 OK
-            Content-length: 1
-                            
-            """);
+        endPoint.addInput("HTTP/1.1 200 OK\n" +
+            "Content-length: 1\n" +
+            "\n");
         CompletableFuture<ContentResponse> completable = startExchange();
         connection.getHttpChannel().receive();
         // ByteArrayEndPoint has an idle timeout of 0 by default,
@@ -216,11 +212,9 @@ public class HttpReceiverOverHTTPTest
     public void testReceiveBadResponse(HttpCompliance compliance) throws Exception
     {
         init(compliance);
-        endPoint.addInput("""
-            HTTP/1.1 200 OK
-            Content-length: A
-                            
-            """);
+        endPoint.addInput("HTTP/1.1 200 OK\n" +
+            "Content-length: A\n" +
+            "\n");
         CompletableFuture<ContentResponse> completable = startExchange();
         connection.getHttpChannel().receive();
 
@@ -271,11 +265,9 @@ public class HttpReceiverOverHTTPTest
         endPoint.setConnection(connection);
 
         // Partial response to trigger the call to fillInterested().
-        endPoint.addInput("""
-            HTTP/1.1 200 OK
-            Content-Length: 1
-                                
-            """);
+        endPoint.addInput("HTTP/1.1 200 OK\n" +
+            "Content-Length: 1\n" +
+            "\n");
 
         CompletableFuture<ContentResponse> completable = startExchange();
         connection.getHttpChannel().receive();

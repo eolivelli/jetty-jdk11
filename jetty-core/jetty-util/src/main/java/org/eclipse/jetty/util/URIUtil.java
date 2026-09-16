@@ -1919,7 +1919,7 @@ public final class URIUtil
         }
 
         // shouldn't be possible to reach this point
-        throw new IllegalArgumentException("Cannot make %s into `jar:file:` URI".formatted(uri));
+        throw new IllegalArgumentException(String.format("Cannot make %s into `jar:file:` URI", uri));
     }
 
     /**

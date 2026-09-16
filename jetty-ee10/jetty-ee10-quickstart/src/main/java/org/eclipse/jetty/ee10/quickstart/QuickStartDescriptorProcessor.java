@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.ServletContext;
 import org.eclipse.jetty.ee10.annotations.AnnotationConfiguration;
@@ -199,7 +200,7 @@ public class QuickStartDescriptorProcessor extends IterativeDescriptorProcessor 
                     .map(normalizer::expand)
                     .map(context.getResourceFactory()::newResource)
                     .map(Resource::getURI)
-                    .toList();
+                    .collect(Collectors.toList());
 
                 for (URI uri : uris)
                 {

@@ -340,11 +340,9 @@ public class ServletMultiPartFormData
         @Override
         public String toString()
         {
-            return "%s@%x[part=%s]".formatted(
-                TypeUtil.toShortName(getClass()),
+            return String.format("%s@%x[part=%s]", TypeUtil.toShortName(getClass()),
                 hashCode(),
-                _part
-            );
+                _part);
         }
     }
 }

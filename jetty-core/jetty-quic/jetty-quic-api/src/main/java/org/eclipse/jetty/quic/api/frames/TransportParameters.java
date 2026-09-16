@@ -78,7 +78,7 @@ public class TransportParameters implements Iterable<Map.Entry<TransportParamete
     @Override
     public String toString()
     {
-        return "%s@%x[%s]".formatted(TypeUtil.toShortName(getClass()), hashCode(), parameters);
+        return String.format("%s@%x[%s]", TypeUtil.toShortName(getClass()), hashCode(), parameters);
     }
 
     /**
@@ -225,7 +225,7 @@ public class TransportParameters implements Iterable<Map.Entry<TransportParamete
         @Override
         public String toString()
         {
-            return "%s[%d]".formatted(TypeUtil.toShortName(getClass()), id);
+            return String.format("%s[%d]", TypeUtil.toShortName(getClass()), id);
         }
 
     }

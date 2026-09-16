@@ -268,12 +268,10 @@ public class DefaultServletCombinationsTest
     {
         startServer(data.pathInfoOnly(), data.welcomeMode());
         String requestPath = context.getContextPath() + (data.pathInfoOnly() ? "/static" : "") + data.requestPath();
-        String rawResponse = connector.getResponse(String.format("""
-            GET %s HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """, requestPath));
+        String rawResponse = connector.getResponse(String.format("GET %s HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n", requestPath));
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         int status = response.getStatus();
         assertThat(response.toString(), status, is(data.expectedStatus()));

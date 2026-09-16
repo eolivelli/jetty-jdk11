@@ -169,12 +169,10 @@ public class HttpInputTransientErrorTest
 
         try (LocalConnector.LocalEndPoint localEndPoint = connector.connect())
         {
-            String request = """
-                POST /ctx/post HTTP/1.1
-                Host: local
-                Content-Length: 10
-                            
-                """;
+            String request = "POST /ctx/post HTTP/1.1\n" +
+                "Host: local\n" +
+                "Content-Length: 10\n" +
+                "\n";
             localEndPoint.addInput(request);
             Thread.sleep((long)(IDLE_TIMEOUT * 1.5));
             localEndPoint.addInput("1234567890");
@@ -261,12 +259,10 @@ public class HttpInputTransientErrorTest
 
         try (LocalConnector.LocalEndPoint localEndPoint = connector.connect())
         {
-            String request = """
-                POST /ctx/post HTTP/1.1
-                Host: local
-                Content-Length: 10
-                            
-                """;
+            String request = "POST /ctx/post HTTP/1.1\n" +
+                "Host: local\n" +
+                "Content-Length: 10\n" +
+                "\n";
             localEndPoint.addInput(request);
             Thread.sleep((long)(IDLE_TIMEOUT * 1.5));
             localEndPoint.addInput("1234567890");
@@ -328,12 +324,10 @@ public class HttpInputTransientErrorTest
 
         try (LocalConnector.LocalEndPoint localEndPoint = connector.connect())
         {
-            String request = """
-                POST /ctx/post HTTP/1.1
-                Host: local
-                Content-Length: 10
-                            
-                """;
+            String request = "POST /ctx/post HTTP/1.1\n" +
+                "Host: local\n" +
+                "Content-Length: 10\n" +
+                "\n";
             localEndPoint.addInput(request);
             Thread.sleep((long)(IDLE_TIMEOUT * 1.5));
             localEndPoint.addInput("1234567890");
@@ -371,12 +365,10 @@ public class HttpInputTransientErrorTest
 
         try (LocalConnector.LocalEndPoint localEndPoint = connector.connect())
         {
-            String request = """
-                POST /ctx/post HTTP/1.1
-                Host: local
-                Content-Length: 10
-                            
-                """;
+            String request = "POST /ctx/post HTTP/1.1\n" +
+                "Host: local\n" +
+                "Content-Length: 10\n" +
+                "\n";
             localEndPoint.addInput(request);
             Thread.sleep((long)(IDLE_TIMEOUT * 1.5));
             localEndPoint.addInput("1234567890");
@@ -413,12 +405,10 @@ public class HttpInputTransientErrorTest
 
         try (LocalConnector.LocalEndPoint localEndPoint = connector.connect())
         {
-            String request = """
-                POST /ctx/post HTTP/1.1
-                Host: local
-                Content-Length: 10
-                            
-                """;
+            String request = "POST /ctx/post HTTP/1.1\n" +
+                "Host: local\n" +
+                "Content-Length: 10\n" +
+                "\n";
             localEndPoint.addInput(request);
             Thread.sleep((long)(IDLE_TIMEOUT * 1.5));
             localEndPoint.addInput("1234567890");

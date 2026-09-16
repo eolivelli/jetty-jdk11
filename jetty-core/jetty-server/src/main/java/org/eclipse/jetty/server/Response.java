@@ -381,13 +381,11 @@ public interface Response extends Content.Sink
             if (content == null && request.getConnectionMetaData().getHttpConfiguration().isGenerateRedirectBody())
             {
                 response.getHeaders().put(MimeTypes.Type.TEXT_HTML_8859_1.getContentTypeField());
-                String body = """
-            <!DOCTYPE html>
-            <html lang="en">
-            <head><meta charset="ISO-8859-1"/><meta http-equiv="refresh" content="0; URL=%s"/><title>Redirecting...</title></head>
-            <body><p>If you are not redirected, <a href="%s">click here</a>.</p></body>
-            </html>
-            """.formatted(location, location);
+                String body = String.format("<!DOCTYPE html>\n" +
+                    "<html lang=\"en\">\n" +
+                    "<head><meta charset=\"ISO-8859-1\"/><meta http-equiv=\"refresh\" content=\"0; URL=%s\"/><title>Redirecting...</title></head>\n" +
+                    "<body><p>If you are not redirected, <a href=\"%s\">click here</a>.</p></body>\n" +
+                    "</html>\n", location, location);
                 content = BufferUtil.toBuffer(body, StandardCharsets.ISO_8859_1);
             }
 

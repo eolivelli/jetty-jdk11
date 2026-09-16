@@ -521,12 +521,10 @@ public class WebAppContextTest
 
         server.start();
 
-        String rawResponse = connector.getResponse("""
-            GET http://localhost:8080 HTTP/1.1\r
-            Host: localhost:8080\r
-            Connection: close\r
-            \r
-            """);
+        String rawResponse = connector.getResponse("GET http://localhost:8080 HTTP/1.1\r\n" +
+            "Host: localhost:8080\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat("Response OK", response.getStatus(), is(HttpStatus.OK_200));
     }
@@ -854,23 +852,19 @@ public class WebAppContextTest
         // TODO the following assertion fails because of a bug in the JDK (see JDK-8311079 and MountedPathResourceTest.testJarFileResourceAccessBackSlash())
         //assertThat(servletContext.getResource("/nested-reserved-!#\\\\$%&()*+,:=?@[]-meta-inf-resource.txt"), notNullValue());
 
-        HttpTester.Response response1 = HttpTester.parseResponse(connector.getResponse("""
-            GET /resource HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """));
+        HttpTester.Response response1 = HttpTester.parseResponse(connector.getResponse("GET /resource HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n"));
 
         assertThat(response1.getStatus(), is(HttpStatus.OK_200));
         assertThat(response1.getContent(), containsString("/WEB-INF"));
         assertThat(response1.getContent(), containsString("/nested-reserved-!#\\\\$%&()*+,:=?@[]-meta-inf-resource.txt"));
 
-        HttpTester.Response response2 = HttpTester.parseResponse(connector.getResponse("""
-            GET /real HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """));
+        HttpTester.Response response2 = HttpTester.parseResponse(connector.getResponse("GET /real HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n"));
 
         assertThat(response2.getStatus(), is(HttpStatus.OK_200));
         assertThat(response2.getContent(), containsString("/WEB-INF"));
@@ -945,7 +939,7 @@ public class WebAppContextTest
         List<URI> actualURIs = Stream.of(webAppClassLoader.getURLs())
             .map(WebAppContextTest::toURI)
             .filter(notInTempDirectory(context))
-            .toList();
+            .collect(Collectors.toList());
         assertThat("[" + description + "] WebAppClassLoader.urls.length", actualURIs.size(), is(expectedUris.size()));
 
         assertThat(actualURIs, contains(expectedUris.toArray()));
@@ -1009,7 +1003,7 @@ public class WebAppContextTest
         List<URI> urls = Stream.of(webAppClassLoader.getURLs())
             .map(WebAppContextTest::toURI)
             .filter(notInTempDirectory(context))
-            .toList();
+            .collect(Collectors.toList());
         assertThat("URLs", urls.size(), is(1));
         Path extLibs = MavenPaths.findTestResourceDir("ext");
         extLibs = extLibs.toAbsolutePath();

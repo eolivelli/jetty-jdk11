@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 
@@ -324,21 +325,17 @@ public class MultiPartServletTest
         {
             OutputStream output = socket.getOutputStream();
 
-            String content = """
-                --A1B2C3
-                Content-Disposition: form-data; name="part1"
-                Content-Type: text/plain; charset="UTF-8"
-                
-                content1
-                --A1B2C3--
-                """;
-            String header = """
-                POST / HTTP/1.1
-                Host: localhost
-                Content-Type: multipart/form-data; boundary="A1B2C3"
-                Content-Length: $L
-                
-                """.replace("$L", String.valueOf(content.length()));
+            String content = "--A1B2C3\n" +
+                "Content-Disposition: form-data; name=\"part1\"\n" +
+                "Content-Type: text/plain; charset=\"UTF-8\"\n" +
+                "\n" +
+                "content1\n" +
+                "--A1B2C3--\n";
+            String header = ("POST / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Content-Type: multipart/form-data; boundary=\"A1B2C3\"\n" +
+                "Content-Length: $L\n" +
+                "\n").replace("$L", String.valueOf(content.length()));
 
             output.write(header.getBytes(UTF_8));
             output.write(content.getBytes(UTF_8));
@@ -414,21 +411,17 @@ public class MultiPartServletTest
         {
             OutputStream output = socket.getOutputStream();
 
-            String content = """
-                --A1B2C3
-                Content-Disposition: form-data; name="part1"
-                Content-Type: text/plain; charset="UTF-8"
-                
-                content1
-                --A1B2C3--
-                """;
-            String header = """
-                POST / HTTP/1.1
-                Host: localhost
-                Content-Type: multipart/form-data; boundary="A1B2C3"
-                Content-Length: $L
-                
-                """.replace("$L", String.valueOf(content.length()));
+            String content = "--A1B2C3\n" +
+                "Content-Disposition: form-data; name=\"part1\"\n" +
+                "Content-Type: text/plain; charset=\"UTF-8\"\n" +
+                "\n" +
+                "content1\n" +
+                "--A1B2C3--\n";
+            String header = ("POST / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Content-Type: multipart/form-data; boundary=\"A1B2C3\"\n" +
+                "Content-Length: $L\n" +
+                "\n").replace("$L", String.valueOf(content.length()));
 
             output.write(header.getBytes(UTF_8));
             output.write(content.getBytes(UTF_8));
@@ -616,21 +609,17 @@ public class MultiPartServletTest
         {
             OutputStream output = socket.getOutputStream();
 
-            String content = """
-                --A1B2C3
-                Content-Disposition: form-data; name="part1"; filename="part1.txt"
-                Content-Type: text/plain; charset="UTF-8"
-                
-                content1
-                --A1B2C3--
-                """;
-            String header = """
-                POST / HTTP/1.1
-                Host: localhost
-                Content-Type: multipart/form-data; boundary="A1B2C3"
-                Content-Length: $L
-                
-                """.replace("$L", String.valueOf(content.length()));
+            String content = "--A1B2C3\n" +
+                "Content-Disposition: form-data; name=\"part1\"; filename=\"part1.txt\"\n" +
+                "Content-Type: text/plain; charset=\"UTF-8\"\n" +
+                "\n" +
+                "content1\n" +
+                "--A1B2C3--\n";
+            String header = ("POST / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Content-Type: multipart/form-data; boundary=\"A1B2C3\"\n" +
+                "Content-Length: $L\n" +
+                "\n").replace("$L", String.valueOf(content.length()));
 
             output.write(header.getBytes(UTF_8));
             output.write(content.getBytes(UTF_8));
@@ -673,21 +662,17 @@ public class MultiPartServletTest
         {
             OutputStream output = socket.getOutputStream();
 
-            String content = """
-                --A1B2C3
-                Content-Disposition: form-data; name="part1"; filename="part1.txt"
-                Content-Type: text/plain; charset="UTF-8"
-                
-                content1
-                --A1B2C3--
-                """;
-            String header = """
-                POST / HTTP/1.1
-                Host: localhost
-                Content-Type: multipart/form-data; boundary="A1B2C3"
-                Content-Length: $L
-                
-                """.replace("$L", String.valueOf(content.length()));
+            String content = "--A1B2C3\n" +
+                "Content-Disposition: form-data; name=\"part1\"; filename=\"part1.txt\"\n" +
+                "Content-Type: text/plain; charset=\"UTF-8\"\n" +
+                "\n" +
+                "content1\n" +
+                "--A1B2C3--\n";
+            String header = ("POST / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Content-Type: multipart/form-data; boundary=\"A1B2C3\"\n" +
+                "Content-Length: $L\n" +
+                "\n").replace("$L", String.valueOf(content.length()));
 
             output.write(header.getBytes(UTF_8));
             output.write(content.getBytes(UTF_8));
@@ -754,7 +739,7 @@ public class MultiPartServletTest
     @SuppressWarnings("resource")
     private Collection<Path> getTempDirFiles() throws IOException
     {
-        return Files.list(tmpDir).toList();
+        return Files.list(tmpDir).collect(Collectors.toList());
     }
 
     public static Stream<Arguments> dispatchTestArgs()
@@ -823,21 +808,17 @@ public class MultiPartServletTest
         {
             OutputStream output = socket.getOutputStream();
 
-            String content = """
-                --A1B2C3
-                Content-Disposition: form-data; name="part1"
-                Content-Type: text/plain; charset="UTF-8"
-                
-                content1
-                --A1B2C3--
-                """;
-            String header = """
-                POST / HTTP/1.1
-                Host: localhost
-                Content-Type: multipart/form-data; boundary="A1B2C3"
-                Content-Length: $L
-                
-                """.replace("$L", String.valueOf(content.length()));
+            String content = "--A1B2C3\n" +
+                "Content-Disposition: form-data; name=\"part1\"\n" +
+                "Content-Type: text/plain; charset=\"UTF-8\"\n" +
+                "\n" +
+                "content1\n" +
+                "--A1B2C3--\n";
+            String header = ("POST / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Content-Type: multipart/form-data; boundary=\"A1B2C3\"\n" +
+                "Content-Length: $L\n" +
+                "\n").replace("$L", String.valueOf(content.length()));
 
             output.write(header.getBytes(UTF_8));
             output.write(content.getBytes(UTF_8));

@@ -64,11 +64,9 @@ public class ServerConnectorHttpServerTest extends HttpServerTestBase
         {
             OutputStream os = client.getOutputStream();
 
-            String request = """
-                GET / HTTP/1.1\r
-                Host: localhost\r
-                \r
-                """;
+            String request = "GET / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "\r\n";
             os.write(request.getBytes(StandardCharsets.ISO_8859_1));
             os.flush();
 
@@ -109,11 +107,9 @@ public class ServerConnectorHttpServerTest extends HttpServerTestBase
         {
             OutputStream os = client.getOutputStream();
 
-            String request = """
-                GET / HTTP/1.1\r
-                Host: localhost\r
-                \r
-                """;
+            String request = "GET / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "\r\n";
             os.write(request.getBytes(StandardCharsets.ISO_8859_1));
             os.flush();
 

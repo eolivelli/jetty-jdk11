@@ -299,7 +299,7 @@ public class EventsHandlerTest extends AbstractTest
         startClient(transportType);
 
         long delayMs = 500;
-        URI uri = URI.create(newURI(transportType).toASCIIString() + "?handling=%d&succeeding=%d".formatted(delayMs, delayMs));
+        URI uri = URI.create(newURI(transportType).toASCIIString() + String.format("?handling=%d&succeeding=%d", delayMs, delayMs));
 
         ContentResponse response = client.GET(uri);
         assertThat(response.getStatus(), is(200));

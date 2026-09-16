@@ -601,14 +601,12 @@ public class ForwardedRequestCustomizer implements HttpConfiguration.Customizer
             @Override
             public String toString()
             {
-                return "%s@%x{id=%s,remote=%s,authority=%s,%s}".formatted(
-                    TypeUtil.toShortName(this.getClass()),
+                return String.format("%s@%x{id=%s,remote=%s,authority=%s,%s}", TypeUtil.toShortName(this.getClass()),
                     hashCode(),
                     getId(),
                     remote,
                     authority,
-                    getWrapped()
-                );
+                    getWrapped());
             }
         };
 
@@ -803,7 +801,7 @@ public class ForwardedRequestCustomizer implements HttpConfiguration.Customizer
         @Override
         public String toString()
         {
-            return "%s@%x{host='%s'/%s, port=%d/%s}".formatted(TypeUtil.toShortName(getClass()), hashCode(), _host, _hostSource, _port, _portSource);
+            return String.format("%s@%x{host='%s'/%s, port=%d/%s}", TypeUtil.toShortName(getClass()), hashCode(), _host, _hostSource, _port, _portSource);
         }
     }
 

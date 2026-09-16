@@ -244,11 +244,9 @@ public class DoSHandlerTest
                 {
                     while (NanoTime.isBefore(NanoTime.now(), end))
                     {
-                        String response = connector.getResponse("""
-                                GET / HTTP/1.1\r
-                                Host: local\r
-                                
-                                """);
+                        String response = connector.getResponse("GET / HTTP/1.1\r\n" +
+                            "Host: local\r\n" +
+                            "\n");
                         assertThat(response, containsString("200 OK"));
                         Thread.sleep(1000);
                     }
@@ -294,11 +292,9 @@ public class DoSHandlerTest
                         try
                         {
                             outstanding.incrementAndGet();
-                            String response = connector.getResponse("""
-                                GET / HTTP/1.1\r
-                                Host: local\r
-                                
-                                """);
+                            String response = connector.getResponse("GET / HTTP/1.1\r\n" +
+                                "Host: local\r\n" +
+                                "\n");
                             if (response.contains(" 429 "))
                                 calm.incrementAndGet();
                             Thread.sleep(1000);

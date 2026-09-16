@@ -97,6 +97,6 @@ public abstract class RegexRule extends Rule
     @Override
     public String toString()
     {
-        return "%s[regex:%s]".formatted(super.toString(), getRegex());
+        return String.format("%s[regex:%s]", super.toString(), getRegex());
     }
 }

@@ -739,12 +739,10 @@ public class AsyncMiddleManServletTest
         // Connect to the proxy, but send a request for the server.
         try (SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", proxyConnector.getLocalPort())))
         {
-            String request = """
-                GET http://localhost:$P/ HTTP/1.1
-                Host: localhost:$P
-                Accept-Encoding: gzip
-                
-                """.replace("$P", String.valueOf(serverConnector.getLocalPort()));
+            String request = ("GET http://localhost:$P/ HTTP/1.1\n" +
+                "Host: localhost:$P\n" +
+                "Accept-Encoding: gzip\n" +
+                "\n").replace("$P", String.valueOf(serverConnector.getLocalPort()));
             client.write(BufferUtil.toBuffer(request, StandardCharsets.UTF_8));
 
             // Do not read yet, wait for the proxy to become TCP congested.

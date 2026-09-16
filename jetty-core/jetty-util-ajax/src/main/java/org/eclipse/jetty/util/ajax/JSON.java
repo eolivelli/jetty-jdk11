@@ -1482,7 +1482,7 @@ public class JSON
         @Override
         public String toString()
         {
-            return "%s@%x[index=%d,length=%d]".formatted(TypeUtil.toShortName(getClass()), hashCode(), index, string.length());
+            return String.format("%s@%x[index=%d,length=%d]", TypeUtil.toShortName(getClass()), hashCode(), index, string.length());
         }
     }
 

@@ -90,10 +90,10 @@ public class WebDescriptor extends Descriptor
 
     protected static void addDescriptorCatalog(XmlParser xmlParser) throws IllegalStateException
     {
-        String catalogName = "catalog-%s.xml".formatted(ContextHandler.ENVIRONMENT.getName());
+        String catalogName = String.format("catalog-%s.xml", ContextHandler.ENVIRONMENT.getName());
         URL url = WebDescriptor.class.getResource(catalogName);
         if (url == null)
-            throw new IllegalStateException("Catalog not found: %s/%s".formatted(WebDescriptor.class.getPackageName(), catalogName));
+            throw new IllegalStateException(String.format("Catalog not found: %s/%s", WebDescriptor.class.getPackageName(), catalogName));
         try
         {
             xmlParser.addCatalog(URI.create(url.toExternalForm()), Servlet.class);

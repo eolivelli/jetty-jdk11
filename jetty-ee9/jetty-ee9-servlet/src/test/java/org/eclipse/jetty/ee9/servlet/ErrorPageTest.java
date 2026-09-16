@@ -319,11 +319,9 @@ public class ErrorPageTest
         {
             OutputStream output = socket.getOutputStream();
 
-            String request = """
-            GET /abort HTTP/1.1\r
-            Host: test\r
-            \r
-            """;
+            String request = "GET /abort HTTP/1.1\r\n" +
+                "Host: test\r\n" +
+                "\r\n";
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
 

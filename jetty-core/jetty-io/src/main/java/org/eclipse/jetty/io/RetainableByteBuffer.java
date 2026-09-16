@@ -723,7 +723,7 @@ public interface RetainableByteBuffer extends Retainable
         @Override
         public String toString()
         {
-            return "%s@%x[%s]".formatted(TypeUtil.toShortName(getClass()), hashCode(), getWrapped());
+            return String.format("%s@%x[%s]", TypeUtil.toShortName(getClass()), hashCode(), getWrapped());
         }
 
         @Override
@@ -1425,7 +1425,7 @@ public interface RetainableByteBuffer extends Retainable
         @Override
         public String toDetailString()
         {
-            return "%s@%x".formatted(TypeUtil.toShortName(getClass()), hashCode());
+            return String.format("%s@%x", TypeUtil.toShortName(getClass()), hashCode());
         }
     }
 

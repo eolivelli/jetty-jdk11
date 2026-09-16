@@ -16,6 +16,7 @@ package org.eclipse.jetty.test.client.transport;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.client.Destination;
 import org.eclipse.jetty.client.transport.HttpClientTransportOverHTTP;
@@ -101,7 +102,7 @@ public class ConnectionPoolTest extends AbstractTest
         {
             return connections.stream()
                 .filter(klass::isInstance)
-                .toList();
+                .collect(Collectors.toList());
         }
     }
 }

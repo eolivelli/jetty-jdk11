@@ -130,7 +130,7 @@ public class ContentSourceTest
             @Override
             public String toString()
             {
-                return "%s@%x".formatted(ContentSourceTransformer.class.getSimpleName(), hashCode());
+                return String.format("%s@%x", ContentSourceTransformer.class.getSimpleName(), hashCode());
             }
         };
 

@@ -117,7 +117,7 @@ public final class ByteRange
      */
     public String toHeaderValue(long length)
     {
-        return "bytes %d-%d/%d".formatted(first, last, length);
+        return String.format("bytes %d-%d/%d", first, last, length);
     }
 
     /**

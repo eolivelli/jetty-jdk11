@@ -599,11 +599,9 @@ public class HttpChannelTest
         _server.addConnector(localConnector);
         _server.start();
 
-        String rawRequest = """
-            GET / HTTP/1.1
-            Host: local
-            
-            """;
+        String rawRequest = "GET / HTTP/1.1\n" +
+            "Host: local\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(localConnector.getResponse(rawRequest));
         assertEquals(500, response.getStatus());
@@ -650,11 +648,9 @@ public class HttpChannelTest
         _server.addConnector(serverConnector);
         _server.start();
 
-        String rawRequest = """
-            GET / HTTP/1.1
-            Host: local
-            
-            """;
+        String rawRequest = "GET / HTTP/1.1\n" +
+            "Host: local\n" +
+            "\n";
 
         try (Socket socket = new Socket("localhost", serverConnector.getLocalPort()))
         {
@@ -771,11 +767,9 @@ public class HttpChannelTest
         _server.addConnector(localConnector);
         _server.start();
 
-        String rawRequest = """
-            GET / HTTP/1.1
-            Host: local
-            
-            """;
+        String rawRequest = "GET / HTTP/1.1\n" +
+            "Host: local\n" +
+            "\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         assertThat(rawResponse, startsWith("HTTP/1.1 200 OK"));

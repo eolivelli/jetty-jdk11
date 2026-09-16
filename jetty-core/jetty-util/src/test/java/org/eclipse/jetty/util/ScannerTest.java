@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.awaitility.Awaitility;
 import org.eclipse.jetty.toolchain.test.FS;
@@ -891,7 +892,7 @@ public class ScannerTest
             return pathsChanged.entrySet().stream()
                 .map(e -> String.format("%s|%s", e.getValue(), e.getKey()))
                 .sorted()
-                .toList();
+                .collect(Collectors.toList());
         }
     }
 }

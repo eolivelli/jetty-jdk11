@@ -53,13 +53,9 @@ public class AmbiguousPathTest
             @Override
             public boolean handle(Request request, Response response, Callback callback)
             {
-                String body = """
-                    Client: %s
-                    Request URI: %s
-                    """.formatted(
-                    Request.getRemoteAddr(request),
-                    request.getHttpURI().toString()
-                );
+                String body = String.format("Client: %s\n" +
+                    "Request URI: %s\n", Request.getRemoteAddr(request),
+                    request.getHttpURI().toString());
                 Content.Sink.write(response, true, body, callback);
                 return true;
             }
@@ -78,7 +74,7 @@ public class AmbiguousPathTest
         server.setHandler(contextHandlerCollection);
         server.start();
 
-        String baseURI = "http://%s".formatted(server.getURI().getAuthority());
+        String baseURI = String.format("http://%s", server.getURI().getAuthority());
 
         client = new HttpClient();
         client.start();

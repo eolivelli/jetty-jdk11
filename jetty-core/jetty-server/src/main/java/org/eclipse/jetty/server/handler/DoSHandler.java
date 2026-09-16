@@ -360,7 +360,7 @@ public class DoSHandler extends ConditionalHandler.ElseNext
             {
                 try (AutoLock ignored = _lock.lock())
                 {
-                    return "%s@%s{%d/%d}".formatted(TypeUtil.toShortName(getClass()), _id, _bucket, _maxRequestsPerSecond);
+                    return String.format("%s@%s{%d/%d}", TypeUtil.toShortName(getClass()), _id, _bucket, _maxRequestsPerSecond);
                 }
             }
         }

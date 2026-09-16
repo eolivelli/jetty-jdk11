@@ -291,10 +291,8 @@ public class MavenLocalRepoFileInitializerTest
             Path root = zipfs.getPath("/");
             Path dir = root.resolve("modules");
             Files.createDirectories(dir);
-            Files.writeString(dir.resolve("eeX-demo.mod"), """
-                [description]
-                Test Demo Module (doesn't do anything)
-                """, UTF_8);
+            Files.writeString(dir.resolve("eeX-demo.mod"), "[description]\n" +
+                "Test Demo Module (doesn't do anything)\n", UTF_8);
         }
 
         MavenLocalRepoFileInitializer repo =

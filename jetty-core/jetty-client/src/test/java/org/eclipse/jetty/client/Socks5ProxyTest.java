@@ -143,12 +143,10 @@ public class Socks5ProxyTest
             assertEquals(path, request.getURI());
 
             // Write the HTTP response.
-            String response = """
-                HTTP/1.1 200 OK\r
-                Content-Length: 0\r
-                Connection: close\r
-                \r
-                """;
+            String response = "HTTP/1.1 200 OK\r\n" +
+                "Content-Length: 0\r\n" +
+                "Connection: close\r\n" +
+                "\r\n";
             channel.write(ByteBuffer.wrap(response.getBytes(StandardCharsets.US_ASCII)));
 
             assertTrue(latch.await(5, TimeUnit.SECONDS));
@@ -222,12 +220,10 @@ public class Socks5ProxyTest
             assertEquals(path, request.getURI());
 
             // Write the HTTP response.
-            String response = """
-                HTTP/1.1 200 OK\r
-                Content-Length: 0\r
-                Connection: close\r
-                \r
-                """;
+            String response = "HTTP/1.1 200 OK\r\n" +
+                "Content-Length: 0\r\n" +
+                "Connection: close\r\n" +
+                "\r\n";
             channel.write(ByteBuffer.wrap(response.getBytes(StandardCharsets.US_ASCII)));
 
             assertTrue(latch.await(5, TimeUnit.SECONDS));
@@ -334,12 +330,10 @@ public class Socks5ProxyTest
             assertEquals(path, request.getURI());
 
             // Write the HTTP response.
-            String response = """
-                HTTP/1.1 200 OK\r
-                Content-Length: 0\r
-                Connection: close\r
-                \r
-                """;
+            String response = "HTTP/1.1 200 OK\r\n" +
+                "Content-Length: 0\r\n" +
+                "Connection: close\r\n" +
+                "\r\n";
             channel.write(ByteBuffer.wrap(response.getBytes(StandardCharsets.US_ASCII)));
 
             assertTrue(latch.await(5, TimeUnit.SECONDS));
@@ -548,12 +542,10 @@ public class Socks5ProxyTest
             assertEquals(path, request.getURI());
 
             // Write the HTTP response.
-            String response = """
-                HTTP/1.1 200 OK\r
-                Content-Length: 0\r
-                Connection: close\r
-                \r
-                """;
+            String response = "HTTP/1.1 200 OK\r\n" +
+                "Content-Length: 0\r\n" +
+                "Connection: close\r\n" +
+                "\r\n";
             channel.write(ByteBuffer.wrap(response.getBytes(StandardCharsets.US_ASCII)));
 
             assertTrue(latch.await(5, TimeUnit.SECONDS));
@@ -661,12 +653,10 @@ public class Socks5ProxyTest
             assertEquals(path, request.getURI());
 
             // Write the HTTP response.
-            String response = """
-                HTTP/1.1 200 OK\r
-                Content-Length: 0\r
-                Connection: close\r
-                \r
-                """;
+            String response = "HTTP/1.1 200 OK\r\n" +
+                "Content-Length: 0\r\n" +
+                "Connection: close\r\n" +
+                "\r\n";
             channel.write(ByteBuffer.wrap(response.getBytes(StandardCharsets.US_ASCII)));
 
             assertTrue(latch.await(5, TimeUnit.SECONDS));
@@ -749,12 +739,10 @@ public class Socks5ProxyTest
             assertEquals(path, request.getURI());
 
             // Write the HTTP response.
-            String response = """
-                HTTP/1.1 200 OK\r
-                Content-Length: 0\r
-                Connection: close\r
-                \r
-                """;
+            String response = "HTTP/1.1 200 OK\r\n" +
+                "Content-Length: 0\r\n" +
+                "Connection: close\r\n" +
+                "\r\n";
             OutputStream output = sslSocket.getOutputStream();
             output.write(response.getBytes(StandardCharsets.US_ASCII));
             output.flush();
@@ -1046,12 +1034,10 @@ public class Socks5ProxyTest
             assertEquals(path, request.getURI());
 
             // Write the HTTP response.
-            String response = """
-                HTTP/1.1 200 OK\r
-                Content-Length: 0\r
-                Connection: close\r
-                \r
-                """;
+            String response = "HTTP/1.1 200 OK\r\n" +
+                "Content-Length: 0\r\n" +
+                "Connection: close\r\n" +
+                "\r\n";
             channel.write(ByteBuffer.wrap(response.getBytes(StandardCharsets.US_ASCII)));
 
             assertTrue(latch.await(5, TimeUnit.SECONDS));

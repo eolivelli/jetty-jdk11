@@ -95,12 +95,10 @@ public class MinimumDataRateHandlerTest
             }
         }, minimumReadRate, 0));
 
-        String request = """
-            POST / HTTP/1.1\r
-            Host: localhost\r
-            Content-Length: 1000\r
-            \r
-            """;
+        String request = "POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Length: 1000\r\n" +
+            "\r\n";
 
         try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest(request))
         {
@@ -167,12 +165,10 @@ public class MinimumDataRateHandlerTest
             }
         }, minimumReadRate, 0));
 
-        String request = """
-            POST / HTTP/1.1\r
-            Host: localhost\r
-            Content-Length: 1000\r
-            \r
-            """;
+        String request = "POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Length: 1000\r\n" +
+            "\r\n";
 
         try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest(request))
         {
@@ -254,11 +250,9 @@ public class MinimumDataRateHandlerTest
             }
         }, 0, minimumWriteRate));
 
-        String request = """
-            GET / HTTP/1.1\r
-            Host: localhost\r
-            \r
-            """;
+        String request = "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "\r\n";
 
         try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest(request))
         {
@@ -299,11 +293,9 @@ public class MinimumDataRateHandlerTest
             }
         }, 0, minimumWriteRate));
 
-        String request = """
-            GET / HTTP/1.1\r
-            Host: localhost\r
-            \r
-            """;
+        String request = "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "\r\n";
 
         try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest(request))
         {
@@ -364,11 +356,9 @@ public class MinimumDataRateHandlerTest
             }
         });
 
-        String request = """
-            GET / HTTP/1.1\r
-            Host: localhost\r
-            \r
-            """;
+        String request = "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "\r\n";
 
         try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest(request))
         {

@@ -46,34 +46,31 @@ public class Utf8Benchmark
     // Each string is about 450 characters long.
     private static final Map<String, String> STRINGS_MAP = new HashMap<>()
     {{
-        put("ASCII", """
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-            irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
-            qui officia deserunt mollit anim id est laborum.""");
-        put("FR", """
-            J'ai su là-bas que, pour quelques emplettes,
-            Éliante est sortie, et Célimène aussi ;
-            Mais comme l'on m'a dit que vous étiez ici,
-            J'ai monté pour vous dire, et d'un coeur véritable,
-            Que j'ai conçu pour vous une estime incroyable,
-            Et que, depuis longtemps, cette estime m'a mis
-            Dans un ardent désir d'être de vos amis.
-            Oui, mon coeur au mérite aime à rendre justice,
-            Et je brûle qu'un noeud d'amitié nous unisse :
-            Je crois qu'un ami chaud, et de ma qualité""");
-        put("JA", """
-            参加希望の方は今すぐ登録してください。この会議では、グローバルなインタネット、Unicode、
-            ソフトウェアの国際化およびローカリゼーション、OSおよびアプリケーションでのUnicode
-            のインプリメンテーション、フォント、テキスト表示、マルチ言語コンピューティングにおける業界の専門家が集まります。
-            参加希望の方は今すぐ登録してください。この会議では、グローバルなインタネット、Unicode
-            、ソフトウェアの国際化およびローカリゼーション、OSおよびアプリケーションでのUnicode
-            のインプリメンテーション、フォント、テキスト表示、マルチ言語コンピューティングにおける業界の専門家が集まります。
-            参加希望の方は今すぐ登録してください。この会議では、グローバルなインタネット、Unicode
-            、ソフトウェアの国際化およびローカリゼーション、OSおよびアプリケーションでのUnicode
-            のインプリメンテーション、フォント、テキスト表示、マルチ言語コンピューティングにおける業界の専門家が集まります。""");
+        put("ASCII", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor\n" +
+            "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud\n" +
+            "exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute\n" +
+            "irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat\n" +
+            "nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa\n" +
+            "qui officia deserunt mollit anim id est laborum.");
+        put("FR", "J'ai su là-bas que, pour quelques emplettes,\n" +
+            "Éliante est sortie, et Célimène aussi ;\n" +
+            "Mais comme l'on m'a dit que vous étiez ici,\n" +
+            "J'ai monté pour vous dire, et d'un coeur véritable,\n" +
+            "Que j'ai conçu pour vous une estime incroyable,\n" +
+            "Et que, depuis longtemps, cette estime m'a mis\n" +
+            "Dans un ardent désir d'être de vos amis.\n" +
+            "Oui, mon coeur au mérite aime à rendre justice,\n" +
+            "Et je brûle qu'un noeud d'amitié nous unisse :\n" +
+            "Je crois qu'un ami chaud, et de ma qualité");
+        put("JA", "参加希望の方は今すぐ登録してください。この会議では、グローバルなインタネット、Unicode、\n" +
+            "ソフトウェアの国際化およびローカリゼーション、OSおよびアプリケーションでのUnicode\n" +
+            "のインプリメンテーション、フォント、テキスト表示、マルチ言語コンピューティングにおける業界の専門家が集まります。\n" +
+            "参加希望の方は今すぐ登録してください。この会議では、グローバルなインタネット、Unicode\n" +
+            "、ソフトウェアの国際化およびローカリゼーション、OSおよびアプリケーションでのUnicode\n" +
+            "のインプリメンテーション、フォント、テキスト表示、マルチ言語コンピューティングにおける業界の専門家が集まります。\n" +
+            "参加希望の方は今すぐ登録してください。この会議では、グローバルなインタネット、Unicode\n" +
+            "、ソフトウェアの国際化およびローカリゼーション、OSおよびアプリケーションでのUnicode\n" +
+            "のインプリメンテーション、フォント、テキスト表示、マルチ言語コンピューティングにおける業界の専門家が集まります。");
     }};
 
     @Param({"ASCII", "FR", "JA"})

@@ -2552,20 +2552,18 @@ public class ConstraintTest
         _server.start();
 
         RoleInfo roleInfo = _security.prepareConstraintInfo(requestPath, httpMethod);
-        assertThat("%s %s roleInfo isChecked".formatted(httpMethod, requestPath), roleInfo.isChecked(), is(expectedIsChecked));
+        assertThat(String.format("%s %s roleInfo isChecked", httpMethod, requestPath), roleInfo.isChecked(), is(expectedIsChecked));
         if (roleInfo.isChecked())
         {
-            assertThat("%s %s forbidden".formatted(httpMethod, requestPath), roleInfo.isForbidden(), is(expectedForbidden));
-            assertThat("%s %s roles".formatted(httpMethod, requestPath), roleInfo.getRoles(), rolesMatcher);
-            assertThat("%s %s user data constraint".formatted(httpMethod, requestPath), roleInfo.getUserDataConstraint(), dataConstraintMatcher);
+            assertThat(String.format("%s %s forbidden", httpMethod, requestPath), roleInfo.isForbidden(), is(expectedForbidden));
+            assertThat(String.format("%s %s roles", httpMethod, requestPath), roleInfo.getRoles(), rolesMatcher);
+            assertThat(String.format("%s %s user data constraint", httpMethod, requestPath), roleInfo.getUserDataConstraint(), dataConstraintMatcher);
         }
     }
 
     @ParameterizedTest
-    @CsvSource(textBlock = """
-        PROPPATCH, PATCH
-        PATCH, PATCHED
-        """)
+    @CsvSource(textBlock = "PROPPATCH, PATCH\n" +
+        "PATCH, PATCHED\n")
     public void testSubstringMethod(String methodConstraint, String methodRequest) throws Exception
     {
         ServletConstraint forbidConstraint = new ServletConstraint();
@@ -2580,8 +2578,8 @@ public class ConstraintTest
 
         String requestPath = "/test/foo";
         RoleInfo roleInfo = _security.prepareConstraintInfo(requestPath, methodRequest);
-        assertThat("%s %s roleInfo isChecked".formatted(methodRequest, requestPath), roleInfo.isChecked(), is(false));
-        assertThat("%s %s roleInfo forbidden".formatted(methodRequest, requestPath), roleInfo.isForbidden(), is(false));
+        assertThat(String.format("%s %s roleInfo isChecked", methodRequest, requestPath), roleInfo.isChecked(), is(false));
+        assertThat(String.format("%s %s roleInfo forbidden", methodRequest, requestPath), roleInfo.isForbidden(), is(false));
     }
 
     public static Stream<Arguments> singleForbiddenMethodOmissionCases()
@@ -2629,10 +2627,10 @@ public class ConstraintTest
 
         RoleInfo roleInfo = _security.prepareConstraintInfo(requestPath, requestHttpMethod);
         boolean constraintIsChecked = expectedForbidden && !httpMethodOmission.equalsIgnoreCase(requestHttpMethod);
-        assertThat("%s %s roleInfo isChecked".formatted(requestHttpMethod, requestPath), roleInfo.isChecked(), is(constraintIsChecked));
+        assertThat(String.format("%s %s roleInfo isChecked", requestHttpMethod, requestPath), roleInfo.isChecked(), is(constraintIsChecked));
         if (roleInfo.isChecked())
         {
-            assertThat("%s %s forbidden".formatted(requestHttpMethod, requestPath), roleInfo.isForbidden(), is(expectedForbidden));
+            assertThat(String.format("%s %s forbidden", requestHttpMethod, requestPath), roleInfo.isForbidden(), is(expectedForbidden));
         }
     }
 
@@ -2680,10 +2678,10 @@ public class ConstraintTest
 
         RoleInfo roleInfo = _security.prepareConstraintInfo(requestPath, requestHttpMethod);
         boolean constraintIsChecked = !expectAllowed && !httpMethodOmission.equalsIgnoreCase(requestHttpMethod);
-        assertThat("%s %s roleInfo isChecked".formatted(requestHttpMethod, requestPath), roleInfo.isChecked(), is(constraintIsChecked));
+        assertThat(String.format("%s %s roleInfo isChecked", requestHttpMethod, requestPath), roleInfo.isChecked(), is(constraintIsChecked));
         if (roleInfo.isChecked())
         {
-            assertThat("%s %s allowed".formatted(requestHttpMethod, requestPath), roleInfo.isForbidden(), is(not(expectAllowed)));
+            assertThat(String.format("%s %s allowed", requestHttpMethod, requestPath), roleInfo.isForbidden(), is(not(expectAllowed)));
         }
     }
 
@@ -2729,10 +2727,10 @@ public class ConstraintTest
 
         RoleInfo roleInfo = _security.prepareConstraintInfo(requestPath, httpMethod);
         boolean constraintIsChecked = expectedForbidden && !"GET".equalsIgnoreCase(httpMethod);
-        assertThat("%s %s roleInfo isChecked".formatted(httpMethod, requestPath), roleInfo.isChecked(), is(constraintIsChecked));
+        assertThat(String.format("%s %s roleInfo isChecked", httpMethod, requestPath), roleInfo.isChecked(), is(constraintIsChecked));
         if (roleInfo.isChecked())
         {
-            assertThat("%s %s forbidden".formatted(httpMethod, requestPath), roleInfo.isForbidden(), is(expectedForbidden));
+            assertThat(String.format("%s %s forbidden", httpMethod, requestPath), roleInfo.isForbidden(), is(expectedForbidden));
         }
     }
 
@@ -2766,10 +2764,10 @@ public class ConstraintTest
 
         RoleInfo roleInfo = _security.prepareConstraintInfo(requestPath, httpMethod);
         boolean constraintIsChecked = expectedForbidden && !"GET".equalsIgnoreCase(httpMethod);
-        assertThat("%s %s roleInfo isChecked".formatted(httpMethod, requestPath), roleInfo.isChecked(), is(constraintIsChecked));
+        assertThat(String.format("%s %s roleInfo isChecked", httpMethod, requestPath), roleInfo.isChecked(), is(constraintIsChecked));
         if (roleInfo.isChecked())
         {
-            assertThat("%s %s forbidden".formatted(httpMethod, requestPath), roleInfo.isForbidden(), is(expectedForbidden));
+            assertThat(String.format("%s %s forbidden", httpMethod, requestPath), roleInfo.isForbidden(), is(expectedForbidden));
         }
     }
 

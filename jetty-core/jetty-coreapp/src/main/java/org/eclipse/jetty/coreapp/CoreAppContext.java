@@ -210,7 +210,7 @@ public class CoreAppContext extends ContextHandler implements Deployable
     {
         setExtraClassPath(Stream.of(extraClasspath)
             .map(entry -> getResourceFactory().newResource(entry))
-            .toList()
+            .collect(Collectors.toList())
         );
     }
 

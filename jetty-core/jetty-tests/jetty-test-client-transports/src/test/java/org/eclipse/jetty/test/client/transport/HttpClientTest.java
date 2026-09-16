@@ -1303,7 +1303,7 @@ public class HttpClientTest extends AbstractTest
             public boolean handle(Request request, org.eclipse.jetty.server.Response response, Callback callback)
             {
                 String value = request.getHeaders().get("name");
-                String msg = "name:[%s]".formatted(value);
+                String msg = String.format("name:[%s]", value);
                 Content.Sink.write(response, true, msg, callback);
                 return true;
             }
@@ -1349,7 +1349,7 @@ public class HttpClientTest extends AbstractTest
             public boolean handle(Request request, org.eclipse.jetty.server.Response response, Callback callback)
             {
                 String value = request.getHeaders().get(HttpHeader.CONTENT_TYPE);
-                String msg = "content-type:[%s]".formatted(value);
+                String msg = String.format("content-type:[%s]", value);
                 Content.Sink.write(response, true, msg, callback);
                 return true;
             }
@@ -1397,7 +1397,7 @@ public class HttpClientTest extends AbstractTest
             public boolean handle(Request request, org.eclipse.jetty.server.Response response, Callback callback)
             {
                 String value = request.getHeaders().get("name");
-                String msg = "name:[%s]".formatted(value);
+                String msg = String.format("name:[%s]", value);
                 Content.Sink.write(response, true, msg, callback);
                 return true;
             }

@@ -36,6 +36,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.http.ComplianceUtils;
 import org.eclipse.jetty.http.ComplianceViolation;
@@ -529,12 +530,12 @@ public interface Request extends Attributes, Content.Source
         List<Locale> locales = acceptable.stream()
             .map(Locale::forLanguageTag)
             .filter(l -> !l.getLanguage().isEmpty())
-            .toList();
+            .collect(Collectors.toList());
 
         if (locales.isEmpty())
             return DEFAULT_LOCALES;
 
-        List<Locale> known = locales.stream().filter(MimeTypes::isKnownLocale).toList();
+        List<Locale> known = locales.stream().filter(MimeTypes::isKnownLocale).collect(Collectors.toList());
         if (known.size() == locales.size())
             return known;
         if (known.isEmpty())
@@ -1060,7 +1061,7 @@ public interface Request extends Attributes, Content.Source
         @Override
         public String toString()
         {
-            return "%s@%x{%s}".formatted(TypeUtil.toShortName(getClass()), hashCode(), getWrapped());
+            return String.format("%s@%x{%s}", TypeUtil.toShortName(getClass()), hashCode(), getWrapped());
         }
     }
 

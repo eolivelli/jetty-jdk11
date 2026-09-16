@@ -214,7 +214,7 @@ public class HttpRedirector
                 }
                 else
                 {
-                    String message = "Could not compute redirect method for status %d and method %s".formatted(response.getStatus(), method);
+                    String message = String.format("Could not compute redirect method for status %d and method %s", response.getStatus(), method);
                     fail(request, response, new HttpResponseException(message, response));
                 }
             }

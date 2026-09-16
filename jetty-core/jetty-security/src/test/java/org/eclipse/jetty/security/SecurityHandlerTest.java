@@ -14,6 +14,7 @@
 package org.eclipse.jetty.security;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.HttpURI;
@@ -194,7 +195,7 @@ public class SecurityHandlerTest
         List<String> names = matches.stream()
             .map(MappedResource::getResource)
             .map(Constraint::getName)
-            .toList();
+            .collect(Collectors.toList());
 
         assertThat(names, contains(
             "default",

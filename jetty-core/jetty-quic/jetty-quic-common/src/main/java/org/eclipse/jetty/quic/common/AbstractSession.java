@@ -304,7 +304,7 @@ public abstract class AbstractSession extends ContainerLifeCycle implements Sess
     @Override
     public String toString()
     {
-        return "%s@%x".formatted(TypeUtil.toShortName(getClass()), hashCode());
+        return String.format("%s@%x", TypeUtil.toShortName(getClass()), hashCode());
     }
 
     public interface Listener extends Session.Listener

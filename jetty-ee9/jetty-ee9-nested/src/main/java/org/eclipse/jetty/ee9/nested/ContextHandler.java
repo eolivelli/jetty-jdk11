@@ -1464,7 +1464,7 @@ public class ContextHandler extends ScopedHandler implements Attributes, Supplie
     public String toString()
     {
         if (_coreContextHandler == null)
-            return "%s@%x.<init>".formatted(TypeUtil.toShortName(ContextHandler.class), hashCode());
+            return String.format("%s@%x.<init>", TypeUtil.toShortName(ContextHandler.class), hashCode());
 
         final String[] vhosts = getVirtualHosts();
 

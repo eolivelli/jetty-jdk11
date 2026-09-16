@@ -16,7 +16,6 @@ package org.eclipse.jetty.ee9.security.authentication;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serial;
 import java.io.Serializable;
 import javax.security.auth.Subject;
 
@@ -46,7 +45,6 @@ public class SessionAuthentication extends AbstractUserAuthentication
 {
     private static final Logger LOG = LoggerFactory.getLogger(SessionAuthentication.class);
 
-    @Serial
     private static final long serialVersionUID = -4643200685888258706L;
 
     public static final String __J_AUTHENTICATED = "org.eclipse.jetty.security.UserIdentity";
@@ -79,7 +77,6 @@ public class SessionAuthentication extends AbstractUserAuthentication
         return super.getUserIdentity();
     }
 
-    @Serial
     private void readObject(ObjectInputStream stream)
         throws IOException, ClassNotFoundException
     {
@@ -147,7 +144,6 @@ public class SessionAuthentication extends AbstractUserAuthentication
         }
     }
 
-    @Serial
     protected Object readResolve()
     {
         // A SessionAuthentication without a UserIdentity is invalid, and should be deserialized as null instead
@@ -161,7 +157,6 @@ public class SessionAuthentication extends AbstractUserAuthentication
         return this;
     }
 
-    @Serial
     private void writeObject(ObjectOutputStream out) throws IOException
     {
         ObjectOutputStream.PutField fields = out.putFields();

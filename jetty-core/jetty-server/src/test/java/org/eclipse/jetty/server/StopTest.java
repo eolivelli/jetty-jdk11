@@ -311,11 +311,9 @@ public class StopTest
         server.start();
 
         try (LocalEndPoint endp = connector.executeRequest(
-            """
-                GET / HTTP/1.1\r
-                Host: localhost\r
-                \r
-                """
+            "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "\r\n"
         ))
         {
             exchanger0.exchange(null);
@@ -396,11 +394,9 @@ public class StopTest
         server.start();
 
         try (LocalEndPoint endp = connector.executeRequest(
-            """
-                GET / HTTP/1.1\r
-                Host: localhost\r
-                \r
-                """
+            "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "\r\n"
         ))
         {
             exchanger0.exchange(null);

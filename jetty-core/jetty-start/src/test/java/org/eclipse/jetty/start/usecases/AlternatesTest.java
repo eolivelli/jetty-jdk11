@@ -39,43 +39,33 @@ public class AlternatesTest extends AbstractUseCase
         FS.touch(baseDir.resolve("etc/d.xml"));
         FS.touch(baseDir.resolve("etc/ndb.xml"));
         Files.writeString(baseDir.resolve("modules/alternate.mod"),
-            """
-            [provides]
-            default
-            [ini]
-            default.option=alternate
-            """, UTF_8);
+            "[provides]\n" +
+            "default\n" +
+            "[ini]\n" +
+            "default.option=alternate\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/default.mod"),
-            """
-            [xml]
-            etc/d.xml
-            [ini]
-            default.option=default
-            """, UTF_8);
+            "[xml]\n" +
+            "etc/d.xml\n" +
+            "[ini]\n" +
+            "default.option=default\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/noDftOptionA.mod"),
-            """
-            [provides]
-            noDft
-            [optional]
-            default
-            [ini]
-            noDft.option=A
-            """, UTF_8);
+            "[provides]\n" +
+            "noDft\n" +
+            "[optional]\n" +
+            "default\n" +
+            "[ini]\n" +
+            "noDft.option=A\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/noDftOptionB.mod"),
-            """
-            [provides]
-            noDft
-            [depend]
-            default
-            [xml]
-            etc/ndb.xml
-            [ini]
-            noDft.option=B
-            """, UTF_8);
+            "[provides]\n" +
+            "noDft\n" +
+            "[depend]\n" +
+            "default\n" +
+            "[xml]\n" +
+            "etc/ndb.xml\n" +
+            "[ini]\n" +
+            "noDft.option=B\n", UTF_8);
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            """, UTF_8);
+            "--modules=main\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = List.of(
@@ -118,43 +108,33 @@ public class AlternatesTest extends AbstractUseCase
         FS.touch(baseDir.resolve("etc/d.xml"));
         FS.touch(baseDir.resolve("etc/ndb.xml"));
         Files.writeString(baseDir.resolve("modules/alternate.mod"),
-            """
-            [provides]
-            default
-            [ini]
-            default.option=alternate
-            """, UTF_8);
+            "[provides]\n" +
+            "default\n" +
+            "[ini]\n" +
+            "default.option=alternate\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/default.mod"),
-            """
-            [xml]
-            etc/d.xml
-            [ini]
-            default.option=default
-            """, UTF_8);
+            "[xml]\n" +
+            "etc/d.xml\n" +
+            "[ini]\n" +
+            "default.option=default\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/noDftOptionA.mod"),
-            """
-            [provides]
-            noDft
-            [optional]
-            default
-            [ini]
-            noDft.option=A
-            """, UTF_8);
+            "[provides]\n" +
+            "noDft\n" +
+            "[optional]\n" +
+            "default\n" +
+            "[ini]\n" +
+            "noDft.option=A\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/noDftOptionB.mod"),
-            """
-            [provides]
-            noDft
-            [depend]
-            default
-            [xml]
-            etc/ndb.xml
-            [ini]
-            noDft.option=B
-            """, UTF_8);
+            "[provides]\n" +
+            "noDft\n" +
+            "[depend]\n" +
+            "default\n" +
+            "[xml]\n" +
+            "etc/ndb.xml\n" +
+            "[ini]\n" +
+            "noDft.option=B\n", UTF_8);
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            """, UTF_8);
+            "--modules=main\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = List.of(
@@ -200,43 +180,33 @@ public class AlternatesTest extends AbstractUseCase
         FS.touch(baseDir.resolve("etc/d.xml"));
         FS.touch(baseDir.resolve("etc/ndb.xml"));
         Files.writeString(baseDir.resolve("modules/alternate.mod"),
-            """
-            [provides]
-            default
-            [ini]
-            default.option=alternate
-            """, UTF_8);
+            "[provides]\n" +
+            "default\n" +
+            "[ini]\n" +
+            "default.option=alternate\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/default.mod"),
-            """
-            [xml]
-            etc/d.xml
-            [ini]
-            default.option=default
-            """, UTF_8);
+            "[xml]\n" +
+            "etc/d.xml\n" +
+            "[ini]\n" +
+            "default.option=default\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/noDftOptionA.mod"),
-            """
-            [provides]
-            noDft
-            [optional]
-            default
-            [ini]
-            noDft.option=A
-            """, UTF_8);
+            "[provides]\n" +
+            "noDft\n" +
+            "[optional]\n" +
+            "default\n" +
+            "[ini]\n" +
+            "noDft.option=A\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/noDftOptionB.mod"),
-            """
-            [provides]
-            noDft
-            [depend]
-            default
-            [xml]
-            etc/ndb.xml
-            [ini]
-            noDft.option=B
-            """, UTF_8);
+            "[provides]\n" +
+            "noDft\n" +
+            "[depend]\n" +
+            "default\n" +
+            "[xml]\n" +
+            "etc/ndb.xml\n" +
+            "[ini]\n" +
+            "noDft.option=B\n", UTF_8);
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            """, UTF_8);
+            "--modules=main\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = List.of(
@@ -281,43 +251,33 @@ public class AlternatesTest extends AbstractUseCase
         FS.touch(baseDir.resolve("etc/d.xml"));
         FS.touch(baseDir.resolve("etc/ndb.xml"));
         Files.writeString(baseDir.resolve("modules/alternate.mod"),
-            """
-            [provides]
-            default
-            [ini]
-            default.option=alternate
-            """, UTF_8);
+            "[provides]\n" +
+            "default\n" +
+            "[ini]\n" +
+            "default.option=alternate\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/default.mod"),
-            """
-            [xml]
-            etc/d.xml
-            [ini]
-            default.option=default
-            """, UTF_8);
+            "[xml]\n" +
+            "etc/d.xml\n" +
+            "[ini]\n" +
+            "default.option=default\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/noDftOptionA.mod"),
-            """
-            [provides]
-            noDft
-            [optional]
-            default
-            [ini]
-            noDft.option=A
-            """, UTF_8);
+            "[provides]\n" +
+            "noDft\n" +
+            "[optional]\n" +
+            "default\n" +
+            "[ini]\n" +
+            "noDft.option=A\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/noDftOptionB.mod"),
-            """
-            [provides]
-            noDft
-            [depend]
-            default
-            [xml]
-            etc/ndb.xml
-            [ini]
-            noDft.option=B
-            """, UTF_8);
+            "[provides]\n" +
+            "noDft\n" +
+            "[depend]\n" +
+            "default\n" +
+            "[xml]\n" +
+            "etc/ndb.xml\n" +
+            "[ini]\n" +
+            "noDft.option=B\n", UTF_8);
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            """, UTF_8);
+            "--modules=main\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = List.of(
@@ -340,43 +300,33 @@ public class AlternatesTest extends AbstractUseCase
         FS.touch(baseDir.resolve("etc/d.xml"));
         FS.touch(baseDir.resolve("etc/ndb.xml"));
         Files.writeString(baseDir.resolve("modules/alternate.mod"),
-            """
-            [provides]
-            default
-            [ini]
-            default.option=alternate
-            """, UTF_8);
+            "[provides]\n" +
+            "default\n" +
+            "[ini]\n" +
+            "default.option=alternate\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/default.mod"),
-            """
-            [xml]
-            etc/d.xml
-            [ini]
-            default.option=default
-            """, UTF_8);
+            "[xml]\n" +
+            "etc/d.xml\n" +
+            "[ini]\n" +
+            "default.option=default\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/noDftOptionA.mod"),
-            """
-            [provides]
-            noDft
-            [optional]
-            default
-            [ini]
-            noDft.option=A
-            """, UTF_8);
+            "[provides]\n" +
+            "noDft\n" +
+            "[optional]\n" +
+            "default\n" +
+            "[ini]\n" +
+            "noDft.option=A\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/noDftOptionB.mod"),
-            """
-            [provides]
-            noDft
-            [depend]
-            default
-            [xml]
-            etc/ndb.xml
-            [ini]
-            noDft.option=B
-            """, UTF_8);
+            "[provides]\n" +
+            "noDft\n" +
+            "[depend]\n" +
+            "default\n" +
+            "[xml]\n" +
+            "etc/ndb.xml\n" +
+            "[ini]\n" +
+            "noDft.option=B\n", UTF_8);
         Files.writeString(baseDir.resolve("start.ini"),
-        """
-            --modules=main
-            """, UTF_8);
+        "--modules=main\n", UTF_8);
 
         // === Prepare Jetty Base using Main
         List<String> prepareArgs = List.of(

@@ -47,24 +47,22 @@ public class XmlAppendableTest
         out.closeTag();
 
         String expected =
-            """
-                <?xml version="1.0" encoding="utf-8"?>
-                <test>
-                  <tag/>
-                  <tag name="attr value" noval="" quotes="&apos;&quot;"/>
-                  <tag name="attr value" noval="" quotes="&apos;&quot;">content</tag>
-                  <level1>
-                    <tag>content</tag>
-                    <tag>content</tag>
-                  </level1>
-                  <level1 name="attr value" noval="" quotes="&apos;&quot;">
-                    <level2>
-                      <tag>content</tag>
-                      <tag>content</tag>
-                    </level2>
-                  </level1>
-                </test>
-                """;
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+            "<test>\n" +
+            "  <tag/>\n" +
+            "  <tag name=\"attr value\" noval=\"\" quotes=\"&apos;&quot;\"/>\n" +
+            "  <tag name=\"attr value\" noval=\"\" quotes=\"&apos;&quot;\">content</tag>\n" +
+            "  <level1>\n" +
+            "    <tag>content</tag>\n" +
+            "    <tag>content</tag>\n" +
+            "  </level1>\n" +
+            "  <level1 name=\"attr value\" noval=\"\" quotes=\"&apos;&quot;\">\n" +
+            "    <level2>\n" +
+            "      <tag>content</tag>\n" +
+            "      <tag>content</tag>\n" +
+            "    </level2>\n" +
+            "  </level1>\n" +
+            "</test>\n";
 
         String result = outputStream.toString(StandardCharsets.UTF_8);
         assertEquals(expected, result);

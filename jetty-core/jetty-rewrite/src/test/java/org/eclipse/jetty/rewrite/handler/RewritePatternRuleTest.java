@@ -67,12 +67,10 @@ public class RewritePatternRuleTest extends AbstractRuleTest
         RewritePatternRule rule = new RewritePatternRule(pattern, replacement);
         start(rule);
 
-        String request = """
-            GET $U HTTP/1.1
-            Host: localhost
-            Connection: close
-                        
-            """.replace("$U", inputURI);
+        String request = ("GET $U HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Connection: close\n" +
+            "\n").replace("$U", inputURI);
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -87,11 +85,9 @@ public class RewritePatternRuleTest extends AbstractRuleTest
         start(rule);
 
         String query = "a=b";
-        String request = """
-            GET /context?$Q HTTP/1.1
-            Host: localhost
-                        
-            """.replace("$Q", query);
+        String request = ("GET /context?$Q HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n").replace("$Q", query);
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -107,11 +103,9 @@ public class RewritePatternRuleTest extends AbstractRuleTest
         start(rule);
 
         String query = "a=b";
-        String request = """
-            GET /context?$Q HTTP/1.1
-            Host: localhost
-                        
-            """.replace("$Q", query);
+        String request = ("GET /context?$Q HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n").replace("$Q", query);
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());

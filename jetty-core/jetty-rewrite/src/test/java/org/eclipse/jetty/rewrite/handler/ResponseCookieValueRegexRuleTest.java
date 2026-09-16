@@ -48,11 +48,9 @@ public class ResponseCookieValueRegexRuleTest extends AbstractRuleTest
         rule.setCode(403);
         start(rule);
 
-        String request = """
-            GET /test HTTP/1.1
-            Host: localhost
-
-            """;
+        String request = "GET /test HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(200, response.getStatus());
@@ -66,12 +64,10 @@ public class ResponseCookieValueRegexRuleTest extends AbstractRuleTest
         rule.setCode(403);
         start(rule);
 
-        String request = """
-            GET /test HTTP/1.1
-            Host: localhost
-            Cookie: CookieTest=randomstuff
-
-            """;
+        String request = "GET /test HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Cookie: CookieTest=randomstuff\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(403, response.getStatus());
@@ -86,12 +82,10 @@ public class ResponseCookieValueRegexRuleTest extends AbstractRuleTest
         rule.setCode(403);
         start(rule);
 
-        String request = """
-            GET /test HTTP/1.1
-            Host: localhost
-            Cookie: CookieTest=value
-
-            """;
+        String request = "GET /test HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Cookie: CookieTest=value\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(403, response.getStatus());
@@ -106,12 +100,10 @@ public class ResponseCookieValueRegexRuleTest extends AbstractRuleTest
         rule.setCode(403);
         start(rule);
 
-        String request = """
-            GET /test HTTP/1.1
-            Host: localhost
-            Cookie: CookieTest=somevaluehere
-
-            """;
+        String request = "GET /test HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Cookie: CookieTest=somevaluehere\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(403, response.getStatus());
@@ -126,12 +118,10 @@ public class ResponseCookieValueRegexRuleTest extends AbstractRuleTest
         rule.setMessage("Matched");
         start(rule);
 
-        String request = """
-            GET /test HTTP/1.1
-            Host: localhost
-            Cookie: CookieTest=stuff
-
-            """;
+        String request = "GET /test HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Cookie: CookieTest=stuff\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(403, response.getStatus());

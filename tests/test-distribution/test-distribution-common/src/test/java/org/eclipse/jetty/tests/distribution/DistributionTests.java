@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.jetty.client.ContentResponse;
@@ -288,16 +289,14 @@ public class DistributionTests extends AbstractJettyHomeTest
 
             Path loggingProps = distribution.getJettyBase().resolve("resources/jetty-logging.properties");
 
-            String loggingConfig = """
-                # Default for everything is INFO
-                org.eclipse.jetty.LEVEL=INFO
-                # to see full logger names
-                # org.eclipse.jetty.logging.appender.NAME_CONDENSE=false
-                # to see CR LF as-is (not escaped) in output (useful for DEBUG of request/response headers)
-                org.eclipse.jetty.logging.appender.MESSAGE_ESCAPE=false
-                # To enable DEBUG:oejepP.JavadocTransparentProxy
-                org.eclipse.jetty.%s.proxy.ProxyServlet$Transparent.JavadocTransparentProxy.LEVEL=DEBUG
-                """.formatted(env);
+            String loggingConfig = String.format("# Default for everything is INFO\n" +
+                "org.eclipse.jetty.LEVEL=INFO\n" +
+                "# to see full logger names\n" +
+                "# org.eclipse.jetty.logging.appender.NAME_CONDENSE=false\n" +
+                "# to see CR LF as-is (not escaped) in output (useful for DEBUG of request/response headers)\n" +
+                "org.eclipse.jetty.logging.appender.MESSAGE_ESCAPE=false\n" +
+                "# To enable DEBUG:oejepP.JavadocTransparentProxy\n" +
+                "org.eclipse.jetty.%s.proxy.ProxyServlet$Transparent.JavadocTransparentProxy.LEVEL=DEBUG\n", env);
 
             Files.writeString(loggingProps, loggingConfig, StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING);
 
@@ -342,47 +341,43 @@ public class DistributionTests extends AbstractJettyHomeTest
             Path jettyBaseEtc = jettyBase.resolve("etc");
             Files.createDirectories(jettyBaseEtc);
             Path sslPatchXML = jettyBaseEtc.resolve("ssl-patch.xml");
-            String xml = """
-                <?xml version="1.0"?>
-                <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure_10_0.dtd">
-                <Configure id="sslConnector" class="org.eclipse.jetty.server.ServerConnector">
-                  <Call name="addIfAbsentConnectionFactory">
-                    <Arg>
-                      <New class="org.eclipse.jetty.server.SslConnectionFactory">
-                        <Arg name="next">fcgi/1.0</Arg>
-                        <Arg name="sslContextFactory"><Ref refid="sslContextFactory"/></Arg>
-                      </New>
-                    </Arg>
-                  </Call>
-                  <Call name="addConnectionFactory">
-                    <Arg>
-                      <New class="org.eclipse.jetty.fcgi.server.ServerFCGIConnectionFactory">
-                        <Arg><Ref refid="sslHttpConfig" /></Arg>
-                      </New>
-                    </Arg>
-                  </Call>
-                </Configure>
-                """;
+            String xml = "<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure_10_0.dtd\">\n" +
+                "<Configure id=\"sslConnector\" class=\"org.eclipse.jetty.server.ServerConnector\">\n" +
+                "  <Call name=\"addIfAbsentConnectionFactory\">\n" +
+                "    <Arg>\n" +
+                "      <New class=\"org.eclipse.jetty.server.SslConnectionFactory\">\n" +
+                "        <Arg name=\"next\">fcgi/1.0</Arg>\n" +
+                "        <Arg name=\"sslContextFactory\"><Ref refid=\"sslContextFactory\"/></Arg>\n" +
+                "      </New>\n" +
+                "    </Arg>\n" +
+                "  </Call>\n" +
+                "  <Call name=\"addConnectionFactory\">\n" +
+                "    <Arg>\n" +
+                "      <New class=\"org.eclipse.jetty.fcgi.server.ServerFCGIConnectionFactory\">\n" +
+                "        <Arg><Ref refid=\"sslHttpConfig\" /></Arg>\n" +
+                "      </New>\n" +
+                "    </Arg>\n" +
+                "  </Call>\n" +
+                "</Configure>\n";
             Files.write(sslPatchXML, List.of(xml), StandardOpenOption.CREATE);
 
             Path jettyBaseModules = jettyBase.resolve("modules");
             Files.createDirectories(jettyBaseModules);
             Path sslPatchModule = jettyBaseModules.resolve("ssl-patch.mod");
             // http2 is not explicitly enabled.
-            String module = """
-                [depends]
-                fcgi
-
-                [before]
-                https
-                http2
-
-                [after]
-                ssl
-
-                [xml]
-                etc/ssl-patch.xml
-                """;
+            String module = "[depends]\n" +
+                "fcgi\n" +
+                "\n" +
+                "[before]\n" +
+                "https\n" +
+                "http2\n" +
+                "\n" +
+                "[after]\n" +
+                "ssl\n" +
+                "\n" +
+                "[xml]\n" +
+                "etc/ssl-patch.xml\n";
             Files.write(sslPatchModule, List.of(module), StandardOpenOption.CREATE);
 
             try (JettyHomeTester.Run run2 = distribution.start("--add-modules=ssl-patch"))
@@ -497,10 +492,8 @@ public class DistributionTests extends AbstractJettyHomeTest
         Path jettyBaseModules = jettyBase.resolve("modules");
         Files.createDirectories(jettyBaseModules);
         Path execModule = jettyBaseModules.resolve("exec.mod");
-        String module = """
-            [exec]
-            --show-version
-            """;
+        String module = "[exec]\n" +
+            "--show-version\n";
         Files.write(execModule, List.of(module), StandardOpenOption.CREATE);
 
         try (JettyHomeTester.Run run1 = distribution.start(List.of("--add-modules=http,exec")))
@@ -533,13 +526,11 @@ public class DistributionTests extends AbstractJettyHomeTest
         String pathProperty = "jetty.sslContext.keyStorePath";
         // Create module with an [ini] section with an invalid password,
         // which should be overridden on the command line at startup.
-        String module = """
-            [depends]
-            ssl
-            
-            [ini]
-            %s=modbased
-            """.formatted(pathProperty);
+        String module = String.format("[depends]\n" +
+            "ssl\n" +
+            "\n" +
+            "[ini]\n" +
+            "%s=modbased\n", pathProperty);
         Files.writeString(jettyBaseModules.resolve("ssl-ini.mod"), module, StandardOpenOption.CREATE);
 
         try (JettyHomeTester.Run run1 = distribution.start("--add-module=https,test-keystore,ssl-ini"))
@@ -794,51 +785,47 @@ public class DistributionTests extends AbstractJettyHomeTest
             Path jettyBaseEtc = jettyBase.resolve("etc");
             Files.createDirectories(jettyBaseEtc);
             Path fcgiConnectorXML = jettyBaseEtc.resolve("fcgi-connector.xml");
-            Files.writeString(fcgiConnectorXML, """
-                <?xml version="1.0"?>
-                <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure_10_0.dtd">
-                <Configure id="Server">
-                  <Call name="addConnector">
-                    <Arg>
-                      <New id="fcgiConnector" class="org.eclipse.jetty.server.ServerConnector">
-                        <Arg><Ref refid="Server" /></Arg>
-                        <Arg type="int">1</Arg>
-                        <Arg type="int">1</Arg>
-                        <Arg>
-                          <Array type="org.eclipse.jetty.server.ConnectionFactory">
-                            <Item>
-                              <New class="org.eclipse.jetty.fcgi.server.ServerFCGIConnectionFactory">
-                                <Arg><Ref refid="httpConfig" /></Arg>
-                              </New>
-                            </Item>
-                          </Array>
-                        </Arg>
-                        <Set name="port">$P</Set>
-                      </New>
-                    </Arg>
-                  </Call>
-                </Configure>
-                """.replace("$P", String.valueOf(fcgiPort)), StandardOpenOption.CREATE);
+            Files.writeString(fcgiConnectorXML, ("<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure_10_0.dtd\">\n" +
+                "<Configure id=\"Server\">\n" +
+                "  <Call name=\"addConnector\">\n" +
+                "    <Arg>\n" +
+                "      <New id=\"fcgiConnector\" class=\"org.eclipse.jetty.server.ServerConnector\">\n" +
+                "        <Arg><Ref refid=\"Server\" /></Arg>\n" +
+                "        <Arg type=\"int\">1</Arg>\n" +
+                "        <Arg type=\"int\">1</Arg>\n" +
+                "        <Arg>\n" +
+                "          <Array type=\"org.eclipse.jetty.server.ConnectionFactory\">\n" +
+                "            <Item>\n" +
+                "              <New class=\"org.eclipse.jetty.fcgi.server.ServerFCGIConnectionFactory\">\n" +
+                "                <Arg><Ref refid=\"httpConfig\" /></Arg>\n" +
+                "              </New>\n" +
+                "            </Item>\n" +
+                "          </Array>\n" +
+                "        </Arg>\n" +
+                "        <Set name=\"port\">$P</Set>\n" +
+                "      </New>\n" +
+                "    </Arg>\n" +
+                "  </Call>\n" +
+                "</Configure>\n").replace("$P", String.valueOf(fcgiPort)), StandardOpenOption.CREATE);
 
             // Deploy a Jetty context XML file that is only necessary for the test,
             // as it simulates, for example, what the php-fpm server would return.
             Path jettyBaseWork = jettyBase.resolve("work");
             Path phpXML = jettyBase.resolve("webapps").resolve("php.xml");
-            Files.writeString(phpXML, """
-                <?xml version="1.0"?>
-                <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure_10_0.dtd">
-                <Configure class="org.eclipse.jetty.server.handler.ContextHandler">
-                  <Set name="contextPath">/php</Set>
-                  <Set name="baseResourceAsPath">
-                    <Call class="java.nio.file.Path" name="of">
-                      <Arg>$R</Arg>
-                    </Call>
-                  </Set>
-                  <Set name="handler">
-                    <New class="org.eclipse.jetty.server.handler.ResourceHandler" />
-                  </Set>
-                </Configure>
-                """.replace("$R", jettyBaseWork.toAbsolutePath().toString()), StandardOpenOption.CREATE);
+            Files.writeString(phpXML, ("<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure_10_0.dtd\">\n" +
+                "<Configure class=\"org.eclipse.jetty.server.handler.ContextHandler\">\n" +
+                "  <Set name=\"contextPath\">/php</Set>\n" +
+                "  <Set name=\"baseResourceAsPath\">\n" +
+                "    <Call class=\"java.nio.file.Path\" name=\"of\">\n" +
+                "      <Arg>$R</Arg>\n" +
+                "    </Call>\n" +
+                "  </Set>\n" +
+                "  <Set name=\"handler\">\n" +
+                "    <New class=\"org.eclipse.jetty.server.handler.ResourceHandler\" />\n" +
+                "  </Set>\n" +
+                "</Configure>\n").replace("$R", jettyBaseWork.toAbsolutePath().toString()), StandardOpenOption.CREATE);
             // Save a file in $JETTY_BASE/work so that it can be requested.
             String testFileContent = "hello";
             Files.writeString(jettyBaseWork.resolve("test.txt"), testFileContent, StandardOpenOption.CREATE);
@@ -846,20 +833,18 @@ public class DistributionTests extends AbstractJettyHomeTest
             // Deploy a Jetty context XML file that sets up the FastCGIProxyHandler.
             // Converts URIs from http://host:<httpPort>/proxy/foo to http://host:<fcgiPort>/app/foo.
             Path proxyXML = jettyBase.resolve("webapps").resolve("proxy.xml");
-            Files.writeString(proxyXML, """
-                <?xml version="1.0"?>
-                <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure_10_0.dtd">
-                <Configure class="org.eclipse.jetty.server.handler.ContextHandler">
-                  <Set name="contextPath">/proxy</Set>
-                  <Set name="handler">
-                    <New class="org.eclipse.jetty.fcgi.proxy.FastCGIProxyHandler">
-                      <Arg>(https?)://([^:]+):(\\d+)/([^/]+)/(.*)</Arg>
-                      <Arg>$1://$2:$P/php/$5</Arg>
-                      <Arg>/var/wordpress</Arg>
-                    </New>
-                  </Set>
-                </Configure>
-                """.replace("$P", String.valueOf(fcgiPort)), StandardOpenOption.CREATE);
+            Files.writeString(proxyXML, ("<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure_10_0.dtd\">\n" +
+                "<Configure class=\"org.eclipse.jetty.server.handler.ContextHandler\">\n" +
+                "  <Set name=\"contextPath\">/proxy</Set>\n" +
+                "  <Set name=\"handler\">\n" +
+                "    <New class=\"org.eclipse.jetty.fcgi.proxy.FastCGIProxyHandler\">\n" +
+                "      <Arg>(https?)://([^:]+):(\\d+)/([^/]+)/(.*)</Arg>\n" +
+                "      <Arg>$1://$2:$P/php/$5</Arg>\n" +
+                "      <Arg>/var/wordpress</Arg>\n" +
+                "    </New>\n" +
+                "  </Set>\n" +
+                "</Configure>\n").replace("$P", String.valueOf(fcgiPort)), StandardOpenOption.CREATE);
 
             int httpPort = Tester.freePort();
             try (JettyHomeTester.Run run2 = distribution.start("jetty.http.port=" + httpPort, "etc/fcgi-connector.xml"))
@@ -902,55 +887,49 @@ public class DistributionTests extends AbstractJettyHomeTest
             Path jettyBaseEtc = jettyBase.resolve("etc");
             Files.createDirectories(jettyBaseEtc);
             Path fcgiConnectorXML = jettyBaseEtc.resolve("fcgi-connector.xml");
-            Files.writeString(fcgiConnectorXML, """
-                <?xml version="1.0"?>
-                <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure_10_0.dtd">
-                <Configure id="Server">
-                  <Call name="addConnector">
-                    <Arg>
-                      <New id="fcgiConnector" class="org.eclipse.jetty.server.ServerConnector">
-                        <Arg><Ref refid="Server" /></Arg>
-                        <Arg type="int">1</Arg>
-                        <Arg type="int">1</Arg>
-                        <Arg>
-                          <Array type="org.eclipse.jetty.server.ConnectionFactory">
-                            <Item>
-                              <New class="org.eclipse.jetty.fcgi.server.ServerFCGIConnectionFactory">
-                                <Arg><Ref refid="httpConfig" /></Arg>
-                              </New>
-                            </Item>
-                          </Array>
-                        </Arg>
-                        <Set name="port">$P</Set>
-                      </New>
-                    </Arg>
-                  </Call>
-                </Configure>
-                """.replace("$P", String.valueOf(fcgiPort)), StandardOpenOption.CREATE);
+            Files.writeString(fcgiConnectorXML, ("<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure_10_0.dtd\">\n" +
+                "<Configure id=\"Server\">\n" +
+                "  <Call name=\"addConnector\">\n" +
+                "    <Arg>\n" +
+                "      <New id=\"fcgiConnector\" class=\"org.eclipse.jetty.server.ServerConnector\">\n" +
+                "        <Arg><Ref refid=\"Server\" /></Arg>\n" +
+                "        <Arg type=\"int\">1</Arg>\n" +
+                "        <Arg type=\"int\">1</Arg>\n" +
+                "        <Arg>\n" +
+                "          <Array type=\"org.eclipse.jetty.server.ConnectionFactory\">\n" +
+                "            <Item>\n" +
+                "              <New class=\"org.eclipse.jetty.fcgi.server.ServerFCGIConnectionFactory\">\n" +
+                "                <Arg><Ref refid=\"httpConfig\" /></Arg>\n" +
+                "              </New>\n" +
+                "            </Item>\n" +
+                "          </Array>\n" +
+                "        </Arg>\n" +
+                "        <Set name=\"port\">$P</Set>\n" +
+                "      </New>\n" +
+                "    </Arg>\n" +
+                "  </Call>\n" +
+                "</Configure>\n").replace("$P", String.valueOf(fcgiPort)), StandardOpenOption.CREATE);
 
             // Deploy a Jetty context XML file that is only necessary for the test,
             // as it simulates, for example, what the php-fpm server would return.
             Path jettyBaseWork = jettyBase.resolve("work");
             Path phpXML = jettyBase.resolve("webapps/php.xml");
-            Files.writeString(phpXML, """
-                <?xml version="1.0"?>
-                <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure_10_0.dtd">
-                <Configure class="org.eclipse.jetty.coreapp.CoreAppContext">
-                  <Set name="contextPath">/php</Set>
-                  <Set name="baseResourceAsPath">
-                    <Call class="java.nio.file.Path" name="of">
-                      <Arg>$R</Arg>
-                    </Call>
-                  </Set>
-                  <Set name="handler">
-                    <New class="org.eclipse.jetty.server.handler.ResourceHandler" />
-                  </Set>
-                </Configure>
-                """.replace("$R", jettyBaseWork.toAbsolutePath().toString()), StandardOpenOption.CREATE);
+            Files.writeString(phpXML, ("<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure_10_0.dtd\">\n" +
+                "<Configure class=\"org.eclipse.jetty.coreapp.CoreAppContext\">\n" +
+                "  <Set name=\"contextPath\">/php</Set>\n" +
+                "  <Set name=\"baseResourceAsPath\">\n" +
+                "    <Call class=\"java.nio.file.Path\" name=\"of\">\n" +
+                "      <Arg>$R</Arg>\n" +
+                "    </Call>\n" +
+                "  </Set>\n" +
+                "  <Set name=\"handler\">\n" +
+                "    <New class=\"org.eclipse.jetty.server.handler.ResourceHandler\" />\n" +
+                "  </Set>\n" +
+                "</Configure>\n").replace("$R", jettyBaseWork.toAbsolutePath().toString()), StandardOpenOption.CREATE);
             Files.writeString(jettyBase.resolve("webapps/php.properties"),
-                """
-                    environment=core
-                    """);
+                "environment=core\n");
             // Save a file in $JETTY_BASE/work so that it can be requested.
             String testFileContent = "hello";
             Files.writeString(jettyBaseWork.resolve("test.txt"), testFileContent, StandardOpenOption.CREATE);
@@ -958,31 +937,27 @@ public class DistributionTests extends AbstractJettyHomeTest
             // Deploy a Jetty context XML file that sets up the FastCGIProxyServlet.
             // Converts URIs from http://host:<httpPort>/proxy/foo to http://host:<fcgiPort>/php/foo.
             Path proxyXML = jettyBase.resolve("webapps").resolve("proxy.xml");
-            Files.writeString(proxyXML, """
-                <?xml version="1.0"?>
-                <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure_10_0.dtd">
-                <Configure class="org.eclipse.jetty.$ENV.servlet.ServletContextHandler">
-                  <Set name="contextPath">/proxy</Set>
-                  <Call name="addServlet">
-                    <Arg>org.eclipse.jetty.$ENV.fcgi.proxy.FastCGIProxyServlet</Arg>
-                    <Arg>*.txt</Arg>
-                    <Call name="setInitParameter">
-                      <Arg>proxyTo</Arg>
-                      <Arg>http://localhost:$P/php</Arg>
-                    </Call>
-                    <Call name="setInitParameter">
-                      <Arg>scriptRoot</Arg>
-                      <Arg>/var/wordpress</Arg>
-                    </Call>
-                  </Call>
-                </Configure>
-                """.replace("$ENV", env).replace("$P", String.valueOf(fcgiPort)), StandardOpenOption.CREATE);
+            Files.writeString(proxyXML, ("<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure_10_0.dtd\">\n" +
+                "<Configure class=\"org.eclipse.jetty.$ENV.servlet.ServletContextHandler\">\n" +
+                "  <Set name=\"contextPath\">/proxy</Set>\n" +
+                "  <Call name=\"addServlet\">\n" +
+                "    <Arg>org.eclipse.jetty.$ENV.fcgi.proxy.FastCGIProxyServlet</Arg>\n" +
+                "    <Arg>*.txt</Arg>\n" +
+                "    <Call name=\"setInitParameter\">\n" +
+                "      <Arg>proxyTo</Arg>\n" +
+                "      <Arg>http://localhost:$P/php</Arg>\n" +
+                "    </Call>\n" +
+                "    <Call name=\"setInitParameter\">\n" +
+                "      <Arg>scriptRoot</Arg>\n" +
+                "      <Arg>/var/wordpress</Arg>\n" +
+                "    </Call>\n" +
+                "  </Call>\n" +
+                "</Configure>\n").replace("$ENV", env).replace("$P", String.valueOf(fcgiPort)), StandardOpenOption.CREATE);
 
             Path proxyProps = jettyBase.resolve("webapps").resolve("proxy.properties");
             Files.writeString(proxyProps,
-                """
-                environment=$ENV
-                """.replace("$ENV", env), StandardOpenOption.CREATE);
+                "environment=$ENV\n".replace("$ENV", env), StandardOpenOption.CREATE);
 
             int httpPort = Tester.freePort();
             try (JettyHomeTester.Run run2 = distribution.start("jetty.http.port=" + httpPort, "etc/fcgi-connector.xml"))
@@ -1020,43 +995,39 @@ public class DistributionTests extends AbstractJettyHomeTest
             Path jettyBaseModules = jettyBase.resolve("modules");
             Files.createDirectories(jettyBaseModules);
             Path httpBackendModule = jettyBaseModules.resolve("http-backend.mod");
-            Files.writeString(httpBackendModule, """
-                [depend]
-                server
-                [xml]
-                etc/jetty-http-backend.xml
-                [ini-template]
-                # jetty.http.backend.port=9090
-                """, StandardOpenOption.CREATE);
+            Files.writeString(httpBackendModule, "[depend]\n" +
+                "server\n" +
+                "[xml]\n" +
+                "etc/jetty-http-backend.xml\n" +
+                "[ini-template]\n" +
+                "# jetty.http.backend.port=9090\n", StandardOpenOption.CREATE);
             Path jettyBaseEtc = jettyBase.resolve("etc");
             Files.createDirectories(jettyBaseEtc);
             Path httpBackendXML = jettyBaseEtc.resolve("jetty-http-backend.xml");
-            Files.writeString(httpBackendXML, """
-                <?xml version="1.0"?>
-                <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure_10_0.dtd">
-                <Configure id="Server" class="org.eclipse.jetty.server.Server">
-                  <Call name="addConnector">
-                    <Arg>
-                      <New class="org.eclipse.jetty.server.ServerConnector">
-                        <Arg name="server"><Ref refid="Server" /></Arg>
-                        <Arg name="acceptors" type="int">1</Arg>
-                        <Arg name="selectors" type="int">1</Arg>
-                        <Arg name="factories">
-                          <Array type="org.eclipse.jetty.server.ConnectionFactory">
-                            <Item>
-                              <New class="org.eclipse.jetty.server.HttpConnectionFactory">
-                                <Arg name="config"><Ref refid="httpConfig" /></Arg>
-                              </New>
-                            </Item>
-                          </Array>
-                        </Arg>
-                        <Set name="port"><Property name="jetty.http.backend.port" default="9090" /></Set>
-                        <Set name="name">backendConnector</Set>
-                      </New>
-                    </Arg>
-                  </Call>
-                </Configure>
-                """, StandardOpenOption.CREATE);
+            Files.writeString(httpBackendXML, "<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure_10_0.dtd\">\n" +
+                "<Configure id=\"Server\" class=\"org.eclipse.jetty.server.Server\">\n" +
+                "  <Call name=\"addConnector\">\n" +
+                "    <Arg>\n" +
+                "      <New class=\"org.eclipse.jetty.server.ServerConnector\">\n" +
+                "        <Arg name=\"server\"><Ref refid=\"Server\" /></Arg>\n" +
+                "        <Arg name=\"acceptors\" type=\"int\">1</Arg>\n" +
+                "        <Arg name=\"selectors\" type=\"int\">1</Arg>\n" +
+                "        <Arg name=\"factories\">\n" +
+                "          <Array type=\"org.eclipse.jetty.server.ConnectionFactory\">\n" +
+                "            <Item>\n" +
+                "              <New class=\"org.eclipse.jetty.server.HttpConnectionFactory\">\n" +
+                "                <Arg name=\"config\"><Ref refid=\"httpConfig\" /></Arg>\n" +
+                "              </New>\n" +
+                "            </Item>\n" +
+                "          </Array>\n" +
+                "        </Arg>\n" +
+                "        <Set name=\"port\"><Property name=\"jetty.http.backend.port\" default=\"9090\" /></Set>\n" +
+                "        <Set name=\"name\">backendConnector</Set>\n" +
+                "      </New>\n" +
+                "    </Arg>\n" +
+                "  </Call>\n" +
+                "</Configure>\n", StandardOpenOption.CREATE);
 
             // Set up the backend application.
             Path war = distribution.resolveArtifact("org.eclipse.jetty.demos:jetty-servlet5-demo-simple-webapp:war:" + jettyVersion);
@@ -1072,7 +1043,7 @@ public class DistributionTests extends AbstractJettyHomeTest
                 "jetty.http.backend.port=" + backendPort,
                 "--module=http-backend",
                 "jetty.proxy.contextPath=/proxy",
-                "jetty.proxy.proxyTo=http://localhost:%d/backend".formatted(backendPort)))
+                String.format("jetty.proxy.proxyTo=http://localhost:%d/backend", backendPort)))
             {
                 assertTrue(run2.awaitForJettyStart(), String.join(System.lineSeparator(), run2.getLogs()));
 
@@ -1227,31 +1198,25 @@ public class DistributionTests extends AbstractJettyHomeTest
             };
 
             // Put war into ${jetty.base}/wars/ directory
-            String coordinates = "org.eclipse.jetty.demos:jetty-%s-demo-simple-webapp:war:%s".formatted(
-                "ee8".equals(env) ? "servlet4" : "servlet5",
-                jettyVersion
-            );
+            String coordinates = String.format("org.eclipse.jetty.demos:jetty-%s-demo-simple-webapp:war:%s", "ee8".equals(env) ? "servlet4" : "servlet5",
+                jettyVersion);
             Path warsDir = jettyBase.resolve("wars");
             FS.ensureDirExists(warsDir);
             Path destWar = warsDir.resolve("demo.war");
             Files.copy(distribution.resolveArtifact(coordinates), destWar);
 
             // Create XML for deployable
-            String xml = """
-                <?xml version="1.0" encoding="UTF-8"?>
-                <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure.dtd">
-                
-                <Configure class="org.eclipse.jetty.%s.webapp.WebAppContext">
-                  <Set name="contextPath">/demo</Set>
-                  <Set name="war">%s</Set>
-                </Configure>
-                """.formatted(env, destWar.toString());
+            String xml = String.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure.dtd\">\n" +
+                "\n" +
+                "<Configure class=\"org.eclipse.jetty.%s.webapp.WebAppContext\">\n" +
+                "  <Set name=\"contextPath\">/demo</Set>\n" +
+                "  <Set name=\"war\">%s</Set>\n" +
+                "</Configure>\n", env, destWar.toString());
             Files.writeString(jettyBase.resolve("webapps/demo.xml"), xml, StandardCharsets.UTF_8);
 
             // Specify Environment Properties for this raw XML based deployable
-            String props = """
-                environment=%s
-                """.formatted(env);
+            String props = String.format("environment=%s\n", env);
             Files.writeString(jettyBase.resolve("webapps/demo.properties"), props, StandardCharsets.UTF_8);
 
             /* The jetty.base tree should now look like this
@@ -1361,7 +1326,7 @@ public class DistributionTests extends AbstractJettyHomeTest
                         .send();
                     assertEquals(HttpStatus.NOT_FOUND_404, response.getStatus());
                     String date = response.getHeaders().get(HttpHeader.DATE);
-                    String msg = "Request to [%s]: Response Header [Date]".formatted(hostHeader);
+                    String msg = String.format("Request to [%s]: Response Header [Date]", hostHeader);
                     assertThat(msg, date, notNullValue());
                     // asserting an exact value is tricky as the Date header is dynamic,
                     // so we just assert that it has some content and isn't blank
@@ -1483,9 +1448,7 @@ public class DistributionTests extends AbstractJettyHomeTest
             Path webAppZip = distribution.resolveArtifact("org.eclipse.jetty.tests:jetty-core-http2-client-webapp:zip:core-webapp:" + jettyVersion);
             Files.copy(webAppZip, webapps.resolve(name + ".jar"));
 
-            Files.writeString(webapps.resolve(name + ".properties"), """
-                jetty.deploy.contextPath=/test
-                """);
+            Files.writeString(webapps.resolve(name + ".properties"), "jetty.deploy.contextPath=/test\n");
 
             int port = Tester.freePort();
             try (JettyHomeTester.Run run2 = distribution.start("jetty.http.port=" + port))
@@ -1563,15 +1526,11 @@ public class DistributionTests extends AbstractJettyHomeTest
             assertEquals(0, run1.getExitValue());
 
             Path jettyLogging = distribution.getJettyBase().resolve("resources/jetty-logging.properties");
-            String loggingConfig = """
-                org.eclipse.jetty.LEVEL=DEBUG
-                """;
+            String loggingConfig = "org.eclipse.jetty.LEVEL=DEBUG\n";
             Files.writeString(jettyLogging, loggingConfig, StandardOpenOption.TRUNCATE_EXISTING);
 
-            String coordinates = "org.eclipse.jetty.demos:jetty-%s-demo-simple-webapp:war:%s".formatted(
-                "ee8".equals(env) ? "servlet4" : "servlet5",
-                jettyVersion
-            );
+            String coordinates = String.format("org.eclipse.jetty.demos:jetty-%s-demo-simple-webapp:war:%s", "ee8".equals(env) ? "servlet4" : "servlet5",
+                jettyVersion);
             Path war = distribution.resolveArtifact(coordinates);
             distribution.installWar(war, "test");
 
@@ -1630,13 +1589,13 @@ public class DistributionTests extends AbstractJettyHomeTest
                 Path logs = distribution.getJettyBase().resolve("logs");
                 try (Stream<Path> logsPaths = Files.list(logs))
                 {
-                    List<Path> logsFiles = logsPaths.toList();
+                    List<Path> logsFiles = logsPaths.collect(Collectors.toList());
                     assertEquals(1, logsFiles.size());
                     List<String> logLines = await().atMost(5, TimeUnit.SECONDS).until(() ->
                     {
                         try (Stream<String> lines = Files.lines(logsFiles.get(0)))
                         {
-                            return lines.toList();
+                            return lines.collect(Collectors.toList());
                         }
                     }, Matchers.hasSize(1));
                     assertThat(logLines.get(0), startsWith(forwarded));

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.http.ByteRange;
 import org.eclipse.jetty.http.CompressedContentFormat;
@@ -918,7 +919,7 @@ public class ResourceService extends ContainerLifeCycle
         _precompressedFormats.addAll(precompressedFormats);
         // TODO: this preferred encoding order should be a separate configurable
         _preferredEncodingOrder.clear();
-        _preferredEncodingOrder.addAll(_precompressedFormats.stream().map(CompressedContentFormat::getEncoding).toList());
+        _preferredEncodingOrder.addAll(_precompressedFormats.stream().map(CompressedContentFormat::getEncoding).collect(Collectors.toList()));
     }
 
     public void setEncodingCacheSize(int encodingCacheSize)

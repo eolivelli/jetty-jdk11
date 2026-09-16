@@ -89,18 +89,14 @@ public class RewriteLanguageAndEncodingRuleTest extends AbstractRuleTest
     @Test
     public void testNone() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/unknown.html HTTP/1.0\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/unknown.html HTTP/1.0\r\n" +
+            "\r\n"));
 
         assertEquals(404, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language, Accept-Encoding"));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/only.html HTTP/1.0\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/only.html HTTP/1.0\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language, Accept-Encoding"));
@@ -109,10 +105,8 @@ public class RewriteLanguageAndEncodingRuleTest extends AbstractRuleTest
         assertThat(response.get(HttpHeader.ETAG), not(nullValue()));
         assertThat(response.get(HttpHeader.ETAG), not(containsString("-")));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/all.html HTTP/1.0\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language, Accept-Encoding"));
@@ -121,10 +115,8 @@ public class RewriteLanguageAndEncodingRuleTest extends AbstractRuleTest
         assertThat(response.get(HttpHeader.ETAG), not(nullValue()));
         assertThat(response.get(HttpHeader.ETAG), not(containsString("-")));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/br-only.html HTTP/1.0\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/br-only.html HTTP/1.0\r\n" +
+            "\r\n"));
 
         assertEquals(404, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language, Accept-Encoding"));
@@ -133,34 +125,28 @@ public class RewriteLanguageAndEncodingRuleTest extends AbstractRuleTest
     @Test
     public void testBoth() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/unknown.html HTTP/1.0\r
-            Accept-Encoding: br\r
-            Accept-Language: en\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/unknown.html HTTP/1.0\r\n" +
+            "Accept-Encoding: br\r\n" +
+            "Accept-Language: en\r\n" +
+            "\r\n"));
 
         assertEquals(404, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language, Accept-Encoding"));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/only.html HTTP/1.0\r
-            Accept-Encoding: br\r
-            Accept-Language: en\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/only.html HTTP/1.0\r\n" +
+            "Accept-Encoding: br\r\n" +
+            "Accept-Language: en\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language, Accept-Encoding"));
         assertEquals("only", response.getContent());
         assertThat(response.get(HttpHeader.CONTENT_ENCODING), nullValue());
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            Accept-Encoding: br\r
-            Accept-Language: en\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/all.html HTTP/1.0\r\n" +
+            "Accept-Encoding: br\r\n" +
+            "Accept-Language: en\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language, Accept-Encoding"));
@@ -173,12 +159,10 @@ public class RewriteLanguageAndEncodingRuleTest extends AbstractRuleTest
     @Test
     public void testEtags() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            Accept-Encoding: br\r
-            Accept-Language: en\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/all.html HTTP/1.0\r\n" +
+            "Accept-Encoding: br\r\n" +
+            "Accept-Language: en\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language, Accept-Encoding"));
@@ -189,15 +173,13 @@ public class RewriteLanguageAndEncodingRuleTest extends AbstractRuleTest
         String etag = response.get(HttpHeader.ETAG);
         assertThat(etag, containsString("-br-en\""));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            Accept-Encoding: br\r
-            Accept-Language: en\r
-            If-None-Match: w/"abc"\r
-            If-None-Match: w/"xyz", %s, w/"pqy"\r
-            If-None-Match: w/"123"\r
-            \r
-            """.formatted(etag)));
+        response = HttpTester.parseResponse(_connector.getResponse(String.format("GET /ctx/all.html HTTP/1.0\r\n" +
+            "Accept-Encoding: br\r\n" +
+            "Accept-Language: en\r\n" +
+            "If-None-Match: w/\"abc\"\r\n" +
+            "If-None-Match: w/\"xyz\", %s, w/\"pqy\"\r\n" +
+            "If-None-Match: w/\"123\"\r\n" +
+            "\r\n", etag)));
 
         assertEquals(304, response.getStatus());
     }

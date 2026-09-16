@@ -99,7 +99,7 @@ public class ServletContextRequest extends ContextRequest implements ServletCont
                 return servletContextRequest;
         }
 
-        throw new IllegalStateException("could not find %s for %s".formatted(ServletContextRequest.class.getSimpleName(), request));
+        throw new IllegalStateException(String.format("could not find %s for %s", ServletContextRequest.class.getSimpleName(), request));
     }
 
     private final ServletApiRequest _servletApiRequest;

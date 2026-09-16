@@ -94,6 +94,6 @@ public class RewriteRegexRule extends RegexRule
     @Override
     public String toString()
     {
-        return "%s[rewrite:%s]".formatted(super.toString(), replacement);
+        return String.format("%s[rewrite:%s]", super.toString(), replacement);
     }
 }

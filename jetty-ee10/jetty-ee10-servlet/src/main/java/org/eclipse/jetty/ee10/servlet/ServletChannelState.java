@@ -46,7 +46,7 @@ public class ServletChannelState
 {
     private static final Logger LOG = LoggerFactory.getLogger(ServletChannelState.class);
 
-    private static final long DEFAULT_TIMEOUT = Long.getLong("%s.DEFAULT_TIMEOUT".formatted(ServletChannelState.class.getName()), 30000L);
+    private static final long DEFAULT_TIMEOUT = Long.getLong(String.format("%s.DEFAULT_TIMEOUT", ServletChannelState.class.getName()), 30000L);
 
     /*
      * The state of the ServletChannel,used to control the overall lifecycle.

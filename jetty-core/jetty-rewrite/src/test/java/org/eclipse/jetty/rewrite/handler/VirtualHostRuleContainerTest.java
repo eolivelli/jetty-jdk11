@@ -56,11 +56,9 @@ public class VirtualHostRuleContainerTest extends AbstractRuleTest
         _virtualHostRules.setVirtualHosts(List.of("foo.com"));
         _virtualHostRules.addRule(new RewritePatternRule("/cheese/bar/*", "/cheese/fooRule"));
 
-        String request = """
-            GET /cheese/bar HTTP/1.1
-            Host: cheese.com
-                        
-            """;
+        String request = "GET /cheese/bar HTTP/1.1\n" +
+            "Host: cheese.com\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -75,11 +73,9 @@ public class VirtualHostRuleContainerTest extends AbstractRuleTest
         _virtualHostRules.setVirtualHosts(List.of("foo.com"));
         _virtualHostRules.addRule(new RewritePatternRule("/cheese/bar/*", "/cheese/fooRule"));
 
-        String request = """
-            GET /cheese/bar HTTP/1.1
-            Host: foo.com
-                        
-            """;
+        String request = "GET /cheese/bar HTTP/1.1\n" +
+            "Host: foo.com\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -95,11 +91,9 @@ public class VirtualHostRuleContainerTest extends AbstractRuleTest
         _virtualHostRules.setVirtualHosts(List.of("foo.com"));
         _virtualHostRules.addRule(new RewritePatternRule("/cheese/bar/*", "/cheese/fooRule"));
 
-        String request = """
-            GET /cheese/bar HTTP/1.1
-            Host: foo.com
-                        
-            """;
+        String request = "GET /cheese/bar HTTP/1.1\n" +
+            "Host: foo.com\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -107,11 +101,9 @@ public class VirtualHostRuleContainerTest extends AbstractRuleTest
 
         _rewriteHandler.setRules(List.of(_virtualHostRules, rule));
 
-        request = """
-            GET /cheese/bar HTTP/1.1
-            Host: foo.com
-                        
-            """;
+        request = "GET /cheese/bar HTTP/1.1\n" +
+            "Host: foo.com\n" +
+            "\n";
 
         response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -119,11 +111,9 @@ public class VirtualHostRuleContainerTest extends AbstractRuleTest
 
         _virtualHostRules.setTerminating(true);
 
-        request = """
-            GET /cheese/bar HTTP/1.1
-            Host: foo.com
-                        
-            """;
+        request = "GET /cheese/bar HTTP/1.1\n" +
+            "Host: foo.com\n" +
+            "\n";
 
         response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -137,11 +127,9 @@ public class VirtualHostRuleContainerTest extends AbstractRuleTest
         _virtualHostRules.setVirtualHosts(List.of("foo.com"));
         _virtualHostRules.addRule(new RewritePatternRule("/cheese/bar/*", "/cheese/fooRule"));
 
-        String request = """
-            GET /cheese/bar HTTP/1.1
-            Host: Foo.com
-                        
-            """;
+        String request = "GET /cheese/bar HTTP/1.1\n" +
+            "Host: Foo.com\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -159,11 +147,9 @@ public class VirtualHostRuleContainerTest extends AbstractRuleTest
         {
             _virtualHostRules.setVirtualHosts(virtualHosts);
 
-            String request = """
-                GET /cheese/bar HTTP/1.1
-                Host: cheese.com
-                            
-                """;
+            String request = "GET /cheese/bar HTTP/1.1\n" +
+                "Host: cheese.com\n" +
+                "\n";
 
             HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
             assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -178,11 +164,9 @@ public class VirtualHostRuleContainerTest extends AbstractRuleTest
         _virtualHostRules.setVirtualHosts(List.of("cheese.com"));
         _virtualHostRules.addRule(new RewritePatternRule("/cheese/bar/*", "/cheese/fooRule"));
 
-        String request = """
-                GET /cheese/bar HTTP/1.1
-                Host: foo.com
-                            
-                """;
+        String request = "GET /cheese/bar HTTP/1.1\n" +
+            "Host: foo.com\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -190,11 +174,9 @@ public class VirtualHostRuleContainerTest extends AbstractRuleTest
 
         _virtualHostRules.addVirtualHost("foo.com");
 
-        request = """
-                GET /cheese/bar HTTP/1.1
-                Host: foo.com
-                            
-                """;
+        request = "GET /cheese/bar HTTP/1.1\n" +
+            "Host: foo.com\n" +
+            "\n";
 
         response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -222,11 +204,9 @@ public class VirtualHostRuleContainerTest extends AbstractRuleTest
 
         for (String requestHost : requestHosts)
         {
-            String request = """
-                GET /cheese/bar HTTP/1.1
-                Host: $H
-                            
-                """.replace("$H", requestHost);
+            String request = ("GET /cheese/bar HTTP/1.1\n" +
+                "Host: $H\n" +
+                "\n").replace("$H", requestHost);
 
             HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
             assertEquals(HttpStatus.OK_200, response.getStatus());

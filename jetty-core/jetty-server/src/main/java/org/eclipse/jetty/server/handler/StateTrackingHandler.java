@@ -306,7 +306,7 @@ public class StateTrackingHandler extends Handler.Wrapper
     @Override
     public String toString()
     {
-        return "%s@%x".formatted(TypeUtil.toShortName(getClass()), hashCode());
+        return String.format("%s@%x", TypeUtil.toShortName(getClass()), hashCode());
     }
 
     public static class ThreadInfo
@@ -681,11 +681,11 @@ public class StateTrackingHandler extends Handler.Wrapper
             String completion = this.completion;
             ThreadInfo completionThreadInfo = this.completionThreadInfo;
 
-            out.append("handle() result: %s\n".formatted(handled == null ? "pending" : handled));
+            out.append(String.format("handle() result: %s\n", handled == null ? "pending" : handled));
             if (handleThreadInfo != null)
                 out.append(indent).append(handleThreadInfo.toString(indent));
 
-            out.append(indent).append("handler callback: %s [%s]\n".formatted(Objects.toString(completion, "not completed"), getCallback()));
+            out.append(indent).append(String.format("handler callback: %s [%s]\n", Objects.toString(completion, "not completed"), getCallback()));
             if (completionThreadInfo != null)
                 out.append(indent).append(completionThreadInfo.toString(indent));
         }
@@ -762,12 +762,12 @@ public class StateTrackingHandler extends Handler.Wrapper
                 Object demandRunner = this.demandRunner;
                 if (demandRunner instanceof Thread runThread)
                 {
-                    out.append("demand: running [%s]\n".formatted(callback));
+                    out.append(String.format("demand: running [%s]\n", callback));
                     out.append(indent).append(new ThreadInfo(runThread).toString(indent));
                 }
                 else
                 {
-                    out.append("demand: %s [%s]\n".formatted(demandRunner == null ? "pending" : "none", callback));
+                    out.append(String.format("demand: %s [%s]\n", demandRunner == null ? "pending" : "none", callback));
                 }
             }
 
@@ -922,18 +922,18 @@ public class StateTrackingHandler extends Handler.Wrapper
                 }
                 else
                 {
-                    out.append("write: %s\n".formatted(writeCompleted == this ? "succeeded" : "failed with " + writeCompleted));
+                    out.append(String.format("write: %s\n", writeCompleted == this ? "succeeded" : "failed with " + writeCompleted));
                 }
 
                 Object callbackRunner = this.callbackRunner;
                 if (callbackRunner instanceof Thread callbackThread)
                 {
-                    out.append(indent).append("write callback: running [%s]\n".formatted(getCallback()));
+                    out.append(indent).append(String.format("write callback: running [%s]\n", getCallback()));
                     out.append(indent).append(new ThreadInfo(callbackThread).toString(indent));
                 }
                 else
                 {
-                    out.append(indent).append("write callback: %s [%s]\n".formatted(callbackRunner == null ? "pending" : "completed", getCallback()));
+                    out.append(indent).append(String.format("write callback: %s [%s]\n", callbackRunner == null ? "pending" : "completed", getCallback()));
                 }
             }
         }

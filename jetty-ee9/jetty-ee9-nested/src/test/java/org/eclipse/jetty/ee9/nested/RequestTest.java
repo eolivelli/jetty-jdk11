@@ -183,13 +183,11 @@ public class RequestTest
         };
         _server.start();
 
-        String request = """
-            GET / HTTP/1.1
-            Host: whatever
-            Content-Type: text/html;charset=utf8
-            Connection: close
-
-            """;
+        String request = "GET / HTTP/1.1\n" +
+            "Host: whatever\n" +
+            "Content-Type: text/html;charset=utf8\n" +
+            "Connection: close\n" +
+            "\n";
 
         //test setting the default char encoding
         _context.setDefaultRequestCharacterEncoding("ascii");
@@ -803,12 +801,10 @@ public class RequestTest
         };
 
         String rawResponse = _connector.getResponse(
-            """
-                CONNECT myhost:9999 HTTP/1.1\r
-                Host: myhost:9999\r
-                Connection: close\r
-                \r
-                """);
+            "CONNECT myhost:9999 HTTP/1.1\r\n" +
+            "Host: myhost:9999\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
         assertThat("request.getRequestURL", resultRequestURL.get(), is("http://myhost:9999/"));
@@ -821,12 +817,10 @@ public class RequestTest
         _handler._checker = (request, response) -> true;
 
         String rawResponse = _connector.getResponse(
-            """
-                CONNECT myhost:9999 HTTP/1.1\r
-                Host: otherhost:8888\r
-                Connection: close\r
-                \r
-                """);
+            "CONNECT myhost:9999 HTTP/1.1\r\n" +
+            "Host: otherhost:8888\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST_400));
     }
@@ -971,14 +965,12 @@ public class RequestTest
         assertEquals("443", results.get(i));
 
         results.clear();
-        response = _connector.getResponse("""
-            GET / HTTP/1.1
-            Host: [::1]:8888
-            Connection: close
-            x-forwarded-for: remote
-            x-forwarded-proto: https
-
-            """);
+        response = _connector.getResponse("GET / HTTP/1.1\n" +
+            "Host: [::1]:8888\n" +
+            "Connection: close\n" +
+            "x-forwarded-for: remote\n" +
+            "x-forwarded-proto: https\n" +
+            "\n");
         i = 0;
         assertThat(response, containsString("200 OK"));
         assertEquals("https://[::1]:8888/", results.get(i++));
@@ -1041,12 +1033,10 @@ public class RequestTest
             return true;
         };
 
-        String response = _connector.getResponse("""
-            GET / HTTP/1.1
-            Host: [::1]:8888
-            Connection: close
-
-            """);
+        String response = _connector.getResponse("GET / HTTP/1.1\n" +
+            "Host: [::1]:8888\n" +
+            "Connection: close\n" +
+            "\n");
         int i = 0;
         assertThat(response, containsString("200 OK"));
         assertEquals("[1:2:3:4:5:6:7:8]", results.get(i++));
@@ -1347,21 +1337,19 @@ public class RequestTest
         _context.setHandler(handler);
         _server.start();
 
-        String requests = """
-            GET / HTTP/1.1\r
-            Host: whatever\r
-            Content-Type: text/plain\r
-            Content-Length: 10\r
-            \r
-            0123456789\r
-            GET / HTTP/1.1\r
-            Host: whatever\r
-            Content-Type: text/plain\r
-            Content-Length: 10\r
-            Connection: close\r
-            \r
-            ABCDEFGHIJ\r
-            """;
+        String requests = "GET / HTTP/1.1\r\n" +
+            "Host: whatever\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Content-Length: 10\r\n" +
+            "\r\n" +
+            "0123456789\r\n" +
+            "GET / HTTP/1.1\r\n" +
+            "Host: whatever\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Content-Length: 10\r\n" +
+            "Connection: close\r\n" +
+            "\r\n" +
+            "ABCDEFGHIJ\r\n";
 
         LocalEndPoint endp = _connector.executeRequest(requests);
         String response = endp.getResponse();
@@ -1490,13 +1478,11 @@ public class RequestTest
         };
 
         String response = _connector.getResponse(
-            """
-                GET / HTTP/1.1
-                Host: whatever
-                Cookie: name1=value1
-                Connection: close
-
-                """
+            "GET / HTTP/1.1\n" +
+            "Host: whatever\n" +
+            "Cookie: name1=value1\n" +
+            "Connection: close\n" +
+            "\n"
         );
         assertTrue(response.startsWith("HTTP/1.1 200 OK"));
         assertEquals(1, cookies.size());
@@ -1522,13 +1508,11 @@ public class RequestTest
         };
 
         String response = _connector.getResponse(
-            """
-                GET / HTTP/1.1
-                Host: whatever
-                Cookie: $Version="1"; name1="value1"; $Path="/servlet_jsh_cookie_web"; $Domain="localhost"
-                Connection: close
-                
-                """
+            "GET / HTTP/1.1\n" +
+            "Host: whatever\n" +
+            "Cookie: $Version=\"1\"; name1=\"value1\"; $Path=\"/servlet_jsh_cookie_web\"; $Domain=\"localhost\"\n" +
+            "Connection: close\n" +
+            "\n"
         );
         assertTrue(response.startsWith("HTTP/1.1 200 OK"));
         assertEquals(1, cookies.size());
@@ -2503,12 +2487,10 @@ public class RequestTest
         };
 
         String rawResponse = _connector.getResponse(
-            """
-                GET /test HTTP/1.1\r
-                Host: host\r
-                Connection: close\r
-                \r
-                """);
+            "GET /test HTTP/1.1\r\n" +
+            "Host: host\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
     }
@@ -2524,15 +2506,13 @@ public class RequestTest
         };
 
         String rawResponse = _connector.getResponse(
-            """
-                POST /test HTTP/1.1\r
-                Host: host\r
-                Content-Type:multipart/form-data; charset=Unknown\r
-                Content-Length: 10\r
-                Connection: close\r
-                \r
-                1234567890\r
-                """);
+            "POST /test HTTP/1.1\r\n" +
+            "Host: host\r\n" +
+            "Content-Type:multipart/form-data; charset=Unknown\r\n" +
+            "Content-Length: 10\r\n" +
+            "Connection: close\r\n" +
+            "\r\n" +
+            "1234567890\r\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
     }

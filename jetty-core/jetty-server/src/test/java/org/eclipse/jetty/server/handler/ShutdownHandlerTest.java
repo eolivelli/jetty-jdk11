@@ -139,13 +139,11 @@ public class ShutdownHandlerTest
              OutputStream output = client.getOutputStream();
              InputStream input = client.getInputStream())
         {
-            String rawRequest = """
-                POST %s?%s HTTP/1.1
-                Host: %s:%d
-                Connection: close
-                Content-Length: 0
-                                
-                """.formatted(shutdownUri.getRawPath(), shutdownUri.getRawQuery(), shutdownUri.getHost(), shutdownUri.getPort());
+            String rawRequest = String.format("POST %s?%s HTTP/1.1\n" +
+                "Host: %s:%d\n" +
+                "Connection: close\n" +
+                "Content-Length: 0\n" +
+                "\n", shutdownUri.getRawPath(), shutdownUri.getRawQuery(), shutdownUri.getHost(), shutdownUri.getPort());
 
             output.write(rawRequest.getBytes(StandardCharsets.UTF_8));
             output.flush();

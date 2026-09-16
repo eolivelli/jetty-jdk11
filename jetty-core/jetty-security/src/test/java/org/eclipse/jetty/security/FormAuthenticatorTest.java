@@ -191,15 +191,13 @@ public class FormAuthenticatorTest
         assertThat(response, containsString("Location: /ctx/error"));
         assertThat(response, not(containsString("Set-Cookie: JSESSIONID=")));
 
-        response = _connector.getResponse("""
-            POST /ctx/j_security_check HTTP/1.0\r
-            Host: host:8888\r
-            Content-Length: 32\r
-            Content-Type: application/x-www-form-urlencoded\r
-            Cookie: JSESSIONID=" + sessionId + "\r
-            \r
-            j_username=user&j_password=wrong
-            """);
+        response = _connector.getResponse("POST /ctx/j_security_check HTTP/1.0\r\n" +
+            "Host: host:8888\r\n" +
+            "Content-Length: 32\r\n" +
+            "Content-Type: application/x-www-form-urlencoded\r\n" +
+            "Cookie: JSESSIONID=\" + sessionId + \"\r\n" +
+            "\r\n" +
+            "j_username=user&j_password=wrong\n");
         assertThat(response, containsString("HTTP/1.1 302 Found"));
         assertThat(response, containsString("Location: /ctx/error"));
         assertThat(response, not(containsString("Set-Cookie: JSESSIONID=")));
@@ -258,15 +256,13 @@ public class FormAuthenticatorTest
         assertThat(response, containsString("Set-Cookie: JSESSIONID="));
         sessionId = sessionId(response);
 
-        response = _connector.getResponse("""
-            POST /ctx/j_security_check HTTP/1.0\r
-            Host: host:8888\r
-            Content-Length: 35\r
-            Content-Type: application/x-www-form-urlencoded\r
-            Cookie: JSESSIONID=%s\r
-            \r
-            j_username=user&j_password=password
-            """.formatted(sessionId));
+        response = _connector.getResponse(String.format("POST /ctx/j_security_check HTTP/1.0\r\n" +
+            "Host: host:8888\r\n" +
+            "Content-Length: 35\r\n" +
+            "Content-Type: application/x-www-form-urlencoded\r\n" +
+            "Cookie: JSESSIONID=%s\r\n" +
+            "\r\n" +
+            "j_username=user&j_password=password\n", sessionId));
         assertThat(response, containsString("HTTP/1.1 302 Found"));
         assertThat(response, containsString("Location: /ctx/any/user"));
         assertThat(response, containsString("Set-Cookie: JSESSIONID="));
@@ -298,16 +294,14 @@ public class FormAuthenticatorTest
         String response;
         String sessionId = "unknown";
 
-        response = _connector.getResponse("""
-            POST /ctx/any/user?action=form HTTP/1.1\r
-            Host: host:8888\r
-            Content-Length: 25\r
-            Content-Type: application/x-www-form-urlencoded\r
-            Cookie: JSESSIONID=%s\r
-            Connection: close\r
-            \r
-            name1=value1&name2=value2\r
-            """.formatted(sessionId));
+        response = _connector.getResponse(String.format("POST /ctx/any/user?action=form HTTP/1.1\r\n" +
+            "Host: host:8888\r\n" +
+            "Content-Length: 25\r\n" +
+            "Content-Type: application/x-www-form-urlencoded\r\n" +
+            "Cookie: JSESSIONID=%s\r\n" +
+            "Connection: close\r\n" +
+            "\r\n" +
+            "name1=value1&name2=value2\r\n", sessionId));
         assertThat(response, containsString("HTTP/1.1 303 See Other"));
         assertThat(response, containsString("Location: /ctx/login"));
         assertThat(response, containsString("Set-Cookie: JSESSIONID="));

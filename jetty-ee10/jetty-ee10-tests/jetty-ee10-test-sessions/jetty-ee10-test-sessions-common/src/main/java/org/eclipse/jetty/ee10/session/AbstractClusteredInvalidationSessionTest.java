@@ -14,7 +14,6 @@
 package org.eclipse.jetty.ee10.session;
 
 import java.io.IOException;
-import java.io.Serial;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -133,7 +132,6 @@ public abstract class AbstractClusteredInvalidationSessionTest extends AbstractS
 
     public static class TestServlet extends HttpServlet
     {
-        @Serial
         @Override
         protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
         {

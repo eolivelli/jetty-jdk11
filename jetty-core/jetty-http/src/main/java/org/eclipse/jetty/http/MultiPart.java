@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.io.Content;
@@ -519,13 +520,11 @@ public class MultiPart
         @Override
         public String toString()
         {
-            return "%s@%x[name=%s,fileName=%s,length=%d]".formatted(
-                TypeUtil.toShortName(getClass()),
+            return String.format("%s@%x[name=%s,fileName=%s,length=%d]", TypeUtil.toShortName(getClass()),
                 hashCode(),
                 getName(),
                 getFileName(),
-                getLength()
-            );
+                getLength());
         }
     }
 
@@ -575,7 +574,7 @@ public class MultiPart
                             return chunk;
                         return Content.Chunk.from(chunk.getByteBuffer().slice(), chunk.isLast());
                     })
-                    .toList();
+                    .collect(Collectors.toList());
                 ChunksContentSource newContentSource = new ChunksContentSource(chunks);
                 chunks.forEach(Content.Chunk::release);
                 contentSources.add(newContentSource);
@@ -602,13 +601,11 @@ public class MultiPart
         @Override
         public String toString()
         {
-            return "%s@%x[name=%s,fileName=%s,length=%d]".formatted(
-                TypeUtil.toShortName(getClass()),
+            return String.format("%s@%x[name=%s,fileName=%s,length=%d]", TypeUtil.toShortName(getClass()),
                 hashCode(),
                 getName(),
                 getFileName(),
-                getLength()
-            );
+                getLength());
         }
     }
 
@@ -650,13 +647,11 @@ public class MultiPart
         @Override
         public String toString()
         {
-            return "%s@%x[name=%s,fileName=%s,path=%s]".formatted(
-                TypeUtil.toShortName(getClass()),
+            return String.format("%s@%x[name=%s,fileName=%s,path=%s]", TypeUtil.toShortName(getClass()),
                 hashCode(),
                 getName(),
                 getFileName(),
-                getPath()
-            );
+                getPath());
         }
     }
 
@@ -691,13 +686,11 @@ public class MultiPart
         @Override
         public String toString()
         {
-            return "%s@%x[name=%s,fileName=%s,length=%d]".formatted(
-                TypeUtil.toShortName(getClass()),
+            return String.format("%s@%x[name=%s,fileName=%s,length=%d]", TypeUtil.toShortName(getClass()),
                 hashCode(),
                 getName(),
                 getFileName(),
-                getLength()
-            );
+                getLength());
         }
     }
 
@@ -982,7 +975,7 @@ public class MultiPart
         {
             int max = getPartHeadersMaxLength();
             if (max > 0 && builder.length() > max)
-                throw new IllegalStateException("headers max length exceeded: %d".formatted(max));
+                throw new IllegalStateException(String.format("headers max length exceeded: %d", max));
         }
 
         @Override
@@ -1561,7 +1554,7 @@ public class MultiPart
             ++partHeadersLength;
             int max = getPartHeadersMaxLength();
             if (max > 0 && partHeadersLength > max)
-                throw new IllegalStateException("headers max length exceeded: %d".formatted(max));
+                throw new IllegalStateException(String.format("headers max length exceeded: %d", max));
         }
 
         private boolean parseContent(Content.Chunk chunk)

@@ -129,7 +129,7 @@ public abstract class AuthenticationProtocolHandler implements ProtocolHandler
             // The request may still be sending content, stop it.
             Request request = response.getRequest();
             if (request.getBody() != null)
-                request.fail(new HttpRequestException("Aborting request after receiving a %d response".formatted(response.getStatus()), request));
+                request.fail(new HttpRequestException(String.format("Aborting request after receiving a %d response", response.getStatus()), request));
         }
 
         @Override

@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -70,17 +71,15 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DigestPostTest
 {
-    private static final String MESSAGE = """
-        0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789
-        9876543210 9876543210 9876543210 9876543210 9876543210 9876543210 9876543210 9876543210
-        1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890
-        0987654321 0987654321 0987654321 0987654321 0987654321 0987654321 0987654321 0987654321
-        abcdefghijklmnopqrstuvwxyz abcdefghijklmnopqrstuvwxyz abcdefghijklmnopqrstuvwxyz
-        ABCDEFGHIJKLMNOPQRSTUVWXYZ ABCDEFGHIJKLMNOPQRSTUVWXYZ ABCDEFGHIJKLMNOPQRSTUVWXYZ
-        Now is the time for all good men to come to the aid of the party.
-        How now brown cow.
-        The quick brown fox jumped over the lazy dog.
-        """;
+    private static final String MESSAGE = "0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789\n" +
+        "9876543210 9876543210 9876543210 9876543210 9876543210 9876543210 9876543210 9876543210\n" +
+        "1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890\n" +
+        "0987654321 0987654321 0987654321 0987654321 0987654321 0987654321 0987654321 0987654321\n" +
+        "abcdefghijklmnopqrstuvwxyz abcdefghijklmnopqrstuvwxyz abcdefghijklmnopqrstuvwxyz\n" +
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ ABCDEFGHIJKLMNOPQRSTUVWXYZ ABCDEFGHIJKLMNOPQRSTUVWXYZ\n" +
+        "Now is the time for all good men to come to the aid of the party.\n" +
+        "How now brown cow.\n" +
+        "The quick brown fox jumped over the lazy dog.\n";
 
     private final String _user = "testuser";
     private final String _password = "password";
@@ -140,13 +139,11 @@ public class DigestPostTest
         try (SocketChannel socket1 = SocketChannel.open(new InetSocketAddress("localhost", _connector.getLocalPort())))
         {
             _servlet._received = null;
-            String request = """
-                POST /test/ HTTP/1.0
-                Host: localhost
-                Content-Length: %d
-                
-                %s\
-                """.formatted(MESSAGE.length(), MESSAGE);
+            String request = String.format("POST /test/ HTTP/1.0\n" +
+                "Host: localhost\n" +
+                "Content-Length: %d\n" +
+                "\n" +
+                "%s", MESSAGE.length(), MESSAGE);
             socket1.write(UTF_8.encode(request));
 
             HttpTester.Response response = HttpTester.parseResponse(socket1);
@@ -159,21 +156,17 @@ public class DigestPostTest
             assertNotNull(nonce);
 
             String rsp = newResponse("POST", "/test/", nonce);
-            String digest = """
-                Digest username="%s", realm="%s", nonce="%s", uri="/test/", algorithm=%s, response="%s", qop=auth, nc=%s, cnonce="%s"\
-                """.formatted(_user, _realm, nonce, _authenticator.getAlgorithm(), rsp, nc, cnonce);
+            String digest = String.format("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"/test/\", algorithm=%s, response=\"%s\", qop=auth, nc=%s, cnonce=\"%s\"", _user, _realm, nonce, _authenticator.getAlgorithm(), rsp, nc, cnonce);
 
             try (SocketChannel socket2 = SocketChannel.open(new InetSocketAddress("localhost", _connector.getLocalPort())))
             {
                 _servlet._received = null;
-                request = """
-                    POST /test/ HTTP/1.0
-                    Host: localhost
-                    Content-Length: %d
-                    Authorization: %s
-                    
-                    %s\
-                    """.formatted(MESSAGE.length(), digest, MESSAGE);
+                request = String.format("POST /test/ HTTP/1.0\n" +
+                    "Host: localhost\n" +
+                    "Content-Length: %d\n" +
+                    "Authorization: %s\n" +
+                    "\n" +
+                    "%s", MESSAGE.length(), digest, MESSAGE);
                 socket2.write(UTF_8.encode(request));
 
                 response = HttpTester.parseResponse(socket2);
@@ -190,13 +183,11 @@ public class DigestPostTest
         try (SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", _connector.getLocalPort())))
         {
             _servlet._received = null;
-            String request = """
-                POST /test/ HTTP/1.1
-                Host: localhost
-                Content-Length: %d
-                
-                %s\
-                """.formatted(MESSAGE.length(), MESSAGE);
+            String request = String.format("POST /test/ HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Content-Length: %d\n" +
+                "\n" +
+                "%s", MESSAGE.length(), MESSAGE);
             socket.write(UTF_8.encode(request));
 
             HttpTester.Response response = HttpTester.parseResponse(socket);
@@ -209,19 +200,15 @@ public class DigestPostTest
             assertNotNull(nonce);
 
             String rsp = newResponse("POST", "/test/", nonce);
-            String digest = """
-                Digest username="%s", realm="%s", nonce="%s", uri="/test/", algorithm=%s, response="%s", qop=auth, nc=%s, cnonce="%s"\
-                """.formatted(_user, _realm, nonce, _authenticator.getAlgorithm(), rsp, nc, cnonce);
+            String digest = String.format("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"/test/\", algorithm=%s, response=\"%s\", qop=auth, nc=%s, cnonce=\"%s\"", _user, _realm, nonce, _authenticator.getAlgorithm(), rsp, nc, cnonce);
 
             _servlet._received = null;
-            request = """
-                POST /test/ HTTP/1.1
-                Host: localhost
-                Content-Length: %d
-                Authorization: %s
-                
-                %s\
-                """.formatted(MESSAGE.length(), digest, MESSAGE);
+            request = String.format("POST /test/ HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Content-Length: %d\n" +
+                "Authorization: %s\n" +
+                "\n" +
+                "%s", MESSAGE.length(), digest, MESSAGE);
             socket.write(UTF_8.encode(request));
 
             response = HttpTester.parseResponse(socket);
@@ -237,13 +224,11 @@ public class DigestPostTest
         try (SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", _connector.getLocalPort())))
         {
             _servlet._received = null;
-            String request = """
-                POST /test/ HTTP/1.1
-                Host: localhost
-                Content-Length: %d
-                
-                %s\
-                """.formatted(MESSAGE.length(), MESSAGE);
+            String request = String.format("POST /test/ HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Content-Length: %d\n" +
+                "\n" +
+                "%s", MESSAGE.length(), MESSAGE);
             socket.write(UTF_8.encode(request));
 
             HttpTester.Response response = HttpTester.parseResponse(socket);
@@ -257,19 +242,15 @@ public class DigestPostTest
 
             String encodedUser = "UTF-8''" + _user.replace("e", "%65");
             String rsp = newResponse("POST", "/test/", nonce);
-            String digest = """
-                Digest username*="%s", realm="%s", nonce="%s", uri="/test/", algorithm=%s, response="%s", qop=auth, nc=%s, cnonce="%s"\
-                """.formatted(encodedUser, _realm, nonce, _authenticator.getAlgorithm(), rsp, nc, cnonce);
+            String digest = String.format("Digest username*=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"/test/\", algorithm=%s, response=\"%s\", qop=auth, nc=%s, cnonce=\"%s\"", encodedUser, _realm, nonce, _authenticator.getAlgorithm(), rsp, nc, cnonce);
 
             _servlet._received = null;
-            request = """
-                POST /test/ HTTP/1.1
-                Host: localhost
-                Content-Length: %d
-                Authorization: %s
-                
-                %s\
-                """.formatted(MESSAGE.length(), digest, MESSAGE);
+            request = String.format("POST /test/ HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Content-Length: %d\n" +
+                "Authorization: %s\n" +
+                "\n" +
+                "%s", MESSAGE.length(), digest, MESSAGE);
             socket.write(UTF_8.encode(request));
 
             response = HttpTester.parseResponse(socket);
@@ -380,7 +361,7 @@ public class DigestPostTest
             UserPrincipal userPrincipal = new UserPrincipal(username, credential);
             users.put(username, userPrincipal);
             if (roleNames != null)
-                roles.put(username, Arrays.stream(roleNames).map(RolePrincipal::new).toList());
+                roles.put(username, Arrays.stream(roleNames).map(RolePrincipal::new).collect(Collectors.toList()));
         }
 
         @Override

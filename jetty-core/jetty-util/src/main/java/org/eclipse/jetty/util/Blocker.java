@@ -543,7 +543,7 @@ public class Blocker
         @Override
         public String toString()
         {
-            return "%s@%x[c=%s]".formatted(TypeUtil.toShortName(getClass()), hashCode(), _completed);
+            return String.format("%s@%x[c=%s]", TypeUtil.toShortName(getClass()), hashCode(), _completed);
         }
     }
 }

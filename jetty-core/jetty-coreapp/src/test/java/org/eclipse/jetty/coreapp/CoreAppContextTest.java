@@ -164,12 +164,10 @@ public class CoreAppContextTest
 
         startServerWithDeploy(baseDir, webapps, null);
 
-        String rawRequest = """
-            GET /demo/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /demo/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -194,27 +192,23 @@ public class CoreAppContextTest
         FS.ensureDirExists(webapps);
 
         Path demoXml = webapps.resolve("moved.xml");
-        String demoXmlStr = """
-            <?xml version="1.0" encoding="UTF-8"?>
-            <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure_10_0.dtd">
-            
-            <!-- Simple handler to redirect from old path to new -->
-            <Configure class="org.eclipse.jetty.server.handler.MovedContextHandler">
-              <Set name="contextPath">/documentation</Set>
-              <Set name="redirectURI">https://jetty.org/docs/</Set>
-              <Set name="statusCode">302</Set>
-            </Configure>
-            """;
+        String demoXmlStr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure_10_0.dtd\">\n" +
+            "\n" +
+            "<!-- Simple handler to redirect from old path to new -->\n" +
+            "<Configure class=\"org.eclipse.jetty.server.handler.MovedContextHandler\">\n" +
+            "  <Set name=\"contextPath\">/documentation</Set>\n" +
+            "  <Set name=\"redirectURI\">https://jetty.org/docs/</Set>\n" +
+            "  <Set name=\"statusCode\">302</Set>\n" +
+            "</Configure>\n";
         Files.writeString(demoXml, demoXmlStr);
 
         startServerWithDeploy(baseDir, webapps, null);
 
-        String rawRequest = """
-            GET /documentation/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /documentation/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -235,39 +229,33 @@ public class CoreAppContextTest
         FS.ensureDirExists(demobase);
 
         Files.writeString(demobase.resolve("index.html"),
-            """
-                demobase index
-                """);
+            "demobase index\n");
 
         Path webapps = root.resolve("webapps");
         FS.ensureDirExists(webapps);
 
         Path demoXml = webapps.resolve("demo.xml");
-        String demoXmlStr = """
-            <?xml version="1.0"?>
-            <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure.dtd">
-            <Configure class="org.eclipse.jetty.server.handler.ContextHandler">
-              <Set name="contextPath">/demo</Set>
-              <Set name="baseResourceAsPath">
-                <Call class="java.nio.file.Path" name="of">
-                  <Arg>%s</Arg>
-                </Call>
-              </Set>
-              <Set name="handler">
-                <New class="org.eclipse.jetty.server.handler.ResourceHandler" />
-              </Set>
-            </Configure>
-            """.formatted(demobase.toString());
+        String demoXmlStr = String.format("<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure.dtd\">\n" +
+            "<Configure class=\"org.eclipse.jetty.server.handler.ContextHandler\">\n" +
+            "  <Set name=\"contextPath\">/demo</Set>\n" +
+            "  <Set name=\"baseResourceAsPath\">\n" +
+            "    <Call class=\"java.nio.file.Path\" name=\"of\">\n" +
+            "      <Arg>%s</Arg>\n" +
+            "    </Call>\n" +
+            "  </Set>\n" +
+            "  <Set name=\"handler\">\n" +
+            "    <New class=\"org.eclipse.jetty.server.handler.ResourceHandler\" />\n" +
+            "  </Set>\n" +
+            "</Configure>\n", demobase.toString());
         Files.writeString(demoXml, demoXmlStr);
 
         startServerWithDeploy(demobase, webapps, null);
 
-        String rawRequest = """
-            GET /demo/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /demo/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -292,68 +280,56 @@ public class CoreAppContextTest
         Files.writeString(webapps.resolve("demo/static/test.txt"), "This is the test TXT");
 
         Path demoXml = webapps.resolve("demo/jetty-web.xml");
-        String demoXmlStr = """
-            <?xml version="1.0"?>
-            <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure.dtd">
-            <Configure class="org.eclipse.jetty.coreapp.CoreAppContext">
-              <Set name="contextPath">/demo</Set>
-            </Configure>
-            """;
+        String demoXmlStr = "<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure.dtd\">\n" +
+            "<Configure class=\"org.eclipse.jetty.coreapp.CoreAppContext\">\n" +
+            "  <Set name=\"contextPath\">/demo</Set>\n" +
+            "</Configure>\n";
         Files.writeString(demoXml, demoXmlStr);
 
         startServerWithDeploy(root, webapps, null);
 
         // Request static file via directory (which results in ResourceHandler welcomeFiles logic returning index.html)
-        String rawResponse = localConnector.getResponse("""
-            GET /demo/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """);
+        String rawResponse = localConnector.getResponse("GET /demo/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
         String responseBody = response.getContent();
         assertThat(responseBody, containsString("This is the static index.html"));
 
         // Request specific static file
-        rawResponse = localConnector.getResponse("""
-            GET /demo/test.txt HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """);
+        rawResponse = localConnector.getResponse("GET /demo/test.txt HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n");
         response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
         responseBody = response.getContent();
         assertThat(responseBody, containsString("This is the test TXT"));
 
         // Request specific static file that doesn't exist
-        rawResponse = localConnector.getResponse("""
-            GET /demo/bogus.png HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """);
+        rawResponse = localConnector.getResponse("GET /demo/bogus.png HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n");
         response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND_404));
 
         // Request jetty-web.xml
-        rawResponse = localConnector.getResponse("""
-            GET /demo/jetty-web.xml HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """);
+        rawResponse = localConnector.getResponse("GET /demo/jetty-web.xml HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n");
         response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND_404));
 
         // Request jetty-web.xml in different way
-        rawResponse = localConnector.getResponse("""
-            GET /demo/../jetty-web.xml HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """);
+        rawResponse = localConnector.getResponse("GET /demo/../jetty-web.xml HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n");
         response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND_404));
     }
@@ -369,9 +345,7 @@ public class CoreAppContextTest
 
         Path environments = root.resolve("environments");
         FS.ensureDirExists(environments);
-        Files.writeString(environments.resolve("core.properties"), """
-            custom.displayPrefix=Customized
-            """);
+        Files.writeString(environments.resolve("core.properties"), "custom.displayPrefix=Customized\n");
 
         Path webapps = root.resolve("webapps");
         FS.ensureDirExists(webapps);
@@ -381,29 +355,23 @@ public class CoreAppContextTest
 
         Path staticDir = demoDir.resolve("static");
         FS.ensureDirExists(staticDir);
-        Files.writeString(staticDir.resolve("index.html"), """
-            This is the static index.html
-            """);
+        Files.writeString(staticDir.resolve("index.html"), "This is the static index.html\n");
 
         Path demoXml = webapps.resolve("demo.xml");
-        String demoXmlStr = """
-            <?xml version="1.0"?>
-            <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure.dtd">
-            <Configure class="org.eclipse.jetty.coreapp.CoreAppContext">
-              <Set name="displayName"><Property name="custom.displayPrefix" default=""/> Demo</Set>
-              <Set name="contextPath">/demo</Set>
-            </Configure>
-            """;
+        String demoXmlStr = "<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure.dtd\">\n" +
+            "<Configure class=\"org.eclipse.jetty.coreapp.CoreAppContext\">\n" +
+            "  <Set name=\"displayName\"><Property name=\"custom.displayPrefix\" default=\"\"/> Demo</Set>\n" +
+            "  <Set name=\"contextPath\">/demo</Set>\n" +
+            "</Configure>\n";
         Files.writeString(demoXml, demoXmlStr);
 
         startServerWithDeploy(root, webapps, environments);
 
-        String rawRequest = """
-            GET /demo/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /demo/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -428,19 +396,17 @@ public class CoreAppContextTest
 
         Path environments = root.resolve("environments");
         FS.ensureDirExists(environments);
-        Files.writeString(environments.resolve("core.xml"), """
-            <?xml version="1.0"?>
-            <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure.dtd">
-            <Configure class="org.eclipse.jetty.server.handler.ContextHandler">
-              <Call name="addVirtualHosts">
-                <Arg>
-                  <Array type="string">
-                    <Item>local</Item>
-                  </Array>
-                </Arg>
-              </Call>
-            </Configure>
-            """);
+        Files.writeString(environments.resolve("core.xml"), "<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure.dtd\">\n" +
+            "<Configure class=\"org.eclipse.jetty.server.handler.ContextHandler\">\n" +
+            "  <Call name=\"addVirtualHosts\">\n" +
+            "    <Arg>\n" +
+            "      <Array type=\"string\">\n" +
+            "        <Item>local</Item>\n" +
+            "      </Array>\n" +
+            "    </Arg>\n" +
+            "  </Call>\n" +
+            "</Configure>\n");
 
         Path webapps = root.resolve("webapps");
         FS.ensureDirExists(webapps);
@@ -450,28 +416,22 @@ public class CoreAppContextTest
 
         Path staticDir = demoDir.resolve("static");
         FS.ensureDirExists(staticDir);
-        Files.writeString(staticDir.resolve("index.html"), """
-            This is the static index.html
-            """);
+        Files.writeString(staticDir.resolve("index.html"), "This is the static index.html\n");
 
         Path demoXml = webapps.resolve("demo.xml");
-        String demoXmlStr = """
-            <?xml version="1.0"?>
-            <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure.dtd">
-            <Configure class="org.eclipse.jetty.coreapp.CoreAppContext">
-              <Set name="contextPath">/demo</Set>
-            </Configure>
-            """;
+        String demoXmlStr = "<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure.dtd\">\n" +
+            "<Configure class=\"org.eclipse.jetty.coreapp.CoreAppContext\">\n" +
+            "  <Set name=\"contextPath\">/demo</Set>\n" +
+            "</Configure>\n";
         Files.writeString(demoXml, demoXmlStr);
 
         startServerWithDeploy(root, webapps, environments);
 
-        String rawRequest = """
-            GET /demo/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /demo/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -516,16 +476,14 @@ public class CoreAppContextTest
         assertThrows(ClassNotFoundException.class, () -> Class.forName("org.example.ExampleHandler"));
 
         Path demoXml = webapps.resolve("demo.xml");
-        String demoXmlStr = """
-            <?xml version="1.0"?>
-            <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure.dtd">
-            <Configure class="org.eclipse.jetty.coreapp.CoreAppContext">
-              <Set name="contextPath">/demo</Set>
-              <Set name="handler">
-                <New class="org.example.BogusHandler" /> <!-- THIS DOESN'T EXIST -->
-              </Set>
-            </Configure>
-            """;
+        String demoXmlStr = "<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure.dtd\">\n" +
+            "<Configure class=\"org.eclipse.jetty.coreapp.CoreAppContext\">\n" +
+            "  <Set name=\"contextPath\">/demo</Set>\n" +
+            "  <Set name=\"handler\">\n" +
+            "    <New class=\"org.example.BogusHandler\" /> <!-- THIS DOESN'T EXIST -->\n" +
+            "  </Set>\n" +
+            "</Configure>\n";
         Files.writeString(demoXml, demoXmlStr);
 
         try (StacklessLogging ignore = new StacklessLogging(DeploymentScanner.class))
@@ -572,16 +530,14 @@ public class CoreAppContextTest
         assertThrows(ClassNotFoundException.class, () -> Class.forName("org.example.ExampleHandler"));
 
         Path demoXml = demoDir.resolve("jetty-web.xml");
-        String demoXmlStr = """
-            <?xml version="1.0"?>
-            <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure.dtd">
-            <Configure class="org.eclipse.jetty.coreapp.CoreAppContext">
-              <Set name="contextPath">/demo</Set>
-              <Set name="handler">
-                <New class="org.example.ExampleBadSetServerHandler" />
-              </Set>
-            </Configure>
-            """;
+        String demoXmlStr = "<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure.dtd\">\n" +
+            "<Configure class=\"org.eclipse.jetty.coreapp.CoreAppContext\">\n" +
+            "  <Set name=\"contextPath\">/demo</Set>\n" +
+            "  <Set name=\"handler\">\n" +
+            "    <New class=\"org.example.ExampleBadSetServerHandler\" />\n" +
+            "  </Set>\n" +
+            "</Configure>\n";
         Files.writeString(demoXml, demoXmlStr);
 
         try (StacklessLogging ignore = new StacklessLogging(
@@ -633,16 +589,14 @@ public class CoreAppContextTest
         assertThrows(ClassNotFoundException.class, () -> Class.forName("org.example.ExampleHandler"));
 
         Path demoXml = demoDir.resolve("jetty-web.xml");
-        String demoXmlStr = """
-            <?xml version="1.0"?>
-            <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure.dtd">
-            <Configure class="org.eclipse.jetty.coreapp.CoreAppContext">
-              <Set name="contextPath">/demo</Set>
-              <Set name="handler">
-                <New class="org.example.ExampleBadStartHandler" />
-              </Set>
-            </Configure>
-            """;
+        String demoXmlStr = "<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure.dtd\">\n" +
+            "<Configure class=\"org.eclipse.jetty.coreapp.CoreAppContext\">\n" +
+            "  <Set name=\"contextPath\">/demo</Set>\n" +
+            "  <Set name=\"handler\">\n" +
+            "    <New class=\"org.example.ExampleBadStartHandler\" />\n" +
+            "  </Set>\n" +
+            "</Configure>\n";
         Files.writeString(demoXml, demoXmlStr);
 
         try (StacklessLogging ignore = new StacklessLogging(DeploymentScanner.class, StandardDeployer.class))
@@ -690,12 +644,10 @@ public class CoreAppContextTest
 
         startServerWithDeploy(baseDir, webapps, null);
 
-        String rawRequest = """
-            GET /alt-demo/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /alt-demo/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -727,13 +679,11 @@ public class CoreAppContextTest
         unpack(srcZip, demoDir);
 
         Path demoXml = webapps.resolve("demo.xml");
-        String demoXmlStr = """
-            <?xml version="1.0"?>
-            <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure.dtd">
-            <Configure class="org.eclipse.jetty.coreapp.CoreAppContext">
-              <Set name="contextPath">/alt-demo</Set>
-            </Configure>
-            """;
+        String demoXmlStr = "<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure.dtd\">\n" +
+            "<Configure class=\"org.eclipse.jetty.coreapp.CoreAppContext\">\n" +
+            "  <Set name=\"contextPath\">/alt-demo</Set>\n" +
+            "</Configure>\n";
         Files.writeString(demoXml, demoXmlStr);
 
         // ensure that demo zip classes are not in our test/server classpath.
@@ -742,12 +692,10 @@ public class CoreAppContextTest
 
         startServerWithDeploy(baseDir, webapps, null);
 
-        String rawRequest = """
-            GET /alt-demo/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /alt-demo/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -801,26 +749,22 @@ public class CoreAppContextTest
         assertThrows(ClassNotFoundException.class, () -> Class.forName("org.example.ExampleHandler"));
 
         Path demoXml = webapps.resolve("demo.xml");
-        String demoXmlStr = """
-            <?xml version="1.0"?>
-            <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure.dtd">
-            <Configure class="org.eclipse.jetty.coreapp.CoreAppContext">
-              <Set name="contextPath">/demo</Set>
-              <Call name="setExtraClassPath">
-                <Arg type="String"><Property name="jetty.base"/>/extra-lib/extra.jar</Arg>
-              </Call>
-            </Configure>
-            """;
+        String demoXmlStr = "<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure.dtd\">\n" +
+            "<Configure class=\"org.eclipse.jetty.coreapp.CoreAppContext\">\n" +
+            "  <Set name=\"contextPath\">/demo</Set>\n" +
+            "  <Call name=\"setExtraClassPath\">\n" +
+            "    <Arg type=\"String\"><Property name=\"jetty.base\"/>/extra-lib/extra.jar</Arg>\n" +
+            "  </Call>\n" +
+            "</Configure>\n";
         Files.writeString(demoXml, demoXmlStr);
 
         startServerWithDeploy(baseDir, webapps, null);
 
-        String rawRequest = """
-            GET /demo/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /demo/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -883,12 +827,10 @@ public class CoreAppContextTest
 
         startServerWithDeploy(baseDir, webapps, null);
 
-        String rawRequest = """
-            GET /demo/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /demo/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -959,12 +901,10 @@ public class CoreAppContextTest
             contextHandlerCollection.addHandler(contextHandler);
         });
 
-        String rawRequest = """
-            GET /demo/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /demo/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -1029,12 +969,10 @@ public class CoreAppContextTest
             contextHandlerCollection.addHandler(contextHandler);
         });
 
-        String rawRequest = """
-            GET /demo/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /demo/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);

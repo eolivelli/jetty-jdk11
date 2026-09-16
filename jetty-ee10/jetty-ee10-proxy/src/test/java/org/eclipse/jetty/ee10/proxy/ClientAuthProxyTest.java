@@ -147,7 +147,7 @@ public class ClientAuthProxyTest
                     Assertions.assertNotNull(certificates);
                     X509Certificate certificate = certificates[0];
                     X500Principal principal = certificate.getSubjectX500Principal();
-                    String body = "%s\r\n%d\r\n".formatted(principal.toString(), org.eclipse.jetty.server.Request.getRemotePort(request));
+                    String body = String.format("%s\r\n%d\r\n", principal.toString(), org.eclipse.jetty.server.Request.getRemotePort(request));
                     Content.Sink.write(response, true, body, callback);
                     return true;
                 }

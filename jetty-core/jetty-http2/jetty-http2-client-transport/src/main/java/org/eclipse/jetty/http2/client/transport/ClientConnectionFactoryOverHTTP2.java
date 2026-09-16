@@ -19,6 +19,7 @@ import java.nio.channels.ClosedChannelException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.client.Connection;
 import org.eclipse.jetty.client.Destination;
@@ -90,7 +91,7 @@ public class ClientConnectionFactoryOverHTTP2 extends ContainerLifeCycle impleme
                 return protocols;
             return protocols.stream()
                 .filter(Predicate.not("h2"::equals))
-                .toList();
+                .collect(Collectors.toList());
         }
 
         @Override

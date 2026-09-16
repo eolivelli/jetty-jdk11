@@ -153,14 +153,12 @@ public class ComplianceViolations2616Test
     public void testQualityCsvWithBadQuotesAllowedByCompliance() throws Exception
     {
         // Note the bad Accept-Language value.
-        String request = """
-            GET /dump/ HTTP/1.1\r
-            Host: local\r
-            Accept: */*\r
-            Accept-Language: 1'"6000\r
-            Connection: close\r
-            \r
-            """;
+        String request = "GET /dump/ HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Accept: */*\r\n" +
+            "Accept-Language: 1'\"6000\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
 
         String response = connector.getResponse(request);
         assertThat("Response status", response, containsString("HTTP/1.1 200 OK"));
@@ -176,14 +174,12 @@ public class ComplianceViolations2616Test
             httpConfig.setHttpCompliance(HttpCompliance.RFC9110);
 
             // Note the bad Accept-Language value.
-            String request = """
-                GET /dump/ HTTP/1.1\r
-                Host: local\r
-                Accept: */*\r
-                Accept-Language: 1'"6000\r
-                Connection: close\r
-                \r
-                """;
+            String request = "GET /dump/ HTTP/1.1\r\n" +
+                "Host: local\r\n" +
+                "Accept: */*\r\n" +
+                "Accept-Language: 1'\"6000\r\n" +
+                "Connection: close\r\n" +
+                "\r\n";
 
             String response = connector.getResponse(request);
             assertThat("Response status", response, containsString("HTTP/1.1 400 Bad Request"));
@@ -194,14 +190,12 @@ public class ComplianceViolations2616Test
     @Test
     public void testNoColonHeaderMiddle() throws Exception
     {
-        String request = """
-            GET /dump/ HTTP/1.1\r
-            Name\r
-            Host: local\r
-            Accept: */*\r
-            Connection: close\r
-            \r
-            """;
+        String request = "GET /dump/ HTTP/1.1\r\n" +
+            "Name\r\n" +
+            "Host: local\r\n" +
+            "Accept: */*\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
 
         String response = connector.getResponse(request);
         assertThat("Response status", response, containsString("HTTP/1.1 200 OK"));
@@ -212,14 +206,12 @@ public class ComplianceViolations2616Test
     @Test
     public void testNoColonHeaderEnd() throws Exception
     {
-        String request = """
-            GET /dump/ HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            Accept: */*\r
-            Name\r
-            \r
-            """;
+        String request = "GET /dump/ HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "Accept: */*\r\n" +
+            "Name\r\n" +
+            "\r\n";
 
         String response = connector.getResponse(request);
         assertThat("Response status", response, containsString("HTTP/1.1 200"));
@@ -230,15 +222,13 @@ public class ComplianceViolations2616Test
     @Test
     public void testFoldedHeader() throws Exception
     {
-        String request = """
-            GET /dump/ HTTP/1.1\r
-            Host: local\r
-            Name: Some\r
-             Value\r
-            Connection: close\r
-            Accept: */*\r
-            \r
-            """;
+        String request = "GET /dump/ HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Name: Some\r\n" +
+            " Value\r\n" +
+            "Connection: close\r\n" +
+            "Accept: */*\r\n" +
+            "\r\n";
 
         String response = connector.getResponse(request);
         assertThat("Response status", response, containsString("HTTP/1.1 200"));
@@ -249,12 +239,10 @@ public class ComplianceViolations2616Test
     @Test
     public void testAmbiguousSlash() throws Exception
     {
-        String request = """
-            GET /dump/foo//bar HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """;
+        String request = "GET /dump/foo//bar HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
 
         String response = connector.getResponse(request);
         assertThat(response, containsString("HTTP/1.1 400 Bad"));

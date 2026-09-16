@@ -90,11 +90,9 @@ public class EagerContentHandlerTest
 
         try (Socket socket = new Socket("localhost", _connector.getLocalPort()))
         {
-            String request = """
-                GET / HTTP/1.1\r
-                Host: localhost\r
-                \r
-                """;
+            String request = "GET / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "\r\n";
             OutputStream output = socket.getOutputStream();
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
@@ -151,13 +149,11 @@ public class EagerContentHandlerTest
 
         try (Socket socket = new Socket("localhost", _connector.getLocalPort()))
         {
-            String request = """
-                POST / HTTP/1.1\r
-                Host: localhost\r
-                Content-Length: 10\r
-                \r
-                0123456789\r
-                """;
+            String request = "POST / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Content-Length: 10\r\n" +
+                "\r\n" +
+                "0123456789\r\n";
             OutputStream output = socket.getOutputStream();
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
@@ -196,8 +192,7 @@ public class EagerContentHandlerTest
                 new Throwable().printStackTrace(new PrintStream(out));
                 String stack = out.toString(StandardCharsets.ISO_8859_1);
                 assertThat(stack, not(containsString("DemandContentCallback.succeeded")));
-                assertThat(stack, not(containsString("%s.%s".formatted(
-                    EagerContentHandler.RetainedContentLoaderFactory.RetainedContentLoader.class.getSimpleName(),
+                assertThat(stack, not(containsString(String.format("%s.%s", EagerContentHandler.RetainedContentLoaderFactory.RetainedContentLoader.class.getSimpleName(),
                     EagerContentHandler.RetainedContentLoaderFactory.RetainedContentLoader.class.getDeclaredMethod("run").getName()))));
 
                 processing.countDown();
@@ -208,12 +203,10 @@ public class EagerContentHandlerTest
 
         try (Socket socket = new Socket("localhost", _connector.getLocalPort()))
         {
-            String request = """
-                POST / HTTP/1.1\r
-                Host: localhost\r
-                Content-Length: 10\r
-                \r
-                """;
+            String request = "POST / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Content-Length: 10\r\n" +
+                "\r\n";
             OutputStream output = socket.getOutputStream();
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
@@ -253,8 +246,7 @@ public class EagerContentHandlerTest
                 new Throwable().printStackTrace(new PrintStream(out));
                 String stack = out.toString(StandardCharsets.ISO_8859_1);
                 assertThat(stack, not(containsString("DemandContentCallback.succeeded")));
-                assertThat(stack, not(containsString("%s.%s".formatted(
-                    EagerContentHandler.RetainedContentLoaderFactory.RetainedContentLoader.class.getSimpleName(),
+                assertThat(stack, not(containsString(String.format("%s.%s", EagerContentHandler.RetainedContentLoaderFactory.RetainedContentLoader.class.getSimpleName(),
                     EagerContentHandler.RetainedContentLoaderFactory.RetainedContentLoader.class.getDeclaredMethod("run").getName()))));
 
                 // Check content
@@ -275,12 +267,10 @@ public class EagerContentHandlerTest
 
         try (Socket socket = new Socket("localhost", _connector.getLocalPort()))
         {
-            String request = """
-                POST / HTTP/1.1\r
-                Host: localhost\r
-                Content-Length: 10\r
-                \r
-                """;
+            String request = "POST / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Content-Length: 10\r\n" +
+                "\r\n";
             OutputStream output = socket.getOutputStream();
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
@@ -334,13 +324,11 @@ public class EagerContentHandlerTest
 
         try (Socket socket = new Socket("localhost", _connector.getLocalPort()))
         {
-            String request = """
-                POST / HTTP/1.1\r
-                Host: localhost\r
-                Content-Length: 10\r
-                \r
-                1234567890\r
-                """;
+            String request = "POST / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Content-Length: 10\r\n" +
+                "\r\n" +
+                "1234567890\r\n";
             OutputStream output = socket.getOutputStream();
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
@@ -382,20 +370,18 @@ public class EagerContentHandlerTest
 
         try (Socket socket = new Socket("localhost", _connector.getLocalPort()))
         {
-            String request = """
-                POST / HTTP/1.1\r
-                Host: localhost\r
-                Transfer-Encoding: chunked\r
-                \r
-                3\r
-                123\r
-                4\r
-                4567\r
-                3\r
-                890\r
-                0\r
-                \r
-                """;
+            String request = "POST / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Transfer-Encoding: chunked\r\n" +
+                "\r\n" +
+                "3\r\n" +
+                "123\r\n" +
+                "4\r\n" +
+                "4567\r\n" +
+                "3\r\n" +
+                "890\r\n" +
+                "0\r\n" +
+                "\r\n";
             OutputStream output = socket.getOutputStream();
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
@@ -448,11 +434,9 @@ public class EagerContentHandlerTest
 
         try (Socket socket = new Socket("localhost", _connector.getLocalPort()))
         {
-            String request = """
-                GET / HTTP/1.1\r
-                Host: localhost\r
-                \r
-                """;
+            String request = "GET / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "\r\n";
             OutputStream output = socket.getOutputStream();
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
@@ -490,11 +474,9 @@ public class EagerContentHandlerTest
         {
             OutputStream output = socket.getOutputStream();
 
-            output.write("""
-                GET / HTTP/1.1
-                Host: localhost
-                
-                """.getBytes(StandardCharsets.UTF_8));
+            output.write(("GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "\n").getBytes(StandardCharsets.UTF_8));
             output.flush();
 
             Awaitility.await().atMost(5, TimeUnit.SECONDS).until(processing::getCount, equalTo(1L));
@@ -505,13 +487,11 @@ public class EagerContentHandlerTest
             String content = new String(response.getContentBytes(), StandardCharsets.UTF_8);
             assertThat(content, containsString("[]"));
 
-            output.write("""
-                POST / HTTP/1.1
-                Host: localhost
-                Content-Type: %s
-                Content-Length: 22
-                
-                """.formatted(MimeTypes.Type.FORM_ENCODED).getBytes(StandardCharsets.UTF_8));
+            output.write(String.format("POST / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Content-Type: %s\n" +
+                "Content-Length: 22\n" +
+                "\n", MimeTypes.Type.FORM_ENCODED).getBytes(StandardCharsets.UTF_8));
             output.flush();
             assertFalse(processing.await(100, TimeUnit.MILLISECONDS));
 
@@ -586,14 +566,12 @@ public class EagerContentHandlerTest
         // Test when the content-length is known so the failure is triggered directly from EagerContentHandler.
         try (Socket socket = new Socket("localhost", _connector.getLocalPort()))
         {
-            String request = """
-                POST /foo HTTP/1.1\r
-                Host: localhost\r
-                Content-Type: application/x-www-form-urlencoded\r
-                Content-Length: 27\r
-                \r
-                param1=value1&param2=value2\
-                """;
+            String request = "POST /foo HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Content-Type: application/x-www-form-urlencoded\r\n" +
+                "Content-Length: 27\r\n" +
+                "\r\n" +
+                "param1=value1&param2=value2";
             OutputStream output = socket.getOutputStream();
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
@@ -613,15 +591,13 @@ public class EagerContentHandlerTest
         try (Socket socket = new Socket("localhost", _connector.getLocalPort()))
         {
             // Write the first request content which does not exceed the form limits.
-            String request = """
-                POST /foo HTTP/1.1\r
-                Host: localhost\r
-                Content-Type: application/x-www-form-urlencoded\r
-                Transfer-Encoding: chunked\r
-                \r
-                D\r
-                param1=value1\r
-                """;
+            String request = "POST /foo HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Content-Type: application/x-www-form-urlencoded\r\n" +
+                "Transfer-Encoding: chunked\r\n" +
+                "\r\n" +
+                "D\r\n" +
+                "param1=value1\r\n";
             OutputStream output = socket.getOutputStream();
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
@@ -630,12 +606,10 @@ public class EagerContentHandlerTest
             assertTrue(processing.await(5, TimeUnit.SECONDS));
 
             // Write remaining form content which exceeds the limit.
-            String requestContinued = """
-                E\r
-                &param2=value2\r
-                0\r
-                \r
-                """;
+            String requestContinued = "E\r\n" +
+                "&param2=value2\r\n" +
+                "0\r\n" +
+                "\r\n";
             output.write(requestContinued.getBytes(StandardCharsets.UTF_8));
             output.flush();
 
@@ -697,20 +671,16 @@ public class EagerContentHandlerTest
         try (Socket socket = new Socket("localhost", _connector.getLocalPort()))
         {
             StringBuilder request = new StringBuilder();
-            request.append("""
-                POST /foo HTTP/1.1\r
-                Host: localhost\r
-                """);
+            request.append("POST /foo HTTP/1.1\r\n" +
+                "Host: localhost\r\n");
             if (maxFormFields != -1)
                 request.append(FormFields.MAX_FIELDS_ATTRIBUTE).append(": ").append(maxFormFields).append("\r\n");
             if (maxFormLength != -1)
                 request.append(FormFields.MAX_LENGTH_ATTRIBUTE).append(": ").append(maxFormLength).append("\r\n");
-            request.append("""
-                Content-Type: application/x-www-form-urlencoded\r
-                Content-Length: 27\r
-                \r
-                param1=value1&param2=value2\
-                """);
+            request.append("Content-Type: application/x-www-form-urlencoded\r\n" +
+                "Content-Length: 27\r\n" +
+                "\r\n" +
+                "param1=value1&param2=value2");
             OutputStream output = socket.getOutputStream();
             output.write(request.toString().getBytes(StandardCharsets.UTF_8));
             output.flush();
@@ -748,14 +718,12 @@ public class EagerContentHandlerTest
         {
             OutputStream output = socket.getOutputStream();
 
-            output.write("""
-                POST / HTTP/1.1
-                Host: localhost
-                Content-Type: %s
-                Content-Length: 22
-                
-                name=value&x=1&x=2&x=3
-                """.formatted(MimeTypes.Type.FORM_ENCODED).getBytes(StandardCharsets.UTF_8));
+            output.write(String.format("POST / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Content-Type: %s\n" +
+                "Content-Length: 22\n" +
+                "\n" +
+                "name=value&x=1&x=2&x=3\n", MimeTypes.Type.FORM_ENCODED).getBytes(StandardCharsets.UTF_8));
             output.flush();
 
             HttpTester.Input input = HttpTester.from(socket.getInputStream());
@@ -799,28 +767,24 @@ public class EagerContentHandlerTest
 
         try (Socket socket = new Socket("localhost", _connector.getLocalPort()))
         {
-            String requestContent = """
-                --jettyBoundary123\r
-                Content-Disposition: form-data; name="part0"\r
-                \r
-                This is the content of Part0\r
-                --jettyBoundary123\r
-                Content-Disposition: form-data; name="part1"\r
-                \r
-                This is the content of Part1\r
-                --jettyBoundary123\r
-                Content-Disposition: form-data; name="part2"\r
-                \r
-                This is the content of Part2\r
-                --jettyBoundary123--\r
-                """;
-            String requestHeaders = String.format("""
-                POST / HTTP/1.1\r
-                Host: localhost\r
-                Content-Type: multipart/form-data; boundary=jettyBoundary123\r
-                Content-Length: %s\r
-                \r
-                """, requestContent.getBytes(StandardCharsets.UTF_8).length);
+            String requestContent = "--jettyBoundary123\r\n" +
+                "Content-Disposition: form-data; name=\"part0\"\r\n" +
+                "\r\n" +
+                "This is the content of Part0\r\n" +
+                "--jettyBoundary123\r\n" +
+                "Content-Disposition: form-data; name=\"part1\"\r\n" +
+                "\r\n" +
+                "This is the content of Part1\r\n" +
+                "--jettyBoundary123\r\n" +
+                "Content-Disposition: form-data; name=\"part2\"\r\n" +
+                "\r\n" +
+                "This is the content of Part2\r\n" +
+                "--jettyBoundary123--\r\n";
+            String requestHeaders = String.format("POST / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Content-Type: multipart/form-data; boundary=jettyBoundary123\r\n" +
+                "Content-Length: %s\r\n" +
+                "\r\n", requestContent.getBytes(StandardCharsets.UTF_8).length);
             OutputStream output = socket.getOutputStream();
             output.write((requestHeaders + requestContent).getBytes(StandardCharsets.UTF_8));
             output.flush();

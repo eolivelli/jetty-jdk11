@@ -105,12 +105,10 @@ public class RequestListenersTest
             }
         });
 
-        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("""
-            GET / HTTP/1.1
-            Host: localhost
-            Connection: close
-                            
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Connection: close\n" +
+            "\n"));
 
         assertEquals(HttpStatus.OK_200, response.getStatus());
         await().atMost(5, TimeUnit.SECONDS).until(() -> history, contains("zero", "one", "two", "three", "four"));
@@ -148,11 +146,9 @@ public class RequestListenersTest
         long idleTimeout = 1000;
         connector.setIdleTimeout(idleTimeout);
 
-        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("""
-            GET /path HTTP/1.0
-            Host: localhost
-                        
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("GET /path HTTP/1.0\n" +
+            "Host: localhost\n" +
+            "\n"));
 
         assertTrue(latch.await(2 * idleTimeout, TimeUnit.MILLISECONDS));
         assertThat(response.getStatus(), is(HttpStatus.INTERNAL_SERVER_ERROR_500));
@@ -185,13 +181,11 @@ public class RequestListenersTest
         long idleTimeout = 1000;
         connector.setIdleTimeout(idleTimeout);
 
-        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("""
-            POST / HTTP/1.1
-            Host: localhost
-            Content-Length: 1
-            Connection: close
-                            
-            """, 2 * idleTimeout, TimeUnit.MILLISECONDS));
+        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("POST / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Content-Length: 1\n" +
+            "Connection: close\n" +
+            "\n", 2 * idleTimeout, TimeUnit.MILLISECONDS));
 
         int expectedStatus = succeedCallback ? HttpStatus.OK_200 : HttpStatus.INTERNAL_SERVER_ERROR_500;
         assertEquals(expectedStatus, response.getStatus());
@@ -232,12 +226,10 @@ public class RequestListenersTest
         long idleTimeout = 1000;
         connector.setIdleTimeout(idleTimeout);
 
-        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("""
-            POST / HTTP/1.1
-            Host: localhost
-            Content-Length: 1
-                            
-            """, 2 * idleTimeout, TimeUnit.MILLISECONDS));
+        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("POST / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Content-Length: 1\n" +
+            "\n", 2 * idleTimeout, TimeUnit.MILLISECONDS));
 
         int expectedStatus = succeedCallback ? HttpStatus.OK_200 : HttpStatus.INTERNAL_SERVER_ERROR_500;
         assertEquals(expectedStatus, response.getStatus());
@@ -267,12 +259,10 @@ public class RequestListenersTest
         long idleTimeout = 500;
         connector.setIdleTimeout(idleTimeout);
 
-        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("""
-            GET / HTTP/1.1
-            Host: localhost
-            Connection: close
-                            
-            """, 3 * idleTimeout, TimeUnit.MILLISECONDS));
+        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Connection: close\n" +
+            "\n", 3 * idleTimeout, TimeUnit.MILLISECONDS));
 
         assertEquals(HttpStatus.OK_200, response.getStatus());
         assertThat(idleTimeouts.get(), greaterThan(1));
@@ -300,13 +290,11 @@ public class RequestListenersTest
         long idleTimeout = 1000;
         connector.setIdleTimeout(idleTimeout);
 
-        try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest("""
-            POST / HTTP/1.1
-            Host: localhost
-            Content-Length: 1
-            Connection: close
-                            
-            """))
+        try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest("POST / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Content-Length: 1\n" +
+            "Connection: close\n" +
+            "\n"))
         {
 
             // Get the callback as promised by the error listener.
@@ -338,13 +326,11 @@ public class RequestListenersTest
         long idleTimeout = 1000;
         connector.setIdleTimeout(idleTimeout);
 
-        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("""
-            POST / HTTP/1.1
-            Host: localhost
-            Content-Length: 1
-            Connection: close
-                            
-            """, 3 * idleTimeout, TimeUnit.MILLISECONDS));
+        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("POST / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Content-Length: 1\n" +
+            "Connection: close\n" +
+            "\n", 3 * idleTimeout, TimeUnit.MILLISECONDS));
 
         // The first time the listener returns false, but does not
         // complete the callback, so another idle timeout elapses.
@@ -371,12 +357,10 @@ public class RequestListenersTest
         long idleTimeout = 1000;
         connector.setIdleTimeout(idleTimeout);
 
-        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("""
-            GET / HTTP/1.1
-            Host: localhost
-            Connection: close
-                        
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Connection: close\n" +
+            "\n"));
         assertThat(response.getStatus(), is(HttpStatus.INTERNAL_SERVER_ERROR_500));
         assertThat(response.getContent(), containsString("HTTP ERROR 500 java.util.concurrent.TimeoutException: Idle timeout expired:"));
     }
@@ -399,13 +383,11 @@ public class RequestListenersTest
         long idleTimeout = 1000;
         connector.setIdleTimeout(idleTimeout);
 
-        try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest("""
-            POST / HTTP/1.1
-            Host: localhost
-            Content-Length: 1
-            Connection: close
-                        
-            """))
+        try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest("POST / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Content-Length: 1\n" +
+            "Connection: close\n" +
+            "\n"))
         {
 
             Callback callback = callbackCompletable.get(5 * idleTimeout, TimeUnit.MILLISECONDS);
@@ -453,13 +435,11 @@ public class RequestListenersTest
         // Do not grow the output so the response will be congested.
         try (LocalConnector.LocalEndPoint endPoint = connector.connect(1024))
         {
-            endPoint.addInputAndExecute("""
-                POST / HTTP/1.1
-                Host: localhost
-                Content-Length: 1
-                Connection: close
-                            
-                """);
+            endPoint.addInputAndExecute("POST / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Content-Length: 1\n" +
+                "Connection: close\n" +
+                "\n");
 
             Callback callback = writeFailed.get(5 * idleTimeout, TimeUnit.MILLISECONDS);
 

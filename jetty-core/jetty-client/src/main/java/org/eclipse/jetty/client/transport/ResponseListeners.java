@@ -719,7 +719,7 @@ public class ResponseListeners
             @Override
             public String toString()
             {
-                return "%s@%x[i=%d,d=%s,c=%s,s=%s]".formatted(TypeUtil.toShortName(getClass()), hashCode(), index, demandCallbackRef, chunk, state);
+                return String.format("%s@%x[i=%d,d=%s,c=%s,s=%s]", TypeUtil.toShortName(getClass()), hashCode(), index, demandCallbackRef, chunk, state);
             }
         }
 

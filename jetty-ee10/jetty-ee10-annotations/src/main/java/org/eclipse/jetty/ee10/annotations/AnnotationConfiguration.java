@@ -30,6 +30,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import jakarta.servlet.ServletContainerInitializer;
@@ -867,7 +868,7 @@ public class AnnotationConfiguration extends AbstractConfiguration
                     LOG.info("Error: {} for {}", e.getMessage(), state._context);
                 return Stream.of();
             }
-        }).toList();
+        }).collect(Collectors.toList());
 
         if (LOG.isDebugEnabled())
             LOG.debug("Service loaders found in {}ms", NanoTime.millisSince(start));

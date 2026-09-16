@@ -854,15 +854,14 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
                         {
                             envName = getDefaultEnvironmentName();
                             if (envName == null)
-                                throw new IllegalStateException("Unable to deploy %s to unknown environment".formatted(app.getName()));
+                                throw new IllegalStateException(String.format("Unable to deploy %s to unknown environment", app.getName()));
                             if (LOG.isDebugEnabled())
                                 LOG.debug("Using default environment {} to deploy app {}", envName, app.getName());
                         }
                         Environment env = Environment.get(envName);
 
                         if (env == null || !enabledEnvironments.contains(envName))
-                            throw new IllegalStateException("Unable to deploy %s to environment %s. Available environments: %s"
-                                .formatted(app.name, envName, enabledEnvironments));
+                            throw new IllegalStateException(String.format("Unable to deploy %s to environment %s. Available environments: %s", app.name, envName, enabledEnvironments));
 
                         // Create a new Attributes layer for the app deployment, which is the
                         // combination of layered Environment Attributes with app Attributes overlaying them.
@@ -899,15 +898,14 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
                         {
                             envName = getDefaultEnvironmentName();
                             if (envName == null)
-                                throw new IllegalStateException("Unable to redeploy %s to unknown environment".formatted(app.getName()));
+                                throw new IllegalStateException(String.format("Unable to redeploy %s to unknown environment", app.getName()));
                             if (LOG.isDebugEnabled())
                                 LOG.debug("Using default environment {} to redeploy app {}", envName, app.getName());
                         }
                         Environment env = Environment.get(envName);
 
                         if (env == null || !enabledEnvironments.contains(envName))
-                            throw new IllegalStateException("Unable to redeploy %s to environment %s. Available environments: %s"
-                                .formatted(app.name, envName, enabledEnvironments));
+                            throw new IllegalStateException(String.format("Unable to redeploy %s to environment %s. Available environments: %s", app.name, envName, enabledEnvironments));
 
                         // Create a new Attributes layer for the app deployment, which is the
                         // combination of layered Environment Attributes with app Attributes overlaying them.
@@ -1458,7 +1456,7 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
         {
             List<Path> hits = paths.stream()
                 .filter(predicate)
-                .toList();
+                .collect(Collectors.toList());
             if (hits.size() == 1)
                 return hits.get(0);
             else if (hits.size() > 1)
@@ -1475,7 +1473,7 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
                 .filter((e) -> e.getValue() != PathsApp.State.REMOVED)
                 .map(Map.Entry::getKey)
                 .sorted(PathCollators.byName(true))
-                .toList();
+                .collect(Collectors.toList());
 
             if (livePaths.isEmpty())
                 return null;
@@ -1561,7 +1559,7 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
                 .filter(Files::isRegularFile)
                 .filter(p -> p.getFileName().toString().equalsIgnoreCase(propFilename))
                 .sorted(PathCollators.byName(true))
-                .toList();
+                .collect(Collectors.toList());
 
             if (propFiles.isEmpty())
             {
@@ -1614,7 +1612,7 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
             List<Path> removedPaths = paths.entrySet()
                 .stream().filter(e -> e.getValue() == PathsApp.State.REMOVED)
                 .map(Map.Entry::getKey)
-                .toList();
+                .collect(Collectors.toList());
             for (Path removedPath : removedPaths)
             {
                 paths.remove(removedPath);
@@ -1685,7 +1683,7 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
         @Override
         public String toString()
         {
-            StringBuilder str = new StringBuilder("%s@%x".formatted(TypeUtil.toShortName(this.getClass()), hashCode()));
+            StringBuilder str = new StringBuilder(String.format("%s@%x", TypeUtil.toShortName(this.getClass()), hashCode()));
             str.append("[").append(name);
             str.append("|").append(getState());
             str.append(", env=").append(getEnvironmentName());

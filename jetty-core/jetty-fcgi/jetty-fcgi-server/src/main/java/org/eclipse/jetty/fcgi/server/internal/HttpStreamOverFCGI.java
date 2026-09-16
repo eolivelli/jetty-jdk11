@@ -380,6 +380,6 @@ public class HttpStreamOverFCGI implements HttpStream
     @Override
     public String toString()
     {
-        return "%s@%x".formatted(TypeUtil.toShortName(getClass()), hashCode());
+        return String.format("%s@%x", TypeUtil.toShortName(getClass()), hashCode());
     }
 }

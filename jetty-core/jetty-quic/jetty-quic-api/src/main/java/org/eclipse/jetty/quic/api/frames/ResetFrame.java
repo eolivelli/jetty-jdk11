@@ -38,10 +38,8 @@ public class ResetFrame extends Frame.WithStreamId
     @Override
     public String toString()
     {
-        return "%s[appError=%d,finalSize=%d]".formatted(
-            super.toString(),
+        return String.format("%s[appError=%d,finalSize=%d]", super.toString(),
             getApplicationErrorCode(),
-            getFinalSize()
-        );
+            getFinalSize());
     }
 }

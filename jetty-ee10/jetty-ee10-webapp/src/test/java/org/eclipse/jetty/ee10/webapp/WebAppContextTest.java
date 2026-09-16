@@ -231,13 +231,12 @@ public class WebAppContextTest
 
         try (StacklessLogging stackless = new StacklessLogging(ServletChannel.class))
         {
-            String rawRequest = """
-                POST / HTTP/1.1\r
-                Host: test\r
-                Connection: close\r
-                Content-Length: 10\r
-                \r
-                01234""";
+            String rawRequest = "POST / HTTP/1.1\r\n" +
+                "Host: test\r\n" +
+                "Connection: close\r\n" +
+                "Content-Length: 10\r\n" +
+                "\r\n" +
+                "01234";
 
             LocalConnector.LocalEndPoint endPoint = connector.connect();
             endPoint.addInputAndExecute(rawRequest);
@@ -274,12 +273,10 @@ public class WebAppContextTest
 
         try (StacklessLogging stackless = new StacklessLogging(ServletChannel.class))
         {
-            String rawRequest = """
-                GET /foo/WEB-INF/classes/this/does/not/exist HTTP/1.1\r
-                Host: test\r
-                Connection: close\r
-                \r
-                """;
+            String rawRequest = "GET /foo/WEB-INF/classes/this/does/not/exist HTTP/1.1\r\n" +
+                "Host: test\r\n" +
+                "Connection: close\r\n" +
+                "\r\n";
 
             String rawResponse = connector.getResponse(rawRequest);
 
@@ -589,12 +586,10 @@ public class WebAppContextTest
         server.start();
 
         assertThat(HttpTester.parseResponse(connector.getResponse(
-                """
-                    GET %s HTTP/1.1\r
-                    Host: localhost:8080\r
-                    Connection: close\r
-                    \r
-                    """.formatted(path))).getStatus(),
+                String.format("GET %s HTTP/1.1\r\n" +
+                    "Host: localhost:8080\r\n" +
+                    "Connection: close\r\n" +
+                    "\r\n", path))).getStatus(),
             Matchers.anyOf(is(HttpStatus.BAD_REQUEST_400)));
     }
 
@@ -616,12 +611,10 @@ public class WebAppContextTest
 
         server.start();
 
-        String rawResponse = connector.getResponse("""
-            GET http://localhost:8080 HTTP/1.1\r
-            Host: localhost:8080\r
-            Connection: close\r
-            \r
-            """);
+        String rawResponse = connector.getResponse("GET http://localhost:8080 HTTP/1.1\r\n" +
+            "Host: localhost:8080\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
     }
@@ -895,12 +888,10 @@ public class WebAppContextTest
         URL url = servletContext.getResource(resource);
         assertThat(url.toString(), endsWith(expected));
 
-        HttpTester.Response response1 = HttpTester.parseResponse(connector.getResponse("""
-            GET /resource?r=%s HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """.formatted(resource)));
+        HttpTester.Response response1 = HttpTester.parseResponse(connector.getResponse(String.format("GET /resource?r=%s HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n", resource)));
 
         assertThat(response1.getStatus(), is(HttpStatus.OK_200));
         assertThat(response1.getContent(), containsString("url=" + url));
@@ -942,12 +933,10 @@ public class WebAppContextTest
         // TODO the following assertion fails because of a bug in the JDK (see JDK-8311079 and MountedPathResourceTest.testJarFileResourceAccessBackSlash())
         //assertThat(servletContext.getResource("/nested-reserved-!#\\\\$%&()*+,:=?@[]-meta-inf-resource.txt"), notNullValue());
 
-        HttpTester.Response response1 = HttpTester.parseResponse(connector.getResponse("""
-            GET /resources HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """));
+        HttpTester.Response response1 = HttpTester.parseResponse(connector.getResponse("GET /resources HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n"));
 
         assertThat(response1.getStatus(), is(HttpStatus.OK_200));
         assertThat(response1.getContent(), containsString("/WEB-INF"));
@@ -955,12 +944,10 @@ public class WebAppContextTest
         assertThat(response1.getContent(), containsString("/WEB-INF/lib/odd-resource.jar"));
         assertThat(response1.getContent(), containsString("/nested-reserved-!#\\\\$%&()*+,:=?@[]-meta-inf-resource.txt"));
 
-        HttpTester.Response response2 = HttpTester.parseResponse(connector.getResponse("""
-            GET /real HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """));
+        HttpTester.Response response2 = HttpTester.parseResponse(connector.getResponse("GET /real HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n"));
 
         assertThat(response2.getStatus(), is(HttpStatus.OK_200));
         assertThat(response2.getContent(), containsString("/WEB-INF"));
@@ -1034,7 +1021,7 @@ public class WebAppContextTest
         List<URI> actualURIs = Stream.of(webAppClassLoader.getURLs())
             .map(WebAppContextTest::toURI)
             .filter(notInTempDirectory(context))
-            .toList();
+            .collect(Collectors.toList());
 
         assertThat("[" + description + "] WebAppClassLoader.urls.length", actualURIs.size(), is(expectedUris.size()));
 
@@ -1099,7 +1086,7 @@ public class WebAppContextTest
         List<URI> urls = Stream.of(webAppClassLoader.getURLs())
             .map(WebAppContextTest::toURI)
             .filter(notInTempDirectory(context))
-            .toList();
+            .collect(Collectors.toList());
         assertThat("URLs", urls.size(), is(1));
         Path extLibs = MavenPaths.findTestResourceDir("ext");
         extLibs = extLibs.toAbsolutePath();

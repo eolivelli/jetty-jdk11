@@ -73,16 +73,15 @@ public class ReloadedSessionMissingClassTest
         webInfDir.mkdir();
 
         File webXml = new File(webInfDir, "web.xml");
-        String xml = """
-            <web-app
-                xmlns="https://jakarta.ee/xml/ns/jakartaee"
-                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
-                version="6.0">
-              <session-config>
-                <session-timeout>1</session-timeout>
-              </session-config>
-            </web-app>""";
+        String xml = "<web-app\n" +
+            "    xmlns=\"https://jakarta.ee/xml/ns/jakartaee\"\n" +
+            "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+            "    xsi:schemaLocation=\"https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd\"\n" +
+            "    version=\"6.0\">\n" +
+            "  <session-config>\n" +
+            "    <session-timeout>1</session-timeout>\n" +
+            "  </session-config>\n" +
+            "</web-app>";
         FileWriter w = new FileWriter(webXml);
         w.write(xml);
         w.close();

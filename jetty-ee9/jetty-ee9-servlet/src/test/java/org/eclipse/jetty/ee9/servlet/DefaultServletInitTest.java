@@ -82,7 +82,7 @@ public class DefaultServletInitTest
         @Override
         public String toString()
         {
-            return "ContextInit[%s=%s]".formatted(key, value);
+            return String.format("ContextInit[%s=%s]", key, value);
         }
     }
 
@@ -106,7 +106,7 @@ public class DefaultServletInitTest
         @Override
         public String toString()
         {
-            return "HolderInit[%s=%s]".formatted(key, value);
+            return String.format("HolderInit[%s=%s]", key, value);
         }
     }
 
@@ -164,12 +164,10 @@ public class DefaultServletInitTest
 
         startServer(contextHandler);
 
-        String rawRequest = """
-            GET / HTTP/1.1
-            Host: test
-            Connection: close
-                        
-            """;
+        String rawRequest = "GET / HTTP/1.1\n" +
+            "Host: test\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(localConnector.getResponse(rawRequest));
         assertThat(response.getStatus(), is(200));

@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.jetty.toolchain.test.FS;
@@ -493,7 +494,7 @@ public class ResourceFactoryTest
             String config = String.join(separators, dirs);
 
             // Split using one of the default separators
-            List<URI> uris = resourceFactory.split(config).stream().map(Resource::getURI).toList();
+            List<URI> uris = resourceFactory.split(config).stream().map(Resource::getURI).collect(Collectors.toList());
 
             URI[] expected = new URI[]{
                 dir.toUri(),
@@ -527,7 +528,7 @@ public class ResourceFactoryTest
             ));
 
             // Split using commas
-            List<URI> uris = resourceFactory.split(config, File.pathSeparator, false).stream().map(Resource::getURI).toList();
+            List<URI> uris = resourceFactory.split(config, File.pathSeparator, false).stream().map(Resource::getURI).collect(Collectors.toList());
 
             URI[] expected = new URI[]{
                 dir.toUri(),
@@ -548,7 +549,7 @@ public class ResourceFactoryTest
         try (ResourceFactory.Closeable resourceFactory = ResourceFactory.closeable())
         {
             // TIP: don't allow raw delim to show up in base dir, otherwise the string split later will be wrong.
-            Path base = MavenPaths.targetTestDir("testSplitOnPipeWithGlob_%02x".formatted((byte)delimChar.charAt(0)));
+            Path base = MavenPaths.targetTestDir(String.format("testSplitOnPipeWithGlob_%02x", (byte)delimChar.charAt(0)));
             FS.ensureEmpty(base);
             Path dir = base.resolve("dir");
             FS.ensureDirExists(dir);
@@ -567,7 +568,7 @@ public class ResourceFactoryTest
             ));
 
             // Split using commas
-            List<URI> uris = resourceFactory.split(config).stream().map(Resource::getURI).toList();
+            List<URI> uris = resourceFactory.split(config).stream().map(Resource::getURI).collect(Collectors.toList());
 
             URI[] expected = new URI[]{
                 dir.toUri(),

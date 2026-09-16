@@ -72,7 +72,7 @@ public class ErrorCode
     @Override
     public String toString()
     {
-        return "%s[0x%x]".formatted(getClass().getSimpleName(), code);
+        return String.format("%s[0x%x]", getClass().getSimpleName(), code);
     }
 
     private static boolean isCrypto(long code)

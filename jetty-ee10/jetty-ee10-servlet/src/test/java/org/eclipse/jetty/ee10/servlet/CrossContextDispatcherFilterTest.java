@@ -132,12 +132,10 @@ public class CrossContextDispatcherFilterTest
 
         startServer(contextHandlerCollection);
 
-        String rawRequest = """
-            GET /group/formal.hello HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /group/formal.hello HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(rawRequest));
         assertThat(response.getStatus(), is(200));
         assertThat(response.getContent(), containsString("Reached Service context"));
@@ -261,12 +259,10 @@ public class CrossContextDispatcherFilterTest
 
         startServer(contextHandlerCollection);
 
-        String rawRequest = """
-            GET /group/formal.hello HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /group/formal.hello HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(rawRequest));
         assertThat(response.getStatus(), is(200));
         assertThat(response.getContent(), containsString("Reached Service context"));

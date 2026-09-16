@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.client.ContentResponse;
 import org.eclipse.jetty.client.HttpClient;
@@ -308,7 +309,7 @@ public class DeploymentErrorTest
         return deployer.getContexts().getHandlers().stream()
             .filter(h -> (h instanceof ContextHandler))
             .map(ContextHandler.class::cast)
-            .toList();
+            .collect(Collectors.toList());
     }
 
     private ContextHandler findContext(String contextPath, List<ContextHandler> apps)

@@ -50,33 +50,27 @@ public class HandlerBenchmark
     static Server _server = new Server();
     static ServerConnector _connector = new ServerConnector(_server);
 
-    static final byte[] GET = """
-                    GET /ctx/path HTTP/1.1\r
-                    Host: localhost\r
-                    X-Forwarded-For: 192.168.0.1\r
-                    \r
-                    """.getBytes(StandardCharsets.ISO_8859_1);
+    static final byte[] GET = ("GET /ctx/path HTTP/1.1\r\n" +
+        "Host: localhost\r\n" +
+        "X-Forwarded-For: 192.168.0.1\r\n" +
+        "\r\n").getBytes(StandardCharsets.ISO_8859_1);
 
-    static final byte[] POST = """
-                    POST /ctx/path HTTP/1.1\r
-                    Host: localhost\r
-                    Content-Length: 16\r
-                    Content-Type: text/plain; charset=iso-8859-1\r
-                    X-Forwarded-For: 192.168.0.1\r
-                    \r
-                    ECHO Echo echo\r
-                    """.getBytes(StandardCharsets.ISO_8859_1);
+    static final byte[] POST = ("POST /ctx/path HTTP/1.1\r\n" +
+        "Host: localhost\r\n" +
+        "Content-Length: 16\r\n" +
+        "Content-Type: text/plain; charset=iso-8859-1\r\n" +
+        "X-Forwarded-For: 192.168.0.1\r\n" +
+        "\r\n" +
+        "ECHO Echo echo\r\n").getBytes(StandardCharsets.ISO_8859_1);
 
-    static final byte[] POST_CLOSE = """
-                    POST /ctx/path HTTP/1.1\r
-                    Host: localhost\r
-                    Content-Length: 16\r
-                    Content-Type: text/plain; charset=iso-8859-1\r
-                    X-Forwarded-For: 192.168.0.1\r
-                    Connection: close\r
-                    \r
-                    ECHO Echo echo\r
-                    """.getBytes(StandardCharsets.ISO_8859_1);
+    static final byte[] POST_CLOSE = ("POST /ctx/path HTTP/1.1\r\n" +
+        "Host: localhost\r\n" +
+        "Content-Length: 16\r\n" +
+        "Content-Type: text/plain; charset=iso-8859-1\r\n" +
+        "X-Forwarded-For: 192.168.0.1\r\n" +
+        "Connection: close\r\n" +
+        "\r\n" +
+        "ECHO Echo echo\r\n").getBytes(StandardCharsets.ISO_8859_1);
 
     @Setup(Level.Trial)
     public static void setupServer() throws Exception

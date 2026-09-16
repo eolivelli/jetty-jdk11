@@ -52,6 +52,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.net.ssl.CertPathTrustManagerParameters;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
@@ -2398,7 +2399,7 @@ public abstract class SslContextFactory extends ContainerLifeCycle implements Du
                 // Match the SNI host.
                 List<X509> matching = certificates.stream()
                     .filter(x509 -> x509.matches(sniHost))
-                    .toList();
+                    .collect(Collectors.toList());
 
                 if (matching.isEmpty())
                 {

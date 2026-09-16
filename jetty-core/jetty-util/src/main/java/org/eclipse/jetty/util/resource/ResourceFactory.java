@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.util.FileID;
 import org.eclipse.jetty.util.StringUtil;
@@ -498,7 +499,7 @@ public interface ResourceFactory
         if ((uris == null) || (uris.isEmpty()))
             throw new IllegalArgumentException("List of URIs is invalid");
 
-        return combine(uris.stream().map(this::newResource).toList());
+        return combine(uris.stream().map(this::newResource).collect(Collectors.toList()));
     }
 
     /**
@@ -596,7 +597,7 @@ public interface ResourceFactory
         if (obj instanceof Resource res)
             return res;
 
-        throw new IllegalArgumentException("Cannot convert %s to a Resource".formatted(obj.getClass().getName()));
+        throw new IllegalArgumentException(String.format("Cannot convert %s to a Resource", obj.getClass().getName()));
     }
 
     /**

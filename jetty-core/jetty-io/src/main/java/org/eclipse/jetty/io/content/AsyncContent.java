@@ -349,13 +349,11 @@ public class AsyncContent implements Content.Sink, Content.Source, Closeable
         @Override
         public String toString()
         {
-            return "%s@%x[rc=%s,l=%b,b=%s]".formatted(
-                TypeUtil.toShortName(getClass()),
+            return String.format("%s@%x[rc=%s,l=%b,b=%s]", TypeUtil.toShortName(getClass()),
                 hashCode(),
                 referenceCounter == null ? "-" : referenceCounter.get(),
                 isLast(),
-                BufferUtil.toDetailString(getByteBuffer())
-            );
+                BufferUtil.toDetailString(getByteBuffer()));
         }
     }
 }

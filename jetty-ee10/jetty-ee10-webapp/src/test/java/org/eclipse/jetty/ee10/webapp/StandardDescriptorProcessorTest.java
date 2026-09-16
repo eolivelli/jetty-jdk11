@@ -206,15 +206,13 @@ public class StandardDescriptorProcessorTest
 
         Path descriptorXml = docroot.resolve("WEB-INF/web.xml");
         FS.ensureDirExists(descriptorXml.getParent());
-        Files.writeString(descriptorXml, """
-            <?xml version="1.0" encoding="UTF-8"?>
-            <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
-              version="6.0">
-              <name>Test WebApp</name>
-            </web-app>
-            """);
+        Files.writeString(descriptorXml, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\"\n" +
+            "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+            "  xsi:schemaLocation=\"https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd\"\n" +
+            "  version=\"6.0\">\n" +
+            "  <name>Test WebApp</name>\n" +
+            "</web-app>\n");
         wac.setDescriptor(descriptorXml.toUri().toASCIIString());
 
         final Map<String, String> CREATE_JAR_ENV = new HashMap<>();
@@ -226,20 +224,18 @@ public class StandardDescriptorProcessorTest
         URI uriOne = URI.create("jar:" + fragmentOneJar.toUri().toASCIIString());
         try (FileSystem zipfs = FileSystems.newFileSystem(uriOne, CREATE_JAR_ENV))
         {
-            String fragmentXml = """
-                <?xml version="1.0" encoding="ISO-8859-1"?>
-                <web-fragment
-                   xmlns="http://java.sun.com/xml/ns/javaee"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-fragment_4_0.xsd"
-                   version="4.0">
-                  <name>Frag1Test</name>
-                  <mime-mapping>
-                    <extension>eot</extension>
-                    <mime-type>application/octet-stream</mime-type>
-                  </mime-mapping>
-                </web-fragment>
-                """;
+            String fragmentXml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+                "<web-fragment\n" +
+                "   xmlns=\"http://java.sun.com/xml/ns/javaee\"\n" +
+                "   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                "   xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-fragment_4_0.xsd\"\n" +
+                "   version=\"4.0\">\n" +
+                "  <name>Frag1Test</name>\n" +
+                "  <mime-mapping>\n" +
+                "    <extension>eot</extension>\n" +
+                "    <mime-type>application/octet-stream</mime-type>\n" +
+                "  </mime-mapping>\n" +
+                "</web-fragment>\n";
             Path path = zipfs.getPath("/META-INF/web-fragment.xml");
             FS.ensureDirExists(path.getParent());
             Files.writeString(path, fragmentXml);
@@ -251,20 +247,18 @@ public class StandardDescriptorProcessorTest
         URI uriTwo = URI.create("jar:" + fragmentTwoJar.toUri().toASCIIString());
         try (FileSystem zipfs = FileSystems.newFileSystem(uriTwo, CREATE_JAR_ENV))
         {
-            String fragmentXml = """
-                <?xml version="1.0" encoding="ISO-8859-1"?>
-                <web-fragment
-                   xmlns="http://java.sun.com/xml/ns/javaee"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-fragment_4_0.xsd"
-                   version="4.0">
-                  <name>Frag2Test</name>
-                  <mime-mapping>
-                    <extension>eot</extension>
-                    <mime-type>application/vnd.ms-fontobject</mime-type>
-                  </mime-mapping>
-                </web-fragment>
-                """;
+            String fragmentXml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+                "<web-fragment\n" +
+                "   xmlns=\"http://java.sun.com/xml/ns/javaee\"\n" +
+                "   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                "   xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-fragment_4_0.xsd\"\n" +
+                "   version=\"4.0\">\n" +
+                "  <name>Frag2Test</name>\n" +
+                "  <mime-mapping>\n" +
+                "    <extension>eot</extension>\n" +
+                "    <mime-type>application/vnd.ms-fontobject</mime-type>\n" +
+                "  </mime-mapping>\n" +
+                "</web-fragment>\n";
             Path path = zipfs.getPath("/META-INF/web-fragment.xml");
             FS.ensureDirExists(path.getParent());
             Files.writeString(path, fragmentXml);

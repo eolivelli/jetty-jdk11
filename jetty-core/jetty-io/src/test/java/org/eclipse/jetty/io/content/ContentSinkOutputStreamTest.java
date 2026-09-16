@@ -61,7 +61,7 @@ public class ContentSinkOutputStreamTest
         Queue<String> events = new ArrayDeque<>();
         Content.Sink sink = (last, byteBuffer, callback) ->
         {
-            events.add("last=%s, buffer=%s".formatted(last, BufferUtil.toString(byteBuffer)));
+            events.add(String.format("last=%s, buffer=%s", last, BufferUtil.toString(byteBuffer)));
             callback.succeeded();
         };
 

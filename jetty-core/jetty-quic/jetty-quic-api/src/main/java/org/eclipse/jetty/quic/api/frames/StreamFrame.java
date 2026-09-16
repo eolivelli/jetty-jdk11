@@ -158,12 +158,10 @@ public class StreamFrame extends Frame.WithStreamId
     @Override
     public String toString()
     {
-        return "%s[offset=%d,length=%d/%d,last=%b]".formatted(
-            super.toString(),
+        return String.format("%s[offset=%d,length=%d/%d,last=%b]", super.toString(),
             getOffset(),
             getData().remaining(),
             getLength(),
-            isEndStream()
-        );
+            isEndStream());
     }
 }

@@ -224,7 +224,7 @@ public class ServletCoreResponse implements org.eclipse.jetty.server.Response
     @Override
     public String toString()
     {
-        return "%s@%x{%s,%s}".formatted(TypeUtil.toShortName(this.getClass()), hashCode(), this._coreRequest, _httpServletResponse);
+        return String.format("%s@%x{%s,%s}", TypeUtil.toShortName(this.getClass()), hashCode(), this._coreRequest, _httpServletResponse);
     }
 
     private static class HttpServletResponseHttpFields implements HttpFields.Mutable

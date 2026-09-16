@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import jakarta.servlet.ServletException;
@@ -309,7 +310,7 @@ public class FormTest
                 PrintWriter out = response.getWriter();
 
                 Map<String, String[]> paramMap = request.getParameterMap();
-                List<String> names = paramMap.keySet().stream().sorted().toList();
+                List<String> names = paramMap.keySet().stream().sorted().collect(Collectors.toList());
                 for (String name: names)
                 {
                     out.printf("param[%s] = \"%s\"%n", name, String.join(",", paramMap.get(name)));

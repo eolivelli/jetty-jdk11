@@ -283,13 +283,12 @@ public class MultiPartServletTest
         startServer(multiPartCompliance);
 
         String contentType = "multipart/form-data; boundary=-------------------------7e21c038151054";
-        String incompleteForm = """
-            ---------------------------7e21c038151054
-            Content-Disposition: form-data; name="description"
-            
-            Some data, but incomplete
-            ---------------------------7e21c038151054
-            Content-Disposition: form-d"""; // intentionally incomplete
+        String incompleteForm = "---------------------------7e21c038151054\n" +
+            "Content-Disposition: form-data; name=\"description\"\n" +
+            "\n" +
+            "Some data, but incomplete\n" +
+            "---------------------------7e21c038151054\n" +
+            "Content-Disposition: form-d"; // intentionally incomplete
 
         StringRequestContent incomplete = new StringRequestContent(
             contentType,
@@ -321,17 +320,15 @@ public class MultiPartServletTest
 
         String contentType = "multipart/form-data; boundary=---------------------------7e25e1e151054";
         // NOTE: The extra `\r` here are intentional, do not remove.
-        String rawForm = """
-            -----------------------------7e25e1e151054\r
-            Content-Disposition: form-data; name="user"\r
-                        \r
-            anotheruser\r
-            -----------------------------7e25e1e151054\r
-            Content-Disposition: form-data; name="comment"\r
-                        \r
-            with something to say\r
-            -----------------------------7e25e1e151054--\r
-            """;
+        String rawForm = "-----------------------------7e25e1e151054\r\n" +
+            "Content-Disposition: form-data; name=\"user\"\r\n" +
+            "            \r\n" +
+            "anotheruser\r\n" +
+            "-----------------------------7e25e1e151054\r\n" +
+            "Content-Disposition: form-data; name=\"comment\"\r\n" +
+            "            \r\n" +
+            "with something to say\r\n" +
+            "-----------------------------7e25e1e151054--\r\n";
 
         StringRequestContent form = new StringRequestContent(
             contentType,
@@ -406,16 +403,14 @@ public class MultiPartServletTest
         startServer(legacyBase64);
 
         String contentType = "multipart/form-data; boundary=8GbcZNTauFWYMt7GeM9BxFMdlNBJ6aLJhGdXp";
-        String rawForm = """
-            --8GbcZNTauFWYMt7GeM9BxFMdlNBJ6aLJhGdXp
-            Content-ID: <foo@example.org>
-            Content-Disposition: form-data; name="quote"
-            Content-Transfer-Encoding: base64
-            
-            IkJvb2tzIGFyZSB0aGUgbGliZXJhdGVkIHNwaXJpdHMgb2YgbWVuLiIgLS0gTWFyayBUd2Fpbg==
-            --8GbcZNTauFWYMt7GeM9BxFMdlNBJ6aLJhGdXp--
-            
-            """;
+        String rawForm = "--8GbcZNTauFWYMt7GeM9BxFMdlNBJ6aLJhGdXp\n" +
+            "Content-ID: <foo@example.org>\n" +
+            "Content-Disposition: form-data; name=\"quote\"\n" +
+            "Content-Transfer-Encoding: base64\n" +
+            "\n" +
+            "IkJvb2tzIGFyZSB0aGUgbGliZXJhdGVkIHNwaXJpdHMgb2YgbWVuLiIgLS0gTWFyayBUd2Fpbg==\n" +
+            "--8GbcZNTauFWYMt7GeM9BxFMdlNBJ6aLJhGdXp--\n" +
+            "\n";
 
         StringRequestContent form = new StringRequestContent(
             contentType,
@@ -446,16 +441,14 @@ public class MultiPartServletTest
         startServer(legacyBase64);
 
         String contentType = "multipart/form-data; boundary=8GbcZNTauFWYMt7GeM9BxFMdlNBJ6aLJhGdXp";
-        String rawForm = """
-            --8GbcZNTauFWYMt7GeM9BxFMdlNBJ6aLJhGdXp
-            Content-ID: <foo@example.org>
-            Content-Disposition: form-data; name="quote"
-            Content-Transfer-Encoding: base64
-            
-            "Travel is fatal to prejudice." -- Mark Twain
-            --8GbcZNTauFWYMt7GeM9BxFMdlNBJ6aLJhGdXp--
-            
-            """;
+        String rawForm = "--8GbcZNTauFWYMt7GeM9BxFMdlNBJ6aLJhGdXp\n" +
+            "Content-ID: <foo@example.org>\n" +
+            "Content-Disposition: form-data; name=\"quote\"\n" +
+            "Content-Transfer-Encoding: base64\n" +
+            "\n" +
+            "\"Travel is fatal to prejudice.\" -- Mark Twain\n" +
+            "--8GbcZNTauFWYMt7GeM9BxFMdlNBJ6aLJhGdXp--\n" +
+            "\n";
 
         StringRequestContent form = new StringRequestContent(
             contentType,
@@ -493,16 +486,14 @@ public class MultiPartServletTest
         startServer(legacyBase64);
 
         String contentType = "multipart/form-data; boundary=8GbcZNTauFWYMt7GeM9BxFMdlNBJ6aLJhGdXp";
-        String rawForm = """
-            --8GbcZNTauFWYMt7GeM9BxFMdlNBJ6aLJhGdXp
-            Content-ID: <foo@example.org>
-            Content-Disposition: form-data; name="quote"
-            Content-Transfer-Encoding: base64
-            
-            IkJvb2tzIGFyZSB0aGUgbGliZXJhdGVkIHNwaXJpdHMgb2YgbWVuLiIgLS0gTWFyayBUd2Fpbg==
-            --8GbcZNTauFWYMt7GeM9BxFMdlNBJ6aLJhGdXp--
-            
-            """;
+        String rawForm = "--8GbcZNTauFWYMt7GeM9BxFMdlNBJ6aLJhGdXp\n" +
+            "Content-ID: <foo@example.org>\n" +
+            "Content-Disposition: form-data; name=\"quote\"\n" +
+            "Content-Transfer-Encoding: base64\n" +
+            "\n" +
+            "IkJvb2tzIGFyZSB0aGUgbGliZXJhdGVkIHNwaXJpdHMgb2YgbWVuLiIgLS0gTWFyayBUd2Fpbg==\n" +
+            "--8GbcZNTauFWYMt7GeM9BxFMdlNBJ6aLJhGdXp--\n" +
+            "\n";
 
         StringRequestContent form = new StringRequestContent(
             contentType,

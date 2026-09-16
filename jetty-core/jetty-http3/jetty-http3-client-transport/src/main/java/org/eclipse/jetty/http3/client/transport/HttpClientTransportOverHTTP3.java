@@ -98,7 +98,7 @@ public class HttpClientTransportOverHTTP3 extends AbstractHttpClientTransport im
     {
         HttpVersion version = request.getVersion();
         if (((HttpRequest)request).isVersionExplicit() && version != HttpVersion.HTTP_3)
-            throw new HttpRequestException("Cannot send explicit %s requests with %s transport".formatted(version, HttpVersion.HTTP_3), request);
+            throw new HttpRequestException(String.format("Cannot send explicit %s requests with %s transport", version, HttpVersion.HTTP_3), request);
         Transport provided = request.getTransport();
         if (provided == null)
             request.transport(transport);

@@ -128,11 +128,9 @@ public class CompactPathRuleTest extends AbstractRuleTest
         if (inputQuery != null)
             requestPath += "?" + inputQuery;
 
-        String request = """
-            GET %s HTTP/1.1
-            Host: localhost
-            
-            """.formatted(requestPath);
+        String request = String.format("GET %s HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n", requestPath);
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -167,14 +165,12 @@ public class CompactPathRuleTest extends AbstractRuleTest
      */
     @ParameterizedTest
     @CsvSource(delimiter = '|',
-        textBlock = """
-            # decoding | canonicalizing | inputPath
-            false | false | /../context/
-            false | false | /%2e./context/
-            false | false | /.%2e/context/
-            false | false | /%2e%2e/context/
-            true | false | /..%2fcontext/
-            """)
+        textBlock = "# decoding | canonicalizing | inputPath\n" +
+            "false | false | /../context/\n" +
+            "false | false | /%2e./context/\n" +
+            "false | false | /.%2e/context/\n" +
+            "false | false | /%2e%2e/context/\n" +
+            "true | false | /..%2fcontext/\n")
     public void testCompactPathRuleResultsInBadMessage(boolean decoding, boolean canonicalizing, String inputPath) throws Exception
     {
         _httpConfig.setUriCompliance(UriCompliance.UNSAFE);
@@ -192,11 +188,9 @@ public class CompactPathRuleTest extends AbstractRuleTest
             }
         });
 
-        String request = """
-            GET %s HTTP/1.1
-            Host: localhost
-            
-            """.formatted(inputPath);
+        String request = String.format("GET %s HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n", inputPath);
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.BAD_REQUEST_400, response.getStatus());

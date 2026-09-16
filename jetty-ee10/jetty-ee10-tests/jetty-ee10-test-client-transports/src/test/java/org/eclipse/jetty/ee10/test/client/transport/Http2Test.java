@@ -80,15 +80,13 @@ public class Http2Test
     }
 
     @ParameterizedTest
-    @CsvSource(useHeadersInDisplayName = true, textBlock = """
-        contentLengthMode, flushMode
-        int              , false
-        int              , true
-        long             , false
-        long             , true
-        string           , false
-        string           , true
-        """)
+    @CsvSource(useHeadersInDisplayName = true, textBlock = "contentLengthMode, flushMode\n" +
+        "int              , false\n" +
+        "int              , true\n" +
+        "long             , false\n" +
+        "long             , true\n" +
+        "string           , false\n" +
+        "string           , true\n")
     public void testServletContentLengthDoesSendEmptyLastDataFrame(String contentLengthMode, boolean flushMode) throws Exception
     {
         start(new HttpServlet()

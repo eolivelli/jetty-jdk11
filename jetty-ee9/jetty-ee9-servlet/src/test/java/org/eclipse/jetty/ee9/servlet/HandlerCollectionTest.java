@@ -83,12 +83,10 @@ public class HandlerCollectionTest
 
         startServer(coreContextHandlerCollection);
 
-        String rawRequest = """
-            GET /test/info HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /test/info HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
         HttpTester.Response response = HttpTester.parseResponse(localConnector.getResponse(rawRequest));
         assertThat("status", response.getStatus(), is(200));
         assertThat("response content", response.getContent(), containsString("Got GET Request"));

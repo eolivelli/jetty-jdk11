@@ -247,15 +247,13 @@ public class OpenIdProvider extends ContainerLifeCycle
 
         if (preAuthedUser == null)
         {
-            String responseContent = String.format("""
-                <h2>Login to OpenID Connect Provider</h2>
-                <form action="%s" method="post">
-                <input type="text" autocomplete="off" placeholder="Username" name="username" required>
-                <input type="hidden" name="redirectUri" value="%s">
-                <input type="hidden" name="state" value="%s">
-                <input type="submit">
-                </form>
-                """, AUTH_PATH, redirectUri, state);
+            String responseContent = String.format("<h2>Login to OpenID Connect Provider</h2>\n" +
+                "<form action=\"%s\" method=\"post\">\n" +
+                "<input type=\"text\" autocomplete=\"off\" placeholder=\"Username\" name=\"username\" required>\n" +
+                "<input type=\"hidden\" name=\"redirectUri\" value=\"%s\">\n" +
+                "<input type=\"hidden\" name=\"state\" value=\"%s\">\n" +
+                "<input type=\"submit\">\n" +
+                "</form>\n", AUTH_PATH, redirectUri, state);
             response.getHeaders().put(HttpHeader.CONTENT_TYPE, "text/html");
             response.write(true, BufferUtil.toBuffer(responseContent), callback);
         }

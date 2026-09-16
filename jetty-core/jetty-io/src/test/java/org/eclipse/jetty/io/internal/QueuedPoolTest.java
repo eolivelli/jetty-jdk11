@@ -16,6 +16,7 @@ package org.eclipse.jetty.io.internal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.util.Pool;
 import org.junit.jupiter.api.Test;
@@ -283,7 +284,7 @@ public class QueuedPoolTest
         pool.reserve().enable("bbb", false);
         List<String> objects = pool.stream()
             .map(Pool.Entry::getPooled)
-            .toList();
+            .collect(Collectors.toList());
         assertThat(objects, equalTo(Arrays.asList("aaa", "bbb")));
         assertThat(pool.size(), is(2));
     }

@@ -39,17 +39,15 @@ public class BasehomeWithfilesTest extends AbstractUseCase
         FS.ensureDirExists(baseDir.resolve("modules/withfiles/four/sub/dir"));
 
         Files.writeString(baseDir.resolve("modules/withfiles.mod"),
-            """
-            [files]
-            basehome:modules/withfiles/test.txt|one/renamed.txt
-            basehome:modules/withfiles/test.txt|two/
-            three/
-            basehome:modules/withfiles/test.txt|three
-            basehome:modules/withfiles
-            basehome:modules/withfiles/four/|five/
-            six/
-            basehome:modules/withfiles/four/sub|six
-            """, UTF_8);
+            "[files]\n" +
+            "basehome:modules/withfiles/test.txt|one/renamed.txt\n" +
+            "basehome:modules/withfiles/test.txt|two/\n" +
+            "three/\n" +
+            "basehome:modules/withfiles/test.txt|three\n" +
+            "basehome:modules/withfiles\n" +
+            "basehome:modules/withfiles/four/|five/\n" +
+            "six/\n" +
+            "basehome:modules/withfiles/four/sub|six\n", UTF_8);
         FS.touch(baseDir.resolve("modules/withfiles/four/sub/dir/test.txt"));
         FS.touch(baseDir.resolve("modules/withfiles/four/test.txt"));
         FS.touch(baseDir.resolve("modules/withfiles/test.txt"));

@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.ee9.webapp.WebAppContext;
 import org.eclipse.jetty.server.Server;
@@ -155,7 +156,7 @@ public class TestWebAppPropertyConverter
         assertThat(webApp.getBaseResource(), instanceOf(CombinedResource.class));
 
         CombinedResource combinedResource = (CombinedResource)webApp.getBaseResource();
-        List<URI> actual = combinedResource.getResources().stream().filter(Objects::nonNull).map(Resource::getURI).toList();
+        List<URI> actual = combinedResource.getResources().stream().filter(Objects::nonNull).map(Resource::getURI).collect(Collectors.toList());
         URI[] expected = new URI[]{base1.toURI(), base2.toURI()};
         assertThat(actual, containsInAnyOrder(expected));
     }

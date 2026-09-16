@@ -114,24 +114,22 @@ public class RequestHeadersTest
     @ParameterizedTest
     @CsvSource(
         delimiter = '|',
-        textBlock = """
-            # Request Value | Expected Locale
-            ;q=0.5          | en-US
-            q=0.6           | en-US
-            de              | de
-            en-GB           | en-GB
-            en;q=0.5,it     | it
-            bogus           | bogus
-            bogus,en-US     | en-US
-            en_en           | en-US
-            en-FO           | en-FO
-            en-cockney      | en-cockney
-            de-DE-1996      | de-DE-1996
-            th-TH-u-nu-thai-x-lvariant-TH | th-TH-u-nu-thai-x-lvariant-TH
-            x-pig-latin     | en-US
-            ;-              | en-US
-            ";--            | en-US
-            """)
+        textBlock = "# Request Value | Expected Locale\n" +
+            ";q=0.5          | en-US\n" +
+            "q=0.6           | en-US\n" +
+            "de              | de\n" +
+            "en-GB           | en-GB\n" +
+            "en;q=0.5,it     | it\n" +
+            "bogus           | bogus\n" +
+            "bogus,en-US     | en-US\n" +
+            "en_en           | en-US\n" +
+            "en-FO           | en-FO\n" +
+            "en-cockney      | en-cockney\n" +
+            "de-DE-1996      | de-DE-1996\n" +
+            "th-TH-u-nu-thai-x-lvariant-TH | th-TH-u-nu-thai-x-lvariant-TH\n" +
+            "x-pig-latin     | en-US\n" +
+            ";-              | en-US\n" +
+            "\";--            | en-US\n")
     public void testLocale(String requestHeaderValue, String expectedLocale) throws Exception
     {
         startServer((context) ->

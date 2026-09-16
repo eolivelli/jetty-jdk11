@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.toolchain.test.FS;
 import org.eclipse.jetty.toolchain.test.MavenTestingUtils;
@@ -91,7 +92,7 @@ public class CombinedResourceTest
         List<String> relative = listing.stream()
             .map(rc::getPathTo)
             .map(Path::toString)
-            .toList();
+            .collect(Collectors.toList());
 
         String[] expected = new String[] {
             "1.txt",
@@ -110,7 +111,7 @@ public class CombinedResourceTest
         relative = rc.resolve("dir").list().stream()
             .map(rc::getPathTo)
             .map(Path::toString)
-            .toList();
+            .collect(Collectors.toList());
 
         expected = new String[] {
             FS.separators("dir/1.txt"),
@@ -811,7 +812,7 @@ public class CombinedResourceTest
             )
         );
 
-        assertThat(composite.getAllResources().stream().map(composite::getPathTo).map(Path::toString).toList(), containsInAnyOrder(
+        assertThat(composite.getAllResources().stream().map(composite::getPathTo).map(Path::toString).collect(Collectors.toList()), containsInAnyOrder(
             "1.txt",
             "2.txt",
             "3.txt",

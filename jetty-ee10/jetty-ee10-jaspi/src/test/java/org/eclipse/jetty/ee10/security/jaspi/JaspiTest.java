@@ -207,11 +207,9 @@ public class JaspiTest
     @Test
     public void testOtherAuth() throws Exception
     {
-        String response = _connector.getResponse("""
-            GET /other/jaspi/test HTTP/1.0
-            X-Forwarded-User: user
-
-            """);
+        String response = _connector.getResponse("GET /other/jaspi/test HTTP/1.0\n" +
+            "X-Forwarded-User: user\n" +
+            "\n");
         assertThat(response, startsWith("HTTP/1.1 200 OK"));
     }
 

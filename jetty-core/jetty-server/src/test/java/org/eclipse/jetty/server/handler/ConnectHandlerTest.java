@@ -416,11 +416,9 @@ public class ConnectHandlerTest extends AbstractConnectHandlerTest
         try
         {
             InetAddress address = InetAddress.getByName(invalidHostname);
-            String err = """
-                DNS Hijacking detected: %s should have not returned a valid IP address [%s].
-                Fix your DNS provider to have this test pass.
-                For more info see https://en.wikipedia.org/wiki/DNS_hijacking")
-                """.formatted(invalidHostname, address.getHostAddress());
+            String err = String.format("DNS Hijacking detected: %s should have not returned a valid IP address [%s].\n" +
+                "Fix your DNS provider to have this test pass.\n" +
+                "For more info see https://en.wikipedia.org/wiki/DNS_hijacking\")\n", invalidHostname, address.getHostAddress());
             assertNull(address, err);
         }
         catch (UnknownHostException e)

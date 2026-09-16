@@ -37,55 +37,52 @@ public class SignInWithEthereumParserTest
     {
         List<Arguments> data = new ArrayList<>();
 
-        data.add(Arguments.of("""
-            example.com wants you to sign in with your Ethereum account:
-            0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
-
-            I accept the ExampleOrg Terms of Service: https://example.com/tos
-
-            URI: https://example.com/login
-            Version: 1
-            Chain ID: 1
-            Nonce: 32891756
-            Issued At: 2021-09-30T16:25:24Z
-            Resources:
-            - ipfs://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/
-            - https://example.com/my-web2-claim.json""",
+        data.add(Arguments.of("example.com wants you to sign in with your Ethereum account:\n" +
+            "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2\n" +
+            "\n" +
+            "I accept the ExampleOrg Terms of Service: https://example.com/tos\n" +
+            "\n" +
+            "URI: https://example.com/login\n" +
+            "Version: 1\n" +
+            "Chain ID: 1\n" +
+            "Nonce: 32891756\n" +
+            "Issued At: 2021-09-30T16:25:24Z\n" +
+            "Resources:\n" +
+            "- ipfs://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/\n" +
+            "- https://example.com/my-web2-claim.json",
             null, "example.com"
             ));
 
 
-        data.add(Arguments.of("""
-                example.com:3388 wants you to sign in with your Ethereum account:
-                0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
-                
-                I accept the ExampleOrg Terms of Service: https://example.com/tos
-                
-                URI: https://example.com/login
-                Version: 1
-                Chain ID: 1
-                Nonce: 32891756
-                Issued At: 2021-09-30T16:25:24Z
-                Resources:
-                - ipfs://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/
-                - https://example.com/my-web2-claim.json""",
+        data.add(Arguments.of("example.com:3388 wants you to sign in with your Ethereum account:\n" +
+            "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2\n" +
+            "\n" +
+            "I accept the ExampleOrg Terms of Service: https://example.com/tos\n" +
+            "\n" +
+            "URI: https://example.com/login\n" +
+            "Version: 1\n" +
+            "Chain ID: 1\n" +
+            "Nonce: 32891756\n" +
+            "Issued At: 2021-09-30T16:25:24Z\n" +
+            "Resources:\n" +
+            "- ipfs://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/\n" +
+            "- https://example.com/my-web2-claim.json",
             null, "example.com:3388"
         ));
 
-        data.add(Arguments.of("""
-                https://example.com wants you to sign in with your Ethereum account:
-                0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
-                
-                I accept the ExampleOrg Terms of Service: https://example.com/tos
-                
-                URI: https://example.com/login
-                Version: 1
-                Chain ID: 1
-                Nonce: 32891756
-                Issued At: 2021-09-30T16:25:24Z
-                Resources:
-                - ipfs://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/
-                - https://example.com/my-web2-claim.json""",
+        data.add(Arguments.of("https://example.com wants you to sign in with your Ethereum account:\n" +
+            "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2\n" +
+            "\n" +
+            "I accept the ExampleOrg Terms of Service: https://example.com/tos\n" +
+            "\n" +
+            "URI: https://example.com/login\n" +
+            "Version: 1\n" +
+            "Chain ID: 1\n" +
+            "Nonce: 32891756\n" +
+            "Issued At: 2021-09-30T16:25:24Z\n" +
+            "Resources:\n" +
+            "- ipfs://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/\n" +
+            "- https://example.com/my-web2-claim.json",
             "https", "example.com"
         ));
 
@@ -108,10 +105,9 @@ public class SignInWithEthereumParserTest
         assertThat(siwe.scheme(), equalTo(scheme));
         assertThat(siwe.domain(), equalTo(domain));
 
-        String resources = """
-            
-            - ipfs://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/
-            - https://example.com/my-web2-claim.json""";
+        String resources = "\n" +
+            "- ipfs://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/\n" +
+            "- https://example.com/my-web2-claim.json";
         assertThat(siwe.resources(), equalTo(resources));
     }
 
@@ -130,10 +126,9 @@ public class SignInWithEthereumParserTest
         LocalDateTime expirationTime = LocalDateTime.now().plusDays(1);
         LocalDateTime notBefore = LocalDateTime.now().minusDays(1);
         String requestId = "123456789";
-        String resources = """
-            
-            - ipfs://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/
-            - https://example.com/my-web2-claim.json""";
+        String resources = "\n" +
+            "- ipfs://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/\n" +
+            "- https://example.com/my-web2-claim.json";
 
         String message = SignInWithEthereumGenerator.generateMessage(scheme, domain, address, statement, uri, version, chainId, nonce, issuedAt,
             expirationTime, notBefore, requestId, resources);

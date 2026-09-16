@@ -101,14 +101,12 @@ public class EagerContentHandlerServletTest
 
         try (Socket socket = new Socket("localhost", _connector.getLocalPort()))
         {
-            String request = """
-                POST /foo HTTP/1.1\r
-                Host: localhost\r
-                Content-Type: application/x-www-form-urlencoded\r
-                Content-Length: 27\r
-                \r
-                param1=value1&param2=value2\
-                """;
+            String request = "POST /foo HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Content-Type: application/x-www-form-urlencoded\r\n" +
+                "Content-Length: 27\r\n" +
+                "\r\n" +
+                "param1=value1&param2=value2";
             OutputStream output = socket.getOutputStream();
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
@@ -180,20 +178,16 @@ public class EagerContentHandlerServletTest
         try (Socket socket = new Socket("localhost", _connector.getLocalPort()))
         {
             StringBuilder request = new StringBuilder();
-            request.append("""
-                POST /foo HTTP/1.1\r
-                Host: localhost\r
-                """);
+            request.append("POST /foo HTTP/1.1\r\n" +
+                "Host: localhost\r\n");
             if (maxFormFields != -1)
                 request.append(FormFields.MAX_FIELDS_ATTRIBUTE).append(": ").append(maxFormFields).append("\r\n");
             if (maxFormLength != -1)
                 request.append(FormFields.MAX_LENGTH_ATTRIBUTE).append(": ").append(maxFormLength).append("\r\n");
-            request.append("""
-                Content-Type: application/x-www-form-urlencoded\r
-                Content-Length: 27\r
-                \r
-                param1=value1&param2=value2\
-                """);
+            request.append("Content-Type: application/x-www-form-urlencoded\r\n" +
+                "Content-Length: 27\r\n" +
+                "\r\n" +
+                "param1=value1&param2=value2");
             OutputStream output = socket.getOutputStream();
             output.write(request.toString().getBytes(StandardCharsets.UTF_8));
             output.flush();

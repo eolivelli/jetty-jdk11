@@ -90,10 +90,8 @@ public abstract class AbstractRedispatchTest
 
                 Path resourcesDir = jettyBase.resolve("resources");
                 FS.ensureDirExists(resourcesDir);
-                String loggingText = """
-                    #org.eclipse.jetty.LEVEL=DEBUG
-                    #org.eclipse.jetty.deploy.LEVEL=DEBUG
-                    """;
+                String loggingText = "#org.eclipse.jetty.LEVEL=DEBUG\n" +
+                    "#org.eclipse.jetty.deploy.LEVEL=DEBUG\n";
                 Files.writeString(resourcesDir.resolve("jetty-logging.properties"), loggingText, StandardCharsets.UTF_8);
 
                 // Configure the DispatchPlanHandler
@@ -103,39 +101,33 @@ public abstract class AbstractRedispatchTest
                 Path installDispatchPlanXml = MavenPaths.findTestResourceFile("install-ccd-handler.xml");
                 Files.copy(installDispatchPlanXml, etcDir.resolve(installDispatchPlanXml.getFileName()));
 
-                String module = """
-                [depend]
-                server
-                
-                [lib]
-                lib/jetty-util-ajax-$J.jar
-                lib/ccd-common-$J.jar
-                
-                [xml]
-                etc/install-ccd-handler.xml
-                
-                [ini]
-                jetty.webapp.addProtectedClasses+=,org.eclipse.jetty.tests.ccd.common.
-                jetty.webapp.addHiddenClasses+=,-org.eclipse.jetty.tests.ccd.common.
-                """.replace("$J", jettyVersion);
+                String module = ("[depend]\n" +
+                    "server\n" +
+                    "\n" +
+                    "[lib]\n" +
+                    "lib/jetty-util-ajax-$J.jar\n" +
+                    "lib/ccd-common-$J.jar\n" +
+                    "\n" +
+                    "[xml]\n" +
+                    "etc/install-ccd-handler.xml\n" +
+                    "\n" +
+                    "[ini]\n" +
+                    "jetty.webapp.addProtectedClasses+=,org.eclipse.jetty.tests.ccd.common.\n" +
+                    "jetty.webapp.addHiddenClasses+=,-org.eclipse.jetty.tests.ccd.common.\n").replace("$J", jettyVersion);
                 Files.writeString(modulesDir.resolve("ccd.mod"), module, StandardCharsets.UTF_8);
 
                 // -- Error Handler
                 Path errorHandlerXml = MavenPaths.findTestResourceFile("error-handler.xml");
                 Files.copy(errorHandlerXml, etcDir.resolve("error-handler.xml"));
-                String errorHandlerIni = """
-                    etc/error-handler.xml
-                    """;
+                String errorHandlerIni = "etc/error-handler.xml\n";
                 Files.writeString(startDir.resolve("error-handler.ini"), errorHandlerIni);
 
                 // -- Plans Dir
                 Path plansDir = MavenPaths.findTestResourceDir("plans");
 
                 Path ccdIni = startDir.resolve("ccd.ini");
-                String ini = """
-                --module=ccd
-                ccd-plans-dir=$D
-                """.replace("$D", plansDir.toString());
+                String ini = ("--module=ccd\n" +
+                    "ccd-plans-dir=$D\n").replace("$D", plansDir.toString());
                 Files.writeString(ccdIni, ini, StandardCharsets.UTF_8);
 
                 // -- Add the test wars

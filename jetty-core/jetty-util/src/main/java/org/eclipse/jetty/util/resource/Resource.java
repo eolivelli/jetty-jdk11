@@ -56,8 +56,7 @@ public abstract class Resource implements Iterable<Resource>
     {
         if (resource == null)
             return "null exists=false directory=false lm=-1";
-        return "%s exists=%b directory=%b lm=%s"
-            .formatted(resource.toString(), resource.exists(), resource.isDirectory(), resource.lastModified());
+        return String.format("%s exists=%b directory=%b lm=%s", resource.toString(), resource.exists(), resource.isDirectory(), resource.lastModified());
     }
 
     /**

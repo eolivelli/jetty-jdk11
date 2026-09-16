@@ -91,16 +91,14 @@ public class ChunkSizeExtensionTest
             }
         });
 
-        String request = """
-            POST / HTTP/1.1\r
-            Host: localhost\r
-            Transfer-Encoding: chunked\r
-            \r
-            10$W;$Wext\r
-            0123456789ABCDEF\r
-            0\r
-            \r
-            """.replace("$W", bws ? "\t" : "");
+        String request = ("POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Transfer-Encoding: chunked\r\n" +
+            "\r\n" +
+            "10$W;$Wext\r\n" +
+            "0123456789ABCDEF\r\n" +
+            "0\r\n" +
+            "\r\n").replace("$W", bws ? "\t" : "");
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
 
         assertThat(response.getStatus(), equalTo(HttpStatus.OK_200));
@@ -121,16 +119,14 @@ public class ChunkSizeExtensionTest
             }
         });
 
-        String request = """
-            POST / HTTP/1.1\r
-            Host: localhost\r
-            Transfer-Encoding: chunked\r
-            \r
-            1$W;$Wext$W=$Wval\r
-            X\r
-            0\r
-            \r
-            """.replace("$W", bws ? "\t" : "");
+        String request = ("POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Transfer-Encoding: chunked\r\n" +
+            "\r\n" +
+            "1$W;$Wext$W=$Wval\r\n" +
+            "X\r\n" +
+            "0\r\n" +
+            "\r\n").replace("$W", bws ? "\t" : "");
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
 
         assertThat(response.getStatus(), equalTo(HttpStatus.OK_200));
@@ -151,16 +147,14 @@ public class ChunkSizeExtensionTest
             }
         });
 
-        String request = """
-            POST / HTTP/1.1\r
-            Host: localhost\r
-            Transfer-Encoding: chunked\r
-            \r
-            1$W;$Wext$W=$W"val"\r
-            X\r
-            0\r
-            \r
-            """.replace("$W", bws ? "\t" : "");
+        String request = ("POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Transfer-Encoding: chunked\r\n" +
+            "\r\n" +
+            "1$W;$Wext$W=$W\"val\"\r\n" +
+            "X\r\n" +
+            "0\r\n" +
+            "\r\n").replace("$W", bws ? "\t" : "");
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
 
         assertThat(response.getStatus(), equalTo(HttpStatus.OK_200));
@@ -181,16 +175,14 @@ public class ChunkSizeExtensionTest
             }
         });
 
-        String request = """
-            POST / HTTP/1.1\r
-            Host: localhost\r
-            Transfer-Encoding: chunked\r
-            \r
-            4$W;$Wext1$W;$Wext2\r
-            0123\r
-            0\r
-            \r
-            """.replace("$W", bws ? "\t" : "");
+        String request = ("POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Transfer-Encoding: chunked\r\n" +
+            "\r\n" +
+            "4$W;$Wext1$W;$Wext2\r\n" +
+            "0123\r\n" +
+            "0\r\n" +
+            "\r\n").replace("$W", bws ? "\t" : "");
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertThat(response.getStatus(), equalTo(HttpStatus.OK_200));
@@ -211,16 +203,14 @@ public class ChunkSizeExtensionTest
             }
         });
 
-        String request = """
-            POST / HTTP/1.1\r
-            Host: localhost\r
-            Transfer-Encoding: chunked\r
-            \r
-            4$W;$Wext1$W=$W1$W;$Wext2$W=$W2\r
-            0123\r
-            0\r
-            \r
-            """.replace("$W", bws ? "\t" : "");
+        String request = ("POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Transfer-Encoding: chunked\r\n" +
+            "\r\n" +
+            "4$W;$Wext1$W=$W1$W;$Wext2$W=$W2\r\n" +
+            "0123\r\n" +
+            "0\r\n" +
+            "\r\n").replace("$W", bws ? "\t" : "");
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertThat(response.getStatus(), equalTo(HttpStatus.OK_200));
@@ -241,16 +231,14 @@ public class ChunkSizeExtensionTest
             }
         });
 
-        String request = """
-            POST / HTTP/1.1\r
-            Host: localhost\r
-            Transfer-Encoding: chunked\r
-            \r
-            4$W;$Wext1$W=$W"1"$W;$Wext2$W=$W"2"\r
-            0123\r
-            0\r
-            \r
-            """.replace("$W", bws ? "\t" : "");
+        String request = ("POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Transfer-Encoding: chunked\r\n" +
+            "\r\n" +
+            "4$W;$Wext1$W=$W\"1\"$W;$Wext2$W=$W\"2\"\r\n" +
+            "0123\r\n" +
+            "0\r\n" +
+            "\r\n").replace("$W", bws ? "\t" : "");
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertThat(response.getStatus(), equalTo(HttpStatus.OK_200));
@@ -271,16 +259,14 @@ public class ChunkSizeExtensionTest
         });
 
         // Cannot legally have an empty extension block after the ';' character.
-        String request = """
-            POST / HTTP/1.1\r
-            Host: localhost\r
-            Transfer-Encoding: chunked\r
-            \r
-            a;\r
-            0123456789\r
-            0\r
-            \r
-            """;
+        String request = "POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Transfer-Encoding: chunked\r\n" +
+            "\r\n" +
+            "a;\r\n" +
+            "0123456789\r\n" +
+            "0\r\n" +
+            "\r\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertThat(response.getStatus(), equalTo(HttpStatus.BAD_REQUEST_400));
@@ -301,16 +287,14 @@ public class ChunkSizeExtensionTest
             }
         });
 
-        String request = """
-            POST / HTTP/1.1\r
-            Host: localhost\r
-            Transfer-Encoding: chunked\r
-            \r
-            1;a="\\"val\\""\r
-            X\r
-            0\r
-            \r
-            """;
+        String request = "POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Transfer-Encoding: chunked\r\n" +
+            "\r\n" +
+            "1;a=\"\\\"val\\\"\"\r\n" +
+            "X\r\n" +
+            "0\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertThat(response.getStatus(), equalTo(HttpStatus.OK_200));
         assertNull(_violationListener.poll());
@@ -330,16 +314,14 @@ public class ChunkSizeExtensionTest
             }
         });
 
-        String request = """
-            POST / HTTP/1.1\r
-            Host: localhost\r
-            Transfer-Encoding: chunked\r
-            \r
-            a\r
-            0123456789\r
-            0;ext=$Q1$Q\r
-            \r
-            """.replace("$Q", quoted ? "\"" : "");
+        String request = ("POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Transfer-Encoding: chunked\r\n" +
+            "\r\n" +
+            "a\r\n" +
+            "0123456789\r\n" +
+            "0;ext=$Q1$Q\r\n" +
+            "\r\n").replace("$Q", quoted ? "\"" : "");
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertThat(response.getStatus(), equalTo(HttpStatus.OK_200));
         assertNull(_violationListener.poll());
@@ -358,16 +340,14 @@ public class ChunkSizeExtensionTest
             }
         });
 
-        String request = """
-            POST / HTTP/1.1\r
-            Host: localhost\r
-            Transfer-Encoding: chunked\r
-            \r
-            a\r
-            0123456789\r
-            0;ext\r
-            \r
-            """;
+        String request = "POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Transfer-Encoding: chunked\r\n" +
+            "\r\n" +
+            "a\r\n" +
+            "0123456789\r\n" +
+            "0;ext\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertThat(response.getStatus(), equalTo(HttpStatus.OK_200));
         assertNull(_violationListener.poll());
@@ -386,17 +366,15 @@ public class ChunkSizeExtensionTest
             }
         });
 
-        String request = """
-            POST / HTTP/1.1\r
-            Host: localhost\r
-            Transfer-Encoding: chunked\r
-            \r
-            a\r
-            0123456789\r
-            0;ext\r
-            Trailer: value\r
-            \r
-            """;
+        String request = "POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Transfer-Encoding: chunked\r\n" +
+            "\r\n" +
+            "a\r\n" +
+            "0123456789\r\n" +
+            "0;ext\r\n" +
+            "Trailer: value\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertThat(response.getStatus(), equalTo(HttpStatus.OK_200));
         assertNull(_violationListener.poll());

@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.jetty.toolchain.test.FS;
@@ -44,25 +45,19 @@ public class TransientIniTemplateTest extends AbstractUseCase
         FS.touch(baseDir.resolve("etc/d.xml"));
         FS.touch(baseDir.resolve("etc/t.xml"));
         Files.writeString(baseDir.resolve("modules/direct.mod"),
-            """
-            [xml]
-            etc/d.xml
-            [depend]
-            transient
-            [ini-template]
-            direct.option=direct
-            """, UTF_8);
+            "[xml]\n" +
+            "etc/d.xml\n" +
+            "[depend]\n" +
+            "transient\n" +
+            "[ini-template]\n" +
+            "direct.option=direct\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/transient.mod"),
-            """
-            [xml]
-            etc/t.xml
-            [optional]
-            main
-            """, UTF_8);
+            "[xml]\n" +
+            "etc/t.xml\n" +
+            "[optional]\n" +
+            "main\n", UTF_8);
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            """, UTF_8);
+            "--modules=main\n", UTF_8);
 
         // === Prepare Jetty Base using Main
         List<String> prepareArgs = List.of(
@@ -113,29 +108,23 @@ public class TransientIniTemplateTest extends AbstractUseCase
         FS.touch(baseDir.resolve("etc/d.xml"));
         FS.touch(baseDir.resolve("etc/t.xml"));
         Files.writeString(baseDir.resolve("modules/direct.mod"),
-            """
-            [xml]
-            etc/d.xml
-            [depend]
-            transient
-            [ini-template]
-            direct.option=direct
-            """, UTF_8);
+            "[xml]\n" +
+            "etc/d.xml\n" +
+            "[depend]\n" +
+            "transient\n" +
+            "[ini-template]\n" +
+            "direct.option=direct\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/transient.mod"),
-            """
-            [xml]
-            etc/t.xml
-            [optional]
-            main
-            [ini]
-            transient.option=transient
-            [ini-template]
-            transient.option=transient
-            """, UTF_8);
+            "[xml]\n" +
+            "etc/t.xml\n" +
+            "[optional]\n" +
+            "main\n" +
+            "[ini]\n" +
+            "transient.option=transient\n" +
+            "[ini-template]\n" +
+            "transient.option=transient\n", UTF_8);
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            """, UTF_8);
+            "--modules=main\n", UTF_8);
 
         // === Prepare Jetty Base using Main
         List<String> prepareArgs = List.of(
@@ -186,23 +175,19 @@ public class TransientIniTemplateTest extends AbstractUseCase
         FS.touch(baseDir.resolve("etc/d.xml"));
         FS.touch(baseDir.resolve("etc/t.xml"));
         Files.writeString(baseDir.resolve("modules/direct.mod"),
-            """
-                [xml]
-                etc/d.xml
-                [depend]
-                transient
-                [ini-template]
-                direct.option=direct
-                """, UTF_8);
+            "[xml]\n" +
+            "etc/d.xml\n" +
+            "[depend]\n" +
+            "transient\n" +
+            "[ini-template]\n" +
+            "direct.option=direct\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/transient.mod"),
-            """
-                [xml]
-                etc/t.xml
-                [depend]
-                main
-                [ini-template]
-                transient.option=transient
-                """, UTF_8);
+            "[xml]\n" +
+            "etc/t.xml\n" +
+            "[depend]\n" +
+            "main\n" +
+            "[ini-template]\n" +
+            "transient.option=transient\n", UTF_8);
 
         // === Prepare Jetty Base using Main
         List<String> prepareArgs = List.of(
@@ -262,7 +247,7 @@ public class TransientIniTemplateTest extends AbstractUseCase
                 .map(Path::toString)
                 .filter(filename -> filename.endsWith(".ini"))
                 .sorted()
-                .toList();
+                .collect(Collectors.toList());
         }
     }
 }

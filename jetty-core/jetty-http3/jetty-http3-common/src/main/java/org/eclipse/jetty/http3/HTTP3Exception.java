@@ -16,7 +16,7 @@ package org.eclipse.jetty.http3;
 /**
  * <p>Base class for HTTP/3 exception, carrying an HTTP/3 error code and a reason.</p>
  */
-public abstract sealed class HTTP3Exception extends RuntimeException
+public abstract class HTTP3Exception extends RuntimeException
 {
     private final long errorCode;
 

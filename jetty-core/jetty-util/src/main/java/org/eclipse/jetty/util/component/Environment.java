@@ -88,10 +88,10 @@ public interface Environment extends Attributes
         }
         catch (ClassNotFoundException e)
         {
-            throw new IllegalArgumentException("%s has different classloader".formatted(name), e);
+            throw new IllegalArgumentException(String.format("%s has different classloader", name), e);
         }
 
-        throw new IllegalArgumentException("%s has different classloader".formatted(name));
+        throw new IllegalArgumentException(String.format("%s has different classloader", name));
     }
 
     /**

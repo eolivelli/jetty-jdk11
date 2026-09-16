@@ -70,16 +70,11 @@ public class ContextHandlerDeepTest
             public boolean handle(Request request, Response response, Callback callback)
             {
                 response.getHeaders().put(HttpHeader.CONTENT_TYPE, "text/plain; charset=utf-8");
-                String msg = """
-                    contextPath=%s
-                    pathInContext=%s
-                    httpURI.getPath=%s
-                    """
-                    .formatted(
-                        Request.getContextPath(request),
+                String msg = String.format("contextPath=%s\n" +
+                    "pathInContext=%s\n" +
+                    "httpURI.getPath=%s\n", Request.getContextPath(request),
                         Request.getPathInContext(request),
-                        request.getHttpURI().getPath()
-                    );
+                        request.getHttpURI().getPath());
 
                 response.write(true, BufferUtil.toBuffer(msg), callback);
                 return true;
@@ -88,12 +83,10 @@ public class ContextHandlerDeepTest
 
         startServer(contextHandlerA);
 
-        String rawRequest = """
-            GET /a/b/c/d HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-                        
-            """;
+        String rawRequest = "GET /a/b/c/d HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(rawRequest));
         assertEquals(HttpStatus.OK_200, response.getStatus());
         assertThat(response.getContent(), containsString("contextPath=/a/b/c\n"));

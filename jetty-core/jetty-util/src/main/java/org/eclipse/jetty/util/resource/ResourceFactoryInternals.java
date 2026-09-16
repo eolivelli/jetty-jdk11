@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
@@ -205,7 +206,7 @@ class ResourceFactoryInternals
         {
             List<URI> referencedUris = _compositeResourceFactory.mounted.stream()
                 .map(PathResource::getURI)
-                .toList();
+                .collect(Collectors.toList());
             Dumpable.dumpObjects(out, indent, this, new DumpableCollection("newResourceReferences", referencedUris));
         }
 

@@ -69,7 +69,7 @@ public class DemoModulesTests extends AbstractJettyHomeTest
             "--add-modules=http," + toEnvironment("demos", env)
         };
 
-        String baseURI = "http://localhost:%d/%s-test".formatted(httpPort, env);
+        String baseURI = String.format("http://localhost:%d/%s-test", httpPort, env);
         try (JettyHomeTester.Run runConfig = distribution.start(argsConfig))
         {
             assertTrue(runConfig.awaitForStart());
@@ -156,7 +156,7 @@ public class DemoModulesTests extends AbstractJettyHomeTest
             "--add-modules=http," + toEnvironment("demo-jsp", env)
         };
 
-        String baseURI = "http://localhost:%d/%s-demo-jsp".formatted(httpPort, env);
+        String baseURI = String.format("http://localhost:%d/%s-demo-jsp", httpPort, env);
 
         try (JettyHomeTester.Run runConfig = distribution.start(argsConfig))
         {
@@ -202,7 +202,7 @@ public class DemoModulesTests extends AbstractJettyHomeTest
             "--add-modules=http," + toEnvironment("demo-jspc", env)
         };
 
-        String baseURI = "http://localhost:%d/%s-demo-jspc".formatted(httpPort, env);
+        String baseURI = String.format("http://localhost:%d/%s-demo-jspc", httpPort, env);
 
         try (JettyHomeTester.Run runConfig = distribution.start(argsConfig))
         {
@@ -248,7 +248,7 @@ public class DemoModulesTests extends AbstractJettyHomeTest
                 "--add-modules=http," + toEnvironment("demo-jaas", env)
         };
         
-        String baseURI = "http://localhost:%d/%s-test-jaas".formatted(httpPort, env);
+        String baseURI = String.format("http://localhost:%d/%s-test-jaas", httpPort, env);
 
         try (JettyHomeTester.Run runConfig = distribution.start(argsConfig))
         {
@@ -295,7 +295,7 @@ public class DemoModulesTests extends AbstractJettyHomeTest
                 "--add-modules=http," + toEnvironment("demo-jsp", env)
         };
 
-        String baseURI = "http://localhost:%d/%s-demo-jsp".formatted(httpPort, env);
+        String baseURI = String.format("http://localhost:%d/%s-demo-jsp", httpPort, env);
 
         try (JettyHomeTester.Run runConfig = distribution.start(argsConfig))
         {
@@ -344,7 +344,7 @@ public class DemoModulesTests extends AbstractJettyHomeTest
             "--add-modules=http," + toEnvironment("demo-async-rest", env)
         };
 
-        String baseURI = "http://localhost:%d/%s-demo-async-rest".formatted(httpPort, env);
+        String baseURI = String.format("http://localhost:%d/%s-demo-async-rest", httpPort, env);
 
         try (JettyHomeTester.Run runConfig = distribution.start(argsConfig))
         {
@@ -416,7 +416,7 @@ public class DemoModulesTests extends AbstractJettyHomeTest
 
                 startHttpClient();
 
-                String baseURI = "http://localhost:%d/%s-test-spec".formatted(httpPort, env);
+                String baseURI = String.format("http://localhost:%d/%s-test-spec", httpPort, env);
 
                 // Test the async listener
                 ContentResponse response = client.POST(baseURI + "/asy/xx").send();
@@ -453,7 +453,7 @@ public class DemoModulesTests extends AbstractJettyHomeTest
                             cause instanceof AsynchronousCloseException)
                         {
                             LoggerFactory.getLogger(DemoModulesTests.class).info("EOF During request to {}{}", baseURI, ambiguous, e);
-                            Assumptions.assumeTrue(false, "Jetty Client should not have failed with %s: %s".formatted(cause.getClass().getName(), cause.getMessage()));
+                            Assumptions.assumeTrue(false, String.format("Jetty Client should not have failed with %s: %s", cause.getClass().getName(), cause.getMessage()));
                         }
                         else
                         {
@@ -484,7 +484,7 @@ public class DemoModulesTests extends AbstractJettyHomeTest
             "--add-modules=http,debuglog," + toEnvironment("demos", env)
         };
 
-        String baseURI = "http://localhost:%d/%s-test".formatted(httpPort, env);
+        String baseURI = String.format("http://localhost:%d/%s-test", httpPort, env);
         try (JettyHomeTester.Run runConfig = distribution.start(argsConfig))
         {
             assertTrue(runConfig.awaitForStart());
@@ -544,7 +544,7 @@ public class DemoModulesTests extends AbstractJettyHomeTest
             {
                 assertTrue(runStart.awaitForJettyStart());
 
-                String baseURI = "http://localhost:%d/%s-test".formatted(httpPort, env);
+                String baseURI = String.format("http://localhost:%d/%s-test", httpPort, env);
 
                 startHttpClient();
                 client.setFollowRedirects(true);
@@ -611,7 +611,7 @@ public class DemoModulesTests extends AbstractJettyHomeTest
             {
                 assertTrue(runStart.awaitForJettyStart());
 
-                String baseURI = "http://localhost:%d/%s-test".formatted(httpPort, env);
+                String baseURI = String.format("http://localhost:%d/%s-test", httpPort, env);
 
                 startHttpClient();
                 client.setFollowRedirects(true);
@@ -641,7 +641,7 @@ public class DemoModulesTests extends AbstractJettyHomeTest
                 "--add-modules=http,demo-handler"
         };
 
-        String baseURI = "http://localhost:%d/demo-handler/".formatted(httpPort);
+        String baseURI = String.format("http://localhost:%d/demo-handler/", httpPort);
 
         try (JettyHomeTester.Run runConfig = distribution.start(argsConfig))
         {
@@ -700,8 +700,8 @@ public class DemoModulesTests extends AbstractJettyHomeTest
                 assertTrue(runStart.awaitForJettyStart());
                 startHttpClient();
 
-                String rootURI = "http://localhost:%d".formatted(httpPort);
-                String demoJettyURI = "%s/%s-test".formatted(rootURI, env);
+                String rootURI = String.format("http://localhost:%d", httpPort);
+                String demoJettyURI = String.format("%s/%s-test", rootURI, env);
 
                 ContentResponse response;
 
@@ -761,7 +761,7 @@ public class DemoModulesTests extends AbstractJettyHomeTest
             {
                 assertTrue(runStart.awaitForJettyStart());
                 startHttpClient();
-                String baseURI = "http://localhost:%d/%s-test".formatted(httpPort, env);
+                String baseURI = String.format("http://localhost:%d/%s-test", httpPort, env);
 
                 ContentResponse response = client.POST(baseURI + "/dump/info").send();
                 assertEquals(HttpStatus.OK_200, response.getStatus(), new ResponseDetails(response));
@@ -804,7 +804,7 @@ public class DemoModulesTests extends AbstractJettyHomeTest
             {
                 assertTrue(runStart.awaitForJettyStart());
                 startHttpClient();
-                String baseURI = "http://localhost:%d/%s-test".formatted(httpPort, env);
+                String baseURI = String.format("http://localhost:%d/%s-test", httpPort, env);
 
                 ContentResponse response = client.POST(baseURI + "/dump/info").send();
                 assertEquals(HttpStatus.OK_200, response.getStatus(), new ResponseDetails(response));

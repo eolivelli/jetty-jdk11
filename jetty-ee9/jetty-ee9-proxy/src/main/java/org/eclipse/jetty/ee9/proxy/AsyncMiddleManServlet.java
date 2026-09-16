@@ -919,7 +919,7 @@ public class AsyncMiddleManServlet extends AbstractProxyServlet
         @Override
         public String toString()
         {
-            return "%s@%x[buffer=%s,callback=%s]".formatted(TypeUtil.toShortName(getClass()), hashCode(), buffer, callback);
+            return String.format("%s@%x[buffer=%s,callback=%s]", TypeUtil.toShortName(getClass()), hashCode(), buffer, callback);
         }
     }
 }

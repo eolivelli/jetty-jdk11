@@ -219,7 +219,7 @@ public class TryPathsHandlerTest
             {
                 response.setStatus(HttpStatus.OK_200);
                 response.getHeaders().put(HttpHeader.CONTENT_TYPE, "text/plain; charset=utf-8");
-                String message = "PHP: pathInContext=%s, query=%s".formatted(Request.getPathInContext(request), request.getHttpURI().getQuery());
+                String message = String.format("PHP: pathInContext=%s, query=%s", Request.getPathInContext(request), request.getHttpURI().getQuery());
                 Content.Sink.write(response, true, message, callback);
                 return true;
             }

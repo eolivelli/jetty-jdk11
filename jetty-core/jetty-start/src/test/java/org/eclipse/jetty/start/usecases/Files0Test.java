@@ -35,10 +35,8 @@ public class Files0Test extends AbstractUseCase
         FS.ensureDirExists(baseDir.resolve("modules"));
         FS.ensureDirExists(baseDir.resolve("modules/demo"));
         Files.writeString(baseDir.resolve("modules/demo.mod"),
-            """
-            [files]
-            basehome:modules/demo/demo-config.xml|etc/demo-config.xml
-            """, UTF_8);
+            "[files]\n" +
+            "basehome:modules/demo/demo-config.xml|etc/demo-config.xml\n", UTF_8);
         FS.touch(baseDir.resolve("modules/demo/demo-config.xml"));
 
         // === Prepare Jetty Base using Main

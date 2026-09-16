@@ -58,13 +58,12 @@ public abstract class AbstractWebAppObjectInSessionTest extends AbstractSessionT
         webInfDir.mkdir();
         // Write web.xml
         File webXml = new File(webInfDir, "web.xml");
-        String xml = """
-            <web-app
-                xmlns="https://jakarta.ee/xml/ns/jakartaee"
-                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
-                version="6.0">
-            </web-app>""";
+        String xml = "<web-app\n" +
+            "    xmlns=\"https://jakarta.ee/xml/ns/jakartaee\"\n" +
+            "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+            "    xsi:schemaLocation=\"https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd\"\n" +
+            "    version=\"6.0\">\n" +
+            "</web-app>";
         FileWriter w = new FileWriter(webXml);
         w.write(xml);
         w.close();

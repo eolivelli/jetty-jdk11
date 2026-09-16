@@ -37,10 +37,8 @@ public class Resource
         if (security.getRoles() == null)
             throw new NullPointerException("roles must no be null");
 
-        asyncResponse.resume("""
-            {
-                "response" : "ok"
-            }
-            """);
+        asyncResponse.resume("{\n" +
+            "    \"response\" : \"ok\"\n" +
+            "}\n");
     }
 }

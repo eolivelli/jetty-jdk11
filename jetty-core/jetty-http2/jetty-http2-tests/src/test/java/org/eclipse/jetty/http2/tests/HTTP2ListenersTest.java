@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.client.ContentResponse;
 import org.eclipse.jetty.client.StringRequestContent;
@@ -301,7 +302,7 @@ public class HTTP2ListenersTest extends AbstractTest
 
         private static List<FrameType> toFrameTypes(List<Frame> frames)
         {
-            return frames.stream().map(Frame::getType).toList();
+            return frames.stream().map(Frame::getType).collect(Collectors.toList());
         }
     }
 

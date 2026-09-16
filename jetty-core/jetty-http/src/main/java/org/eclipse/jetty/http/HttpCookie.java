@@ -898,7 +898,7 @@ public interface HttpCookie
      */
     static String toString(HttpCookie httpCookie)
     {
-        return "%s@%x[%s]".formatted(TypeUtil.toShortName(httpCookie.getClass()), httpCookie.hashCode(), asString(httpCookie));
+        return String.format("%s@%x[%s]", TypeUtil.toShortName(httpCookie.getClass()), httpCookie.hashCode(), asString(httpCookie));
     }
 
     /**

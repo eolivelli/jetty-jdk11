@@ -39,6 +39,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
 
@@ -1751,25 +1752,21 @@ public class ProxyServletTest
                 String request;
                 if (chunked)
                 {
-                    request = """
-                        POST http://$A/ HTTP/1.1\r
-                        Host: $A\r
-                        Expect: 100-Continue\r
-                        Transfer-Encoding: chunked\r
-                        \r
-                        0\r
-                        \r
-                        """;
+                    request = "POST http://$A/ HTTP/1.1\r\n" +
+                        "Host: $A\r\n" +
+                        "Expect: 100-Continue\r\n" +
+                        "Transfer-Encoding: chunked\r\n" +
+                        "\r\n" +
+                        "0\r\n" +
+                        "\r\n";
                 }
                 else
                 {
-                    request = """
-                        POST http://$A/ HTTP/1.1\r
-                        Host: $A\r
-                        Expect: 100-Continue\r
-                        Content-Length: 0\r
-                        \r
-                        """;
+                    request = "POST http://$A/ HTTP/1.1\r\n" +
+                        "Host: $A\r\n" +
+                        "Expect: 100-Continue\r\n" +
+                        "Content-Length: 0\r\n" +
+                        "\r\n";
                 }
                 request = request.replace("$A", authority);
                 client.write(StandardCharsets.UTF_8.encode(request));
@@ -1877,7 +1874,7 @@ public class ProxyServletTest
         List<String> responseValues = response.getHeaders().stream()
             .filter(field -> field.getName().equalsIgnoreCase("X-Response"))
             .map(HttpField::getValue)
-            .toList();
+            .collect(Collectors.toList());
         assertEquals(List.of("resp1", "resp2"), responseValues);
     }
 

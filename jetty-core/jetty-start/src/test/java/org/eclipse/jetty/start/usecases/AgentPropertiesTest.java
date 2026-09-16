@@ -40,16 +40,12 @@ public class AgentPropertiesTest extends AbstractUseCase
         FS.touch(baseDir.resolve("lib/agent-jdk-1.7.jar"));
         FS.touch(baseDir.resolve("lib/agent-jdk-1.8.jar"));
         Files.writeString(baseDir.resolve("modules/agent.mod"),
-        """
-            [depend]
-            main
-            [lib]
-            lib/agent-jdk-${java.vm.specification.version}.jar
-            """, UTF_8);
+        "[depend]\n" +
+        "main\n" +
+        "[lib]\n" +
+        "lib/agent-jdk-${java.vm.specification.version}.jar\n", UTF_8);
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main,agent
-            """, UTF_8);
+            "--modules=main,agent\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = List.of(

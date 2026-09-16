@@ -28,6 +28,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.io.Content;
@@ -329,7 +330,7 @@ public class MultiPartFormData
         {
             return parts.stream()
                 .filter(part -> part.getName().equals(name))
-                .toList();
+                .collect(Collectors.toList());
         }
 
         /**
@@ -502,7 +503,7 @@ public class MultiPartFormData
                     length += chunk.getByteBuffer().remaining();
                     long max = getMaxLength();
                     if (max >= 0 && length > max)
-                        throw new IllegalStateException("max length exceeded: %d".formatted(max));
+                        throw new IllegalStateException(String.format("max length exceeded: %d", max));
                     parser.parse(chunk);
                     listener.rethrowIfFailed();
                     return listener.getParts();
@@ -720,7 +721,7 @@ public class MultiPartFormData
                 size += buffer.remaining();
                 if (maxPartSize >= 0 && size > maxPartSize)
                 {
-                    onFailure(new IllegalStateException("max file size exceeded: %d".formatted(maxPartSize)));
+                    onFailure(new IllegalStateException(String.format("max file size exceeded: %d", maxPartSize)));
                     return;
                 }
 
@@ -772,7 +773,7 @@ public class MultiPartFormData
                     {
                         if (size > maxMemoryPartSize)
                         {
-                            onFailure(new IllegalStateException("max memory file size exceeded: %d".formatted(maxMemoryPartSize)));
+                            onFailure(new IllegalStateException(String.format("max memory file size exceeded: %d", maxMemoryPartSize)));
                             return;
                         }
                     }

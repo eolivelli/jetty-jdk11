@@ -107,7 +107,7 @@ public class XmlConfiguration
         };
     private static final List<ConfigurationProcessorFactory> PROCESSOR_FACTORIES = TypeUtil.serviceProviderStream(ServiceLoader.load(ConfigurationProcessorFactory.class))
         .flatMap(p -> Stream.of(p.get()))
-        .toList();
+        .collect(Collectors.toList());
     private static final Pool<ConfigurationParser> __parsers =
         new ConcurrentPool<>(ConcurrentPool.StrategyType.THREAD_ID, Math.min(8, Runtime.getRuntime().availableProcessors()));
 
@@ -471,7 +471,7 @@ public class XmlConfiguration
     {
         return Arrays.stream(StringUtil.csvSplit(csvList))
             .map(s -> resolvedPath(dir, s))
-            .toList();
+            .collect(Collectors.toList());
     }
 
     private static class JettyXmlConfiguration implements ConfigurationProcessor
@@ -1937,7 +1937,7 @@ public class XmlConfiguration
             @Override
             public String toString()
             {
-                return "%s@%x%s%s".formatted(TypeUtil.toShortName(this.getClass()), hashCode(), _names, _arguments);
+                return String.format("%s@%x%s%s", TypeUtil.toShortName(this.getClass()), hashCode(), _names, _arguments);
             }
         }
     }

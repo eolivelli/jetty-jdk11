@@ -37,39 +37,25 @@ public class LoopTest extends AbstractUseCase
         // richard -> harry -> tom -> richard
 
         Files.writeString(baseDir.resolve("modules/branch.mod"),
-            """
-            [provides]
-            branch
-            """, UTF_8);
+            "[provides]\n" +
+            "branch\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/richard.mod"),
-            """
-            [depends]
-            harry
-            """, UTF_8);
+            "[depends]\n" +
+            "harry\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/harry.mod"),
-            """
-            [depends]
-            tom
-            """, UTF_8);
+            "[depends]\n" +
+            "tom\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/other.mod"),
-            """
-            [provides]
-            branch
-            """, UTF_8);
+            "[provides]\n" +
+            "branch\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/root.mod"),
-            """
-            [depends]
-            branch
-            """, UTF_8);
+            "[depends]\n" +
+            "branch\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/tom.mod"),
-            """
-            [depends]
-            richard
-            """, UTF_8);
+            "[depends]\n" +
+            "richard\n", UTF_8);
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=root
-            """, UTF_8);
+            "--modules=root\n", UTF_8);
 
         // === Prepare Jetty Base using Main
         List<String> prepareArgs = List.of(
@@ -100,39 +86,25 @@ public class LoopTest extends AbstractUseCase
         // richard -> dynamic/harry -> tom -> richard
 
         Files.writeString(baseDir.resolve("modules/branch.mod"),
-            """
-            [provides]
-            branch
-            """, UTF_8);
+            "[provides]\n" +
+            "branch\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/richard.mod"),
-            """
-            [depends]
-            dynamic/harry
-            """, UTF_8);
+            "[depends]\n" +
+            "dynamic/harry\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/dynamic/harry.mod"),
-            """
-            [depends]
-            tom
-            """, UTF_8);
+            "[depends]\n" +
+            "tom\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/other.mod"),
-            """
-            [provides]
-            branch
-            """, UTF_8);
+            "[provides]\n" +
+            "branch\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/root.mod"),
-            """
-            [depends]
-            branch
-            """, UTF_8);
+            "[depends]\n" +
+            "branch\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/tom.mod"),
-            """
-            [depends]
-            richard
-            """, UTF_8);
+            "[depends]\n" +
+            "richard\n", UTF_8);
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=root
-            """, UTF_8);
+            "--modules=root\n", UTF_8);
 
         // === Prepare Jetty Base using Main
         List<String> prepareArgs = List.of(

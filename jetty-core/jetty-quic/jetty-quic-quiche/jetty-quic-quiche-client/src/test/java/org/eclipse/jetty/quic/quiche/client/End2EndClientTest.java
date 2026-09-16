@@ -60,13 +60,11 @@ public class End2EndClientTest
     private Server server;
     private QuicheServerConnector connector;
     private HttpClient client;
-    private final String responseContent = """
-        <html>
-          <body>
-            Request served
-          </body>
-        </html>
-        """;
+    private final String responseContent = "<html>\n" +
+        "  <body>\n" +
+        "    Request served\n" +
+        "  </body>\n" +
+        "</html>\n";
     private QuicheTransport transport;
 
     @BeforeEach

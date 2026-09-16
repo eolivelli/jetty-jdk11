@@ -22,6 +22,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import com.sun.net.httpserver.BasicAuthenticator;
 import com.sun.net.httpserver.Filter;
@@ -202,7 +203,7 @@ public class SPIServerTest
                 try (OutputStream responseBody = exchange.getResponseBody();
                      PrintStream out = new PrintStream(responseBody, true, StandardCharsets.UTF_8))
                 {
-                    for (String name : requestHeaders.keySet().stream().sorted().toList())
+                    for (String name : requestHeaders.keySet().stream().sorted().collect(Collectors.toList()))
                     {
                         out.printf("%s: %s%n", name, String.join(",", requestHeaders.get(name)));
                     }
@@ -215,15 +216,13 @@ public class SPIServerTest
         {
             try (OutputStream output = socket.getOutputStream())
             {
-                String request = """
-                    GET / HTTP/1.1
-                    Host: localhost
-                    Connection: close
-                    X-Action: Begin
-                    X-Action: "Ongoing Behavior"
-                    X-Action: Final
-                                        
-                    """;
+                String request = "GET / HTTP/1.1\n" +
+                    "Host: localhost\n" +
+                    "Connection: close\n" +
+                    "X-Action: Begin\n" +
+                    "X-Action: \"Ongoing Behavior\"\n" +
+                    "X-Action: Final\n" +
+                    "\n";
 
                 output.write(request.getBytes(StandardCharsets.UTF_8));
                 output.flush();
@@ -277,14 +276,12 @@ public class SPIServerTest
         {
             try (OutputStream output = socket.getOutputStream())
             {
-                String request = """
-                    GET / HTTP/1.1
-                    Host: localhost
-                    Connection: close
-                    User-Agent: %s
-                    Sec-Ch-Ua: %s
-                                        
-                    """.formatted(ua, secua);
+                String request = String.format("GET / HTTP/1.1\n" +
+                    "Host: localhost\n" +
+                    "Connection: close\n" +
+                    "User-Agent: %s\n" +
+                    "Sec-Ch-Ua: %s\n" +
+                    "\n", ua, secua);
 
                 output.write(request.getBytes(StandardCharsets.UTF_8));
                 output.flush();
@@ -331,13 +328,11 @@ public class SPIServerTest
         {
             try (OutputStream output = socket.getOutputStream())
             {
-                String request = """
-                    GET / HTTP/1.1
-                    Host: localhost
-                    Connection: close
-                    If-Modified-Since: %s
-                                        
-                    """.formatted(since);
+                String request = String.format("GET / HTTP/1.1\n" +
+                    "Host: localhost\n" +
+                    "Connection: close\n" +
+                    "If-Modified-Since: %s\n" +
+                    "\n", since);
 
                 output.write(request.getBytes(StandardCharsets.UTF_8));
                 output.flush();

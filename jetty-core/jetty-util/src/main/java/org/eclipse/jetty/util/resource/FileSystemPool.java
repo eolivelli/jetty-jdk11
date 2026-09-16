@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.util.IO;
 import org.eclipse.jetty.util.TypeUtil;
@@ -248,7 +249,7 @@ public class FileSystemPool implements Dumpable
     {
         try (AutoLock ignore = poolLock.lock())
         {
-            return pool.values().stream().map(m -> m.mount).toList();
+            return pool.values().stream().map(m -> m.mount).collect(Collectors.toList());
         }
     }
 
@@ -353,7 +354,7 @@ public class FileSystemPool implements Dumpable
 
     public String toString()
     {
-        return "%s@%x{%d}".formatted(TypeUtil.toShortName(getClass()), hashCode(), pool.size());
+        return String.format("%s@%x{%d}", TypeUtil.toShortName(getClass()), hashCode(), pool.size());
     }
 
     /**

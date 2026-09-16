@@ -534,7 +534,7 @@ public class ServletApiResponse implements HttpServletResponse
     @Override
     public String toString()
     {
-        return "%s@%x{%s,%s}".formatted(TypeUtil.toShortName(this.getClass()), hashCode(), getResponse(), getServletResponseInfo());
+        return String.format("%s@%x{%s,%s}", TypeUtil.toShortName(this.getClass()), hashCode(), getResponse(), getServletResponseInfo());
     }
 
     static class HttpCookieFacade implements HttpCookie

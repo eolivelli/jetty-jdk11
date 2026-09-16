@@ -116,12 +116,10 @@ public class DefaultServletNamedTest
         contextHandler.addServlet(testServlet, "/*");
         startServer(contextHandler);
 
-        String rawRequest = """
-            GET /ctx/foo.txt HTTP/1.1
-            Host: test
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /ctx/foo.txt HTTP/1.1\n" +
+            "Host: test\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(localConnector.getResponse(rawRequest));
         assertThat(response.getStatus(), is(HttpStatus.OK_200));

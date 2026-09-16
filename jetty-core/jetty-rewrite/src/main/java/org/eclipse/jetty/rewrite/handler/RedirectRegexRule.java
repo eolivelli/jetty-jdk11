@@ -146,6 +146,6 @@ public class RedirectRegexRule extends RegexRule
     @Override
     public String toString()
     {
-        return "%s[redirect:%d>%s]".formatted(super.toString(), getStatusCode(), getLocation());
+        return String.format("%s[redirect:%d>%s]", super.toString(), getStatusCode(), getLocation());
     }
 }

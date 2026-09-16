@@ -42,7 +42,7 @@ public class ForceRequestHeaderValueRuleTest extends AbstractRuleTest
                 response.getHeaders().put(HttpHeader.CONTENT_TYPE, "text/plain;charset=utf-8");
                 for (HttpField httpField : request.getHeaders())
                 {
-                    Content.Sink.write(response, false, "Request Header[%s]: [%s]%n".formatted(httpField.getName(), httpField.getValue()), Callback.NOOP);
+                    Content.Sink.write(response, false, String.format("Request Header[%s]: [%s]%n", httpField.getName(), httpField.getValue()), Callback.NOOP);
                 }
                 response.write(true, BufferUtil.EMPTY_BUFFER, callback);
                 return true;
@@ -58,12 +58,10 @@ public class ForceRequestHeaderValueRuleTest extends AbstractRuleTest
         rule.setHeaderValue("*/*");
         start(rule);
 
-        String request = """
-            GET /echo/foo HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String request = "GET /echo/foo HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(200, response.getStatus());
@@ -80,13 +78,11 @@ public class ForceRequestHeaderValueRuleTest extends AbstractRuleTest
         rule.setHeaderValue("*/*");
         start(rule);
 
-        String request = """
-            GET /echo/foo HTTP/1.1
-            Host: local
-            Accept: */*
-            Connection: closed
-            
-            """;
+        String request = "GET /echo/foo HTTP/1.1\n" +
+            "Host: local\n" +
+            "Accept: */*\n" +
+            "Connection: closed\n" +
+            "\n";
 
         String rawResponse = _connector.getResponse(request);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -104,15 +100,13 @@ public class ForceRequestHeaderValueRuleTest extends AbstractRuleTest
         rule.setHeaderValue("text/*");
         start(rule);
 
-        String request = """
-            GET /echo/foo HTTP/1.1
-            Host: local
-            Accept: images/jpeg
-            Accept: text/plain
-            Accept: */*
-            Connection: closed
-            
-            """;
+        String request = "GET /echo/foo HTTP/1.1\n" +
+            "Host: local\n" +
+            "Accept: images/jpeg\n" +
+            "Accept: text/plain\n" +
+            "Accept: */*\n" +
+            "Connection: closed\n" +
+            "\n";
 
         String rawResponse = _connector.getResponse(request);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -130,17 +124,15 @@ public class ForceRequestHeaderValueRuleTest extends AbstractRuleTest
         rule.setHeaderValue("application/*");
         start(rule);
 
-        String request = """
-            GET /echo/foo HTTP/1.1
-            Host: local
-            Accept: images/jpeg
-            Accept-Encoding: gzip;q=1.0, identity; q=0.5, *;q=0
-            accept: text/plain
-            Accept-Charset: iso-8859-5, unicode-1-1;q=0.8
-            ACCEPT: */*
-            Connection: closed
-            
-            """;
+        String request = "GET /echo/foo HTTP/1.1\n" +
+            "Host: local\n" +
+            "Accept: images/jpeg\n" +
+            "Accept-Encoding: gzip;q=1.0, identity; q=0.5, *;q=0\n" +
+            "accept: text/plain\n" +
+            "Accept-Charset: iso-8859-5, unicode-1-1;q=0.8\n" +
+            "ACCEPT: */*\n" +
+            "Connection: closed\n" +
+            "\n";
 
         String rawResponse = _connector.getResponse(request);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);

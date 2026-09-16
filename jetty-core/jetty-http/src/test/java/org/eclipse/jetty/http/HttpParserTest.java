@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.jetty.http.HttpParser.State;
@@ -685,13 +686,11 @@ public class HttpParserTest
     public void testHeaderFieldValue(HttpCompliance compliance, String rawValue, String expectedValue)
     {
         String request =
-            """
-                GET / HTTP/1.1\r
-                Host: localhost\r
-                Name: %s\r
-                Connection: close\r
-                \r
-                """.formatted(rawValue);
+            String.format("GET / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Name: %s\r\n" +
+                "Connection: close\r\n" +
+                "\r\n", rawValue);
 
         ByteBuffer buffer = BufferUtil.toBuffer(request);
         HttpParser.RequestHandler handler = new Handler();
@@ -725,13 +724,11 @@ public class HttpParserTest
     public void testIllegalFieldCharacter(HttpCompliance compliance, String rawValue, String expectedError)
     {
         String request =
-            """
-                GET / HTTP/1.1\r
-                Host: localhost\r
-                Name: %s\r
-                Connection: close\r
-                \r
-                """.formatted(rawValue);
+            String.format("GET / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Name: %s\r\n" +
+                "Connection: close\r\n" +
+                "\r\n", rawValue);
 
         ByteBuffer buffer = BufferUtil.toBuffer(request);
         HttpParser.RequestHandler handler = new Handler();
@@ -771,13 +768,11 @@ public class HttpParserTest
     public void testWhiteSpaceBeforeRequest(HttpCompliance compliance, String whitespace, String expected)
     {
         String request =
-            """
-                %sGET / HTTP/1.1\r
-                Host: localhost\r
-                Name: value\r
-                Connection: close\r
-                \r
-                """.formatted(whitespace);
+            String.format("%sGET / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Name: value\r\n" +
+                "Connection: close\r\n" +
+                "\r\n", whitespace);
 
         ByteBuffer buffer = BufferUtil.toBuffer(request);
         HttpParser.RequestHandler handler = new Handler();
@@ -1276,12 +1271,10 @@ public class HttpParserTest
     @Test
     public void testCaseSensitiveMethodLegacy()
     {
-        ByteBuffer buffer = BufferUtil.toBuffer("""
-            gEt / http/1.0\r
-            Host: localhost\r
-            Connection: close\r
-            \r
-            """);
+        ByteBuffer buffer = BufferUtil.toBuffer("gEt / http/1.0\r\n" +
+            "Host: localhost\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
         HttpParser.RequestHandler handler = new Handler();
         HttpParser parser = new HttpParser(handler, HttpCompliance.LEGACY);
         parseAll(parser, buffer);
@@ -1297,12 +1290,10 @@ public class HttpParserTest
     @Test
     public void testCaseInsensitiveHeader()
     {
-        ByteBuffer buffer = BufferUtil.toBuffer("""
-            GET / http/1.0\r
-            HOST: localhost\r
-            cOnNeCtIoN: ClOsE\r
-            \r
-            """);
+        ByteBuffer buffer = BufferUtil.toBuffer("GET / http/1.0\r\n" +
+            "HOST: localhost\r\n" +
+            "cOnNeCtIoN: ClOsE\r\n" +
+            "\r\n");
         HttpParser.RequestHandler handler = new Handler();
         HttpParser parser = new HttpParser(handler, HttpCompliance.RFC7230_LEGACY);
         parseAll(parser, buffer);
@@ -1324,12 +1315,10 @@ public class HttpParserTest
     @Test
     public void testCaseInSensitiveHeaderLegacy()
     {
-        ByteBuffer buffer = BufferUtil.toBuffer("""
-            GET / http/1.0\r
-            HOST: localhost\r
-            cOnNeCtIoN: ClOsE\r
-            \r
-            """);
+        ByteBuffer buffer = BufferUtil.toBuffer("GET / http/1.0\r\n" +
+            "HOST: localhost\r\n" +
+            "cOnNeCtIoN: ClOsE\r\n" +
+            "\r\n");
         HttpParser.RequestHandler handler = new Handler();
         HttpParser parser = new HttpParser(handler, HttpCompliance.LEGACY);
         parser.setHeaderCacheCaseSensitive(true);
@@ -2175,11 +2164,9 @@ public class HttpParserTest
     @ValueSource(strings = {"xxx", "0", "00", "50", "050", "0200", "1000", "2xx"})
     public void testBadResponseStatus(String status)
     {
-        ByteBuffer buffer = BufferUtil.toBuffer("""
-                HTTP/1.1 %s %s\r
-                Content-Length:0\r
-                \r
-                """.formatted(status, status), StandardCharsets.ISO_8859_1);
+        ByteBuffer buffer = BufferUtil.toBuffer(String.format("HTTP/1.1 %s %s\r\n" +
+            "Content-Length:0\r\n" +
+            "\r\n", status, status), StandardCharsets.ISO_8859_1);
 
         HttpParser.ResponseHandler handler = new Handler();
         HttpParser parser = new HttpParser(handler);
@@ -2544,13 +2531,11 @@ public class HttpParserTest
     })
     public void testContentLengthWithOWS(String contentLength)
     {
-        String rawRequest = """
-            GET /test HTTP/1.1\r
-            Host: localhost\r
-            Content-Length: @LEN@\r
-            \r
-            1234567890
-            """.replace("@LEN@", contentLength);
+        String rawRequest = ("GET /test HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Length: @LEN@\r\n" +
+            "\r\n" +
+            "1234567890\n").replace("@LEN@", contentLength);
         ByteBuffer buffer = BufferUtil.toBuffer(rawRequest);
 
         HttpParser.RequestHandler handler = new Handler();
@@ -2581,16 +2566,14 @@ public class HttpParserTest
     })
     public void testTransferEncodingWithOWS(String transferEncoding)
     {
-        String rawRequest = """
-            GET /test HTTP/1.1\r
-            Host: localhost\r
-            Transfer-Encoding: @TE@\r
-            \r
-            1\r
-            X\r
-            0\r
-            \r
-            """.replace("@TE@", transferEncoding);
+        String rawRequest = ("GET /test HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Transfer-Encoding: @TE@\r\n" +
+            "\r\n" +
+            "1\r\n" +
+            "X\r\n" +
+            "0\r\n" +
+            "\r\n").replace("@TE@", transferEncoding);
         ByteBuffer buffer = BufferUtil.toBuffer(rawRequest);
 
         HttpParser.RequestHandler handler = new Handler();
@@ -2621,11 +2604,9 @@ public class HttpParserTest
     })
     public void testHostWithOWS(String host)
     {
-        String rawRequest = """
-            GET /test HTTP/1.1\r
-            Host: @HOST@\r
-            \r
-            """.replace("@HOST@", host);
+        String rawRequest = ("GET /test HTTP/1.1\r\n" +
+            "Host: @HOST@\r\n" +
+            "\r\n").replace("@HOST@", host);
         ByteBuffer buffer = BufferUtil.toBuffer(rawRequest);
 
         HttpParser.RequestHandler handler = new Handler();
@@ -4375,19 +4356,17 @@ public class HttpParserTest
     public void testHeaderSize()
     {
         // Extra lines before GET are intentional
-        ByteBuffer buffer = BufferUtil.toBuffer("""
-            
-               
-            
-            GET   /uri   HTTP/1.0\r
-            Host: localhost\r
-            Unknown-Blank-Field:      \r
-            Field-With-Trailing-Whitespace:    value       \r
-            Field-With-Just-LF: value
-            Connection-Partial-Cache-Hit: value\r
-            Content-Length: 0\r
-            \r
-            """
+        ByteBuffer buffer = BufferUtil.toBuffer("\n" +
+            "\n" +
+            "\n" +
+            "GET   /uri   HTTP/1.0\r\n" +
+            "Host: localhost\r\n" +
+            "Unknown-Blank-Field:      \r\n" +
+            "Field-With-Trailing-Whitespace:    value       \r\n" +
+            "Field-With-Just-LF: value\n" +
+            "Connection-Partial-Cache-Hit: value\r\n" +
+            "Content-Length: 0\r\n" +
+            "\r\n"
         );
         int bytes = buffer.remaining();
         HttpParser.RequestHandler handler = new Handler();
@@ -4409,8 +4388,7 @@ public class HttpParserTest
             type = "MultiPartCompliance";
         if (event.violation() instanceof CookieCompliance.Violation)
             type = "CookieCompliance";
-        return "%s.%s (%s)".formatted(
-            type,
+        return String.format("%s.%s (%s)", type,
             event.violation().getName(),
             event.allowed() ? "allowed" : "forbidden");
     }
@@ -4419,7 +4397,7 @@ public class HttpParserTest
     {
         List<String> actualEvents = _complianceViolationEvents.stream()
             .map(HttpParserTest::formatted)
-            .toList();
+            .collect(Collectors.toList());
         assertThat(actualEvents, ordered(expectedEvents));
     }
 
@@ -4500,7 +4478,7 @@ public class HttpParserTest
 
         public String toString()
         {
-            return "%s[eol=%s, eolChunk=%s, c=%s".formatted(TypeUtil.toShortName(this.getClass()), isViolation() ? "LF" : "CRLF", isChunkViolation() ? "LF" : "CRLF", compliance.getName());
+            return String.format("%s[eol=%s, eolChunk=%s, c=%s", TypeUtil.toShortName(this.getClass()), isViolation() ? "LF" : "CRLF", isChunkViolation() ? "LF" : "CRLF", compliance.getName());
         }
     }
 }

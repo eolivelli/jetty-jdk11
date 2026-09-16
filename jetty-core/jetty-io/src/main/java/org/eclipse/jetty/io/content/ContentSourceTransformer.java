@@ -331,12 +331,10 @@ public abstract class ContentSourceTransformer implements Content.Source
     @Override
     public String toString()
     {
-        return "%s@%x[state=%s,source=%s]".formatted(
-            TypeUtil.toShortName(getClass()),
+        return String.format("%s@%x[state=%s,source=%s]", TypeUtil.toShortName(getClass()),
             hashCode(),
             state.get(),
-            rawSource
-        );
+            rawSource);
     }
 
     /**

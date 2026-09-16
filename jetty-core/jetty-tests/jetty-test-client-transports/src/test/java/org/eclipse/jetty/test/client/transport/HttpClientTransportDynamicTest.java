@@ -787,14 +787,12 @@ public class HttpClientTransportDynamicTest
     }
 
     @ParameterizedTest
-    @CsvSource(textBlock = """
-        http,  h1
-        http,  h2
-        http,  h1;h2
-        https, h1
-        https, h2
-        https, h1;h2
-        """)
+    @CsvSource(textBlock = "http,  h1\n" +
+        "http,  h2\n" +
+        "http,  h1;h2\n" +
+        "https, h1\n" +
+        "https, h2\n" +
+        "https, h1;h2\n")
     public void testServerDoesNotAcceptConnections(String scheme, String protocols) throws Exception
     {
         try (ServerSocketChannel server = ServerSocketChannel.open())
@@ -824,17 +822,15 @@ public class HttpClientTransportDynamicTest
     }
 
     @ParameterizedTest
-    @CsvSource(useHeadersInDisplayName = true, textBlock = """
-        secure , serverPreferH2 , clientPreferH2
-         false ,      false     ,      false
-         false ,      false     ,      true
-         false ,      true      ,      false
-         false ,      true      ,      true
-         true  ,      false     ,      false
-         true  ,      false     ,      true
-         true  ,      true      ,      false
-         true  ,      true      ,      true
-        """)
+    @CsvSource(useHeadersInDisplayName = true, textBlock = "secure , serverPreferH2 , clientPreferH2\n" +
+        " false ,      false     ,      false\n" +
+        " false ,      false     ,      true\n" +
+        " false ,      true      ,      false\n" +
+        " false ,      true      ,      true\n" +
+        " true  ,      false     ,      false\n" +
+        " true  ,      false     ,      true\n" +
+        " true  ,      true      ,      false\n" +
+        " true  ,      true      ,      true\n")
     public void testClientForcesOlderProtocolServerRedirects(boolean secure, boolean serverPreferH2, boolean clientPreferH2) throws Exception
     {
         startServer(secure ? (serverPreferH2 ? this::sslAlpnH2H1 : this::sslAlpnH1H2) : this::h1H2C, new Handler.Abstract()

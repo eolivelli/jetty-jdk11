@@ -907,7 +907,7 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
                                     return resourceFactory.newResource(realUri);
                             }
                             return r;
-                        }).toList();
+                        }).collect(Collectors.toList());
                     // Remember the original base resource so it can be restored in doStop().
                     _originalBaseResource = _baseResource;
                     _baseResource = ResourceFactory.combine(resources);
@@ -1622,7 +1622,7 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
         @Override
         public String toString()
         {
-            return "%s@%x".formatted(TypeUtil.toShortName(getClass()), ContextHandler.this.hashCode());
+            return String.format("%s@%x", TypeUtil.toShortName(getClass()), ContextHandler.this.hashCode());
         }
 
         @Override

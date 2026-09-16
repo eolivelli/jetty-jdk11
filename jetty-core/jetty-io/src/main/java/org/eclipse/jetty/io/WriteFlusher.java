@@ -126,7 +126,7 @@ public abstract class WriteFlusher
     private boolean updateState(State previous, State next)
     {
         if (!isTransitionAllowed(previous, next))
-            throw new IllegalArgumentException("Bad transition %s -> %s".formatted(previous, next));
+            throw new IllegalArgumentException(String.format("Bad transition %s -> %s", previous, next));
 
         boolean updated = _state.compareAndSet(previous, next);
         if (LOG.isDebugEnabled())

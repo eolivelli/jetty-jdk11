@@ -325,7 +325,7 @@ public abstract class AbstractSessionManager extends ContainerLifeCycle implemen
                 .map(_context::getAttribute)
                 .filter(Session.LifeCycleListener.class::isInstance)
                 .map(Session.LifeCycleListener.class::cast)
-                .toList();
+                .collect(Collectors.toList());
             addBean(_sessionLifeCycleListeners);
         }
     }
@@ -1369,8 +1369,7 @@ public abstract class AbstractSessionManager extends ContainerLifeCycle implemen
 
     private static String duplicateSession(String id0, boolean fromCookie0, String id1, boolean valid1, boolean fromCookie1)
     {
-        return "Duplicate sessions: %s[%s,%s] & %s[%s,%s]".formatted(
-            id0, "valid", fromCookie0 ? RequestedSession.ID_FROM_COOKIE : RequestedSession.ID_FROM_URI_PARAMETER,
+        return String.format("Duplicate sessions: %s[%s,%s] & %s[%s,%s]", id0, "valid", fromCookie0 ? RequestedSession.ID_FROM_COOKIE : RequestedSession.ID_FROM_URI_PARAMETER,
             id1, valid1 ? "valid" : "unknown", fromCookie1 ? RequestedSession.ID_FROM_COOKIE : RequestedSession.ID_FROM_URI_PARAMETER);
     }
 

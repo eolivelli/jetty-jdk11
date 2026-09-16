@@ -42,7 +42,7 @@ public class DeployModulesTests extends AbstractJettyHomeTest
             .build();
 
         // Add deployModule before ee10-deploy to verify that the module before/after directives are correct.
-        try (JettyHomeTester.Run run1 = distribution.start("--add-modules=http,%s,ee10-deploy".formatted(deployModule)))
+        try (JettyHomeTester.Run run1 = distribution.start(String.format("--add-modules=http,%s,ee10-deploy", deployModule)))
         {
             assertTrue(run1.awaitFor(START_TIMEOUT, TimeUnit.SECONDS));
             assertEquals(0, run1.getExitValue());

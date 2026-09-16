@@ -105,7 +105,7 @@ public class DefaultServlet extends ResourceServlet
         if (request.getHttpServletMapping().getMappingMatch() != MappingMatch.DEFAULT)
         {
             if (warned.compareAndSet(false, true))
-                LOG.warn("Incorrect mapping for DefaultServlet at %s. Use ResourceServlet".formatted(request.getHttpServletMapping().getPattern()));
+                LOG.warn(String.format("Incorrect mapping for DefaultServlet at %s. Use ResourceServlet", request.getHttpServletMapping().getPattern()));
             return super.getEncodedPathInContext(request, included);
         }
 

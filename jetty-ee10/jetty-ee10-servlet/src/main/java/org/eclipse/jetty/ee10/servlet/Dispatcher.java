@@ -271,7 +271,7 @@ public class Dispatcher implements RequestDispatcher
         @Override
         public String toString()
         {
-            return "%s@%x{%s}".formatted(TypeUtil.toShortName(getClass()), hashCode(), getRequest());
+            return String.format("%s@%x{%s}", TypeUtil.toShortName(getClass()), hashCode(), getRequest());
         }
     }
 

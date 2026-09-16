@@ -39,7 +39,7 @@ public class EchoServlet extends HttpServlet
             case "/form" ->
             {
                 String content = request.getParameterMap().entrySet().stream()
-                    .map(e -> "%s=%s".formatted(e.getKey(), String.join(", ", e.getValue())))
+                    .map(e -> String.format("%s=%s", e.getKey(), String.join(", ", e.getValue())))
                     .collect(Collectors.joining("&"));
                 output.print(content);
             }
@@ -49,7 +49,7 @@ public class EchoServlet extends HttpServlet
                 request.setAttribute(MultipartConfigElement.class.getName(), config);
 
                 String content = request.getParts().stream()
-                    .map(part -> "name=%s&length=%d".formatted(part.getName(), part.getSize()))
+                    .map(part -> String.format("name=%s&length=%d", part.getName(), part.getSize()))
                     .collect(Collectors.joining(","));
                 output.print(content);
             }

@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.http.pathmap.MappedResource;
 import org.eclipse.jetty.http.pathmap.MatchedPath;
@@ -74,7 +75,7 @@ public class PathMappingsHandler extends Handler.AbstractContainer
     @Override
     public List<Handler> getHandlers()
     {
-        return mappings.streamResources().map(MappedResource::getResource).toList();
+        return mappings.streamResources().map(MappedResource::getResource).collect(Collectors.toList());
     }
 
     /**

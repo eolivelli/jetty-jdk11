@@ -640,7 +640,7 @@ public class StartArgs
                 .filter(Objects::nonNull)
                 .map(this::getEnvironment)
                 .distinct()
-                .toList();
+                .collect(Collectors.toList());
             for (StartEnvironment environment : enabledEnvironments)
             {
                 if (environment == jettyEnvironment)

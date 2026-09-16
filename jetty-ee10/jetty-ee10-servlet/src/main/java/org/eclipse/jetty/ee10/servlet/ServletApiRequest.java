@@ -1319,7 +1319,7 @@ public class ServletApiRequest implements HttpServletRequest
                 @Override
                 public String toString()
                 {
-                    return "%s@%x:%s".formatted(UnsupportedEncodingException.class.getName(), hashCode(), getMessage());
+                    return String.format("%s@%x:%s", UnsupportedEncodingException.class.getName(), hashCode(), getMessage());
                 }
             };
         }
@@ -1574,7 +1574,7 @@ public class ServletApiRequest implements HttpServletRequest
     @Override
     public String toString()
     {
-        return "%s@%x{%s}".formatted(TypeUtil.toShortName(getClass()), hashCode(), _servletContextRequest);
+        return String.format("%s@%x{%s}", TypeUtil.toShortName(getClass()), hashCode(), _servletContextRequest);
     }
 
     static class AmbiguousURI extends ServletApiRequest

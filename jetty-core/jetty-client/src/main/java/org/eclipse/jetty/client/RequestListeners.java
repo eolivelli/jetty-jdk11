@@ -525,7 +525,7 @@ public class RequestListeners implements Dumpable
         @Override
         public String toString()
         {
-            return "%s@%x(%s,%s)".formatted(TypeUtil.toShortName(getClass()), hashCode(), prev, next);
+            return String.format("%s@%x(%s,%s)", TypeUtil.toShortName(getClass()), hashCode(), prev, next);
         }
     }
 

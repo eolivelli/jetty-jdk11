@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.start.config.CommandLineConfigSource;
 import org.eclipse.jetty.start.config.ConfigSources;
@@ -190,7 +191,7 @@ public class ModulesTest
         List<String> actualLibs = active.stream()
             .flatMap(m -> m.getLibs().stream())
             .distinct()
-            .toList();
+            .collect(Collectors.toList());
         assertThat("Resolved Libs: " + actualLibs, actualLibs, contains(expectedLibs.toArray()));
 
         // Assert XML List
@@ -201,7 +202,7 @@ public class ModulesTest
         List<String> actualXmls = active.stream()
             .flatMap(m -> m.getXmls().stream())
             .distinct()
-            .toList();
+            .collect(Collectors.toList());
         assertThat("Resolved XMLs: " + actualXmls, actualXmls, contains(expectedXmls.toArray()));
     }
 

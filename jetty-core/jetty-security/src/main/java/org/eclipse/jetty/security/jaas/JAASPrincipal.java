@@ -13,7 +13,6 @@
 
 package org.eclipse.jetty.security.jaas;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.security.Principal;
 
@@ -24,7 +23,6 @@ import java.security.Principal;
  */
 public class JAASPrincipal implements Principal, Serializable
 {
-    @Serial
     private static final long serialVersionUID = -5538962177019315479L;
 
     private final String _name;

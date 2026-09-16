@@ -526,16 +526,16 @@ public class HttpURITest
 
         for (String authority: authorities)
         {
-            cases.add(Arguments.of("http://%s/path/info".formatted(authority), "/path/info", "/path/info", EnumSet.noneOf(Violation.class)));
-            cases.add(Arguments.of("http://%s/path/../info".formatted(authority), "/info", "/info", EnumSet.noneOf(Violation.class)));
-            cases.add(Arguments.of("http://%s/path/./info".formatted(authority), "/path/info", "/path/info", EnumSet.noneOf(Violation.class)));
-            cases.add(Arguments.of("http://%s/;/path/info".formatted(authority), "//path/info", "//path/info", EnumSet.of(Violation.AMBIGUOUS_EMPTY_SEGMENT)));
-            cases.add(Arguments.of("http://%s/path;/info".formatted(authority), "/path/info", "/path/info", EnumSet.noneOf(Violation.class)));
-            cases.add(Arguments.of("http://%s//path/info".formatted(authority), "//path/info", "//path/info", EnumSet.of(Violation.AMBIGUOUS_EMPTY_SEGMENT)));
-            cases.add(Arguments.of("http://%s//path/info/".formatted(authority), "//path/info/", "//path/info/", EnumSet.of(Violation.AMBIGUOUS_EMPTY_SEGMENT)));
-            cases.add(Arguments.of("http://%s/path//info".formatted(authority), "/path//info", "/path//info", EnumSet.of(Violation.AMBIGUOUS_EMPTY_SEGMENT)));
-            cases.add(Arguments.of("http://%s/path//info/".formatted(authority), "/path//info/", "/path//info/", EnumSet.of(Violation.AMBIGUOUS_EMPTY_SEGMENT)));
-            cases.add(Arguments.of("http://%s/path/info//".formatted(authority), "/path/info//", "/path/info//", EnumSet.of(Violation.AMBIGUOUS_EMPTY_SEGMENT)));
+            cases.add(Arguments.of(String.format("http://%s/path/info", authority), "/path/info", "/path/info", EnumSet.noneOf(Violation.class)));
+            cases.add(Arguments.of(String.format("http://%s/path/../info", authority), "/info", "/info", EnumSet.noneOf(Violation.class)));
+            cases.add(Arguments.of(String.format("http://%s/path/./info", authority), "/path/info", "/path/info", EnumSet.noneOf(Violation.class)));
+            cases.add(Arguments.of(String.format("http://%s/;/path/info", authority), "//path/info", "//path/info", EnumSet.of(Violation.AMBIGUOUS_EMPTY_SEGMENT)));
+            cases.add(Arguments.of(String.format("http://%s/path;/info", authority), "/path/info", "/path/info", EnumSet.noneOf(Violation.class)));
+            cases.add(Arguments.of(String.format("http://%s//path/info", authority), "//path/info", "//path/info", EnumSet.of(Violation.AMBIGUOUS_EMPTY_SEGMENT)));
+            cases.add(Arguments.of(String.format("http://%s//path/info/", authority), "//path/info/", "//path/info/", EnumSet.of(Violation.AMBIGUOUS_EMPTY_SEGMENT)));
+            cases.add(Arguments.of(String.format("http://%s/path//info", authority), "/path//info", "/path//info", EnumSet.of(Violation.AMBIGUOUS_EMPTY_SEGMENT)));
+            cases.add(Arguments.of(String.format("http://%s/path//info/", authority), "/path//info/", "/path//info/", EnumSet.of(Violation.AMBIGUOUS_EMPTY_SEGMENT)));
+            cases.add(Arguments.of(String.format("http://%s/path/info//", authority), "/path/info//", "/path/info//", EnumSet.of(Violation.AMBIGUOUS_EMPTY_SEGMENT)));
         }
 
         return cases.stream();

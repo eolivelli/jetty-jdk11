@@ -41,49 +41,35 @@ public class OrderedTest extends AbstractUseCase
         FS.touch(baseDir.resolve("etc/alternateB.xml"));
         FS.touch(baseDir.resolve("etc/dependent.xml"));
         Files.writeString(baseDir.resolve("modules/alternateA.mod"),
-            """
-            [provides]
-            alternate
-            [xml]
-            etc/alternateA.xml
-            """, UTF_8);
+            "[provides]\n" +
+            "alternate\n" +
+            "[xml]\n" +
+            "etc/alternateA.xml\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/alternateB.mod"),
-            """
-            [provides]
-            alternate
-            [xml]
-            etc/alternateB.xml
-            """, UTF_8);
+            "[provides]\n" +
+            "alternate\n" +
+            "[xml]\n" +
+            "etc/alternateB.xml\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/convenience.mod"),
-            """
-            [depends]
-            replacement
-            something-else
-            """, UTF_8);
+            "[depends]\n" +
+            "replacement\n" +
+            "something-else\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/dependent.mod"),
-            """
-            [depends]
-            alternate
-            [xml]
-            etc/dependent.xml
-            """, UTF_8);
+            "[depends]\n" +
+            "alternate\n" +
+            "[xml]\n" +
+            "etc/dependent.xml\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/original.mod"),
-            """
-            [ini]
-            impl=original
-            """, UTF_8);
+            "[ini]\n" +
+            "impl=original\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/replacement.mod"),
-            """
-            [provides]
-            original
-            [ini]
-            impl=replacement
-            """, UTF_8);
+            "[provides]\n" +
+            "original\n" +
+            "[ini]\n" +
+            "impl=replacement\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/something-else.mod"),
-            """
-            [depends]
-            original
-            """, UTF_8);
+            "[depends]\n" +
+            "original\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = List.of(
@@ -111,49 +97,35 @@ public class OrderedTest extends AbstractUseCase
         FS.touch(baseDir.resolve("etc/alternateB.xml"));
         FS.touch(baseDir.resolve("etc/dependent.xml"));
         Files.writeString(baseDir.resolve("modules/alternateA.mod"),
-            """
-            [provides]
-            alternate
-            [xml]
-            etc/alternateA.xml
-            """, UTF_8);
+            "[provides]\n" +
+            "alternate\n" +
+            "[xml]\n" +
+            "etc/alternateA.xml\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/alternateB.mod"),
-            """
-            [provides]
-            alternate
-            [xml]
-            etc/alternateB.xml
-            """, UTF_8);
+            "[provides]\n" +
+            "alternate\n" +
+            "[xml]\n" +
+            "etc/alternateB.xml\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/convenience.mod"),
-            """
-            [depends]
-            replacement
-            something-else
-            """, UTF_8);
+            "[depends]\n" +
+            "replacement\n" +
+            "something-else\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/dependent.mod"),
-            """
-            [depends]
-            alternate
-            [xml]
-            etc/dependent.xml
-            """, UTF_8);
+            "[depends]\n" +
+            "alternate\n" +
+            "[xml]\n" +
+            "etc/dependent.xml\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/original.mod"),
-            """
-            [ini]
-            impl=original
-            """, UTF_8);
+            "[ini]\n" +
+            "impl=original\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/replacement.mod"),
-            """
-            [provides]
-            original
-            [ini]
-            impl=replacement
-            """, UTF_8);
+            "[provides]\n" +
+            "original\n" +
+            "[ini]\n" +
+            "impl=replacement\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/something-else.mod"),
-            """
-            [depends]
-            original
-            """, UTF_8);
+            "[depends]\n" +
+            "original\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = List.of(
@@ -181,49 +153,35 @@ public class OrderedTest extends AbstractUseCase
         FS.touch(baseDir.resolve("etc/alternateB.xml"));
         FS.touch(baseDir.resolve("etc/dependent.xml"));
         Files.writeString(baseDir.resolve("modules/alternateA.mod"),
-            """
-            [provides]
-            alternate
-            [xml]
-            etc/alternateA.xml
-            """, UTF_8);
+            "[provides]\n" +
+            "alternate\n" +
+            "[xml]\n" +
+            "etc/alternateA.xml\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/alternateB.mod"),
-            """
-            [provides]
-            alternate
-            [xml]
-            etc/alternateB.xml
-            """, UTF_8);
+            "[provides]\n" +
+            "alternate\n" +
+            "[xml]\n" +
+            "etc/alternateB.xml\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/convenience.mod"),
-            """
-            [depends]
-            replacement
-            something-else
-            """, UTF_8);
+            "[depends]\n" +
+            "replacement\n" +
+            "something-else\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/dependent.mod"),
-            """
-            [depends]
-            alternate
-            [xml]
-            etc/dependent.xml
-            """, UTF_8);
+            "[depends]\n" +
+            "alternate\n" +
+            "[xml]\n" +
+            "etc/dependent.xml\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/original.mod"),
-            """
-            [ini]
-            impl=original
-            """, UTF_8);
+            "[ini]\n" +
+            "impl=original\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/replacement.mod"),
-            """
-            [provides]
-            original
-            [ini]
-            impl=replacement
-            """, UTF_8);
+            "[provides]\n" +
+            "original\n" +
+            "[ini]\n" +
+            "impl=replacement\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/something-else.mod"),
-            """
-            [depends]
-            original
-            """, UTF_8);
+            "[depends]\n" +
+            "original\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = List.of(
@@ -246,49 +204,35 @@ public class OrderedTest extends AbstractUseCase
         FS.touch(baseDir.resolve("etc/alternateB.xml"));
         FS.touch(baseDir.resolve("etc/dependent.xml"));
         Files.writeString(baseDir.resolve("modules/alternateA.mod"),
-            """
-            [provides]
-            alternate
-            [xml]
-            etc/alternateA.xml
-            """, UTF_8);
+            "[provides]\n" +
+            "alternate\n" +
+            "[xml]\n" +
+            "etc/alternateA.xml\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/alternateB.mod"),
-            """
-            [provides]
-            alternate
-            [xml]
-            etc/alternateB.xml
-            """, UTF_8);
+            "[provides]\n" +
+            "alternate\n" +
+            "[xml]\n" +
+            "etc/alternateB.xml\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/convenience.mod"),
-            """
-            [depends]
-            replacement
-            something-else
-            """, UTF_8);
+            "[depends]\n" +
+            "replacement\n" +
+            "something-else\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/dependent.mod"),
-            """
-            [depends]
-            alternate
-            [xml]
-            etc/dependent.xml
-            """, UTF_8);
+            "[depends]\n" +
+            "alternate\n" +
+            "[xml]\n" +
+            "etc/dependent.xml\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/original.mod"),
-            """
-            [ini]
-            impl=original
-            """, UTF_8);
+            "[ini]\n" +
+            "impl=original\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/replacement.mod"),
-            """
-            [provides]
-            original
-            [ini]
-            impl=replacement
-            """, UTF_8);
+            "[provides]\n" +
+            "original\n" +
+            "[ini]\n" +
+            "impl=replacement\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/something-else.mod"),
-            """
-            [depends]
-            original
-            """, UTF_8);
+            "[depends]\n" +
+            "original\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = List.of(
@@ -332,37 +276,29 @@ public class OrderedTest extends AbstractUseCase
         FS.touch(baseDir.resolve("etc/implA.xml"));
         FS.touch(baseDir.resolve("etc/implB.xml"));
         Files.writeString(baseDir.resolve("modules/abstractA.mod"),
-            """
-            [depend]
-            dynamic/${implA}
-            [ini]
-            implA=implA
-            [ini-template]
-            implA=implA
-            """, UTF_8);
+            "[depend]\n" +
+            "dynamic/${implA}\n" +
+            "[ini]\n" +
+            "implA=implA\n" +
+            "[ini-template]\n" +
+            "implA=implA\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/abstractB.mod"),
-            """
-            [depend]
-            dynamic/${implB}
-            [provide]
-            provided
-            [ini]
-            implB=implB
-            [ini-template]
-            implB=implB
-            """, UTF_8);
+            "[depend]\n" +
+            "dynamic/${implB}\n" +
+            "[provide]\n" +
+            "provided\n" +
+            "[ini]\n" +
+            "implB=implB\n" +
+            "[ini-template]\n" +
+            "implB=implB\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/dynamic/implA.mod"),
-            """
-            [depend]
-            provided
-            [xml]
-            etc/implA.xml
-            """, UTF_8);
+            "[depend]\n" +
+            "provided\n" +
+            "[xml]\n" +
+            "etc/implA.xml\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/dynamic/implB.mod"),
-            """
-            [xml]
-            etc/implB.xml
-            """, UTF_8);
+            "[xml]\n" +
+            "etc/implB.xml\n", UTF_8);
 
         // === Prepare Jetty Base using Main
         List<String> prepareArgs = List.of(

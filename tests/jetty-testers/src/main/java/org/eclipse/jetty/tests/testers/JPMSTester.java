@@ -300,7 +300,7 @@ public class JPMSTester extends ProcessWrapper
                 commands.add(classPath);
             }
             commands.add("--module");
-            commands.add("%s/%s".formatted(module.descriptor().name(), config.getMainClass().getName()));
+            commands.add(String.format("%s/%s", module.descriptor().name(), config.getMainClass().getName()));
             commands.addAll(config.getArgs());
 
             LOG.info("executing: " + String.join(" ", commands));
@@ -332,7 +332,7 @@ public class JPMSTester extends ProcessWrapper
             // use the one derived from the main class for now.
             String packageName = config.getMainClass().getPackageName();
             Path bogusClassPath = workDir.resolve(packageName.replace('.', '/')).resolve("Bogus.java");
-            Files.writeString(bogusClassPath, "package %s; class Bogus {}".formatted(packageName), StandardCharsets.US_ASCII, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+            Files.writeString(bogusClassPath, String.format("package %s; class Bogus {}", packageName), StandardCharsets.US_ASCII, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
             commands.add(bogusClassPath.toString());
 
             LOG.info("executing: " + String.join(" ", commands));

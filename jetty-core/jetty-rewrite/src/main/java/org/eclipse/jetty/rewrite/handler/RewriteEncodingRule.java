@@ -123,7 +123,7 @@ public class RewriteEncodingRule extends Rule
     @Override
     public String toString()
     {
-        return "%s@%x".formatted(TypeUtil.toShortName(this.getClass()), hashCode());
+        return String.format("%s@%x", TypeUtil.toShortName(this.getClass()), hashCode());
     }
 
     protected Handler newEncodingHandler(Handler input, String languagePathInContext, Encoding encoding)

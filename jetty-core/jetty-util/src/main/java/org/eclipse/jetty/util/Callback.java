@@ -225,7 +225,7 @@ public interface Callback extends Invocable
             @Override
             public String toString()
             {
-                return "Callback@%x{%s, %s,%s}".formatted(hashCode(), invocationType, success, failure);
+                return String.format("Callback@%x{%s, %s,%s}", hashCode(), invocationType, success, failure);
             }
         };
     }
@@ -268,7 +268,7 @@ public interface Callback extends Invocable
             @Override
             public String toString()
             {
-                return "Callback.Completing@%x{%s,%s}".formatted(hashCode(), invocationType, completed);
+                return String.format("Callback.Completing@%x{%s,%s}", hashCode(), invocationType, completed);
             }
         };
     }
@@ -671,7 +671,7 @@ public interface Callback extends Invocable
         @Override
         public String toString()
         {
-            return "%s@%x:%s".formatted(TypeUtil.toShortName(getClass()), hashCode(), callback);
+            return String.format("%s@%x:%s", TypeUtil.toShortName(getClass()), hashCode(), callback);
         }
     }
 

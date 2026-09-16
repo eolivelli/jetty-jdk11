@@ -164,12 +164,10 @@ public class HttpClientTest extends AbstractHttpClientServerTest
             {
                 channel.read(ByteBuffer.allocate(1024));
 
-                byte[] responseBytes = """
-                    Status: 200 OK\r
-                    Server: Jetty\r
-                    \r
-                    hello world
-                    """.getBytes(UTF_8);
+                byte[] responseBytes = ("Status: 200 OK\r\n" +
+                    "Server: Jetty\r\n" +
+                    "\r\n" +
+                    "hello world\n").getBytes(UTF_8);
 
                 ByteBuffer responseByteBuffer = ByteBuffer.allocate(1024)
                     .put((byte)0x01) //FCGI version

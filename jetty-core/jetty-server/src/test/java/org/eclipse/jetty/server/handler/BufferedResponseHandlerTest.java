@@ -295,11 +295,9 @@ public class BufferedResponseHandlerTest
             bufferedResponseHandler.setHandler(handler);
         });
 
-        String rawResponse = _local.getResponse("""
-            GET /ctx/include/path HTTP/1.1
-            Host: localhost
-            
-            """);
+        String rawResponse = _local.getResponse("GET /ctx/include/path HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.TRANSFER_ENCODING), containsString("chunked"));

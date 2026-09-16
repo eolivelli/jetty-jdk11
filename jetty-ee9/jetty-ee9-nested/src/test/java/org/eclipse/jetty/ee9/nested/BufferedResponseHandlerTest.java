@@ -84,12 +84,10 @@ public class BufferedResponseHandlerTest
             server.setHandler(rootContextHandler);
         });
 
-        String rawRequest = """
-            GET /test HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /test HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -126,12 +124,10 @@ public class BufferedResponseHandlerTest
             server.setHandler(rootContextHandler);
         });
 
-        String rawRequest = """
-            GET /test HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /test HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -172,12 +168,10 @@ public class BufferedResponseHandlerTest
             server.setHandler(rootContextHandler);
         });
 
-        String rawRequest = """
-            GET /test HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /test HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 

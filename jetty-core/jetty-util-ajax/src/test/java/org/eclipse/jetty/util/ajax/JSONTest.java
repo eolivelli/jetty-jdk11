@@ -46,25 +46,21 @@ public class JSONTest
 {
     // @checkstyle-disable-check : AvoidEscapedUnicodeCharactersCheck
 
-    private static final String JSON_STRING = """
-        
-        \t\t    \
-        // ignore this ,a [ "\s
-        /* and this\s
-        /* and * // this\s
-        */\
-        {
-        "onehundred" : 100  ,
-        "small":-0.2,
-        "name" : "fred"  ,
-        "empty" : {}  ,
-        "map" : {"a":-1.0e2}  ,
-        "array" : ["a",-1.0e2,[],null,true,false]  ,
-        "w0":{"class":"org.eclipse.jetty.util.ajax.JSONTest$Woggle","name":"woggle0","nested":{"class":"org.eclipse.jetty.util.ajax.JSONTest$Woggle","name":"woggle1","nested":null,"number":-101},"number":100},
-        "NaN": NaN,
-        "undefined": undefined,
-        }
-        """;
+    private static final String JSON_STRING = "\n" +
+        "\t\t    // ignore this ,a [ \" \n" +
+        "/* and this \n" +
+        "/* and * // this \n" +
+        "*/{\n" +
+        "\"onehundred\" : 100  ,\n" +
+        "\"small\":-0.2,\n" +
+        "\"name\" : \"fred\"  ,\n" +
+        "\"empty\" : {}  ,\n" +
+        "\"map\" : {\"a\":-1.0e2}  ,\n" +
+        "\"array\" : [\"a\",-1.0e2,[],null,true,false]  ,\n" +
+        "\"w0\":{\"class\":\"org.eclipse.jetty.util.ajax.JSONTest$Woggle\",\"name\":\"woggle0\",\"nested\":{\"class\":\"org.eclipse.jetty.util.ajax.JSONTest$Woggle\",\"name\":\"woggle1\",\"nested\":null,\"number\":-101},\"number\":100},\n" +
+        "\"NaN\": NaN,\n" +
+        "\"undefined\": undefined,\n" +
+        "}\n";
 
     private JSON json;
 
@@ -245,19 +241,9 @@ public class JSONTest
     @Test
     public void testStripComment()
     {
-        String test = """
-            
-            \t\t    \
-            // ignore this ,a [ "\s
-            /* \
-            { \
-            "onehundred" : 100  ,\
-            "name" : "fred"  ,\
-            "empty" : {}  ,\
-            "map" : {"a":-1.0e2}  ,\
-            "array" : ["a",-1.0e2,[],null,true,false]  ,\
-            } */
-            """;
+        String test = "\n" +
+            "\t\t    // ignore this ,a [ \" \n" +
+            "/* { \"onehundred\" : 100  ,\"name\" : \"fred\"  ,\"empty\" : {}  ,\"map\" : {\"a\":-1.0e2}  ,\"array\" : [\"a\",-1.0e2,[],null,true,false]  ,} */\n";
 
         Object o = json.fromJSON(test);
         assertNull(o);

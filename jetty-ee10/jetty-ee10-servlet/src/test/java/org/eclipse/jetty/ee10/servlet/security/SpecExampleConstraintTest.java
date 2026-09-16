@@ -326,11 +326,9 @@ public class SpecExampleConstraintTest
         protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
         {
             resp.setContentType("text/plain; charset=UTF-8");
-            resp.getWriter().println("""
-                URI=%s
-                user=%s
-                %s
-                """.formatted(req.getRequestURI(), req.getRemoteUser(), req.getParameter("test_parameter")));
+            resp.getWriter().println(String.format("URI=%s\n" +
+                "user=%s\n" +
+                "%s\n", req.getRequestURI(), req.getRemoteUser(), req.getParameter("test_parameter")));
         }
     }
 }

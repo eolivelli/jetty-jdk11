@@ -92,11 +92,9 @@ public class RewriteRegexRuleTest extends AbstractRuleTest
         RewriteRegexRule rule = new RewriteRegexRule(scenario.regex, scenario.replacement);
         start(rule);
 
-        String request = """
-            GET $T HTTP/1.1
-            Host: localhost
-            
-            """.replace("$T", scenario.pathQuery);
+        String request = ("GET $T HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n").replace("$T", scenario.pathQuery);
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus(), "Response status code");
@@ -126,11 +124,9 @@ public class RewriteRegexRuleTest extends AbstractRuleTest
         RewriteRegexRule rule = new RewriteRegexRule(regex, replacement);
         start(rule);
 
-        String request = """
-            GET $T HTTP/1.1
-            Host: localhost
-            
-            """.replace("$T", target);
+        String request = ("GET $T HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n").replace("$T", target);
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus(), "Response status code");
@@ -165,11 +161,9 @@ public class RewriteRegexRuleTest extends AbstractRuleTest
         rule.setAddQueries(true);
         start(rule);
 
-        String request = """
-            GET $T HTTP/1.1
-            Host: localhost
-            
-            """.replace("$T", target);
+        String request = ("GET $T HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n").replace("$T", target);
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus(), "Response status code");

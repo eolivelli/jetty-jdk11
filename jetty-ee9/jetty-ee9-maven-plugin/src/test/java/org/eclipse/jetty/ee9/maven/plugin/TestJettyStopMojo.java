@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.awaitility.Awaitility;
 import org.eclipse.jetty.server.ShutdownService;
@@ -328,7 +329,7 @@ public class TestJettyStopMojo
         //STOP.PORT=
         //STOP.KEY=
         //STOP.EXIT=
-        List<String> lines = Files.readAllLines(file).stream().filter(s -> s.startsWith("STOP.PORT=") || s.startsWith("STOP.EXIT=")).toList();
+        List<String> lines = Files.readAllLines(file).stream().filter(s -> s.startsWith("STOP.PORT=") || s.startsWith("STOP.EXIT=")).collect(Collectors.toList());
         if (lines.size() < 2)
         {
             //haven't got all the output yet, try again

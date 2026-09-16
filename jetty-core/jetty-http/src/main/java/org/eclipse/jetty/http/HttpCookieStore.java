@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.util.NanoTime;
 import org.eclipse.jetty.util.StringUtil;
@@ -336,7 +337,7 @@ public interface HttpCookieStore
                     .flatMap(Collection::stream)
                     .filter(Predicate.not(StoredHttpCookie::isExpired))
                     .map(HttpCookie.class::cast)
-                    .toList();
+                    .collect(Collectors.toList());
             }
             finally
             {

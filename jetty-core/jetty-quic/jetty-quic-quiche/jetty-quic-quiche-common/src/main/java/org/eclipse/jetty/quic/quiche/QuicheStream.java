@@ -597,7 +597,7 @@ public class QuicheStream extends AbstractStream
     @Override
     public String toString()
     {
-        return "%s[%s,writer=%s]".formatted(super.toString(), closeState, writer);
+        return String.format("%s[%s,writer=%s]", super.toString(), closeState, writer);
     }
 
     private record Writer(boolean last, List<ByteBuffer> buffers, Promise.Invocable<Stream> promise, boolean pending)
@@ -615,13 +615,11 @@ public class QuicheStream extends AbstractStream
         @Override
         public String toString()
         {
-            return "%s@%x[last=%b,pending=%b,buffers=%s]".formatted(
-                TypeUtil.toShortName(getClass()),
+            return String.format("%s@%x[last=%b,pending=%b,buffers=%s]", TypeUtil.toShortName(getClass()),
                 hashCode(),
                 last,
                 pending,
-                buffers
-            );
+                buffers);
         }
     }
 

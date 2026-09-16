@@ -76,7 +76,7 @@ public class ServletContextResponse extends ContextResponse implements ServletCo
                 return servletApiResponse.getServletRequestInfo().getServletChannel().getServletContextResponse();
         }
 
-        throw new IllegalStateException("could not find %s for %s".formatted(ServletContextResponse.class.getSimpleName(), response));
+        throw new IllegalStateException(String.format("could not find %s for %s", ServletContextResponse.class.getSimpleName(), response));
     }
 
     public ServletContextResponse(ServletChannel servletChannel, ServletContextRequest request, Response response)

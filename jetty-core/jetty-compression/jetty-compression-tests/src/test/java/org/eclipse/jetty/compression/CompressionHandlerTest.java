@@ -104,20 +104,18 @@ public class CompressionHandlerTest extends AbstractCompressionTest
      * {@code br} and {@code gzip}
      */
     @ParameterizedTest
-    @CsvSource(textBlock = """
-        # type,    resourceName,     resourceContentType,      requestedPath,              expectedIsCompressed
-        br,        texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        true
-        br,        texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          true
-        br,        texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          true
-        zstandard, texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        false
-        zstandard, texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          false
-        zstandard, texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          false
-        zstandard, images/logo.png,  image/png,                /images/logo.png,           false
-        zstandard, images/logo.png,  image/png,                /path/deep/images/logo.png, false
-        gzip,      texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        true
-        gzip,      texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          true
-        gzip,      texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          true
-        """)
+    @CsvSource(textBlock = "# type,    resourceName,     resourceContentType,      requestedPath,              expectedIsCompressed\n" +
+        "br,        texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        true\n" +
+        "br,        texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          true\n" +
+        "br,        texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          true\n" +
+        "zstandard, texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        false\n" +
+        "zstandard, texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          false\n" +
+        "zstandard, texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          false\n" +
+        "zstandard, images/logo.png,  image/png,                /images/logo.png,           false\n" +
+        "zstandard, images/logo.png,  image/png,                /path/deep/images/logo.png, false\n" +
+        "gzip,      texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        true\n" +
+        "gzip,      texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          true\n" +
+        "gzip,      texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          true\n")
     public void testCompressEncodingsConfig(String compressionType,
                                             String resourceName,
                                             String resourceContentType,
@@ -184,24 +182,22 @@ public class CompressionHandlerTest extends AbstractCompressionTest
      * {@code text/plain} and {@code image/svg+xml}
      */
     @ParameterizedTest
-    @CsvSource(textBlock = """
-        # type,    resourceName,     resourceContentType,      requestedPath,              expectedIsCompressed
-        br,        texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        true
-        br,        texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          true
-        br,        texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          true
-        br,        images/logo.png,  image/png,                /images/logo.png,           false
-        br,        images/logo.png,  image/png,                /path/deep/images/logo.png, false
-        zstandard, texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        true
-        zstandard, texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          true
-        zstandard, texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          true
-        zstandard, images/logo.png,  image/png,                /images/logo.png,           false
-        zstandard, images/logo.png,  image/png,                /path/deep/images/logo.png, false
-        gzip,      texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        true
-        gzip,      texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          true
-        gzip,      texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          true
-        gzip,      images/logo.png,  image/png,                /images/logo.png,           false
-        gzip,      images/logo.png,  image/png,                /path/deep/images/logo.png, false
-        """)
+    @CsvSource(textBlock = "# type,    resourceName,     resourceContentType,      requestedPath,              expectedIsCompressed\n" +
+        "br,        texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        true\n" +
+        "br,        texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          true\n" +
+        "br,        texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          true\n" +
+        "br,        images/logo.png,  image/png,                /images/logo.png,           false\n" +
+        "br,        images/logo.png,  image/png,                /path/deep/images/logo.png, false\n" +
+        "zstandard, texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        true\n" +
+        "zstandard, texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          true\n" +
+        "zstandard, texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          true\n" +
+        "zstandard, images/logo.png,  image/png,                /images/logo.png,           false\n" +
+        "zstandard, images/logo.png,  image/png,                /path/deep/images/logo.png, false\n" +
+        "gzip,      texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        true\n" +
+        "gzip,      texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          true\n" +
+        "gzip,      texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          true\n" +
+        "gzip,      images/logo.png,  image/png,                /images/logo.png,           false\n" +
+        "gzip,      images/logo.png,  image/png,                /path/deep/images/logo.png, false\n")
     public void testCompressMimeTypesConfig(String compressionType,
                                             String resourceName,
                                             String resourceContentType,
@@ -464,12 +460,10 @@ public class CompressionHandlerTest extends AbstractCompressionTest
      * via the ServiceLoader.
      */
     @ParameterizedTest
-    @CsvSource(textBlock = """
-        # type,
-        br,
-        zstandard,
-        gzip,
-        """)
+    @CsvSource(textBlock = "# type,\n" +
+        "br,\n" +
+        "zstandard,\n" +
+        "gzip,\n")
     public void testETag(String compressionType) throws Exception
     {
         CompressionHandler compressionHandler = new CompressionHandler();
@@ -536,24 +530,22 @@ public class CompressionHandlerTest extends AbstractCompressionTest
      * Configuration is only using {@code compressPath} excluding {@code *.png} paths, and including {@code /path/*}
      */
     @ParameterizedTest
-    @CsvSource(textBlock = """
-        # type,    resourceName,     resourceContentType,      requestedPath,              expectedIsCompressed
-        br,        texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        true
-        br,        texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          true
-        br,        texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          true
-        br,        images/logo.png,  image/png,                /images/logo.png,           false
-        br,        images/logo.png,  image/png,                /path/deep/images/logo.png, false
-        zstandard, texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        true
-        zstandard, texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          true
-        zstandard, texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          true
-        zstandard, images/logo.png,  image/png,                /images/logo.png,           false
-        zstandard, images/logo.png,  image/png,                /path/deep/images/logo.png, false
-        gzip,      texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        true
-        gzip,      texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          true
-        gzip,      texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          true
-        gzip,      images/logo.png,  image/png,                /images/logo.png,           false
-        gzip,      images/logo.png,  image/png,                /path/deep/images/logo.png, false
-        """)
+    @CsvSource(textBlock = "# type,    resourceName,     resourceContentType,      requestedPath,              expectedIsCompressed\n" +
+        "br,        texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        true\n" +
+        "br,        texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          true\n" +
+        "br,        texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          true\n" +
+        "br,        images/logo.png,  image/png,                /images/logo.png,           false\n" +
+        "br,        images/logo.png,  image/png,                /path/deep/images/logo.png, false\n" +
+        "zstandard, texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        true\n" +
+        "zstandard, texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          true\n" +
+        "zstandard, texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          true\n" +
+        "zstandard, images/logo.png,  image/png,                /images/logo.png,           false\n" +
+        "zstandard, images/logo.png,  image/png,                /path/deep/images/logo.png, false\n" +
+        "gzip,      texts/quotes.txt, text/plain;charset=utf-8, /path/to/quotes.txt,        true\n" +
+        "gzip,      texts/logo.svg,   image/svg+xml,            /path/to/logo.svg,          true\n" +
+        "gzip,      texts/long.txt,   text/plain;charset=utf-8, /path/to/long.txt,          true\n" +
+        "gzip,      images/logo.png,  image/png,                /images/logo.png,           false\n" +
+        "gzip,      images/logo.png,  image/png,                /path/deep/images/logo.png, false\n")
     public void testCompressPathConfig(String compressionType,
                                        String resourceName,
                                        String resourceContentType,
@@ -619,18 +611,16 @@ public class CompressionHandlerTest extends AbstractCompressionTest
      * {@code GET} and {@code POST}.  This is focused on the decompression of request bodies.
      */
     @ParameterizedTest
-    @CsvSource(textBlock = """
-        # type,    resourceName,     resourceContentType,      requestMethod, requestedPath
-        br,        texts/quotes.txt, text/plain;charset=utf-8, GET,           /path/to/quotes.txt
-        br,        texts/logo.svg,   image/svg+xml,            POST,          /post/to/
-        br,        texts/long.txt,   text/plain;charset=utf-8, PUT,           /put/to/
-        zstandard, texts/quotes.txt, text/plain;charset=utf-8, GET,           /path/to/quotes.txt
-        zstandard, texts/logo.svg,   image/svg+xml,            POST,          /post/to/
-        zstandard, texts/long.txt,   text/plain;charset=utf-8, PUT,           /put/to/
-        gzip,      texts/quotes.txt, text/plain;charset=utf-8, GET,           /path/to/quotes.txt
-        gzip,      texts/logo.svg,   image/svg+xml,            POST,          /post/to/
-        gzip,      texts/long.txt,   text/plain;charset=utf-8, PUT,           /put/to/
-        """)
+    @CsvSource(textBlock = "# type,    resourceName,     resourceContentType,      requestMethod, requestedPath\n" +
+        "br,        texts/quotes.txt, text/plain;charset=utf-8, GET,           /path/to/quotes.txt\n" +
+        "br,        texts/logo.svg,   image/svg+xml,            POST,          /post/to/\n" +
+        "br,        texts/long.txt,   text/plain;charset=utf-8, PUT,           /put/to/\n" +
+        "zstandard, texts/quotes.txt, text/plain;charset=utf-8, GET,           /path/to/quotes.txt\n" +
+        "zstandard, texts/logo.svg,   image/svg+xml,            POST,          /post/to/\n" +
+        "zstandard, texts/long.txt,   text/plain;charset=utf-8, PUT,           /put/to/\n" +
+        "gzip,      texts/quotes.txt, text/plain;charset=utf-8, GET,           /path/to/quotes.txt\n" +
+        "gzip,      texts/logo.svg,   image/svg+xml,            POST,          /post/to/\n" +
+        "gzip,      texts/long.txt,   text/plain;charset=utf-8, PUT,           /put/to/\n")
     public void testDecompressMethodsConfig(String compressionType,
                                             String resourceName,
                                             String resourceContentType,
@@ -750,25 +740,23 @@ public class CompressionHandlerTest extends AbstractCompressionTest
      * with different values for {@code Accept-Encoding}, including {@code *}.
      */
     @ParameterizedTest
-    @CsvSource(useHeadersInDisplayName = true, delimiterString = "|", textBlock = """
-        acceptEncoding | preferredEncoding | expectedEncoding
-                       |                   |
-                       | zstd              |
-                       | br, gzip          |
-        gzip           |                   | gzip
-        zstd, gzip     |                   | zstd
-        br             | zstd              | br
-        br             | gzip, br          | br
-        br, gzip       | gzip, br          | gzip
-        br, zstd       | gzip, br          | br
-        gzip           | zstd, br          | gzip
-        *              |                   | <any>
-        *              | zstd, gzip        | zstd
-        foo, *         |                   | <any>
-        foo, *         | br                | br
-        identity,*;q=0 |                   |
-        identity,*;q=0 | br, gzip          |
-        """)
+    @CsvSource(useHeadersInDisplayName = true, delimiterString = "|", textBlock = "acceptEncoding | preferredEncoding | expectedEncoding\n" +
+        "               |                   |\n" +
+        "               | zstd              |\n" +
+        "               | br, gzip          |\n" +
+        "gzip           |                   | gzip\n" +
+        "zstd, gzip     |                   | zstd\n" +
+        "br             | zstd              | br\n" +
+        "br             | gzip, br          | br\n" +
+        "br, gzip       | gzip, br          | gzip\n" +
+        "br, zstd       | gzip, br          | br\n" +
+        "gzip           | zstd, br          | gzip\n" +
+        "*              |                   | <any>\n" +
+        "*              | zstd, gzip        | zstd\n" +
+        "foo, *         |                   | <any>\n" +
+        "foo, *         | br                | br\n" +
+        "identity,*;q=0 |                   |\n" +
+        "identity,*;q=0 | br, gzip          |\n")
     public void testPreferredCompressEncodings(String acceptEncodings, String preferredEncodings, String expectedEncoding) throws Exception
     {
         pool = new ArrayByteBufferPool.Tracking();
@@ -1149,13 +1137,11 @@ public class CompressionHandlerTest extends AbstractCompressionTest
               OutputStream out = socket.getOutputStream();
               InputStream in = socket.getInputStream())
         {
-            String rawRequest = """
-                GET /test HTTP/1.1\r
-                Accept-Encoding: gzip\r
-                Host: %s\r
-                Connection: close\r
-                \r
-                """.formatted(serverURI.getAuthority());
+            String rawRequest = String.format("GET /test HTTP/1.1\r\n" +
+                "Accept-Encoding: gzip\r\n" +
+                "Host: %s\r\n" +
+                "Connection: close\r\n" +
+                "\r\n", serverURI.getAuthority());
             out.write(rawRequest.getBytes(UTF_8));
             out.flush();
             HttpTester.Response response;

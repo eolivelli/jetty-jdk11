@@ -338,7 +338,7 @@ class UrlParameterDecoder
 
     private String notValidPctEncoding(char hi, char lo)
     {
-        return "Not valid encoding '%%%c%c'".formatted(hi != 0 ? hi : '?', lo != 0 ? lo : '?');
+        return String.format("Not valid encoding '%%%c%c'", hi != 0 ? hi : '?', lo != 0 ? lo : '?');
     }
 
     private String takeBuiltString() throws CharacterCodingException

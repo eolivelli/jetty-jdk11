@@ -233,9 +233,7 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
             assertEquals(0, run1.getExitValue());
 
             Path jettyLogging = distribution.getJettyBase().resolve("resources/jetty-logging.properties");
-            String loggingConfig = """
-                org.eclipse.jetty.LEVEL=DEBUG
-                """;
+            String loggingConfig = "org.eclipse.jetty.LEVEL=DEBUG\n";
             Files.writeString(jettyLogging, loggingConfig, StandardOpenOption.TRUNCATE_EXISTING);
             long fileLength = Files.size(jettyLogging);
 
@@ -311,15 +309,11 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
             assertEquals(0, run1.getExitValue());
 
             Path jettyLogging = distribution.getJettyBase().resolve("resources/jetty-logging.properties");
-            String loggingConfig = """
-                org.eclipse.jetty.LEVEL=DEBUG
-                """;
+            String loggingConfig = "org.eclipse.jetty.LEVEL=DEBUG\n";
             Files.writeString(jettyLogging, loggingConfig, StandardOpenOption.TRUNCATE_EXISTING);
 
-            String coordinates = "org.eclipse.jetty.demos:jetty-%s-demo-simple-webapp:war:%s".formatted(
-                "ee8".equals(env) ? "servlet4" : "servlet5",
-                jettyVersion
-            );
+            String coordinates = String.format("org.eclipse.jetty.demos:jetty-%s-demo-simple-webapp:war:%s", "ee8".equals(env) ? "servlet4" : "servlet5",
+                jettyVersion);
             distribution.installWar(distribution.resolveArtifact(coordinates), "test");
 
             int port = Tester.freePort();
@@ -377,9 +371,7 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
             assertEquals(0, run1.getExitValue(), run1.logs());
 
             Path jettyLogging = distribution.getJettyBase().resolve("resources/jetty-logging.properties");
-            String loggingConfig = """
-                org.eclipse.jetty.LEVEL=DEBUG
-                """;
+            String loggingConfig = "org.eclipse.jetty.LEVEL=DEBUG\n";
             Files.writeString(jettyLogging, loggingConfig, StandardOpenOption.TRUNCATE_EXISTING);
 
             String coordinates = "org.eclipse.jetty.demos:jetty-servlet5-demo-simple-webapp:war:" + jettyVersion;

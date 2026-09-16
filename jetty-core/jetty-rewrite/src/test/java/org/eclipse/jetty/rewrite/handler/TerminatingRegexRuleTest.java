@@ -53,11 +53,9 @@ public class TerminatingRegexRuleTest extends AbstractRuleTest
     @Test
     public void testTerminatingEarly() throws Exception
     {
-        String request = """
-            GET /login.jsp HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /login.jsp HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.CREATED_201, response.getStatus());
@@ -68,11 +66,9 @@ public class TerminatingRegexRuleTest extends AbstractRuleTest
     @ValueSource(strings = {"/login.do", "/login/"})
     public void testNonTerminating(String uri) throws Exception
     {
-        String request = """
-            GET $U HTTP/1.1
-            Host: localhost
-                        
-            """.replace("$U", uri);
+        String request = ("GET $U HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n").replace("$U", uri);
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.SEE_OTHER_303, response.getStatus());

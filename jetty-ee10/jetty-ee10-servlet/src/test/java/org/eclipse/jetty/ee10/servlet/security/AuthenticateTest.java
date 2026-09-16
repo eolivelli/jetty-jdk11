@@ -124,11 +124,11 @@ public class AuthenticateTest
         assertThat(response, containsString("HTTP/1.1 401 Unauthorized"));
 
         // Incorrect credentials also result in a 401 response.
-        response = _connector.getResponse("GET /ctx/ HTTP/1.0\r\nAuthorization: %s\r\n\r\n".formatted(BasicAuthenticator.authorization("admin", "bad_password")));
+        response = _connector.getResponse(String.format("GET /ctx/ HTTP/1.0\r\nAuthorization: %s\r\n\r\n", BasicAuthenticator.authorization("admin", "bad_password")));
         assertThat(response, containsString("HTTP/1.1 401 Unauthorized"));
 
         // If we have correct credentials we will be able to get a valid user principal.
-        response = _connector.getResponse("GET /ctx/ HTTP/1.0\r\nAuthorization: %s\r\n\r\n".formatted(BasicAuthenticator.authorization("admin", "password")));
+        response = _connector.getResponse(String.format("GET /ctx/ HTTP/1.0\r\nAuthorization: %s\r\n\r\n", BasicAuthenticator.authorization("admin", "password")));
         assertThat(response, containsString("HTTP/1.1 200 OK"));
         assertThat(response, containsString("UserPrincipal: admin"));
     }
@@ -460,12 +460,12 @@ public class AuthenticateTest
         assertThat(response, containsString("UserPrincipal: null"));
 
         // Incorrect credentials also results in null user principal, but a 200 response.
-        response = _connector.getResponse("GET /ctx/getUserPrincipal HTTP/1.0\r\nAuthorization: %s\r\n\r\n".formatted(BasicAuthenticator.authorization("admin", "bad_password")));
+        response = _connector.getResponse(String.format("GET /ctx/getUserPrincipal HTTP/1.0\r\nAuthorization: %s\r\n\r\n", BasicAuthenticator.authorization("admin", "bad_password")));
         assertThat(response, containsString("HTTP/1.1 200 OK"));
         assertThat(response, containsString("UserPrincipal: null"));
 
         // If we have correct credentials we will be able to get a valid user principal.
-        response = _connector.getResponse("GET /ctx/getUserPrincipal HTTP/1.0\r\nAuthorization: %s\r\n\r\n".formatted(BasicAuthenticator.authorization("admin", "password")));
+        response = _connector.getResponse(String.format("GET /ctx/getUserPrincipal HTTP/1.0\r\nAuthorization: %s\r\n\r\n", BasicAuthenticator.authorization("admin", "password")));
         assertThat(response, containsString("HTTP/1.1 200 OK"));
         assertThat(response, containsString("UserPrincipal: admin"));
     }

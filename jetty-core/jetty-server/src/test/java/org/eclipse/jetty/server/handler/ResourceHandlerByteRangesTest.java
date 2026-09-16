@@ -109,13 +109,11 @@ public class ResourceHandlerByteRangesTest
 
         try (SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", connector.getLocalPort())))
         {
-            socket.write(BufferUtil.toBuffer("""
-                GET / HTTP/1.1\r
-                Host: local\r
-                Range: bytes=234-258\r
-                Connection: close\r
-                \r
-                """));
+            socket.write(BufferUtil.toBuffer("GET / HTTP/1.1\r\n" +
+                "Host: local\r\n" +
+                "Range: bytes=234-258\r\n" +
+                "Connection: close\r\n" +
+                "\r\n"));
 
             HttpTester.Response response = HttpTester.parseResponse(HttpTester.from(socket));
             assertNotNull(response);
@@ -141,13 +139,11 @@ public class ResourceHandlerByteRangesTest
 
         try (SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", connector.getLocalPort())))
         {
-            socket.write(BufferUtil.toBuffer("""
-                GET / HTTP/1.1\r
-                Host: local\r
-                Range: bytes=234-258, 494-519\r
-                Connection: close\r
-                \r
-                """));
+            socket.write(BufferUtil.toBuffer("GET / HTTP/1.1\r\n" +
+                "Host: local\r\n" +
+                "Range: bytes=234-258, 494-519\r\n" +
+                "Connection: close\r\n" +
+                "\r\n"));
 
             HttpTester.Response response = HttpTester.parseResponse(HttpTester.from(socket));
             assertNotNull(response);
@@ -175,13 +171,11 @@ public class ResourceHandlerByteRangesTest
 
         try (SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", connector.getLocalPort())))
         {
-            socket.write(BufferUtil.toBuffer("""
-                GET / HTTP/1.1\r
-                Host: local\r
-                Range: bytes=234-258\r
-                Connection: close\r
-                \r
-                """));
+            socket.write(BufferUtil.toBuffer("GET / HTTP/1.1\r\n" +
+                "Host: local\r\n" +
+                "Range: bytes=234-258\r\n" +
+                "Connection: close\r\n" +
+                "\r\n"));
 
             HttpTester.Response response = HttpTester.parseResponse(HttpTester.from(socket));
             assertNotNull(response);
@@ -207,13 +201,11 @@ public class ResourceHandlerByteRangesTest
 
         try (SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", connector.getLocalPort())))
         {
-            socket.write(BufferUtil.toBuffer("""
-                GET / HTTP/1.1\r
-                Host: local\r
-                Range: bytes=234-258, 494-519\r
-                Connection: close\r
-                \r
-                """));
+            socket.write(BufferUtil.toBuffer("GET / HTTP/1.1\r\n" +
+                "Host: local\r\n" +
+                "Range: bytes=234-258, 494-519\r\n" +
+                "Connection: close\r\n" +
+                "\r\n"));
 
             HttpTester.Response response = HttpTester.parseResponse(HttpTester.from(socket));
             assertNotNull(response);
@@ -249,13 +241,11 @@ public class ResourceHandlerByteRangesTest
 
         try (SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", connector.getLocalPort())))
         {
-            socket.write(BufferUtil.toBuffer("""
-                GET / HTTP/1.1\r
-                Host: local\r
-                Range: bytes=234-258\r
-                Connection: close\r
-                \r
-                """));
+            socket.write(BufferUtil.toBuffer("GET / HTTP/1.1\r\n" +
+                "Host: local\r\n" +
+                "Range: bytes=234-258\r\n" +
+                "Connection: close\r\n" +
+                "\r\n"));
 
             HttpTester.Response response = HttpTester.parseResponse(HttpTester.from(socket));
             assertNotNull(response);

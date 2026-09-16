@@ -80,18 +80,14 @@ public class RewriteLanguageRuleTest extends AbstractRuleTest
     @Test
     public void testNoLanguage() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/unknown.html HTTP/1.0\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/unknown.html HTTP/1.0\r\n" +
+            "\r\n"));
 
         assertEquals(404, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/only.html HTTP/1.0\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/only.html HTTP/1.0\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
@@ -100,10 +96,8 @@ public class RewriteLanguageRuleTest extends AbstractRuleTest
         assertThat(response.get(HttpHeader.ETAG), not(nullValue()));
         assertThat(response.get(HttpHeader.ETAG), not(containsString("-")));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/all.html HTTP/1.0\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
@@ -112,10 +106,8 @@ public class RewriteLanguageRuleTest extends AbstractRuleTest
         assertThat(response.get(HttpHeader.ETAG), not(nullValue()));
         assertThat(response.get(HttpHeader.ETAG), not(containsString("-")));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/en-AU-only.html HTTP/1.0\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/en-AU-only.html HTTP/1.0\r\n" +
+            "\r\n"));
 
         assertEquals(404, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
@@ -124,31 +116,25 @@ public class RewriteLanguageRuleTest extends AbstractRuleTest
     @Test
     public void testOneLanguage() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/unknown.html HTTP/1.0\r
-            Accept-Language: en-AU\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/unknown.html HTTP/1.0\r\n" +
+            "Accept-Language: en-AU\r\n" +
+            "\r\n"));
 
         assertEquals(404, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/only.html HTTP/1.0\r
-            Accept-Language: en-AU\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/only.html HTTP/1.0\r\n" +
+            "Accept-Language: en-AU\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
         assertEquals("only", response.getContent());
         assertThat(response.get(HttpHeader.CONTENT_LANGUAGE), nullValue());
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            Accept-Language: en-AU\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/all.html HTTP/1.0\r\n" +
+            "Accept-Language: en-AU\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
@@ -156,11 +142,9 @@ public class RewriteLanguageRuleTest extends AbstractRuleTest
         assertThat(response.get(HttpHeader.CONTENT_LANGUAGE), is("en-AU"));
         assertThat(response.get(HttpHeader.ETAG), containsString("-en-AU\""));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/en-AU-only.html HTTP/1.0\r
-            Accept-Language: en-AU\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/en-AU-only.html HTTP/1.0\r\n" +
+            "Accept-Language: en-AU\r\n" +
+            "\r\n"));
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
         assertEquals("en-AU-only", response.getContent());
@@ -171,31 +155,25 @@ public class RewriteLanguageRuleTest extends AbstractRuleTest
     @Test
     public void testQualityLanguage() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/unknown.html HTTP/1.0\r
-            Accept-Language: fr,en-AU;q=0.5\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/unknown.html HTTP/1.0\r\n" +
+            "Accept-Language: fr,en-AU;q=0.5\r\n" +
+            "\r\n"));
 
         assertEquals(404, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/only.html HTTP/1.0\r
-            Accept-Language: fr,en-AU;q=0.5
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/only.html HTTP/1.0\r\n" +
+            "Accept-Language: fr,en-AU;q=0.5\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
         assertEquals("only", response.getContent());
         assertThat(response.get(HttpHeader.CONTENT_LANGUAGE), nullValue());
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            Accept-Language: fr,en-AU;q=0.5
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/all.html HTTP/1.0\r\n" +
+            "Accept-Language: fr,en-AU;q=0.5\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
@@ -203,11 +181,9 @@ public class RewriteLanguageRuleTest extends AbstractRuleTest
         assertThat(response.get(HttpHeader.CONTENT_LANGUAGE), is("fr"));
         assertThat(response.get(HttpHeader.ETAG), containsString("-fr\""));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/en-AU-only.html HTTP/1.0\r
-            Accept-Language: fr,en-AU;q=0.5\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/en-AU-only.html HTTP/1.0\r\n" +
+            "Accept-Language: fr,en-AU;q=0.5\r\n" +
+            "\r\n"));
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
         assertEquals("en-AU-only", response.getContent());
@@ -218,31 +194,25 @@ public class RewriteLanguageRuleTest extends AbstractRuleTest
     @Test
     public void testUnknownQualityLanguage() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/unknown.html HTTP/1.0\r
-            Accept-Language: xx,fr,en-AU;q=0.5\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/unknown.html HTTP/1.0\r\n" +
+            "Accept-Language: xx,fr,en-AU;q=0.5\r\n" +
+            "\r\n"));
 
         assertEquals(404, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/only.html HTTP/1.0\r
-            Accept-Language: xx,fr,en-AU;q=0.5
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/only.html HTTP/1.0\r\n" +
+            "Accept-Language: xx,fr,en-AU;q=0.5\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
         assertEquals("only", response.getContent());
         assertThat(response.get(HttpHeader.CONTENT_LANGUAGE), nullValue());
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            Accept-Language: xx,fr,en-AU;q=0.5
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/all.html HTTP/1.0\r\n" +
+            "Accept-Language: xx,fr,en-AU;q=0.5\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
@@ -250,11 +220,9 @@ public class RewriteLanguageRuleTest extends AbstractRuleTest
         assertThat(response.get(HttpHeader.CONTENT_LANGUAGE), is("fr"));
         assertThat(response.get(HttpHeader.ETAG), containsString("-fr\""));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/en-AU-only.html HTTP/1.0\r
-            Accept-Language: xx,fr,en-AU;q=0.5\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/en-AU-only.html HTTP/1.0\r\n" +
+            "Accept-Language: xx,fr,en-AU;q=0.5\r\n" +
+            "\r\n"));
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
         assertEquals("en-AU-only", response.getContent());
@@ -265,31 +233,25 @@ public class RewriteLanguageRuleTest extends AbstractRuleTest
     @Test
     public void testWildLanguage() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/unknown.html HTTP/1.0\r
-            Accept-Language: fr,*;q=0.5\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/unknown.html HTTP/1.0\r\n" +
+            "Accept-Language: fr,*;q=0.5\r\n" +
+            "\r\n"));
 
         assertEquals(404, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/only.html HTTP/1.0\r
-            Accept-Language: fr,*;q=0.5\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/only.html HTTP/1.0\r\n" +
+            "Accept-Language: fr,*;q=0.5\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
         assertEquals("only", response.getContent());
         assertThat(response.get(HttpHeader.CONTENT_LANGUAGE), nullValue());
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            Accept-Language: fr,*;q=0.5\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/all.html HTTP/1.0\r\n" +
+            "Accept-Language: fr,*;q=0.5\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
@@ -297,11 +259,9 @@ public class RewriteLanguageRuleTest extends AbstractRuleTest
         assertThat(response.get(HttpHeader.CONTENT_LANGUAGE), is("fr"));
         assertThat(response.get(HttpHeader.ETAG), containsString("-fr\""));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/en-AU-only.html HTTP/1.0\r
-            Accept-Language: fr,*;q=0.5\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/en-AU-only.html HTTP/1.0\r\n" +
+            "Accept-Language: fr,*;q=0.5\r\n" +
+            "\r\n"));
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
         assertEquals("en-AU-only", response.getContent());
@@ -312,11 +272,9 @@ public class RewriteLanguageRuleTest extends AbstractRuleTest
     @Test
     public void testEtags() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            Accept-Language: en\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/all.html HTTP/1.0\r\n" +
+            "Accept-Language: en\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Language"));
@@ -326,14 +284,12 @@ public class RewriteLanguageRuleTest extends AbstractRuleTest
         String etag = response.get(HttpHeader.ETAG);
         assertThat(etag, containsString("-en\""));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            Accept-Language: en\r
-            If-None-Match: w/"abc"\r
-            If-None-Match: w/"xyz", %s, w/"pqy"\r
-            If-None-Match: w/"123"\r
-            \r
-            """.formatted(etag)));
+        response = HttpTester.parseResponse(_connector.getResponse(String.format("GET /ctx/all.html HTTP/1.0\r\n" +
+            "Accept-Language: en\r\n" +
+            "If-None-Match: w/\"abc\"\r\n" +
+            "If-None-Match: w/\"xyz\", %s, w/\"pqy\"\r\n" +
+            "If-None-Match: w/\"123\"\r\n" +
+            "\r\n", etag)));
 
         assertEquals(304, response.getStatus());
     }

@@ -646,7 +646,7 @@ public class StreamEndPoint implements EndPoint
             return "<null>";
         if (connection instanceof AbstractConnection c)
             return c.toConnectionString();
-        return "%s@%x".formatted(TypeUtil.toShortName(connection.getClass()), connection.hashCode());
+        return String.format("%s@%x", TypeUtil.toShortName(connection.getClass()), connection.hashCode());
     }
 
     @Override

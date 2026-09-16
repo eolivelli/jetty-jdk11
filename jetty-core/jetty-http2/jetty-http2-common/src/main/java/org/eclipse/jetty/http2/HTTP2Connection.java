@@ -330,7 +330,7 @@ public class HTTP2Connection extends AbstractConnection implements Parser.Listen
     @Override
     public String toConnectionString()
     {
-        return "%s@%x[%s]".formatted(TypeUtil.toShortName(getClass()), hashCode(), strategy);
+        return String.format("%s@%x[%s]", TypeUtil.toShortName(getClass()), hashCode(), strategy);
     }
 
     protected class HTTP2Producer implements ExecutionStrategy.Producer
@@ -580,7 +580,7 @@ public class HTTP2Connection extends AbstractConnection implements Parser.Listen
                 boolean held = l.isHeldByCurrentThread();
                 countState = held ? String.valueOf(tasks.size()) : "undefined";
             }
-            return "%s@%x[taskQueue=%s]".formatted(TypeUtil.toShortName(getClass()), hashCode(), countState);
+            return String.format("%s@%x[taskQueue=%s]", TypeUtil.toShortName(getClass()), hashCode(), countState);
         }
     }
 

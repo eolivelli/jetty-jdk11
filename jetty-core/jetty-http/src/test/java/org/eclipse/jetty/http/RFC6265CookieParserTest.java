@@ -934,7 +934,7 @@ public class RFC6265CookieParserTest
     {
         List<String> actualViolations = cutter.violations.stream()
             .map(v -> String.format("%s%s: %s", v.violation().getName(), (!v.allowed() ? "(forbidden)" : ""), v.details()))
-            .toList();
+            .collect(Collectors.toList());
         assertThat("Actual Violations " + actualViolations.stream()
                 .map(Objects::toString)
                 .collect(Collectors.joining(",  \n", "[\n  ", "\n]")),

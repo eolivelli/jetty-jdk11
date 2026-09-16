@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A Security constraint that is applied to a request, which contain:
@@ -299,7 +300,7 @@ public interface Constraint
     {
         return from(name, Transport.INHERIT, authorization, (roles == null || roles.length == 0)
             ? Collections.emptySet()
-            : new HashSet<>(Arrays.stream(roles).toList()));
+            : new HashSet<>(Arrays.stream(roles).collect(Collectors.toList())));
     }
 
     static Constraint from(Transport transport, Authorization authorization, Set<String> roles)
@@ -311,7 +312,7 @@ public interface Constraint
     {
         return new Constraint()
         {
-            private final String _name = name == null ? "unnamed@%x".formatted(hashCode()) : name;
+            private final String _name = name == null ? String.format("unnamed@%x", hashCode()) : name;
             private final Transport _transport = transport == null ? Transport.INHERIT : transport;
             private final Set<String> _roles = roles == null || roles.isEmpty()
                 ? Collections.emptySet()
@@ -351,8 +352,7 @@ public interface Constraint
             @Override
             public String toString()
             {
-                return "Constraint@%x{%s,%s,%s,%s}".formatted(
-                    hashCode(),
+                return String.format("Constraint@%x{%s,%s,%s,%s}", hashCode(),
                     getName(),
                     getTransport(),
                     getAuthorization(),

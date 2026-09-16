@@ -81,7 +81,7 @@ public class HttpClientTransportOverFCGI extends AbstractConnectorHttpClientTran
     {
         HttpVersion version = request.getVersion();
         if (((HttpRequest)request).isVersionExplicit())
-            throw new HttpRequestException("Cannot send explicit %s requests with FastCGI transport".formatted(version), request);
+            throw new HttpRequestException(String.format("Cannot send explicit %s requests with FastCGI transport", version), request);
         if (request.getTransport() == null)
             request.transport(Transport.TCP_IP);
         return getHttpClient().createOrigin(request, new Origin.Protocol(List.of("fastcgi/1.1"), false));

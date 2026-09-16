@@ -104,6 +104,6 @@ public class CookiePatternRule extends PatternRule
     @Override
     public String toString()
     {
-        return "%s@%x[set-cookie:%s=%s]".formatted(super.toString(), hashCode(), getName(), getValue());
+        return String.format("%s@%x[set-cookie:%s=%s]", super.toString(), hashCode(), getName(), getValue());
     }
 }

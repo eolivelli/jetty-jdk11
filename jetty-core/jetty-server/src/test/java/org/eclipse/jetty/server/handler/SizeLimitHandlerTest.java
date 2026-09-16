@@ -197,12 +197,10 @@ public class SizeLimitHandlerTest
         });
         _server.start();
         HttpTester.Response response = HttpTester.parseResponse(
-            _local.getResponse("""
-                POST /ctx/hello HTTP/1.0\r
-                Content-Length: 8\r
-                \r
-                123456\r
-                """));
+            _local.getResponse("POST /ctx/hello HTTP/1.0\r\n" +
+                "Content-Length: 8\r\n" +
+                "\r\n" +
+                "123456\r\n"));
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getContent(), containsString("OK 8"));
     }
@@ -223,11 +221,10 @@ public class SizeLimitHandlerTest
         });
         _server.start();
         HttpTester.Response response = HttpTester.parseResponse(
-            _local.getResponse("""
-                POST /ctx/hello HTTP/1.0\r
-                Content-Length: 32768\r
-                \r
-                123456..."""));
+            _local.getResponse("POST /ctx/hello HTTP/1.0\r\n" +
+                "Content-Length: 32768\r\n" +
+                "\r\n" +
+                "123456..."));
         assertThat(response.getStatus(), equalTo(413));
         assertThat(response.getContent(), containsString("32768&gt;8192"));
     }
@@ -249,12 +246,10 @@ public class SizeLimitHandlerTest
         _server.start();
 
         try (LocalConnector.LocalEndPoint endPoint = _local.executeRequest(
-            """
-                POST /ctx/hello HTTP/1.1\r
-                Host: localhost\r
-                Transfer-Encoding: chunked\r
-                \r
-                """))
+            "POST /ctx/hello HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Transfer-Encoding: chunked\r\n" +
+            "\r\n"))
         {
             byte[] data = new byte[1024];
             Arrays.fill(data, (byte)'X');

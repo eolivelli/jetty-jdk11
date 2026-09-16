@@ -90,12 +90,10 @@ public class ComplianceViolationListenerTest
             server.setHandler(new EchoRequestUriHandler());
         });
 
-        String rawRequest = """
-            GET %s HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """.formatted(rawPath);
+        String rawRequest = String.format("GET %s HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n", rawPath);
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -136,12 +134,10 @@ public class ComplianceViolationListenerTest
 
         String rawPath = "/path//..//%2e/%2f";
 
-        String rawRequest = """
-            GET %s HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """.formatted(rawPath);
+        String rawRequest = String.format("GET %s HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n", rawPath);
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -184,13 +180,11 @@ public class ComplianceViolationListenerTest
         });
 
         // Intentionally using CR+LF to avoid allowed violation
-        String rawRequest = """
-            GET /path/to/resource HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            X-Foo: value;param=bad\r
-            \r
-            """;
+        String rawRequest = "GET /path/to/resource HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "X-Foo: value;param=bad\r\n" +
+            "\r\n";
 
         String expectedRequestURI = "http://local/path/to/resource";
 
@@ -234,13 +228,11 @@ public class ComplianceViolationListenerTest
 
         // Intentionally NOT using CR+LF in Host header to trigger allowed LF_HEADER_TERMINATION violation
         // Using \t in parameter value triggering allowed WHITESPACE_IN_PARAMETER violation
-        String rawRequest = """
-            GET /path/to/bad/resource HTTP/1.1\r
-            Host: local
-            Connection: close\r
-            X-Foo: value;param\t=bad\r
-            \r
-            """;
+        String rawRequest = "GET /path/to/bad/resource HTTP/1.1\r\n" +
+            "Host: local\n" +
+            "Connection: close\r\n" +
+            "X-Foo: value;param\t=bad\r\n" +
+            "\r\n";
 
         String expectedRequestURI = "http://local/path/to/bad/resource";
 
@@ -290,13 +282,11 @@ public class ComplianceViolationListenerTest
         });
 
         // Duplicate Host headers are forbidden.
-        String rawRequest = """
-            GET /path/to/forbidden/resource HTTP/1.1\r
-            Host: local\r
-            Host: badother\r
-            Connection: close\r
-            \r
-            """;
+        String rawRequest = "GET /path/to/forbidden/resource HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Host: badother\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -337,13 +327,11 @@ public class ComplianceViolationListenerTest
             server.setHandler(new EchoRequestCookiesHandler());
         });
 
-        String rawRequest = """
-            GET /path/to/good/cookie HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            Cookie: foo=bar\r
-            \r
-            """;
+        String rawRequest = "GET /path/to/good/cookie HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "Cookie: foo=bar\r\n" +
+            "\r\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -382,13 +370,11 @@ public class ComplianceViolationListenerTest
         });
 
         // Extra Cookie `\t` triggers allowed OPTIONAL_WHITE_SPACE violation
-        String rawRequest = """
-            GET /path/to/bad/cookie/allowed HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            Cookie: foo\t=bar\r
-            \r
-            """;
+        String rawRequest = "GET /path/to/bad/cookie/allowed HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "Cookie: foo\t=bar\r\n" +
+            "\r\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -430,14 +416,12 @@ public class ComplianceViolationListenerTest
         });
 
         // Extra Cookie `\t` triggers forbidden SPECIAL_CHARS_IN_QUOTES violation
-        String rawRequest = """
-            GET /path/to/bad/cookie/forbidden HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            Cookie: name=value\r
-            Cookie: foo="bar\t"\r
-            \r
-            """;
+        String rawRequest = "GET /path/to/bad/cookie/forbidden HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "Cookie: name=value\r\n" +
+            "Cookie: foo=\"bar\t\"\r\n" +
+            "\r\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -478,7 +462,7 @@ public class ComplianceViolationListenerTest
 
         protected void event(String format, Object... args)
         {
-            String str = format.formatted(args);
+            String str = String.format(format, args);
             if (LOG.isDebugEnabled())
                 LOG.debug(str);
             events.add(str);
@@ -496,8 +480,7 @@ public class ComplianceViolationListenerTest
             type = "MultiPartCompliance";
         if (event.violation() instanceof CookieCompliance.Violation)
             type = "CookieCompliance";
-        return "%s.%s (%s)".formatted(
-            type,
+        return String.format("%s.%s (%s)", type,
             event.violation().getName(),
             event.allowed() ? "allowed" : "forbidden");
     }
@@ -558,7 +541,7 @@ public class ComplianceViolationListenerTest
 
             if (attr instanceof Request req)
             {
-                return "%s %s".formatted(req.getMethod(), req.getHttpURI().toString());
+                return String.format("%s %s", req.getMethod(), req.getHttpURI().toString());
             }
 
             return attr.toString();

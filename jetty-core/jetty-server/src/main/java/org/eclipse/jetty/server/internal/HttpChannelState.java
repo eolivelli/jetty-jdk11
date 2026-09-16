@@ -1390,7 +1390,7 @@ public class HttpChannelState implements HttpChannel, Components
                                 lengthError = "written %d < %d content-length";
                             if (lengthError != null)
                             {
-                                String message = lengthError.formatted(totalWritten, contentLength);
+                                String message = String.format(lengthError, totalWritten, contentLength);
                                 if (LOG.isDebugEnabled())
                                     LOG.debug("fail {} {}", writeCallback, message);
                                 writeFailure = new IOException(message);
@@ -1597,7 +1597,7 @@ public class HttpChannelState implements HttpChannel, Components
         @Override
         public String toString()
         {
-            return "%s@%x{%s,%s}".formatted(TypeUtil.toShortName(this.getClass()), hashCode(), getStatus(), getRequest());
+            return String.format("%s@%x{%s,%s}", TypeUtil.toShortName(this.getClass()), hashCode(), getStatus(), getRequest());
         }
     }
 
@@ -1695,7 +1695,7 @@ public class HttpChannelState implements HttpChannel, Components
                     if (committedContentLength >= 0 &&
                         committedContentLength != totalWritten &&
                         !(totalWritten == 0 && (HttpMethod.HEAD.is(_request.getMethod()) || response.getStatus() == HttpStatus.NOT_MODIFIED_304)))
-                        failure = ExceptionUtil.combine(failure, new IOException("content-length %d != %d written".formatted(committedContentLength, totalWritten)));
+                        failure = ExceptionUtil.combine(failure, new IOException(String.format("content-length %d != %d written", committedContentLength, totalWritten)));
                 }
 
                 // If we are still not failing, is a last stream send needed or can we complete?
@@ -1946,7 +1946,7 @@ public class HttpChannelState implements HttpChannel, Components
         @Override
         public String toString()
         {
-            return "%s@%x".formatted(TypeUtil.toShortName(getClass()), hashCode());
+            return String.format("%s@%x", TypeUtil.toShortName(getClass()), hashCode());
         }
     }
 

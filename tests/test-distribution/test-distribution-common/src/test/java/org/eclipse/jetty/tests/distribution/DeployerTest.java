@@ -69,21 +69,19 @@ public class DeployerTest extends AbstractJettyHomeTest
             Path baseResourcePath = jettyBase.resolve("work/test");
             FS.ensureDirExists(baseResourcePath);
             Path testXml = jettyBase.resolve("webapps").resolve("test.xml");
-            Files.writeString(testXml, """
-                <?xml version="1.0"?>
-                <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure.dtd">
-                <Configure class="org.eclipse.jetty.server.handler.ContextHandler">
-                  <Set name="contextPath">/test</Set>
-                  <Set name="baseResourceAsPath">
-                    <Call class="java.nio.file.Path" name="of">
-                      <Arg>$R</Arg>
-                    </Call>
-                  </Set>
-                  <Set name="handler">
-                    <New class="org.eclipse.jetty.server.handler.ResourceHandler" />
-                  </Set>
-                </Configure>
-                """.replace("$R", baseResourcePath.toAbsolutePath().toString()), StandardOpenOption.CREATE);
+            Files.writeString(testXml, ("<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure.dtd\">\n" +
+                "<Configure class=\"org.eclipse.jetty.server.handler.ContextHandler\">\n" +
+                "  <Set name=\"contextPath\">/test</Set>\n" +
+                "  <Set name=\"baseResourceAsPath\">\n" +
+                "    <Call class=\"java.nio.file.Path\" name=\"of\">\n" +
+                "      <Arg>$R</Arg>\n" +
+                "    </Call>\n" +
+                "  </Set>\n" +
+                "  <Set name=\"handler\">\n" +
+                "    <New class=\"org.eclipse.jetty.server.handler.ResourceHandler\" />\n" +
+                "  </Set>\n" +
+                "</Configure>\n").replace("$R", baseResourcePath.toAbsolutePath().toString()), StandardOpenOption.CREATE);
 
             String testFileContent = "hello";
             Files.writeString(baseResourcePath.resolve("test.txt"), testFileContent, StandardOpenOption.CREATE);
@@ -196,14 +194,12 @@ public class DeployerTest extends AbstractJettyHomeTest
             Path testWebAppPath = distribution.resolveArtifact("org.eclipse.jetty.tests:jetty-core-demo-webapp:zip:core-webapp:" + jettyVersion);
             unpack(testWebAppPath, testDir);
 
-            String testXmlStr = """
-                <?xml version="1.0"?>
-                <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure.dtd">
-                <Configure class="org.eclipse.jetty.coreapp.CoreAppContext">
-                  <Set name="contextPath">/demo</Set>
-                  <Set name="displayName">Demo of Core Deploy WebApp</Set>
-                </Configure>
-                """;
+            String testXmlStr = "<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure.dtd\">\n" +
+                "<Configure class=\"org.eclipse.jetty.coreapp.CoreAppContext\">\n" +
+                "  <Set name=\"contextPath\">/demo</Set>\n" +
+                "  <Set name=\"displayName\">Demo of Core Deploy WebApp</Set>\n" +
+                "</Configure>\n";
             Files.writeString(jettyBase.resolve("webapps/test.xml"), testXmlStr);
 
             int httpPort = Tester.freePort();
@@ -348,7 +344,7 @@ public class DeployerTest extends AbstractJettyHomeTest
                 Files.writeString(root.resolve("test.txt"), testFileContent, StandardOpenOption.CREATE);
             }
 
-            try (Writer out = Files.newBufferedWriter(jettyBase.resolve("webapps/test-%s.properties".formatted(env))))
+            try (Writer out = Files.newBufferedWriter(jettyBase.resolve(String.format("webapps/test-%s.properties", env))))
             {
                 Properties props = new Properties();
                 props.put("environment", env);

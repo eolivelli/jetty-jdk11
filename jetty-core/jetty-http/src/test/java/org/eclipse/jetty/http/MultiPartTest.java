@@ -45,7 +45,7 @@ public class MultiPartTest
         String boundary = "boundary";
         TestListener listener = new TestListener();
         MultiPart.Parser parser = new MultiPart.Parser(boundary, listener);
-        parser.parse(Content.Chunk.from(UTF_8.encode("--%s--".formatted(boundary)), true));
+        parser.parse(Content.Chunk.from(UTF_8.encode(String.format("--%s--", boundary)), true));
 
         assertEquals(1, listener.events.size());
         assertEquals("complete", listener.events.poll());
@@ -57,7 +57,7 @@ public class MultiPartTest
         String boundary = "boundary";
         TestListener listener = new TestListener();
         MultiPart.Parser parser = new MultiPart.Parser(boundary, listener);
-        parser.parse(Content.Chunk.from(UTF_8.encode("--%s--".formatted(boundary)), false));
+        parser.parse(Content.Chunk.from(UTF_8.encode(String.format("--%s--", boundary)), false));
 
         assertEquals(0, listener.events.size());
 
@@ -73,11 +73,9 @@ public class MultiPartTest
         String boundary = "boundary";
         TestListener listener = new TestListener();
         MultiPart.Parser parser = new MultiPart.Parser(boundary, listener);
-        String multipart = """
-            --$B\r
-            \r
-            --$B--\r
-            """;
+        String multipart = "--$B\r\n" +
+            "\r\n" +
+            "--$B--\r\n";
         parser.parse(Content.Chunk.from(UTF_8.encode(multipart.replace("$B", boundary)), true));
 
         assertEquals(5, listener.events.size());
@@ -94,15 +92,11 @@ public class MultiPartTest
         String boundary = "boundary";
         TestListener listener = new TestListener();
         MultiPart.Parser parser = new MultiPart.Parser(boundary, listener);
-        String multipart1 = """
-            --$B
-            name: value
-            
-            content\r
-            """;
-        String multipart2 = """
-            --$B--
-            """;
+        String multipart1 = "--$B\n" +
+            "name: value\n" +
+            "\n" +
+            "content\r\n";
+        String multipart2 = "--$B--\n";
         parser.parse(Content.Chunk.from(UTF_8.encode(multipart1.replace("$B", boundary)), false));
 
         assertEquals(4, listener.events.size());
@@ -125,16 +119,12 @@ public class MultiPartTest
         String boundary = "boundary";
         TestListener listener = new TestListener();
         MultiPart.Parser parser = new MultiPart.Parser(boundary, listener);
-        String multipart1 = """
-            --$B
-            name: value
-            
-            content with additional CRLF
-            \r
-            """;
-        String multipart2 = """
-            --$B--
-            """;
+        String multipart1 = "--$B\n" +
+            "name: value\n" +
+            "\n" +
+            "content with additional CRLF\n" +
+            "\r\n";
+        String multipart2 = "--$B--\n";
         parser.parse(Content.Chunk.from(UTF_8.encode(multipart1.replace("$B", boundary)), false));
 
         assertEquals(4, listener.events.size());
@@ -157,17 +147,13 @@ public class MultiPartTest
         String boundary = "boundary";
         TestListener listener = new TestListener();
         MultiPart.Parser parser = new MultiPart.Parser(boundary, listener);
-        String multipart1 = """
-            --$B
-            name: value
-            
-            content with additional CRLF
-            \r
-            """;
-        String multipart2 = """
-            more content\r
-            --$B--
-            """;
+        String multipart1 = "--$B\n" +
+            "name: value\n" +
+            "\n" +
+            "content with additional CRLF\n" +
+            "\r\n";
+        String multipart2 = "more content\r\n" +
+            "--$B--\n";
         parser.parse(Content.Chunk.from(UTF_8.encode(multipart1.replace("$B", boundary)), false));
 
         assertEquals(4, listener.events.size());
@@ -192,16 +178,14 @@ public class MultiPartTest
         String boundary = "boundary";
         TestListener listener = new TestListener();
         MultiPart.Parser parser = new MultiPart.Parser(boundary, listener);
-        String multipart = """
-            preamble--$B
-            more preamble\r
-            --$B
-            name: value
-            
-            \r\rcontent\r
-            --$B--
-            epilogue
-            """.replace("$B", boundary);
+        String multipart = ("preamble--$B\n" +
+            "more preamble\r\n" +
+            "--$B\n" +
+            "name: value\n" +
+            "\n" +
+            "\r\rcontent\r\n" +
+            "--$B--\n" +
+            "epilogue\n").replace("$B", boundary);
         parser.parse(Content.Chunk.from(UTF_8.encode(multipart), true));
 
         assertEquals(6, listener.events.size());
@@ -240,15 +224,13 @@ public class MultiPartTest
         String boundary = "boundary";
         TestListener listener = new TestListener();
         MultiPart.Parser parser = new MultiPart.Parser(boundary, listener);
-        String multipart = """
-            --$B \t\r
-            name1: value1
-            name2: value2\t
-            
-            content1\r
-            content2\r
-            --$B-- \t
-            """.replace("$B", boundary);
+        String multipart = ("--$B \t\r\n" +
+            "name1: value1\n" +
+            "name2: value2\t\n" +
+            "\n" +
+            "content1\r\n" +
+            "content2\r\n" +
+            "--$B-- \t\n").replace("$B", boundary);
         parser.parse(Content.Chunk.from(UTF_8.encode(multipart), true));
 
         assertEquals(7, listener.events.size());
@@ -268,12 +250,10 @@ public class MultiPartTest
         String content = "--boxyz--boundar012";
         TestListener listener = new TestListener();
         MultiPart.Parser parser = new MultiPart.Parser(boundary, listener);
-        String multipart = """
-            --$B
-            
-            $C\r
-            --$B--
-            """.replace("$B", boundary).replace("$C", content);
+        String multipart = ("--$B\n" +
+            "\n" +
+            "$C\r\n" +
+            "--$B--\n").replace("$B", boundary).replace("$C", content);
         parser.parse(Content.Chunk.from(UTF_8.encode(multipart), true));
 
         assertEquals(5, listener.events.size());
@@ -320,12 +300,10 @@ public class MultiPartTest
         String boundary = "boundary";
         TestListener listener = new TestListener();
         MultiPart.Parser parser = new MultiPart.Parser(boundary, listener);
-        String multipart = """
-            --$B
-            name: value
-            
-            --$B--
-            """.replace("$B", boundary);
+        String multipart = ("--$B\n" +
+            "name: value\n" +
+            "\n" +
+            "--$B--\n").replace("$B", boundary);
         parser.parse(Content.Chunk.from(UTF_8.encode(multipart), true));
 
         assertEquals(6, listener.events.size());
@@ -343,20 +321,18 @@ public class MultiPartTest
         TestPartsListener listener = new TestPartsListener();
         MultiPart.Parser parser = new MultiPart.Parser("BOUNDARY", listener);
 
-        ByteBuffer data = BufferUtil.toBuffer("""
-            preamble\r
-            --BOUNDARY\r
-            name: value\r
-            \r
-            Hello\r
-            --BOUNDARY\r
-            powerLevel: 9001\r
-            \r
-            secondary\r
-            content\r
-            --BOUNDARY--epi\r
-            logue\r
-            """);
+        ByteBuffer data = BufferUtil.toBuffer("preamble\r\n" +
+            "--BOUNDARY\r\n" +
+            "name: value\r\n" +
+            "\r\n" +
+            "Hello\r\n" +
+            "--BOUNDARY\r\n" +
+            "powerLevel: 9001\r\n" +
+            "\r\n" +
+            "secondary\r\n" +
+            "content\r\n" +
+            "--BOUNDARY--epi\r\n" +
+            "logue\r\n");
 
         parser.parse(Content.Chunk.from(data, true));
 
@@ -379,20 +355,18 @@ public class MultiPartTest
         TestPartsListener listener = new TestPartsListener();
         MultiPart.Parser parser = new MultiPart.Parser("BOUNDARY", listener);
 
-        ByteBuffer data = BufferUtil.toBuffer("""
-            preamble
-            --BOUNDARY
-            name: value
-                        
-            Hello
-            --BOUNDARY
-            powerLevel: 9001
-                        
-            secondary
-            content
-            --BOUNDARY--epi
-            logue
-            """);
+        ByteBuffer data = BufferUtil.toBuffer("preamble\n" +
+            "--BOUNDARY\n" +
+            "name: value\n" +
+            "\n" +
+            "Hello\n" +
+            "--BOUNDARY\n" +
+            "powerLevel: 9001\n" +
+            "\n" +
+            "secondary\n" +
+            "content\n" +
+            "--BOUNDARY--epi\n" +
+            "logue\n");
 
         parser.parse(Content.Chunk.from(data, true));
 
@@ -448,12 +422,11 @@ public class MultiPartTest
         TestPartsListener listener = new TestPartsListener();
         MultiPart.Parser parser = new MultiPart.Parser("BOUNDARY", listener);
 
-        ByteBuffer data = BufferUtil.toBuffer("""
-            --BOUNDARY\r
-            name: value\r
-            \r
-            \r
-            --BOUNDARY--""");
+        ByteBuffer data = BufferUtil.toBuffer("--BOUNDARY\r\n" +
+            "name: value\r\n" +
+            "\r\n" +
+            "\r\n" +
+            "--BOUNDARY--");
         parser.parse(Content.Chunk.from(data, true));
 
         assertThat(data.remaining(), is(0));
@@ -469,11 +442,10 @@ public class MultiPartTest
         TestPartsListener listener = new TestPartsListener();
         MultiPart.Parser parser = new MultiPart.Parser("BOUNDARY", listener);
 
-        ByteBuffer data = BufferUtil.toBuffer("""
-            --BOUNDARY\r
-            name: value\r
-            \r
-            --BOUNDARY--""");
+        ByteBuffer data = BufferUtil.toBuffer("--BOUNDARY\r\n" +
+            "name: value\r\n" +
+            "\r\n" +
+            "--BOUNDARY--");
         parser.parse(Content.Chunk.from(data, true));
 
         assertThat(data.remaining(), is(0));
@@ -489,32 +461,27 @@ public class MultiPartTest
         TestPartsListener listener = new TestPartsListener();
         MultiPart.Parser parser = new MultiPart.Parser("BOUNDARY", listener);
 
-        ByteBuffer data = BufferUtil.toBuffer("""
-            --BOUNDARY\r
-            name: value
-            \r
-            Hello\r
-            """);
+        ByteBuffer data = BufferUtil.toBuffer("--BOUNDARY\r\n" +
+            "name: value\n" +
+            "\r\n" +
+            "Hello\r\n");
         parser.parse(Content.Chunk.from(data, false));
 
         assertThat(data.remaining(), is(0));
 
         data = BufferUtil.toBuffer(
-            """
-                this is not a --BOUNDARY\r
-                that's a boundary\r
-                --BOUNDARY--
-                """);
+            "this is not a --BOUNDARY\r\n" +
+            "that's a boundary\r\n" +
+            "--BOUNDARY--\n");
         parser.parse(Content.Chunk.from(data, true));
 
         assertThat(data.remaining(), is(0));
         assertEquals(1, listener.parts.size());
         MultiPart.Part part = listener.parts.get(0);
         assertEquals("value", part.getHeaders().get("name"));
-        assertThat(Content.Source.asString(part.getContentSource()), is("""
-            Hello\r
-            this is not a --BOUNDARY\r
-            that's a boundary"""));
+        assertThat(Content.Source.asString(part.getContentSource()), is("Hello\r\n" +
+            "this is not a --BOUNDARY\r\n" +
+            "that's a boundary"));
     }
 
     @Test
@@ -544,14 +511,13 @@ public class MultiPartTest
         TestPartsListener listener = new TestPartsListener();
         MultiPart.Parser parser = new MultiPart.Parser("BOUNDARY", listener);
 
-        ByteBuffer data = BufferUtil.toBuffer("""
-            --BOUNDARY\r
-            name: value
-            \r
-            Hello\r
-            --BOUNDARY--epilogue here:\r
-            --BOUNDARY--\r
-            --BOUNDARY""");
+        ByteBuffer data = BufferUtil.toBuffer("--BOUNDARY\r\n" +
+            "name: value\n" +
+            "\r\n" +
+            "Hello\r\n" +
+            "--BOUNDARY--epilogue here:\r\n" +
+            "--BOUNDARY--\r\n" +
+            "--BOUNDARY");
 
         parser.parse(Content.Chunk.from(data, true));
 
@@ -569,12 +535,10 @@ public class MultiPartTest
         MultiPart.Parser parser = new MultiPart.Parser("AaB03x", listener);
 
         ByteBuffer data = BufferUtil.toBuffer(
-            """
-                --AaB03x\r
-                content-disposition: form-data; name="field1"\r
-                \rJoe Blow\r
-                --AaB03x--\r
-                """);
+            "--AaB03x\r\n" +
+            "content-disposition: form-data; name=\"field1\"\r\n" +
+            "\rJoe Blow\r\n" +
+            "--AaB03x--\r\n");
         parser.parse(Content.Chunk.from(data, true));
 
         assertNotNull(listener.failure);
@@ -664,7 +628,7 @@ public class MultiPartTest
         @Override
         public void onPartHeader(String name, String value)
         {
-            events.offer("header %s: %s".formatted(name, value));
+            events.offer(String.format("header %s: %s", name, value));
         }
 
         @Override
@@ -676,7 +640,7 @@ public class MultiPartTest
         @Override
         public void onPartContent(Content.Chunk chunk)
         {
-            events.offer("content last: %b length: %d".formatted(chunk.isLast(), chunk.getByteBuffer().remaining()));
+            events.offer(String.format("content last: %b length: %d", chunk.isLast(), chunk.getByteBuffer().remaining()));
         }
 
         @Override
@@ -694,7 +658,7 @@ public class MultiPartTest
         @Override
         public void onFailure(Throwable failure)
         {
-            events.offer("failure %s".formatted(failure.getClass().getName()));
+            events.offer(String.format("failure %s", failure.getClass().getName()));
         }
     }
 

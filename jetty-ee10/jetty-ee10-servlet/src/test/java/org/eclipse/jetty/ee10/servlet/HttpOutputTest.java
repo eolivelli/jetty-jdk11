@@ -169,11 +169,9 @@ public class HttpOutputTest
             }
         };
         LocalEndPoint endp = _connector.executeRequest(
-            """
-                GET / HTTP/1.1
-                Host: localhost:80
-                
-                """);
+            "GET / HTTP/1.1\n" +
+            "Host: localhost:80\n" +
+            "\n");
 
         String response = endp.getResponse();
 

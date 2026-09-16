@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.util.FileID;
 import org.eclipse.jetty.util.Index;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
 public class MimeTypes
 {
     static final  Logger LOG = LoggerFactory.getLogger(MimeTypes.class);
-    private static final Set<Locale> KNOWN_LOCALES = Set.copyOf(Arrays.stream(Locale.getAvailableLocales()).filter(l -> !StringUtil.isBlank(l.getLanguage())).toList());
+    private static final Set<Locale> KNOWN_LOCALES = Set.copyOf(Arrays.stream(Locale.getAvailableLocales()).filter(l -> !StringUtil.isBlank(l.getLanguage())).collect(Collectors.toList()));
     public static final String ISO_8859_1 = StandardCharsets.ISO_8859_1.name().toLowerCase(Locale.ENGLISH);
     public static final String UTF8 = StandardCharsets.UTF_8.name().toLowerCase(Locale.ENGLISH);
     public static final String UTF16 = StandardCharsets.UTF_16.name().toLowerCase(Locale.ENGLISH);

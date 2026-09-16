@@ -53,7 +53,7 @@ public class MultiPartRequestContent extends MultiPartFormData.ContentSource imp
     public MultiPartRequestContent(String boundary)
     {
         super(boundary);
-        this.contentType = "multipart/form-data; boundary=\"%s\"".formatted(boundary);
+        this.contentType = String.format("multipart/form-data; boundary=\"%s\"", boundary);
     }
 
     @Override

@@ -214,9 +214,7 @@ public class DeploymentScannerRuntimeUpdatesTest extends AbstractCleanEnvironmen
         Files.createFile(webappsDir.resolve("simple.war"));
         jetty.copyWebapp("simple.xml", "simple.xml");
         Files.writeString(jetty.getJettyBasePath().resolve("webapps/simple.properties"),
-            """
-                environment=test
-                """
+            "environment=test\n"
         );
 
         // Start jetty

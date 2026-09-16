@@ -31,6 +31,6 @@ public class DataBlockedFrame extends Frame
     @Override
     public String toString()
     {
-        return "%s[offset=%d]".formatted(super.toString(), getOffset());
+        return String.format("%s[offset=%d]", super.toString(), getOffset());
     }
 }

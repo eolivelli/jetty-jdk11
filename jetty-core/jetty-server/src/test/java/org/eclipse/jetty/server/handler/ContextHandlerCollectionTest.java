@@ -141,12 +141,10 @@ public class ContextHandlerCollectionTest
                     default -> fail("Unsupported connector number: " + useConnectorNum);
                 };
 
-            String rawRequest = ("""
-                GET %s HTTP/1.1\r
-                Host: %s\r
-                Connection: close\r
-                \r
-                """).formatted(uri, host);
+            String rawRequest = String.format(("GET %s HTTP/1.1\r\n" +
+                "Host: %s\r\n" +
+                "Connection: close\r\n" +
+                "\r\n"), uri, host);
 
             String rawResponse = connector.getResponse(rawRequest);
             HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -213,12 +211,10 @@ public class ContextHandlerCollectionTest
         {
             server.start();
 
-            String rawRequest = """
-                GET / HTTP/1.1\r
-                Host: %s\r
-                Connection:close\r
-                \r
-                """.formatted(requestHost);
+            String rawRequest = String.format("GET / HTTP/1.1\r\n" +
+                "Host: %s\r\n" +
+                "Connection:close\r\n" +
+                "\r\n", requestHost);
 
             String rawResponse = connector.getResponse(rawRequest);
             HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -287,12 +283,10 @@ public class ContextHandlerCollectionTest
         {
             server.start();
 
-            String rawRequest = """
-                GET / HTTP/1.1\r
-                Host: %s\r
-                Connection:close\r
-                \r
-                """.formatted(requestHost);
+            String rawRequest = String.format("GET / HTTP/1.1\r\n" +
+                "Host: %s\r\n" +
+                "Connection:close\r\n" +
+                "\r\n", requestHost);
 
             String rawResponse = connector.getResponse(rawRequest);
             HttpTester.Response response = HttpTester.parseResponse(rawResponse);

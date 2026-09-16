@@ -225,11 +225,9 @@ public class ResponseTest
         });
         server.start();
 
-        String request = """
-                GET /path HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "GET /path HTTP/1.0\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
     }
@@ -302,11 +300,9 @@ public class ResponseTest
         });
         server.start();
 
-        String request = """
-                GET /path HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "GET /path HTTP/1.0\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
         assertThat(response.get(HttpHeader.SERVER), notNullValue());
@@ -403,7 +399,7 @@ public class ResponseTest
             if (generate)
             {
                 assertThat(response.get(HttpHeader.CONTENT_TYPE), containsString("text/html"));
-                assertThat(actual, containsString("If you are not redirected, <a href=\"%s\">click here</a>".formatted(destination)));
+                assertThat(actual, containsString(String.format("If you are not redirected, <a href=\"%s\">click here</a>", destination)));
                 assertThat(actual, not(containsString("oops")));
             }
             else
@@ -436,21 +432,17 @@ public class ResponseTest
         });
         server.start();
 
-        String request = """
-                GET /path HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "GET /path HTTP/1.0\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.MOVED_TEMPORARILY_302, response.getStatus());
         assertThat(response.get(HttpHeader.LOCATION), is("http://hostname/somewhere/else"));
 
-        request = """
-                GET /path HTTP/1.1\r
-                Host: hostname\r
-                Connection: close\r
-                \r
-                """;
+        request = "GET /path HTTP/1.1\r\n" +
+            "Host: hostname\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.MOVED_TEMPORARILY_302, response.getStatus());
         assertThat(response.get(HttpHeader.LOCATION), is("http://hostname/somewhere/else"));
@@ -474,11 +466,9 @@ public class ResponseTest
         });
         server.start();
 
-        String request = """
-                GET /path HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "GET /path HTTP/1.0\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.MOVED_TEMPORARILY_302, response.getStatus());
         assertThat(response.get(HttpHeader.LOCATION), is("http://hostname/somewhere/else"));
@@ -505,11 +495,9 @@ public class ResponseTest
         });
         server.start();
 
-        String request = """
-                GET /path HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "GET /path HTTP/1.0\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.MOVED_TEMPORARILY_302, response.getStatus());
         assertThat(response.get(HttpHeader.LOCATION), is("/somewhere/else"));
@@ -533,11 +521,9 @@ public class ResponseTest
         });
         server.start();
 
-        String request = """
-                GET /p%61th/ HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "GET /p%61th/ HTTP/1.0\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.MOVED_TEMPORARILY_302, response.getStatus());
         assertThat(response.get(HttpHeader.LOCATION), is("http://hostname/p%61th/somewh%65r%65?else+entirely"));
@@ -559,21 +545,17 @@ public class ResponseTest
         });
         server.start();
 
-        String request = """
-                GET /path HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "GET /path HTTP/1.0\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.MOVED_TEMPORARILY_302, response.getStatus());
         assertThat(response.get(HttpHeader.LOCATION), is("/somewhere/else"));
 
-        request = """
-                GET /path HTTP/1.1\r
-                Host: hostname\r
-                Connection: close\r
-                \r
-                """;
+        request = "GET /path HTTP/1.1\r\n" +
+            "Host: hostname\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.MOVED_TEMPORARILY_302, response.getStatus());
         assertThat(response.get(HttpHeader.LOCATION), is("/somewhere/else"));
@@ -595,41 +577,33 @@ public class ResponseTest
         });
         server.start();
 
-        String request = """
-                GET /path HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "GET /path HTTP/1.0\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.MOVED_TEMPORARILY_302, response.getStatus());
         assertThat(response.get(HttpHeader.LOCATION), is("/somewhere/else"));
 
-        request = """
-                GET /path/ HTTP/1.1\r
-                Host: hostname\r
-                Connection: close\r
-                \r
-                """;
+        request = "GET /path/ HTTP/1.1\r\n" +
+            "Host: hostname\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.MOVED_TEMPORARILY_302, response.getStatus());
         assertThat(response.get(HttpHeader.LOCATION), is("/path/somewhere/else"));
 
-        request = """
-                GET /path/index.html HTTP/1.1\r
-                Host: hostname\r
-                Connection: close\r
-                \r
-                """;
+        request = "GET /path/index.html HTTP/1.1\r\n" +
+            "Host: hostname\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.MOVED_TEMPORARILY_302, response.getStatus());
         assertThat(response.get(HttpHeader.LOCATION), is("/path/somewhere/else"));
 
-        request = """
-                GET /path/to/ HTTP/1.1\r
-                Host: hostname\r
-                Connection: close\r
-                \r
-                """;
+        request = "GET /path/to/ HTTP/1.1\r\n" +
+            "Host: hostname\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.MOVED_TEMPORARILY_302, response.getStatus());
         assertThat(response.get(HttpHeader.LOCATION), is("/path/to/somewhere/else"));
@@ -651,21 +625,17 @@ public class ResponseTest
         });
         server.start();
 
-        String request = """
-                POST /path HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "POST /path HTTP/1.0\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.MOVED_TEMPORARILY_302, response.getStatus());
         assertThat(response.get(HttpHeader.LOCATION), is("http://hostname/somewhere/else"));
 
-        request = """
-                POST /path HTTP/1.1\r
-                Host: hostname\r
-                Connection: close\r
-                \r
-                """;
+        request = "POST /path HTTP/1.1\r\n" +
+            "Host: hostname\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.SEE_OTHER_303, response.getStatus());
         assertThat(response.get(HttpHeader.LOCATION), is("http://hostname/somewhere/else"));
@@ -687,21 +657,17 @@ public class ResponseTest
         });
         server.start();
 
-        String request = """
-                POST /path HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "POST /path HTTP/1.0\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.MOVED_TEMPORARILY_302, response.getStatus());
         assertThat(response.get(HttpHeader.LOCATION), is("/somewhere/else"));
 
-        request = """
-                POST /path HTTP/1.1\r
-                Host: hostname\r
-                Connection: close\r
-                \r
-                """;
+        request = "POST /path HTTP/1.1\r\n" +
+            "Host: hostname\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.SEE_OTHER_303, response.getStatus());
         assertThat(response.get(HttpHeader.LOCATION), is("/somewhere/else"));
@@ -741,11 +707,9 @@ public class ResponseTest
             });
             server.start();
 
-            String request = """
-                GET /path HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+            String request = "GET /path HTTP/1.0\r\n" +
+                "Host: hostname\r\n" +
+                "\r\n";
             HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
             assertThat(response.getStatus(), is(status));
             if (HttpStatus.isRedirection(status))
@@ -772,11 +736,9 @@ public class ResponseTest
         });
         server.start();
 
-        String request = """
-                GET http://user:password@hostname:8888/path HTTP/1.0\r
-                Host: hostname:8888\r
-                \r
-                """;
+        String request = "GET http://user:password@hostname:8888/path HTTP/1.0\r\n" +
+            "Host: hostname:8888\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.MOVED_TEMPORARILY_302, response.getStatus());
         assertThat(response.get(HttpHeader.LOCATION), is("http://hostname:8888/somewhere/else"));
@@ -798,11 +760,9 @@ public class ResponseTest
         });
         server.start();
 
-        String request = """
-                GET /test HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "GET /test HTTP/1.0\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
 
@@ -836,11 +796,9 @@ public class ResponseTest
         });
         server.start();
 
-        String request = """
-                GET /test HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "GET /test HTTP/1.0\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
 
@@ -896,11 +854,9 @@ public class ResponseTest
         });
         server.start();
 
-        String request = """
-                POST /path HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "POST /path HTTP/1.0\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
         assertThat(response.getValuesList(HttpHeader.SET_COOKIE), containsInAnyOrder(
@@ -924,11 +880,9 @@ public class ResponseTest
         });
         server.start();
 
-        String request = """
-                POST /test HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "POST /test HTTP/1.0\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
         assertThat(response.get("X-Te.st"), is("value"));
@@ -950,11 +904,9 @@ public class ResponseTest
         });
         server.start();
 
-        String request = """
-                POST /test HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "POST /test HTTP/1.0\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
         assertThat(response.get("X-Test"), is("val ue"));

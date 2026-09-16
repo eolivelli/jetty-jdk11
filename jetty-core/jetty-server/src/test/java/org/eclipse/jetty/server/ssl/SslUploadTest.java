@@ -97,14 +97,12 @@ public class SslUploadTest
             byte[] requestBody = new byte[16777216];
             Arrays.fill(requestBody, (byte)'x');
 
-            String rawRequest = """
-                POST / HTTP/1.1\r
-                Host: localhost\r
-                Content-Length: %d\r
-                Content-Type: bytes\r
-                Connection: close\r
-                \r
-                """.formatted(requestBody.length);
+            String rawRequest = String.format("POST / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Content-Length: %d\r\n" +
+                "Content-Type: bytes\r\n" +
+                "Connection: close\r\n" +
+                "\r\n", requestBody.length);
 
             try (OutputStream out = socket.getOutputStream();
                  InputStream in = socket.getInputStream())
@@ -120,7 +118,7 @@ public class SslUploadTest
                 assertThat(response.getStatus(), is(200));
 
                 String responseBody = response.getContent();
-                assertThat(responseBody, containsString("Read %d".formatted(requestBody.length)));
+                assertThat(responseBody, containsString(String.format("Read %d", requestBody.length)));
             }
         }
     }

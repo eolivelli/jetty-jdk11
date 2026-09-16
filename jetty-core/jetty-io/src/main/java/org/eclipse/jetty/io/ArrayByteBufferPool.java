@@ -486,7 +486,7 @@ public class ArrayByteBufferPool implements ByteBufferPool, Dumpable
     private List<Map<String, Object>> getBucketsStatistics(boolean direct)
     {
         RetainedBucket[] buckets = direct ? _direct : _indirect;
-        return Arrays.stream(buckets).map(b -> b.getStatistics().toMap()).toList();
+        return Arrays.stream(buckets).map(b -> b.getStatistics().toMap()).collect(Collectors.toList());
     }
 
     @ManagedAttribute("The acquires for direct non-pooled bucket capacities")
@@ -1155,7 +1155,7 @@ public class ArrayByteBufferPool implements ByteBufferPool, Dumpable
                 new DumpableMap("direct non-pooled acquisitions", ((ArrayByteBufferPool)this)._noBucketDirectAcquires),
                 DumpableCollection.fromArray("indirect", ((ArrayByteBufferPool)this)._indirect),
                 new DumpableMap("heap non-pooled acquisitions", ((ArrayByteBufferPool)this)._noBucketIndirectAcquires),
-                DumpableCollection.from("leaks", getLeaks().stream().map(TrackedBuffer::dump).toList())
+                DumpableCollection.from("leaks", getLeaks().stream().map(TrackedBuffer::dump).collect(Collectors.toList()))
             );
         }
 
@@ -1279,10 +1279,9 @@ public class ArrayByteBufferPool implements ByteBufferPool, Dumpable
                     overReleaseStack.printStackTrace(pw);
                 }
                 String stacks = w.toString();
-                return ("%s@%x of %d bytes on %s wrapping %s%n" +
+                return String.format(("%s@%x of %d bytes on %s wrapping %s%n" +
                     " %s%n" +
-                    " acquired at %s")
-                    .formatted(TypeUtil.toShortName(getClass()), hashCode(), getSize(), getAcquireInstant(), getRetained(),
+                    " acquired at %s"), TypeUtil.toShortName(getClass()), hashCode(), getSize(), getAcquireInstant(), getRetained(),
                         BufferUtil.toDetailString(getByteBuffer()),
                         stacks);
             }

@@ -29,6 +29,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import jakarta.servlet.ServletException;
@@ -674,7 +675,7 @@ public class FileBufferedResponseHandlerTest
     {
         try (Stream<Path> listStream = Files.list(testDir))
         {
-            List<Path> listing = listStream.toList();
+            List<Path> listing = listStream.collect(Collectors.toList());
             assertEquals(1, listing.size());
             return Files.size(listing.get(0));
         }

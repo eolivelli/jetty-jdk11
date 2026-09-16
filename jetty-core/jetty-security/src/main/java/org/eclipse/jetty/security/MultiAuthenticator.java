@@ -13,7 +13,6 @@
 
 package org.eclipse.jetty.security;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.function.Function;
@@ -430,7 +429,6 @@ public class MultiAuthenticator extends LoginAuthenticator
 
     private static class MultiAuthState implements Serializable
     {
-        @Serial
         private static final long serialVersionUID = -4292431864385753482L;
 
         private String _authenticatorName;

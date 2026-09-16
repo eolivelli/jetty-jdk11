@@ -489,7 +489,7 @@ public abstract class HTTP3StreamConnection extends AbstractConnection
         @Override
         public String toString()
         {
-            return "%s@%x[%s]".formatted(TypeUtil.toShortName(getClass()), hashCode(), getInvocationType());
+            return String.format("%s@%x[%s]", TypeUtil.toShortName(getClass()), hashCode(), getInvocationType());
         }
     }
 }

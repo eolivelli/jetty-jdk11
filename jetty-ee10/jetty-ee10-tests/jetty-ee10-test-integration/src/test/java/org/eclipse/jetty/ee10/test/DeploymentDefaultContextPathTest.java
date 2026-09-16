@@ -104,12 +104,10 @@ public class DeploymentDefaultContextPathTest
 
         startServer(webappsDir);
 
-        String rawRequest = """
-            GET /test-default/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /test-default/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
         String rawResponse = connector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(200));
@@ -136,25 +134,21 @@ public class DeploymentDefaultContextPathTest
 
         // Create xml that sets a different context-path
         Path xml = webappsDir.resolve("test.xml");
-        String xmlText = """
-            <?xml version="1.0"?>
-            <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure.dtd">
-            <Configure id="wac" class="org.eclipse.jetty.ee10.webapp.WebAppContext">
-              <Set name="contextPath">/test-alt</Set>
-              <Set name="war"><Property name="jetty.webapps" default="." />/test.war</Set>
-              <Set name="extractWAR">false</Set>
-            </Configure>
-            """;
+        String xmlText = "<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure.dtd\">\n" +
+            "<Configure id=\"wac\" class=\"org.eclipse.jetty.ee10.webapp.WebAppContext\">\n" +
+            "  <Set name=\"contextPath\">/test-alt</Set>\n" +
+            "  <Set name=\"war\"><Property name=\"jetty.webapps\" default=\".\" />/test.war</Set>\n" +
+            "  <Set name=\"extractWAR\">false</Set>\n" +
+            "</Configure>\n";
         Files.writeString(xml, xmlText, StandardCharsets.UTF_8);
 
         startServer(webappsDir);
 
-        String rawRequest = """
-            GET /test-alt/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /test-alt/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
         String rawResponse = connector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(200));
@@ -174,18 +168,16 @@ public class DeploymentDefaultContextPathTest
             FS.ensureDirExists(webinf);
 
             Path webXml = root.resolve("WEB-INF/web.xml");
-            String webXmlText = """
-                <?xml version="1.0" encoding="UTF-8"?>
-                <web-app
-                    xmlns="https://jakarta.ee/xml/ns/jakartaee"
-                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
-                    metadata-complete="false"
-                    version="5.0">
-                  <display-name>EE10 Test WebApp</display-name>
-                  <default-context-path>%s</default-context-path>
-                </web-app>
-                """.formatted(defaultContextPath);
+            String webXmlText = String.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<web-app\n" +
+                "    xmlns=\"https://jakarta.ee/xml/ns/jakartaee\"\n" +
+                "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                "    xsi:schemaLocation=\"https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd\"\n" +
+                "    metadata-complete=\"false\"\n" +
+                "    version=\"5.0\">\n" +
+                "  <display-name>EE10 Test WebApp</display-name>\n" +
+                "  <default-context-path>%s</default-context-path>\n" +
+                "</web-app>\n", defaultContextPath);
             Files.writeString(webXml, webXmlText, StandardCharsets.UTF_8);
 
             Path indexHtml = root.resolve("index.html");

@@ -109,12 +109,10 @@ public class PathMethodMappedTest
 
         try (SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", connector.getLocalPort())))
         {
-            client.write(UTF_8.encode("""
-                GET / HTTP/1.1
-                Host: localhost
-                Authorization: %s
-                
-                """.formatted(BasicAuthenticator.authorization("test", "password")))
+            client.write(UTF_8.encode(String.format("GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Authorization: %s\n" +
+                "\n", BasicAuthenticator.authorization("test", "password")))
             );
 
             HttpTester.Response response = HttpTester.parseResponse(client);
@@ -142,12 +140,10 @@ public class PathMethodMappedTest
 
         try (SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", connector.getLocalPort())))
         {
-            client.write(UTF_8.encode("""
-                GET / HTTP/1.1
-                Host: localhost
-                Authorization: %s
-                
-                """.formatted(BasicAuthenticator.authorization("test", "password")))
+            client.write(UTF_8.encode(String.format("GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Authorization: %s\n" +
+                "\n", BasicAuthenticator.authorization("test", "password")))
             );
 
             HttpTester.Response response = HttpTester.parseResponse(client);
@@ -175,12 +171,10 @@ public class PathMethodMappedTest
 
         try (SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", connector.getLocalPort())))
         {
-            client.write(UTF_8.encode("""
-                GET / HTTP/1.1
-                Host: localhost
-                Authorization: %s
-                
-                """.formatted(BasicAuthenticator.authorization("test", "password")))
+            client.write(UTF_8.encode(String.format("GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Authorization: %s\n" +
+                "\n", BasicAuthenticator.authorization("test", "password")))
             );
 
             HttpTester.Response response = HttpTester.parseResponse(client);
@@ -212,37 +206,31 @@ public class PathMethodMappedTest
 
         try (SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", connector.getLocalPort())))
         {
-            client.write(UTF_8.encode("""
-                GET / HTTP/1.1
-                Host: localhost
-                Authorization: %s
-                
-                """.formatted(BasicAuthenticator.authorization("test", "password")))
+            client.write(UTF_8.encode(String.format("GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Authorization: %s\n" +
+                "\n", BasicAuthenticator.authorization("test", "password")))
             );
 
             HttpTester.Response response = HttpTester.parseResponse(client);
             // User "test" does not have roles, so forbidden.
             assertEquals(HttpStatus.FORBIDDEN_403, response.getStatus());
 
-            client.write(UTF_8.encode("""
-                GET / HTTP/1.1
-                Host: localhost
-                Authorization: %s
-                
-                """.formatted(BasicAuthenticator.authorization("reader", "password")))
+            client.write(UTF_8.encode(String.format("GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Authorization: %s\n" +
+                "\n", BasicAuthenticator.authorization("reader", "password")))
             );
 
             response = HttpTester.parseResponse(client);
             // User "reader" has role "read", so it can only perform GET requests.
             assertEquals(HttpStatus.OK_200, response.getStatus());
 
-            client.write(UTF_8.encode("""
-                PUT /file.txt HTTP/1.1
-                Host: localhost
-                Content-Length: 0
-                Authorization: %s
-                
-                """.formatted(BasicAuthenticator.authorization("reader", "password")))
+            client.write(UTF_8.encode(String.format("PUT /file.txt HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Content-Length: 0\n" +
+                "Authorization: %s\n" +
+                "\n", BasicAuthenticator.authorization("reader", "password")))
             );
 
             response = HttpTester.parseResponse(client);
@@ -275,12 +263,10 @@ public class PathMethodMappedTest
 
         try (SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", connector.getLocalPort())))
         {
-            client.write(UTF_8.encode("""
-                GET / HTTP/1.1
-                Host: localhost
-                Authorization: %s
-                
-                """.formatted(BasicAuthenticator.authorization("test", "password")))
+            client.write(UTF_8.encode(String.format("GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Authorization: %s\n" +
+                "\n", BasicAuthenticator.authorization("test", "password")))
             );
 
             HttpTester.Response response = HttpTester.parseResponse(client);
@@ -295,12 +281,10 @@ public class PathMethodMappedTest
             SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
             try (Socket secureClient = sslSocketFactory.createSocket("localhost", tlsConnector.getLocalPort()))
             {
-                String request = """
-                    GET / HTTP/1.1
-                    Host: localhost
-                    Authorization: %s
-                    
-                    """.formatted(BasicAuthenticator.authorization("test", "password"));
+                String request = String.format("GET / HTTP/1.1\n" +
+                    "Host: localhost\n" +
+                    "Authorization: %s\n" +
+                    "\n", BasicAuthenticator.authorization("test", "password"));
                 OutputStream output = secureClient.getOutputStream();
                 output.write(request.getBytes(UTF_8));
                 output.flush();
@@ -310,12 +294,10 @@ public class PathMethodMappedTest
                 // Unauthorized user.
                 assertEquals(HttpStatus.FORBIDDEN_403, response.getStatus());
 
-                request = """
-                    GET / HTTP/1.1
-                    Host: localhost
-                    Authorization: %s
-                    
-                    """.formatted(BasicAuthenticator.authorization("reader", "password"));
+                request = String.format("GET / HTTP/1.1\n" +
+                    "Host: localhost\n" +
+                    "Authorization: %s\n" +
+                    "\n", BasicAuthenticator.authorization("reader", "password"));
                 output.write(request.getBytes(UTF_8));
                 output.flush();
 
@@ -349,50 +331,42 @@ public class PathMethodMappedTest
 
         try (SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", connector.getLocalPort())))
         {
-            client.write(UTF_8.encode("""
-                GET / HTTP/1.1
-                Host: localhost
-                Authorization: %s
-                
-                """.formatted(BasicAuthenticator.authorization("test", "password")))
+            client.write(UTF_8.encode(String.format("GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Authorization: %s\n" +
+                "\n", BasicAuthenticator.authorization("test", "password")))
             );
 
             HttpTester.Response response = HttpTester.parseResponse(client);
             // GET not allowed.
             assertEquals(HttpStatus.FORBIDDEN_403, response.getStatus());
 
-            client.write(UTF_8.encode("""
-                PUT / HTTP/1.1
-                Host: localhost
-                Content-Length: 0
-                Authorization: %s
-                
-                """.formatted(BasicAuthenticator.authorization("reader", "password")))
+            client.write(UTF_8.encode(String.format("PUT / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Content-Length: 0\n" +
+                "Authorization: %s\n" +
+                "\n", BasicAuthenticator.authorization("reader", "password")))
             );
 
             response = HttpTester.parseResponse(client);
             // PUT from user with wrong role, forbidden.
             assertEquals(HttpStatus.FORBIDDEN_403, response.getStatus());
 
-            client.write(UTF_8.encode("""
-                PUT / HTTP/1.1
-                Host: localhost
-                Content-Length: 0
-                Authorization: %s
-                
-                """.formatted(BasicAuthenticator.authorization("writer", "password")))
+            client.write(UTF_8.encode(String.format("PUT / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Content-Length: 0\n" +
+                "Authorization: %s\n" +
+                "\n", BasicAuthenticator.authorization("writer", "password")))
             );
 
             response = HttpTester.parseResponse(client);
             // PUT from user with right role, allowed.
             assertEquals(HttpStatus.OK_200, response.getStatus());
 
-            client.write(UTF_8.encode("""
-                GET / HTTP/1.1
-                Host: localhost
-                Authorization: %s
-                
-                """.formatted(BasicAuthenticator.authorization("writer", "password")))
+            client.write(UTF_8.encode(String.format("GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Authorization: %s\n" +
+                "\n", BasicAuthenticator.authorization("writer", "password")))
             );
 
             response = HttpTester.parseResponse(client);
@@ -425,25 +399,21 @@ public class PathMethodMappedTest
 
         try (SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", connector.getLocalPort())))
         {
-            client.write(UTF_8.encode("""
-                GET / HTTP/1.1
-                Host: localhost
-                Authorization: %s
-                
-                """.formatted(BasicAuthenticator.authorization("admin", "password")))
+            client.write(UTF_8.encode(String.format("GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Authorization: %s\n" +
+                "\n", BasicAuthenticator.authorization("admin", "password")))
             );
 
             HttpTester.Response response = HttpTester.parseResponse(client);
             // User "admin" has both read and write roles, allowed.
             assertEquals(HttpStatus.OK_200, response.getStatus());
 
-            client.write(UTF_8.encode("""
-                PUT / HTTP/1.1
-                Host: localhost
-                Content-Length: 0
-                Authorization: %s
-                
-                """.formatted(BasicAuthenticator.authorization("admin", "password")))
+            client.write(UTF_8.encode(String.format("PUT / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Content-Length: 0\n" +
+                "Authorization: %s\n" +
+                "\n", BasicAuthenticator.authorization("admin", "password")))
             );
 
             response = HttpTester.parseResponse(client);

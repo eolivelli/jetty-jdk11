@@ -54,11 +54,9 @@ public class RewriteHandlerTest extends AbstractRuleTest
     @Test
     public void testXXXtoBar() throws Exception
     {
-        String request = """
-            GET /xxx/bar HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /xxx/bar HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -68,11 +66,9 @@ public class RewriteHandlerTest extends AbstractRuleTest
     @Test
     public void testFooNoChange() throws Exception
     {
-        String request = """
-            GET /foo/bar HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /foo/bar HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -82,11 +78,9 @@ public class RewriteHandlerTest extends AbstractRuleTest
     @Test
     public void testAAAtoDDD() throws Exception
     {
-        String request = """
-            GET /aaa/bar HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /aaa/bar HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -97,11 +91,9 @@ public class RewriteHandlerTest extends AbstractRuleTest
     @Test
     public void testEncodedPattern() throws Exception
     {
-        String request = """
-            GET /ccc/x%20y HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /ccc/x%20y HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -112,11 +104,9 @@ public class RewriteHandlerTest extends AbstractRuleTest
     @Test
     public void testEncodedRegex() throws Exception
     {
-        String request = """
-            GET /xxx/x%20y HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /xxx/x%20y HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());

@@ -14,6 +14,7 @@
 package org.eclipse.jetty.http.pathmap;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
@@ -613,7 +614,7 @@ public class PathMappingsTest
         p.put("/", "default");
         p.put("/foo/bar/*", "foobar");
 
-        assertThat(p.getMatches("/foo/bar/bob/some.thing.txt").stream().map(MappedResource::getResource).toList(),
+        assertThat(p.getMatches("/foo/bar/bob/some.thing.txt").stream().map(MappedResource::getResource).collect(Collectors.toList()),
             contains(
                 "foobarbob",
                 "foobar",

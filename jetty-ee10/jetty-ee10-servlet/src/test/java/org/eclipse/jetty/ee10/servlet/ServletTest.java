@@ -83,10 +83,8 @@ public class ServletTest
 
         _server.start();
 
-        String response = _connector.getResponse("""
-            GET /ctx/get HTTP/1.0
-            
-            """);
+        String response = _connector.getResponse("GET /ctx/get HTTP/1.0\n" +
+            "\n");
         assertThat(response, containsString(" 200 OK"));
         assertThat(response, containsString("Hello!"));
     }
@@ -115,10 +113,8 @@ public class ServletTest
         _connector.setIdleTimeout(idleTimeout);
         _server.start();
 
-        String response = _connector.getResponse("""
-            GET /ctx/get HTTP/1.0
-            
-            """, 5 * idleTimeout, TimeUnit.MILLISECONDS);
+        String response = _connector.getResponse("GET /ctx/get HTTP/1.0\n" +
+            "\n", 5 * idleTimeout, TimeUnit.MILLISECONDS);
         assertThat(response, containsString(" 200 OK"));
         assertThat(response, containsString("Hello!"));
     }
@@ -142,12 +138,10 @@ public class ServletTest
 
         try (LocalConnector.LocalEndPoint endPoint = _connector.connect())
         {
-            String request = """
-                POST /ctx/post HTTP/1.1
-                Host: local
-                Content-Length: 10
-                
-                """;
+            String request = "POST /ctx/post HTTP/1.1\n" +
+                "Host: local\n" +
+                "Content-Length: 10\n" +
+                "\n";
             endPoint.addInputAndExecute(request);
             endPoint.addInput("1234567890");
             HttpTester.Response response = HttpTester.parseResponse(endPoint.getResponse(false, 5, TimeUnit.SECONDS));
@@ -190,12 +184,10 @@ public class ServletTest
 
         try (SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", networkConnector.getLocalPort())))
         {
-            String request = """
-                POST /ctx/post HTTP/1.1
-                Host: local
-                Content-Length: 10
-                
-                """;
+            String request = "POST /ctx/post HTTP/1.1\n" +
+                "Host: local\n" +
+                "Content-Length: 10\n" +
+                "\n";
             client.write(StandardCharsets.UTF_8.encode(request));
             client.write(StandardCharsets.UTF_8.encode("1234567890"));
             HttpTester.Response response = HttpTester.parseResponse(client);
@@ -228,11 +220,9 @@ public class ServletTest
 
         try (LocalConnector.LocalEndPoint endPoint = _connector.connect())
         {
-            String request = """
-                GET /ctx/get HTTP/1.1
-                Host: local
-                
-                """;
+            String request = "GET /ctx/get HTTP/1.1\n" +
+                "Host: local\n" +
+                "\n";
             endPoint.addInput(request);
             String response = endPoint.getResponse(false, 5, TimeUnit.SECONDS);
             assertThat(response, containsString(" 200 OK"));
@@ -277,10 +267,8 @@ public class ServletTest
 
         _server.start();
 
-        String response = _connector.getResponse("""
-            GET /ctx/get HTTP/1.0
-            
-            """);
+        String response = _connector.getResponse("GET /ctx/get HTTP/1.0\n" +
+            "\n");
         assertThat(response, containsString(" 200 OK"));
         assertThat(response, containsString("Hello!"));
     }

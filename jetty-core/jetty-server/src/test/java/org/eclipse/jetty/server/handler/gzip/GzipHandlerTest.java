@@ -285,8 +285,7 @@ public class GzipHandlerTest
         HttpTester.Response response;
 
         request.setMethod("GET");
-        request.setURI("/ctx/async/info?writes=%d&bufferSize=%d&readOnly=%b&contentLength=%b&knownLast=%b"
-            .formatted(writes, bufferSize, readOnly, contentLength, knownLast));
+        request.setURI(String.format("/ctx/async/info?writes=%d&bufferSize=%d&readOnly=%b&contentLength=%b&knownLast=%b", writes, bufferSize, readOnly, contentLength, knownLast));
         request.setVersion("HTTP/1.0");
         request.setHeader("Host", "tester");
         request.setHeader("accept-encoding", "gzip");
@@ -380,12 +379,10 @@ public class GzipHandlerTest
         try (LocalConnector.LocalEndPoint localEndPoint = _connector.connect())
         {
             // Send HEAD Request
-            String rawHeadRequest = """
-                HEAD /ctx/buffer/test?one HTTP/1.1
-                Host: tester
-                Accept-Encoding: gzip
-            
-                """;
+            String rawHeadRequest = "HEAD /ctx/buffer/test?one HTTP/1.1\n" +
+                "Host: tester\n" +
+                "Accept-Encoding: gzip\n" +
+                "\n";
             localEndPoint.addInput(BufferUtil.toBuffer(rawHeadRequest, UTF_8));
             HttpTester.Response response = HttpTester.parseHeadResponse(localEndPoint.getResponse(true, 2, TimeUnit.SECONDS));
 
@@ -395,13 +392,11 @@ public class GzipHandlerTest
             assertThat(response.getContentBytes().length, is(0));
 
             // Send GET Request
-            String rawGetRequest = """
-                GET /ctx/buffer/test?two HTTP/1.1
-                Host: tester
-                Connection: close
-                Accept-Encoding: gzip
-            
-                """;
+            String rawGetRequest = "GET /ctx/buffer/test?two HTTP/1.1\n" +
+                "Host: tester\n" +
+                "Connection: close\n" +
+                "Accept-Encoding: gzip\n" +
+                "\n";
 
             localEndPoint.addInput(BufferUtil.toBuffer(rawGetRequest, UTF_8));
             response = HttpTester.parseResponse(localEndPoint.getResponse(false, 2, TimeUnit.SECONDS));
@@ -430,13 +425,11 @@ public class GzipHandlerTest
         HttpTester.Response response;
 
         // Request to a handler that writes a single buffer, with a valid Content-Length header, and Content-Encoding header.
-        String rawRequest = """
-            HEAD /ctx/buffer/info HTTP/1.1
-            Host: tester
-            Connection: close
-            Accept-Encoding: gzip
-            
-            """;
+        String rawRequest = "HEAD /ctx/buffer/info HTTP/1.1\n" +
+            "Host: tester\n" +
+            "Connection: close\n" +
+            "Accept-Encoding: gzip\n" +
+            "\n";
 
         // Parse HEAD response
         response = HttpTester.parseHeadResponse(_connector.getResponse(rawRequest));
@@ -457,13 +450,11 @@ public class GzipHandlerTest
         HttpTester.Response response;
 
         // Request to a handler that writes a single buffer, with a valid Content-Length header, and Content-Encoding header.
-        String rawRequest = """
-            GET /ctx/buffer/info HTTP/1.1
-            Host: tester
-            Connection: close
-            Accept-Encoding: gzip
-            
-            """;
+        String rawRequest = "GET /ctx/buffer/info HTTP/1.1\n" +
+            "Host: tester\n" +
+            "Connection: close\n" +
+            "Accept-Encoding: gzip\n" +
+            "\n";
 
         response = HttpTester.parseResponse(_connector.getResponse(rawRequest));
 
@@ -1770,17 +1761,15 @@ public class GzipHandlerTest
      * @param filename
      */
     @ParameterizedTest
-    @CsvSource(delimiter = '|', textBlock = """
-        # Filename      | Content-Type
-        example.tar.gz  | application/gzip
-        example.tgz     | application/x-gtar
-        example.zip     | application/zip
-        example.jar     | application/java-archive
-        example.gz      | application/gzip
-        example.bz2     | application/x-bzip2
-        example.rar     | application/x-rar-compressed
-        example.zst     | application/zstd
-        """)
+    @CsvSource(delimiter = '|', textBlock = "# Filename      | Content-Type\n" +
+        "example.tar.gz  | application/gzip\n" +
+        "example.tgz     | application/x-gtar\n" +
+        "example.zip     | application/zip\n" +
+        "example.jar     | application/java-archive\n" +
+        "example.gz      | application/gzip\n" +
+        "example.bz2     | application/x-bzip2\n" +
+        "example.rar     | application/x-rar-compressed\n" +
+        "example.zst     | application/zstd\n")
     public void testDoNotRecompressDefault(String filename, String contentType, WorkDir workDir) throws Exception
     {
         Path tmpPath = workDir.getEmptyPathDir();
@@ -2164,7 +2153,7 @@ public class GzipHandlerTest
             Fields formParameters = FormFields.from(request, UTF_8, -1, -1).get();
             Fields parameters = Fields.combine(queryParameters, formParameters);
 
-            String dump = parameters.stream().map(f -> "%s: %s\n".formatted(f.getName(), f.getValue())).collect(Collectors.joining());
+            String dump = parameters.stream().map(f -> String.format("%s: %s\n", f.getName(), f.getValue())).collect(Collectors.joining());
             Content.Sink.write(response, true, dump, callback);
             return true;
         }

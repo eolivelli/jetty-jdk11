@@ -333,7 +333,7 @@ public class ExceptionUtil
         @Override
         public String toString()
         {
-            return "%s@%x%s".formatted(TypeUtil.toShortName(MultiException.class), hashCode(), _multiException);
+            return String.format("%s@%x%s", TypeUtil.toShortName(MultiException.class), hashCode(), _multiException);
         }
     }
 

@@ -147,10 +147,8 @@ public class HttpFieldTest
 
     @ParameterizedTest
     @CsvSource(delimiter = '|',
-        textBlock = """
-        foo; zed=1; b=j     | foo;zed=1;b=j
-        foo=bar; zed=1; b=j | foo=bar;zed=1;b=j
-        """)
+        textBlock = "foo; zed=1; b=j     | foo;zed=1;b=j\n" +
+            "foo=bar; zed=1; b=j | foo=bar;zed=1;b=j\n")
     public void testValueList(String input, String expected)
     {
         HttpField field = new HttpField("name", input);

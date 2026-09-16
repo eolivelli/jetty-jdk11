@@ -47,11 +47,9 @@ public class ResponsePatternRuleTest extends AbstractRuleTest
         ResponsePatternRule rule = new ResponsePatternRule("/test", HttpStatus.NO_CONTENT_204, null);
         start(rule);
 
-        String request = """
-            GET /test HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /test HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(rule.getCode(), response.getStatus());
@@ -64,11 +62,9 @@ public class ResponsePatternRuleTest extends AbstractRuleTest
 
         start(rule);
 
-        String request = """
-            GET /test HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /test HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(rule.getCode(), response.getStatus());

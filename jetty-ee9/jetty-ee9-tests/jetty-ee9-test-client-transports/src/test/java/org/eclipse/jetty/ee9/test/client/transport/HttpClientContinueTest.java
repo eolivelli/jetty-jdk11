@@ -704,26 +704,22 @@ public class HttpClientContinueTest extends AbstractTest
                 readRequestHeaders(socket.getInputStream());
 
                 OutputStream output = socket.getOutputStream();
-                String responses = """
-                    HTTP/1.1 100 Continue\r
-                    \r
-                    HTTP/1.1 200 OK\r
-                    Transfer-Encoding: chunked\r
-                    \r
-                    10\r
-                    0123456789ABCDEF\r
-                    """;
+                String responses = "HTTP/1.1 100 Continue\r\n" +
+                    "\r\n" +
+                    "HTTP/1.1 200 OK\r\n" +
+                    "Transfer-Encoding: chunked\r\n" +
+                    "\r\n" +
+                    "10\r\n" +
+                    "0123456789ABCDEF\r\n";
                 output.write(responses.getBytes(StandardCharsets.UTF_8));
                 output.flush();
 
                 Thread.sleep(1000);
 
-                String content = """
-                    10\r
-                    0123456789ABCDEF\r
-                    0\r
-                    \r
-                    """;
+                String content = "10\r\n" +
+                    "0123456789ABCDEF\r\n" +
+                    "0\r\n" +
+                    "\r\n";
                 output.write(content.getBytes(StandardCharsets.UTF_8));
                 output.flush();
 
@@ -759,13 +755,11 @@ public class HttpClientContinueTest extends AbstractTest
                 assertNotNull(serverRequest);
                 byte[] content = serverRequest.getContentBytes();
 
-                String serverResponse = """
-                    HTTP/1.1 100 Continue\r
-                    \r
-                    HTTP/1.1 200 OK\r
-                    Content-Length: $L\r
-                    \r
-                    """.replace("$L", String.valueOf(content.length));
+                String serverResponse = ("HTTP/1.1 100 Continue\r\n" +
+                    "\r\n" +
+                    "HTTP/1.1 200 OK\r\n" +
+                    "Content-Length: $L\r\n" +
+                    "\r\n").replace("$L", String.valueOf(content.length));
                 output.write(serverResponse.getBytes(StandardCharsets.UTF_8));
                 output.write(content);
                 output.flush();
@@ -802,26 +796,22 @@ public class HttpClientContinueTest extends AbstractTest
                 OutputStream output = socket.getOutputStream();
 
                 HttpTester.parseRequest(input);
-                String response1 = """
-                    HTTP/1.1 100 Continue\r
-                    \r
-                    HTTP/1.1 303 See Other\r
-                    Location: /redirect\r
-                    Content-Length: 0\r
-                    \r
-                    """;
+                String response1 = "HTTP/1.1 100 Continue\r\n" +
+                    "\r\n" +
+                    "HTTP/1.1 303 See Other\r\n" +
+                    "Location: /redirect\r\n" +
+                    "Content-Length: 0\r\n" +
+                    "\r\n";
                 output.write(response1.getBytes(StandardCharsets.UTF_8));
                 output.flush();
 
                 HttpTester.parseRequest(input);
-                String response2 = """
-                    HTTP/1.1 100 Continue\r
-                    \r
-                    HTTP/1.1 200 OK\r
-                    Content-Length: 0\r
-                    Connection: close\r
-                    \r
-                    """;
+                String response2 = "HTTP/1.1 100 Continue\r\n" +
+                    "\r\n" +
+                    "HTTP/1.1 200 OK\r\n" +
+                    "Content-Length: 0\r\n" +
+                    "Connection: close\r\n" +
+                    "\r\n";
                 output.write(response2.getBytes(StandardCharsets.UTF_8));
                 output.flush();
             }

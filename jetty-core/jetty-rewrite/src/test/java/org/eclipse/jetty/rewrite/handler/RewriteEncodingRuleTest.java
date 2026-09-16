@@ -77,18 +77,14 @@ public class RewriteEncodingRuleTest extends AbstractRuleTest
     @Test
     public void testNoEncoding() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/unknown.html HTTP/1.0\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/unknown.html HTTP/1.0\r\n" +
+            "\r\n"));
 
         assertEquals(404, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/only.html HTTP/1.0\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/only.html HTTP/1.0\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
@@ -97,10 +93,8 @@ public class RewriteEncodingRuleTest extends AbstractRuleTest
         assertThat(response.get(HttpHeader.ETAG), not(nullValue()));
         assertThat(response.get(HttpHeader.ETAG), not(containsString("-")));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/all.html HTTP/1.0\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
@@ -109,10 +103,8 @@ public class RewriteEncodingRuleTest extends AbstractRuleTest
         assertThat(response.get(HttpHeader.ETAG), not(nullValue()));
         assertThat(response.get(HttpHeader.ETAG), not(containsString("-")));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/br-only.html HTTP/1.0\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/br-only.html HTTP/1.0\r\n" +
+            "\r\n"));
 
         assertEquals(404, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
@@ -121,31 +113,25 @@ public class RewriteEncodingRuleTest extends AbstractRuleTest
     @Test
     public void testOneEncoding() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/unknown.html HTTP/1.0\r
-            Accept-Encoding: br\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/unknown.html HTTP/1.0\r\n" +
+            "Accept-Encoding: br\r\n" +
+            "\r\n"));
 
         assertEquals(404, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/only.html HTTP/1.0\r
-            Accept-Encoding: br\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/only.html HTTP/1.0\r\n" +
+            "Accept-Encoding: br\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
         assertEquals("only", response.getContent());
         assertThat(response.get(HttpHeader.CONTENT_ENCODING), nullValue());
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            Accept-Encoding: br\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/all.html HTTP/1.0\r\n" +
+            "Accept-Encoding: br\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
@@ -153,11 +139,9 @@ public class RewriteEncodingRuleTest extends AbstractRuleTest
         assertThat(response.get(HttpHeader.CONTENT_ENCODING), is("br"));
         assertThat(response.get(HttpHeader.ETAG), containsString("-br\""));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/br-only.html HTTP/1.0\r
-            Accept-Encoding: br\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/br-only.html HTTP/1.0\r\n" +
+            "Accept-Encoding: br\r\n" +
+            "\r\n"));
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
         assertEquals("br-only", response.getContent());
@@ -168,31 +152,25 @@ public class RewriteEncodingRuleTest extends AbstractRuleTest
     @Test
     public void testQualityEncoding() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/unknown.html HTTP/1.0\r
-            Accept-Encoding: gzip,br;q=0.5\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/unknown.html HTTP/1.0\r\n" +
+            "Accept-Encoding: gzip,br;q=0.5\r\n" +
+            "\r\n"));
 
         assertEquals(404, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/only.html HTTP/1.0\r
-            Accept-Encoding: gzip,br;q=0.5
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/only.html HTTP/1.0\r\n" +
+            "Accept-Encoding: gzip,br;q=0.5\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
         assertEquals("only", response.getContent());
         assertThat(response.get(HttpHeader.CONTENT_ENCODING), nullValue());
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            Accept-Encoding: gzip,br;q=0.5
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/all.html HTTP/1.0\r\n" +
+            "Accept-Encoding: gzip,br;q=0.5\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
@@ -200,11 +178,9 @@ public class RewriteEncodingRuleTest extends AbstractRuleTest
         assertThat(response.get(HttpHeader.CONTENT_ENCODING), is("gzip"));
         assertThat(response.get(HttpHeader.ETAG), containsString("-gzip\""));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/br-only.html HTTP/1.0\r
-            Accept-Encoding: gzip,br;q=0.5\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/br-only.html HTTP/1.0\r\n" +
+            "Accept-Encoding: gzip,br;q=0.5\r\n" +
+            "\r\n"));
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
         assertEquals("br-only", response.getContent());
@@ -215,31 +191,25 @@ public class RewriteEncodingRuleTest extends AbstractRuleTest
     @Test
     public void testUnknownQualityEncoding() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/unknown.html HTTP/1.0\r
-            Accept-Encoding: xx,gzip,br;q=0.5\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/unknown.html HTTP/1.0\r\n" +
+            "Accept-Encoding: xx,gzip,br;q=0.5\r\n" +
+            "\r\n"));
 
         assertEquals(404, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/only.html HTTP/1.0\r
-            Accept-Encoding: xx,gzip,br;q=0.5
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/only.html HTTP/1.0\r\n" +
+            "Accept-Encoding: xx,gzip,br;q=0.5\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
         assertEquals("only", response.getContent());
         assertThat(response.get(HttpHeader.CONTENT_ENCODING), nullValue());
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            Accept-Encoding: xx,gzip,br;q=0.5
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/all.html HTTP/1.0\r\n" +
+            "Accept-Encoding: xx,gzip,br;q=0.5\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
@@ -247,11 +217,9 @@ public class RewriteEncodingRuleTest extends AbstractRuleTest
         assertThat(response.get(HttpHeader.CONTENT_ENCODING), is("gzip"));
         assertThat(response.get(HttpHeader.ETAG), containsString("-gzip\""));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/br-only.html HTTP/1.0\r
-            Accept-Encoding: xx,gzip,br;q=0.5\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/br-only.html HTTP/1.0\r\n" +
+            "Accept-Encoding: xx,gzip,br;q=0.5\r\n" +
+            "\r\n"));
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
         assertEquals("br-only", response.getContent());
@@ -262,31 +230,25 @@ public class RewriteEncodingRuleTest extends AbstractRuleTest
     @Test
     public void testWildEncoding() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/unknown.html HTTP/1.0\r
-            Accept-Encoding: gzip,*;q=0.5\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/unknown.html HTTP/1.0\r\n" +
+            "Accept-Encoding: gzip,*;q=0.5\r\n" +
+            "\r\n"));
 
         assertEquals(404, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/only.html HTTP/1.0\r
-            Accept-Encoding: gzip,*;q=0.5\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/only.html HTTP/1.0\r\n" +
+            "Accept-Encoding: gzip,*;q=0.5\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
         assertEquals("only", response.getContent());
         assertThat(response.get(HttpHeader.CONTENT_ENCODING), nullValue());
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            Accept-Encoding: gzip,*;q=0.5\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/all.html HTTP/1.0\r\n" +
+            "Accept-Encoding: gzip,*;q=0.5\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
@@ -294,11 +256,9 @@ public class RewriteEncodingRuleTest extends AbstractRuleTest
         assertThat(response.get(HttpHeader.CONTENT_ENCODING), is("gzip"));
         assertThat(response.get(HttpHeader.ETAG), containsString("-gzip\""));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/br-only.html HTTP/1.0\r
-            Accept-Encoding: gzip,*;q=0.5\r
-            \r
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/br-only.html HTTP/1.0\r\n" +
+            "Accept-Encoding: gzip,*;q=0.5\r\n" +
+            "\r\n"));
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
         assertEquals("br-only", response.getContent());
@@ -309,11 +269,9 @@ public class RewriteEncodingRuleTest extends AbstractRuleTest
     @Test
     public void testEtags() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            Accept-Encoding: br\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/all.html HTTP/1.0\r\n" +
+            "Accept-Encoding: br\r\n" +
+            "\r\n"));
 
         assertEquals(200, response.getStatus());
         assertThat(response.get(HttpHeader.VARY), containsString("Accept-Encoding"));
@@ -323,14 +281,12 @@ public class RewriteEncodingRuleTest extends AbstractRuleTest
         String etag = response.get(HttpHeader.ETAG);
         assertThat(etag, containsString("-br\""));
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/all.html HTTP/1.0\r
-            Accept-Encoding: br\r
-            If-None-Match: w/"abc"\r
-            If-None-Match: w/"xyz", %s, w/"pqy"\r
-            If-None-Match: w/"123"\r
-            \r
-            """.formatted(etag)));
+        response = HttpTester.parseResponse(_connector.getResponse(String.format("GET /ctx/all.html HTTP/1.0\r\n" +
+            "Accept-Encoding: br\r\n" +
+            "If-None-Match: w/\"abc\"\r\n" +
+            "If-None-Match: w/\"xyz\", %s, w/\"pqy\"\r\n" +
+            "If-None-Match: w/\"123\"\r\n" +
+            "\r\n", etag)));
 
         assertEquals(304, response.getStatus());
     }

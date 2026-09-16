@@ -131,6 +131,6 @@ public class ResponseStatusHeaderRegexRule extends Rule
     @Override
     public String toString()
     {
-        return "%s[header:%s=%s][response:%d>%s]".formatted(super.toString(), getHeaderName(), getHeaderRegex(), getCode(), getMessage());
+        return String.format("%s[header:%s=%s][response:%d>%s]", super.toString(), getHeaderName(), getHeaderRegex(), getCode(), getMessage());
     }
 }

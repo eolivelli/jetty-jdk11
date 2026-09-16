@@ -219,12 +219,10 @@ public class PropertyPassingTest
         Path base = workDir.getEmptyPathDir();
         Path ini = base.resolve("start.d/config.ini");
         FS.ensureDirectoryExists(ini.getParent());
-        String iniBody = """
-            # Enabling a single module (that does nothing) to let start.jar run
-            --module=empty
-            # TESTING THIS (it should expand the ${jetty.base} portion
-            test.config=${jetty.base}/etc/config.ini
-            """;
+        String iniBody = "# Enabling a single module (that does nothing) to let start.jar run\n" +
+            "--module=empty\n" +
+            "# TESTING THIS (it should expand the ${jetty.base} portion\n" +
+            "test.config=${jetty.base}/etc/config.ini\n";
         Files.writeString(ini, iniBody, UTF_8);
 
         // Setup command line
@@ -244,7 +242,7 @@ public class PropertyPassingTest
         // Test for values
         // The property is defined as `test.config=${jetty.base}/etc/config.ini`
         // so we must maintain the slashes for the `/etc/config.ini` portion (even if it is running on windows)
-        assertThat(output, containsString("test.config=%s/etc/config.ini".formatted(base)));
+        assertThat(output, containsString(String.format("test.config=%s/etc/config.ini", base)));
     }
 
     @Test
@@ -254,23 +252,19 @@ public class PropertyPassingTest
         Path base = workDir.getEmptyPathDir();
         Path module = base.resolve("modules/env-config.mod");
         FS.ensureDirectoryExists(module.getParent());
-        String moduleBody = """
-            [environment]
-            eex
-            
-            [ini-template]
-            # configuration option
-            # test.config=${jetty.home}/etc/eex-config.ini
-            """;
+        String moduleBody = "[environment]\n" +
+            "eex\n" +
+            "\n" +
+            "[ini-template]\n" +
+            "# configuration option\n" +
+            "# test.config=${jetty.home}/etc/eex-config.ini\n";
         Files.writeString(module, moduleBody, UTF_8);
         Path ini = base.resolve("start.d/config.ini");
         FS.ensureDirectoryExists(ini.getParent());
-        String iniBody = """
-            # Enabling a single module (that does nothing) to let start.jar run
-            --module=env-config
-            # TESTING THIS (it should expand the ${jetty.base} portion
-            test.config=${jetty.base}/etc/config.ini
-            """;
+        String iniBody = "# Enabling a single module (that does nothing) to let start.jar run\n" +
+            "--module=env-config\n" +
+            "# TESTING THIS (it should expand the ${jetty.base} portion\n" +
+            "test.config=${jetty.base}/etc/config.ini\n";
         Files.writeString(ini, iniBody, UTF_8);
 
         // Setup command line
@@ -290,7 +284,7 @@ public class PropertyPassingTest
         // Test for values
         // The property is defined as `test.config=${jetty.base}/etc/config.ini`
         // so we must maintain the slashes for the `/etc/config.ini` portion (even if it is running on windows)
-        assertThat(output, containsString("test.config=%s/etc/config.ini".formatted(base)));
+        assertThat(output, containsString(String.format("test.config=%s/etc/config.ini", base)));
     }
 
     private String getClassPath()

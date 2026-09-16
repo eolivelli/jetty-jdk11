@@ -153,11 +153,9 @@ public class NcsaRequestLogTest
         setup(logType);
         testHandlerServerStart();
 
-        _connector.getResponse("""
-            GET /foo?name=value HTTP/1.0
-            Host: servername
-            
-            """);
+        _connector.getResponse("GET /foo?name=value HTTP/1.0\n" +
+            "Host: servername\n" +
+            "\n");
         String log = _entries.poll(5, TimeUnit.SECONDS);
         assertThat(log, containsString("GET /foo?name=value"));
         assertThat(log, containsString(" 200 "));
@@ -170,11 +168,9 @@ public class NcsaRequestLogTest
         setup(logType);
         testHandlerServerStart();
 
-        _connector.getResponse("""
-            GET /foo?name=value HTTP/1.1
-            Host: servername
-            
-            """);
+        _connector.getResponse("GET /foo?name=value HTTP/1.1\n" +
+            "Host: servername\n" +
+            "\n");
         String log = _entries.poll(5, TimeUnit.SECONDS);
         assertThat(log, containsString("GET /foo?name=value"));
         assertThat(log, containsString(" 200 "));
@@ -187,11 +183,9 @@ public class NcsaRequestLogTest
         setup(logType);
         testHandlerServerStart();
 
-        _connector.getResponse("""
-            GET http://hostname:8888/foo?name=value HTTP/1.1
-            Host: hostname:8888
-            
-            """);
+        _connector.getResponse("GET http://hostname:8888/foo?name=value HTTP/1.1\n" +
+            "Host: hostname:8888\n" +
+            "\n");
         String log = _entries.poll(5, TimeUnit.SECONDS);
         assertThat(log, containsString("GET /foo?name=value"));
         assertThat(log, containsString(" 200 "));

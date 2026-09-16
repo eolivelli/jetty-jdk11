@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
 import org.eclipse.jetty.toolchain.test.FS;
@@ -105,7 +106,7 @@ public class MountedPathResourceTest
         {
             Resource r = resourceFactory.newResource(uri);
 
-            List<String> entries = r.list().stream().map(Resource::getFileName).toList();
+            List<String> entries = r.list().stream().map(Resource::getFileName).collect(Collectors.toList());
             assertThat(entries, containsInAnyOrder("alphabet", "numbers", "subsubdir"));
 
             Resource file = r.resolve("subsubdir/numbers");
@@ -119,13 +120,13 @@ public class MountedPathResourceTest
 
             Resource e = resourceFactory.newResource(extract.toString());
 
-            entries = r.list().stream().map(Resource::getFileName).toList();
+            entries = r.list().stream().map(Resource::getFileName).collect(Collectors.toList());
             assertThat(entries, containsInAnyOrder("alphabet", "numbers", "subsubdir"));
 
             s = "jar:" + testZip.toUri().toASCIIString() + "!/subdir/subsubdir/";
             r = resourceFactory.newResource(s);
 
-            entries = r.list().stream().map(Resource::getFileName).toList();
+            entries = r.list().stream().map(Resource::getFileName).collect(Collectors.toList());
             assertThat(entries, containsInAnyOrder("alphabet", "numbers"));
 
             Path extract2 = workDir.getEmptyPathDir().resolve("extract2");
@@ -135,7 +136,7 @@ public class MountedPathResourceTest
 
             e = resourceFactory.newResource(extract2.toString());
 
-            entries = r.list().stream().map(Resource::getFileName).toList();
+            entries = r.list().stream().map(Resource::getFileName).collect(Collectors.toList());
             assertThat(entries, containsInAnyOrder("alphabet", "numbers"));
         }
     }
@@ -218,7 +219,7 @@ public class MountedPathResourceTest
             Resource r = resourceFactory.newResource(uri);
             Collection<Resource> deep = r.getAllResources();
 
-            assertThat(deep.stream().map(r::getPathTo).map(Path::toString).toList(),
+            assertThat(deep.stream().map(r::getPathTo).map(Path::toString).collect(Collectors.toList()),
                 containsInAnyOrder(
                     "numbers",
                     "subsubdir",
@@ -290,7 +291,7 @@ public class MountedPathResourceTest
 
             assertThat("path /rez/ is a dir", rez.isDirectory(), is(true));
 
-            List<String> actual = rez.list().stream().map(Resource::getFileName).toList();
+            List<String> actual = rez.list().stream().map(Resource::getFileName).collect(Collectors.toList());
             String[] expected = new String[]{
                 "one",
                 "aaa",
@@ -320,7 +321,7 @@ public class MountedPathResourceTest
 
             assertThat("path /rez/oddities/ is a dir", rez.isDirectory(), is(true));
 
-            List<String> actual = rez.list().stream().map(Resource::getFileName).toList();
+            List<String> actual = rez.list().stream().map(Resource::getFileName).collect(Collectors.toList());
             String[] expected = new String[]{
                 ";",
                 "#hashcode",
@@ -368,7 +369,7 @@ public class MountedPathResourceTest
 
             assertThat("path /rez/another dir/ is a dir", anotherDir.isDirectory(), is(true));
 
-            List<String> actual = anotherDir.list().stream().map(Resource::getFileName).toList();
+            List<String> actual = anotherDir.list().stream().map(Resource::getFileName).collect(Collectors.toList());
             String[] expected = new String[]{
                 "a file.txt",
                 "another file.txt",

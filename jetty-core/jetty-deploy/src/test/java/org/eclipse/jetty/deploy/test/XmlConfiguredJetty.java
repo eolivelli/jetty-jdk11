@@ -160,7 +160,7 @@ public class XmlConfiguredJetty
     public void assertNoContextHandlers()
     {
         int count = _contexts.getHandlers().size();
-        assertEquals(0, count, "Should have no Contexts, but saw [%s]".formatted(_contexts.getHandlers().stream().map(Handler::toString).collect(Collectors.joining(", "))));
+        assertEquals(0, count, String.format("Should have no Contexts, but saw [%s]", _contexts.getHandlers().stream().map(Handler::toString).collect(Collectors.joining(", "))));
     }
 
     public String getResponse(String path) throws IOException
@@ -187,12 +187,12 @@ public class XmlConfiguredJetty
         if (expectedContextPaths.length != _contexts.getHandlers().size())
         {
             StringBuilder failure = new StringBuilder();
-            failure.append("## Expected Contexts [%d]\n".formatted(expectedContextPaths.length));
+            failure.append(String.format("## Expected Contexts [%d]\n", expectedContextPaths.length));
             for (String expected : expectedContextPaths)
             {
                 failure.append(" - ").append(expected).append('\n');
             }
-            failure.append("## Actual Contexts [%d]\n".formatted(_contexts.getHandlers().size()));
+            failure.append(String.format("## Actual Contexts [%d]\n", _contexts.getHandlers().size()));
             _contexts.getHandlers().forEach((handler) -> failure.append(" - ").append(handler).append('\n'));
             assertEquals(expectedContextPaths.length, _contexts.getHandlers().size(), failure.toString());
         }

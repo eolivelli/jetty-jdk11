@@ -68,11 +68,9 @@ public class ConnectHandlerSSLTest extends AbstractConnectHandlerTest
     public void testGETRequest() throws Exception
     {
         String hostPort = "localhost:" + serverConnector.getLocalPort();
-        String request = """
-                CONNECT $A HTTP/1.1\r
-                Host: $A\r
-                \r
-                """.replace("$A", hostPort);
+        String request = ("CONNECT $A HTTP/1.1\r\n" +
+            "Host: $A\r\n" +
+            "\r\n").replace("$A", hostPort);
         try (Socket socket = newSocket())
         {
             OutputStream output = socket.getOutputStream();
@@ -90,11 +88,9 @@ public class ConnectHandlerSSLTest extends AbstractConnectHandlerTest
             {
                 output = sslSocket.getOutputStream();
 
-                request = """
-                    GET /echo HTTP/1.1\r
-                    Host: $A\r
-                    \r
-                    """.replace("$A", hostPort);
+                request = ("GET /echo HTTP/1.1\r\n" +
+                    "Host: $A\r\n" +
+                    "\r\n").replace("$A", hostPort);
                 output.write(request.getBytes(StandardCharsets.UTF_8));
                 output.flush();
 
@@ -110,11 +106,9 @@ public class ConnectHandlerSSLTest extends AbstractConnectHandlerTest
     public void testPOSTRequests() throws Exception
     {
         String hostPort = "localhost:" + serverConnector.getLocalPort();
-        String request = """
-                CONNECT $A HTTP/1.1\r
-                Host: $A\r
-                \r
-                """.replace("$A", hostPort);
+        String request = ("CONNECT $A HTTP/1.1\r\n" +
+            "Host: $A\r\n" +
+            "\r\n").replace("$A", hostPort);
         try (Socket socket = newSocket())
         {
             OutputStream output = socket.getOutputStream();
@@ -134,12 +128,11 @@ public class ConnectHandlerSSLTest extends AbstractConnectHandlerTest
 
                 for (int i = 0; i < 10; ++i)
                 {
-                    request = """
-                            POST /echo?param=$P HTTP/1.1\r
-                            Host: $A\r
-                            Content-Length: 5\r
-                            \r
-                            HELLO""".replace("$P", String.valueOf(i)).replace("$A", hostPort);
+                    request = ("POST /echo?param=$P HTTP/1.1\r\n" +
+                        "Host: $A\r\n" +
+                        "Content-Length: 5\r\n" +
+                        "\r\n" +
+                        "HELLO").replace("$P", String.valueOf(i)).replace("$A", hostPort);
                     output.write(request.getBytes(StandardCharsets.UTF_8));
                     output.flush();
 
@@ -156,12 +149,10 @@ public class ConnectHandlerSSLTest extends AbstractConnectHandlerTest
     public void testCONNECTWithConnectionCloseInRequest() throws Exception
     {
         String hostPort = "localhost:" + serverConnector.getLocalPort();
-        String request = """
-                CONNECT $A HTTP/1.1\r
-                Host: $A\r
-                Connection: close\r
-                \r
-                """.replace("$A", hostPort);
+        String request = ("CONNECT $A HTTP/1.1\r\n" +
+            "Host: $A\r\n" +
+            "Connection: close\r\n" +
+            "\r\n").replace("$A", hostPort);
         try (Socket socket = newSocket())
         {
             OutputStream output = socket.getOutputStream();
@@ -179,11 +170,9 @@ public class ConnectHandlerSSLTest extends AbstractConnectHandlerTest
             {
                 output = sslSocket.getOutputStream();
 
-                request = """
-                    GET /echo HTTP/1.1\r
-                    Host: $A\r
-                    \r
-                    """.replace("$A", hostPort);
+                request = ("GET /echo HTTP/1.1\r\n" +
+                    "Host: $A\r\n" +
+                    "\r\n").replace("$A", hostPort);
                 output.write(request.getBytes(StandardCharsets.UTF_8));
                 output.flush();
 
@@ -214,10 +203,8 @@ public class ConnectHandlerSSLTest extends AbstractConnectHandlerTest
         proxy.start();
 
         String hostPort = "localhost:" + serverConnector.getLocalPort();
-        String request = """
-            CONNECT $A HTTP/1.1\r
-            Host: $A\r
-            """.replace("$A", hostPort);
+        String request = ("CONNECT $A HTTP/1.1\r\n" +
+            "Host: $A\r\n").replace("$A", hostPort);
         if (requestConnectionClose)
             request += "Connection: close\r\n";
         request += "\r\n";
@@ -238,11 +225,9 @@ public class ConnectHandlerSSLTest extends AbstractConnectHandlerTest
             {
                 output = sslSocket.getOutputStream();
 
-                request = """
-                    GET /echo HTTP/1.1\r
-                    Host: $A\r
-                    \r
-                    """.replace("$A", hostPort);
+                request = ("GET /echo HTTP/1.1\r\n" +
+                    "Host: $A\r\n" +
+                    "\r\n").replace("$A", hostPort);
                 output.write(request.getBytes(StandardCharsets.UTF_8));
                 output.flush();
 

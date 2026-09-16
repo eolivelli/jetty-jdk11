@@ -63,12 +63,10 @@ public class RedirectTest
         HttpConfiguration httpConfiguration = new HttpConfiguration();
         startServer(httpConfiguration, handler);
 
-        String rawRequest = """
-            GET /test HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /test HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);

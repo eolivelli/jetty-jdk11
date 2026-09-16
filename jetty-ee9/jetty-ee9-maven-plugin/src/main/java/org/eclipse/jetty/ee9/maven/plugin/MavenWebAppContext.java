@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.jetty.ee9.plus.webapp.EnvConfiguration;
@@ -232,7 +233,7 @@ public class MavenWebAppContext extends WebAppContext
             // We have to assume that mounting can happen.
             List<Resource> resources = Stream.of(resourceBases)
                 .map(s -> ResourceFactory.of(this).newResource(s))
-                .toList();
+                .collect(Collectors.toList());
             Resource r = ResourceFactory.combine(resources);
             setBaseResource(r);
         }

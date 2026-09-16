@@ -127,12 +127,11 @@ public class ThreadStarvationTest
                 {
                     client.setSoTimeout(10000);
 
-                    String request = """
-                        PUT / HTTP/1.0\r
-                        host: localhost\r
-                        content-length: 10\r
-                        \r
-                        1""";
+                    String request = "PUT / HTTP/1.0\r\n" +
+                        "host: localhost\r\n" +
+                        "content-length: 10\r\n" +
+                        "\r\n" +
+                        "1";
 
                     // Write partial request
                     out.write(request.getBytes(StandardCharsets.UTF_8));
@@ -224,13 +223,12 @@ public class ThreadStarvationTest
                 {
                     client.setSoTimeout(10000);
 
-                    String request = """
-                        POST / HTTP/1.0\r
-                        host: localhost\r
-                        content-type: application/x-www-form-urlencoded\r
-                        content-length: 11\r
-                        \r
-                        a=1&b""";
+                    String request = "POST / HTTP/1.0\r\n" +
+                        "host: localhost\r\n" +
+                        "content-type: application/x-www-form-urlencoded\r\n" +
+                        "content-length: 11\r\n" +
+                        "\r\n" +
+                        "a=1&b";
 
                     // Write partial request
                     out.write(request.getBytes(StandardCharsets.UTF_8));

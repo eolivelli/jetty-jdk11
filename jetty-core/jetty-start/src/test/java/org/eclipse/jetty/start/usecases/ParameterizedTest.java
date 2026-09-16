@@ -39,34 +39,28 @@ public class ParameterizedTest extends AbstractUseCase
         FS.ensureDirExists(baseDir.resolve("start.d"));
         FS.ensureDirExists(baseDir.resolve("modules"));
         Files.writeString(baseDir.resolve("etc/commands.txt"),
-            """
-            name0=changed0
-            name1=changed1
-            --add-modules=parameterized
-            # ignore this
-            """, UTF_8);
+            "name0=changed0\n" +
+            "name1=changed1\n" +
+            "--add-modules=parameterized\n" +
+            "# ignore this\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/parameterized.mod"),
-            """
-            [depend]
-            main
-            [ini]
-            name=value
-            name0?=default
-            name2?=two
-            [ini-template]
-            name0=value0
-            # name1=value1
-            # name2=too
-            """, UTF_8);
+            "[depend]\n" +
+            "main\n" +
+            "[ini]\n" +
+            "name=value\n" +
+            "name0?=default\n" +
+            "name2?=two\n" +
+            "[ini-template]\n" +
+            "name0=value0\n" +
+            "# name1=value1\n" +
+            "# name2=too\n", UTF_8);
         Files.writeString(baseDir.resolve("start.d/tobeupdated.ini"),
-            """
-            #p=v
-            property=value
-            #comment
-            property0=value0
-            #comment
-            #property1=value1
-            """, UTF_8);
+            "#p=v\n" +
+            "property=value\n" +
+            "#comment\n" +
+            "property0=value0\n" +
+            "#comment\n" +
+            "#property1=value1\n", UTF_8);
 
         // === Prepare Jetty Base using Main
         List<String> prepareArgs = List.of(
@@ -126,34 +120,28 @@ public class ParameterizedTest extends AbstractUseCase
         FS.ensureDirExists(baseDir.resolve("start.d"));
         FS.ensureDirExists(baseDir.resolve("modules"));
         Files.writeString(baseDir.resolve("etc/commands.txt"),
-            """
-            name0=changed0
-            name1=changed1
-            --add-modules=parameterized
-            # ignore this
-            """, UTF_8);
+            "name0=changed0\n" +
+            "name1=changed1\n" +
+            "--add-modules=parameterized\n" +
+            "# ignore this\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/parameterized.mod"),
-            """
-            [depend]
-            main
-            [ini]
-            name=value
-            name0?=default
-            name2?=two
-            [ini-template]
-            name0=value0
-            # name1=value1
-            # name2=too
-            """, UTF_8);
+            "[depend]\n" +
+            "main\n" +
+            "[ini]\n" +
+            "name=value\n" +
+            "name0?=default\n" +
+            "name2?=two\n" +
+            "[ini-template]\n" +
+            "name0=value0\n" +
+            "# name1=value1\n" +
+            "# name2=too\n", UTF_8);
         Files.writeString(baseDir.resolve("start.d/tobeupdated.ini"),
-            """
-            #p=v
-            property=value
-            #comment
-            property0=value0
-            #comment
-            #property1=value1
-            """, UTF_8);
+            "#p=v\n" +
+            "property=value\n" +
+            "#comment\n" +
+            "property0=value0\n" +
+            "#comment\n" +
+            "#property1=value1\n", UTF_8);
 
         // === Prepare Jetty Base using Main
         List<String> prepareArgs = List.of(
@@ -211,34 +199,28 @@ public class ParameterizedTest extends AbstractUseCase
         FS.ensureDirExists(baseDir.resolve("start.d"));
         FS.ensureDirExists(baseDir.resolve("modules"));
         Files.writeString(baseDir.resolve("etc/commands.txt"),
-            """
-            name0=changed0
-            name1=changed1
-            --add-modules=parameterized
-            # ignore this
-            """, UTF_8);
+            "name0=changed0\n" +
+            "name1=changed1\n" +
+            "--add-modules=parameterized\n" +
+            "# ignore this\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/parameterized.mod"),
-            """
-            [depend]
-            main
-            [ini]
-            name=value
-            name0?=default
-            name2?=two
-            [ini-template]
-            name0=value0
-            # name1=value1
-            # name2=too
-            """, UTF_8);
+            "[depend]\n" +
+            "main\n" +
+            "[ini]\n" +
+            "name=value\n" +
+            "name0?=default\n" +
+            "name2?=two\n" +
+            "[ini-template]\n" +
+            "name0=value0\n" +
+            "# name1=value1\n" +
+            "# name2=too\n", UTF_8);
         Files.writeString(baseDir.resolve("start.d/tobeupdated.ini"),
-            """
-            #p=v
-            property=value
-            #comment
-            property0=value0
-            #comment
-            #property1=value1
-            """, UTF_8);
+            "#p=v\n" +
+            "property=value\n" +
+            "#comment\n" +
+            "property0=value0\n" +
+            "#comment\n" +
+            "#property1=value1\n", UTF_8);
 
         // === Prepare Jetty Base using Main
         List<String> prepareArgs = List.of(

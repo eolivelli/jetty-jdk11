@@ -57,14 +57,12 @@ import static org.awaitility.Awaitility.await;
 public class StressHTTP2Test
 {
     private static final int N_THREADS = Runtime.getRuntime().availableProcessors() * 2;
-    private static final byte[] DATA = """
-        [start]
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-        dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-        non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        [end]
-        """.repeat(50).getBytes(StandardCharsets.UTF_8);
+    private static final byte[] DATA = ("[start]\n" +
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n" +
+        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure\n" +
+        "dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat\n" +
+        "non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n" +
+        "[end]\n").repeat(50).getBytes(StandardCharsets.UTF_8);
 
     private ExecutorService executorService;
     private Server server;

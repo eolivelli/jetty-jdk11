@@ -1055,7 +1055,7 @@ public class Server extends Handler.Wrapper implements Attributes
         @Override
         public String toString()
         {
-            return "ServerContext@%x".formatted(Server.this.hashCode());
+            return String.format("ServerContext@%x", Server.this.hashCode());
         }
     }
 }

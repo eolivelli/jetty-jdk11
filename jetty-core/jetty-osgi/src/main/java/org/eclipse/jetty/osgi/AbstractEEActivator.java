@@ -307,7 +307,7 @@ public abstract class AbstractEEActivator implements BundleActivator, ServerClas
         {
             try (Stream<Path> listing = Files.list(dir))
             {
-                return listing.toList();
+                return listing.collect(Collectors.toList());
             }
         }
     }

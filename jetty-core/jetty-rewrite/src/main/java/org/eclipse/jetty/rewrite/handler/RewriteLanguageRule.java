@@ -127,7 +127,7 @@ public class RewriteLanguageRule extends Rule
     @Override
     public String toString()
     {
-        return "%s@%x".formatted(TypeUtil.toShortName(this.getClass()), hashCode());
+        return String.format("%s@%x", TypeUtil.toShortName(this.getClass()), hashCode());
     }
 
     protected List<String> getWildCardLanguages()

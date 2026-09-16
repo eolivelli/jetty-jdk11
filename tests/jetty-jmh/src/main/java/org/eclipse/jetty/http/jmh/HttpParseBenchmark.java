@@ -64,7 +64,7 @@ public class HttpParseBenchmark
         @Override
         public String toString()
         {
-            return "%s %s %s".formatted(method, uri, version);
+            return String.format("%s %s %s", method, uri, version);
         }
     }
 

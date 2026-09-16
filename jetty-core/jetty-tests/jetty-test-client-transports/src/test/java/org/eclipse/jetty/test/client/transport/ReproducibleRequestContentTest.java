@@ -84,7 +84,7 @@ public class ReproducibleRequestContentTest extends AbstractTest
                 }
                 else
                 {
-                    response.getHeaders().put(HttpHeader.WWW_AUTHENTICATE, "Basic realm=\"%s\"".formatted(realm));
+                    response.getHeaders().put(HttpHeader.WWW_AUTHENTICATE, String.format("Basic realm=\"%s\"", realm));
                     Response.writeError(request, response, callback, HttpStatus.UNAUTHORIZED_401);
                 }
                 return true;
@@ -160,7 +160,7 @@ public class ReproducibleRequestContentTest extends AbstractTest
                 }
                 else
                 {
-                    response.getHeaders().put(HttpHeader.WWW_AUTHENTICATE, "Basic realm=\"%s\"".formatted(realm));
+                    response.getHeaders().put(HttpHeader.WWW_AUTHENTICATE, String.format("Basic realm=\"%s\"", realm));
                     Response.writeError(request, response, callback, HttpStatus.UNAUTHORIZED_401);
                 }
                 return true;

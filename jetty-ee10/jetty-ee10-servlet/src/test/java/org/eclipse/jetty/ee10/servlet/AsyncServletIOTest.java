@@ -838,13 +838,12 @@ public class AsyncServletIOTest
     @Test
     public void testStolenAsyncRead() throws Exception
     {
-        String request = """
-            POST /ctx/stolen/info HTTP/1.1
-            Host: localhost
-            Content-Type: text/plain
-            Content-Length: 2
-            
-            1""";
+        String request = "POST /ctx/stolen/info HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Content-Type: text/plain\n" +
+            "Content-Length: 2\n" +
+            "\n" +
+            "1";
 
         try (Socket socket = new Socket("localhost", _port))
         {

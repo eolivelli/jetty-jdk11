@@ -156,12 +156,10 @@ public class ServletUpgradeTest
         assertThat(fullContent, containsString("HTTP/1.1 101 Switching Protocols"));
         assertThat(fullContent, containsString("Connection: Upgrade"));
         assertThat(fullContent, containsString("Upgrade: YES"));
-        assertThat(fullContent, containsString("""
-            TCKHttpUpgradeHandler.init\r
-            =onDataAvailable\r
-            HelloWorld\r
-            =onAllDataRead\r
-            """));
+        assertThat(fullContent, containsString("TCKHttpUpgradeHandler.init\r\n" +
+            "=onDataAvailable\r\n" +
+            "HelloWorld\r\n" +
+            "=onAllDataRead\r\n"));
 
         socket.close();
         assertTrue(handler.destroyLatch.await(5, TimeUnit.SECONDS));
@@ -232,10 +230,9 @@ public class ServletUpgradeTest
         assertThat(content, containsString("HTTP/1.1 101 Switching Protocols"));
         assertThat(content, containsString("Connection: Upgrade"));
         assertThat(content, containsString("Upgrade: YES"));
-        assertThat(content, containsString("""
-            TCKHttpUpgradeHandler.init\r
-            =onDataAvailable\r
-            HelloWorld"""));
+        assertThat(content, containsString("TCKHttpUpgradeHandler.init\r\n" +
+            "=onDataAvailable\r\n" +
+            "HelloWorld"));
 
         // The HttpUpgradeHandler.destroy() should still be called in case of an error.
         socket.setSoLinger(true, 0);

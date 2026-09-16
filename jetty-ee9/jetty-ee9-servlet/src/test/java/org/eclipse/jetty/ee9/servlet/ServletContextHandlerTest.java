@@ -2350,12 +2350,10 @@ public class ServletContextHandlerTest
 
         _server.setHandler(context);
         _server.start();
-        String rawRequest = """
-            GET /c1 HTTP/1.1\r
-            Host: localhost\r
-            Connection: close\r
-            \r
-            """;
+        String rawRequest = "GET /c1 HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
 
         String rawResponse = _connector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -2413,7 +2411,7 @@ public class ServletContextHandlerTest
                 }
                 // If we reached this point, then the input path isn't sufficiently bad enough to trigger
                 // a BadMessageException.  That means the testcase input is itself not valid, and should be changed or removed.
-                fail("Input path is not triggering an Exception: \"%s\"".formatted(path));
+                fail(String.format("Input path is not triggering an Exception: \"%s\"", path));
             }
         }), "/dispatcher/*");
         context.addServlet(new ServletHolder("error-servlet", new HttpServlet()
@@ -2440,24 +2438,20 @@ public class ServletContextHandlerTest
         // over badly formatted values in an HTTP Header (like invalid pct-encoding, truncated pct-encoding, or bad utf-8 sequences).
         String base64Path = Base64.getEncoder().encodeToString(requestDispatcherPath.getBytes(UTF_8));
 
-        String rawRequest = """
-            GET /context/dispatcher/ HTTP/1.1\r
-            Host: localhost\r
-            Connection: close\r
-            X-GetRequestDispatcher: %s\r
-            X-DispatcherMode: %s\r
-            \r
-            """.formatted(base64Path, dispatcherMode);
+        String rawRequest = String.format("GET /context/dispatcher/ HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Connection: close\r\n" +
+            "X-GetRequestDispatcher: %s\r\n" +
+            "X-DispatcherMode: %s\r\n" +
+            "\r\n", base64Path, dispatcherMode);
 
         String rawResponse = _connector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST_400));
         // Test response output to ensure we actually reached the getRequestDispatcher testcase code
-        assertThat(response.getContent(), containsString("""
-            ERROR 400
-            reached.testcase=true
-            mode.testcase=%s
-            """.formatted(dispatcherMode)));
+        assertThat(response.getContent(), containsString(String.format("ERROR 400\n" +
+            "reached.testcase=true\n" +
+            "mode.testcase=%s\n", dispatcherMode)));
     }
 
     @Test
@@ -2516,12 +2510,10 @@ public class ServletContextHandlerTest
         _server.addBean(mbeanContainer);
         _server.start();
 
-        String rawRequest = """
-            GET /context/servlet/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /context/servlet/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
         String rawResponse = _connector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(200));

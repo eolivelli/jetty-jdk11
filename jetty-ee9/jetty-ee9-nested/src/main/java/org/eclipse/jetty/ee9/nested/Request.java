@@ -958,16 +958,16 @@ public class Request implements HttpServletRequest
         List<String> acceptable = fields.getQualityCSV(HttpHeader.ACCEPT_LANGUAGE)
             .stream()
             .filter(StringUtil::isNotBlank)
-            .toList();
+            .collect(Collectors.toList());
 
         // handle no locale
         if (acceptable.isEmpty())
             return Locale.getDefault();
 
         // return sorted list of locales, with known locales in quality order before unknown locales in quality order
-        List<Locale> locales = acceptable.stream().map(Locale::forLanguageTag).toList();
+        List<Locale> locales = acceptable.stream().map(Locale::forLanguageTag).collect(Collectors.toList());
         // Filter again, only allowing known locales
-        List<Locale> known = locales.stream().filter(MimeTypes::isKnownLocale).toList();
+        List<Locale> known = locales.stream().filter(MimeTypes::isKnownLocale).collect(Collectors.toList());
         if (known.isEmpty())
             return Locale.getDefault();
         return known.get(0);

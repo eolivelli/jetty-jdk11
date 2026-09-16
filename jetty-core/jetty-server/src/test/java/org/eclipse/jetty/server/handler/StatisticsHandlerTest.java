@@ -85,11 +85,9 @@ public class StatisticsHandlerTest
         _statsHandler.setHandler(new TripleBarrierHandler(barrier));
         _server.start();
 
-        String request = """
-            GET / HTTP/1.1\r
-            Host: localhost\r
-            \r
-            """;
+        String request = "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "\r\n";
 
         // 1st request
         _connector.executeRequest(request);
@@ -160,15 +158,13 @@ public class StatisticsHandlerTest
         });
         _server.start();
 
-        String request = """
-                POST / HTTP/1.1\r
-                Host: localhost\r
-                Transfer-Encoding: chunked\r
-                Connection: close\r
-                \r
-                0a\r
-                0123456789\r
-                """;
+        String request = "POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Transfer-Encoding: chunked\r\n" +
+            "Connection: close\r\n" +
+            "\r\n" +
+            "0a\r\n" +
+            "0123456789\r\n";
 
         String response = _connector.getResponse(request);
         assertThat(response, containsString("HTTP/1.1 200 OK"));
@@ -191,11 +187,9 @@ public class StatisticsHandlerTest
         });
         _server.start();
 
-        String request = """
-            GET / HTTP/1.1\r
-            Host: localhost\r
-            \r
-            """;
+        String request = "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "\r\n";
 
         try (StacklessLogging ignored = new StacklessLogging(Response.class))
         {
@@ -221,11 +215,9 @@ public class StatisticsHandlerTest
         });
         _server.start();
 
-        String request = """
-            GET / HTTP/1.1\r
-            Host: localhost\r
-            \r
-            """;
+        String request = "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "\r\n";
         String response = _connector.getResponse(request);
         assertThat(response, containsString("HTTP/1.1 200 OK"));
         await().atMost(5, TimeUnit.SECONDS).until(_statsHandler::getResponses2xx, is(1));
@@ -239,11 +231,9 @@ public class StatisticsHandlerTest
         _statsHandler.setHandler(new TripleBarrierHandler(barrier));
         _server.start();
 
-        String request = """
-            GET / HTTP/1.1\r
-            Host: localhost\r
-            \r
-            """;
+        String request = "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "\r\n";
 
         _connector.executeRequest(request);
         _connector.executeRequest(request);
@@ -293,11 +283,9 @@ public class StatisticsHandlerTest
         });
         _server.start();
 
-        String request = """
-            GET / HTTP/1.1\r
-            Host: localhost\r
-            \r
-            """;
+        String request = "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "\r\n";
         try (LocalConnector.LocalEndPoint endp = _connector.executeRequest(request))
         {
             barrier[0].await();
@@ -361,11 +349,9 @@ public class StatisticsHandlerTest
         });
         _server.start();
 
-        String request = """
-            GET / HTTP/1.1\r
-            Host: localhost\r
-            \r
-            """;
+        String request = "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "\r\n";
         try (LocalConnector.LocalEndPoint endp = _connector.executeRequest(request))
         {
             barrier[0].await();
@@ -416,11 +402,9 @@ public class StatisticsHandlerTest
 
         try (StacklessLogging ignored = new StacklessLogging(Response.class))
         {
-            String request = """
-                GET / HTTP/1.1\r
-                Host: localhost\r
-                \r
-                """;
+            String request = "GET / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "\r\n";
             String response = _connector.getResponse(request);
             assertThat(response, containsString("HTTP/1.1 500 Server Error"));
         }
@@ -456,11 +440,9 @@ public class StatisticsHandlerTest
 
         try (StacklessLogging ignored = new StacklessLogging(Response.class))
         {
-            String request = """
-                GET / HTTP/1.1\r
-                Host: localhost\r
-                \r
-                """;
+            String request = "GET / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "\r\n";
             String response = _connector.getResponse(request);
             assertThat(response, containsString("HTTP/1.1 500 Server Error"));
         }
@@ -507,11 +489,9 @@ public class StatisticsHandlerTest
 
         try (StacklessLogging ignored = new StacklessLogging(Response.class))
         {
-            String request = """
-                GET / HTTP/1.1\r
-                Host: localhost\r
-                \r
-                """;
+            String request = "GET / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "\r\n";
             String response = _connector.getResponse(request);
             assertThat(response, containsString("HTTP/1.1 500 Server Error"));
         }
@@ -547,11 +527,9 @@ public class StatisticsHandlerTest
 
         try (StacklessLogging ignored = new StacklessLogging(Response.class))
         {
-            String request = """
-                GET / HTTP/1.1\r
-                Host: localhost\r
-                \r
-                """;
+            String request = "GET / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "\r\n";
             String response = _connector.getResponse(request);
             assertThat(response, containsString("HTTP/1.1 200 OK"));
         }
@@ -613,11 +591,9 @@ public class StatisticsHandlerTest
         });
         _server.start();
 
-        String request = """
-            GET / HTTP/1.1\r
-            Host: localhost\r
-            \r
-            """;
+        String request = "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "\r\n";
         try (LocalConnector.LocalEndPoint endp = _connector.executeRequest(request))
         {
             barrier[0].await();

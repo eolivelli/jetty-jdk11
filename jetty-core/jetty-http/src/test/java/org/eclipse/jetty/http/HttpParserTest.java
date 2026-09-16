@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.eclipse.jetty.http.HttpParser.State;
@@ -4432,8 +4433,51 @@ public class HttpParserTest
         return scenarios.stream();
     }
 
-    public record Scenario(String eol, String eolChunk, HttpCompliance compliance)
+    public static final class Scenario
     {
+        private final String eol;
+        private final String eolChunk;
+        private final HttpCompliance compliance;
+
+        public Scenario(String eol, String eolChunk, HttpCompliance compliance)
+        {
+            this.eol = eol;
+            this.eolChunk = eolChunk;
+            this.compliance = compliance;
+        }
+
+        public String eol()
+        {
+            return eol;
+        }
+
+        public String eolChunk()
+        {
+            return eolChunk;
+        }
+
+        public HttpCompliance compliance()
+        {
+            return compliance;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Scenario that = (Scenario)obj;
+            return Objects.equals(eol, that.eol) && Objects.equals(eolChunk, that.eolChunk) && Objects.equals(compliance, that.compliance);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(eol, eolChunk, compliance);
+        }
+
         public boolean isViolation()
         {
             return !eol.equals("\r\n");

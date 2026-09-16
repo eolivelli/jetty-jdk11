@@ -16,9 +16,7 @@ package org.eclipse.jetty.unixdomain.server;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.SocketAddress;
-import java.net.StandardProtocolFamily;
 import java.net.StandardSocketOptions;
-import java.net.UnixDomainSocketAddress;
 import java.nio.channels.Channel;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
@@ -35,6 +33,7 @@ import org.eclipse.jetty.io.EndPoint;
 import org.eclipse.jetty.io.ManagedSelector;
 import org.eclipse.jetty.io.SelectorManager;
 import org.eclipse.jetty.io.SocketChannelEndPoint;
+import org.eclipse.jetty.io.UnixDomain;
 import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.Connector;
@@ -247,8 +246,8 @@ public class UnixDomainServerConnector extends AbstractConnector
     private ServerSocketChannel bindServerSocketChannel() throws IOException
     {
         Path unixDomainPath = getUnixDomainPath();
-        ServerSocketChannel serverChannel = ServerSocketChannel.open(StandardProtocolFamily.UNIX);
-        SocketAddress socketAddress = UnixDomainSocketAddress.of(unixDomainPath);
+        ServerSocketChannel serverChannel = UnixDomain.openServerSocketChannel();
+        SocketAddress socketAddress = UnixDomain.addressOf(unixDomainPath);
         serverChannel.bind(socketAddress, getAcceptQueueSize());
         return serverChannel;
     }

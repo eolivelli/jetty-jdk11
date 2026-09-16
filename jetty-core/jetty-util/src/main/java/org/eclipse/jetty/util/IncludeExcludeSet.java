@@ -38,19 +38,48 @@ public class IncludeExcludeSet<T, P> implements Predicate<P>
     private final Set<T> _excludes;
     private final Predicate<P> _excludePredicate;
 
-    private record SetContainsPredicate<T>(Set<T> set) implements Predicate<T>
+    private static final class SetContainsPredicate<T> implements Predicate<T>
     {
+        private final Set<T> set;
+
+        private SetContainsPredicate(Set<T> set)
+        {
+            this.set = set;
+        }
+
+        public Set<T> set()
+        {
+            return set;
+        }
+
         @Override
         public boolean test(T item)
-            {
-                return set.contains(item);
-            }
+        {
+            return set.contains(item);
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            SetContainsPredicate<?> that = (SetContainsPredicate<?>)obj;
+            return Objects.equals(set, that.set);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(set);
+        }
 
         @Override
         public String toString()
-            {
-                return "CONTAINS";
-            }
+        {
+            return "CONTAINS";
+        }
     }
 
     /**

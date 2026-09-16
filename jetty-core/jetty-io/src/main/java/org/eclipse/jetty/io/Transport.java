@@ -15,8 +15,6 @@ package org.eclipse.jetty.io;
 
 import java.io.IOException;
 import java.net.SocketAddress;
-import java.net.StandardProtocolFamily;
-import java.net.UnixDomainSocketAddress;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
@@ -253,11 +251,11 @@ public interface Transport
      */
     abstract class Unix extends Socket
     {
-        private final UnixDomainSocketAddress socketAddress;
+        private final SocketAddress socketAddress;
 
         protected Unix(Path path)
         {
-            this.socketAddress = UnixDomainSocketAddress.of(path);
+            this.socketAddress = UnixDomain.addressOf(path);
         }
 
         @Override
@@ -285,7 +283,7 @@ public interface Transport
         @Override
         public String toString()
         {
-            return "%s[%s]".formatted(super.toString(), socketAddress.getPath());
+            return String.format("%s[%s]", super.toString(), UnixDomain.getPath(socketAddress));
         }
     }
 
@@ -302,7 +300,7 @@ public interface Transport
         @Override
         public SelectableChannel newSelectableChannel() throws IOException
         {
-            return SocketChannel.open(StandardProtocolFamily.UNIX);
+            return UnixDomain.openSocketChannel();
         }
 
         @Override
@@ -325,7 +323,7 @@ public interface Transport
         @Override
         public SelectableChannel newSelectableChannel() throws IOException
         {
-            return DatagramChannel.open(StandardProtocolFamily.UNIX);
+            return UnixDomain.openDatagramChannel();
         }
 
         @Override

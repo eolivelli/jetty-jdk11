@@ -63,7 +63,7 @@ public class DataBodyParser extends BodyParser
                 {
                     int size = (int)Math.min(buffer.remaining(), length);
                     int position = buffer.position();
-                    ByteBuffer slice = buffer.slice(position, size);
+                    ByteBuffer slice = BufferUtil.absoluteSlice(buffer, position, size);
                     buffer.position(position + size);
 
                     length -= size;

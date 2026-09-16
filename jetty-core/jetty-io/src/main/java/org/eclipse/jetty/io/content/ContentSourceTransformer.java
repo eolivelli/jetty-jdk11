@@ -350,7 +350,7 @@ public abstract class ContentSourceTransformer implements Content.Source
      * <p>FAILING -> FAILED, when just before returning, {@link #read()} detects a concurrent call to {@link #fail(Throwable)}</p>
      *
      */
-    private static sealed class State
+    private static class State
     {
         private static final State IDLE = new Idle();
         private static final State READING = new Reading();

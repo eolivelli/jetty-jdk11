@@ -305,7 +305,7 @@ public class FrameGenerator
         if (dataExceedsFrame)
         {
             position = data.position();
-            ByteBuffer slice = data.slice(position, dataLength);
+            ByteBuffer slice = BufferUtil.absoluteSlice(data, position, dataLength);
             data.position(position + dataLength);
             data = slice;
         }

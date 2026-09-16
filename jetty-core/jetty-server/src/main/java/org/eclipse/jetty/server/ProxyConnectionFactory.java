@@ -19,11 +19,11 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.net.UnixDomainSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadPendingException;
 import java.nio.channels.WritePendingException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +31,7 @@ import org.eclipse.jetty.io.AbstractConnection;
 import org.eclipse.jetty.io.Connection;
 import org.eclipse.jetty.io.EndPoint;
 import org.eclipse.jetty.io.RetainableByteBuffer;
+import org.eclipse.jetty.io.UnixDomain;
 import org.eclipse.jetty.util.BufferUtil;
 import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.StringUtil;
@@ -641,8 +642,8 @@ public class ProxyConnectionFactory extends DetectorConnectionFactory
                             String src = toUnixDomainPath(addr);
                             byteBuffer.get(addr);
                             String dst = toUnixDomainPath(addr);
-                            local = UnixDomainSocketAddress.of(dst);
-                            remote = UnixDomainSocketAddress.of(src);
+                            local = UnixDomain.addressOf(Path.of(dst));
+                            remote = UnixDomain.addressOf(Path.of(src));
                         }
                         default -> throw new IllegalStateException("Unsupported family " + _family);
                     }

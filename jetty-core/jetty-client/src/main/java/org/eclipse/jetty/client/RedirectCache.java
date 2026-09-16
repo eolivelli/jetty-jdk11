@@ -16,6 +16,7 @@ package org.eclipse.jetty.client;
 import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -58,13 +59,71 @@ public interface RedirectCache
 
     /**
      * <p>A cached redirect entry used for both source and target.</p>
-     *
-     * @param method the original or redirect HTTP method
-     * @param origin the original or redirect origin (scheme, host, port)
-     * @param target the original or redirect target (path, authority, asterisk, uri)
      */
-    record MethodOriginTarget(String method, URI origin, String target)
+    final class MethodOriginTarget
     {
+        private final String method;
+        private final URI origin;
+        private final String target;
+
+        /**
+         * @param method the original or redirect HTTP method
+         * @param origin the original or redirect origin (scheme, host, port)
+         * @param target the original or redirect target (path, authority, asterisk, uri)
+         */
+        public MethodOriginTarget(String method, URI origin, String target)
+        {
+            this.method = method;
+            this.origin = origin;
+            this.target = target;
+        }
+
+        /**
+         * @return the original or redirect HTTP method
+         */
+        public String method()
+        {
+            return method;
+        }
+
+        /**
+         * @return the original or redirect origin (scheme, host, port)
+         */
+        public URI origin()
+        {
+            return origin;
+        }
+
+        /**
+         * @return the original or redirect target (path, authority, asterisk, uri)
+         */
+        public String target()
+        {
+            return target;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            MethodOriginTarget that = (MethodOriginTarget)obj;
+            return Objects.equals(method, that.method) && Objects.equals(origin, that.origin) && Objects.equals(target, that.target);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(method, origin, target);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "MethodOriginTarget[method=" + method + ", origin=" + origin + ", target=" + target + "]";
+        }
     }
 
     /**

@@ -15,6 +15,7 @@ package org.eclipse.jetty.http;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.jetty.util.Attributes;
@@ -104,11 +105,61 @@ public interface ComplianceViolation
         ExceptionUtil.ifExceptionThrowUnchecked(throwable);
     }
 
-    record Event(ComplianceViolation.Mode mode, ComplianceViolation violation, String details, boolean allowed)
+    final class Event
     {
+        private final ComplianceViolation.Mode mode;
+        private final ComplianceViolation violation;
+        private final String details;
+        private final boolean allowed;
+
+        public Event(ComplianceViolation.Mode mode, ComplianceViolation violation, String details, boolean allowed)
+        {
+            this.mode = mode;
+            this.violation = violation;
+            this.details = details;
+            this.allowed = allowed;
+        }
+
         public Event(String details, Mode mode, ComplianceViolation violation)
         {
             this(mode, violation, details, false);
+        }
+
+        public ComplianceViolation.Mode mode()
+        {
+            return mode;
+        }
+
+        public ComplianceViolation violation()
+        {
+            return violation;
+        }
+
+        public String details()
+        {
+            return details;
+        }
+
+        public boolean allowed()
+        {
+            return allowed;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Event that = (Event)obj;
+            return allowed == that.allowed && Objects.equals(mode, that.mode) && Objects.equals(violation, that.violation) && Objects.equals(details, that.details);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(mode, violation, details, allowed);
         }
 
         @Override

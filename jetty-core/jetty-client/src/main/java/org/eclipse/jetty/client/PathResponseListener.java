@@ -134,7 +134,48 @@ public class PathResponseListener extends CompletableFuture<PathResponseListener
         }
     }
 
-    public record PathResponse(Response response, Path path)
+    public static final class PathResponse
     {
+        private final Response response;
+        private final Path path;
+
+        public PathResponse(Response response, Path path)
+        {
+            this.response = response;
+            this.path = path;
+        }
+
+        public Response response()
+        {
+            return response;
+        }
+
+        public Path path()
+        {
+            return path;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            PathResponse that = (PathResponse)obj;
+            return Objects.equals(response, that.response) && Objects.equals(path, that.path);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(response, path);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "PathResponse[response=" + response + ", path=" + path + "]";
+        }
     }
 }

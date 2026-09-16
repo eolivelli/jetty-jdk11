@@ -18,7 +18,6 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HexFormat;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
@@ -385,8 +384,20 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
         }
     }
 
-    private record FillableTask(FillInterest fillInterest) implements Invocable.Task
+    private static final class FillableTask implements Invocable.Task
     {
+        private final FillInterest fillInterest;
+
+        private FillableTask(FillInterest fillInterest)
+        {
+            this.fillInterest = fillInterest;
+        }
+
+        public FillInterest fillInterest()
+        {
+            return fillInterest;
+        }
+
         @Override
         public void run()
         {
@@ -398,10 +409,45 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
         {
             return fillInterest.getCallbackInvocationType();
         }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            FillableTask that = (FillableTask)obj;
+            return Objects.equals(fillInterest, that.fillInterest);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(fillInterest);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "FillableTask[fillInterest=" + fillInterest + "]";
+        }
     }
 
-    private record CompleteWriteTask(WriteFlusher writeFlusher) implements Invocable.Task
+    private static final class CompleteWriteTask implements Invocable.Task
     {
+        private final WriteFlusher writeFlusher;
+
+        private CompleteWriteTask(WriteFlusher writeFlusher)
+        {
+            this.writeFlusher = writeFlusher;
+        }
+
+        public WriteFlusher writeFlusher()
+        {
+            return writeFlusher;
+        }
+
         @Override
         public void run()
         {
@@ -413,6 +459,29 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
         {
             return writeFlusher.getCallbackInvocationType();
         }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            CompleteWriteTask that = (CompleteWriteTask)obj;
+            return Objects.equals(writeFlusher, that.writeFlusher);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(writeFlusher);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "CompleteWriteTask[writeFlusher=" + writeFlusher + "]";
+        }
     }
 
     private static class MemorySocketAddress extends SocketAddress
@@ -420,7 +489,7 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
         private static final AtomicLong ID = new AtomicLong();
 
         private final long id = ID.incrementAndGet();
-        private final String address = "[memory:/%s]".formatted(HexFormat.of().formatHex(ByteBuffer.allocate(8).putLong(id).array()));
+        private final String address = String.format("[memory:/%016x]", id);
 
         @Override
         public boolean equals(Object obj)

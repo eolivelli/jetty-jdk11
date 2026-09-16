@@ -224,7 +224,7 @@ public class HttpSenderOverHTTP extends HttpSender
                             contentByteBuffer = BufferUtil.EMPTY_BUFFER;
                         if (generator.isChunking() && contentByteBuffer.remaining() > chunkMaxLength)
                         {
-                            ByteBuffer slice = contentByteBuffer.slice(contentByteBuffer.position(), chunkMaxLength);
+                            ByteBuffer slice = BufferUtil.absoluteSlice(contentByteBuffer, contentByteBuffer.position(), chunkMaxLength);
                             contentByteBuffer.position(contentByteBuffer.position() + chunkMaxLength);
                             contentByteBuffer = slice;
                         }
@@ -335,7 +335,7 @@ public class HttpSenderOverHTTP extends HttpSender
                             contentByteBuffer = BufferUtil.EMPTY_BUFFER;
                         if (generator.isChunking() && contentByteBuffer.remaining() > chunkMaxLength)
                         {
-                            ByteBuffer slice = contentByteBuffer.slice(contentByteBuffer.position(), chunkMaxLength);
+                            ByteBuffer slice = BufferUtil.absoluteSlice(contentByteBuffer, contentByteBuffer.position(), chunkMaxLength);
                             contentByteBuffer.position(contentByteBuffer.position() + chunkMaxLength);
                             contentByteBuffer = slice;
                         }

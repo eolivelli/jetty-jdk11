@@ -570,43 +570,4 @@ public class AsyncJSONTest
         result = extractor.apply(sync.parse(new JSON.StringSource(json)));
         assertThat(result, Matchers.instanceOf(List.class));
     }
-
-    @Test
-    public void testParseRecord()
-    {
-        // No configuration necessary for records.
-        AsyncJSON parser = newAsyncJSON();
-        String name = "Jetty";
-        int age = 30;
-        ByteBuffer byteBuffer = UTF_8.encode("""
-            {
-              "class": "%s",
-              "name": "%s",
-              "age": %d
-            }
-            """.formatted(Person.class.getName(), name, age));
-
-        assertTrue(parser.parse(byteBuffer));
-        Object object = parser.complete();
-        assertInstanceOf(Person.class, object);
-        Person person = (Person)object;
-        assertThat(person.name(), is(name));
-        assertThat(person.age(), is(age));
-
-        // Test null values.
-        byteBuffer = UTF_8.encode("""
-            {
-              "class": "%s",
-              "name": null,
-              "age": %d
-            }
-            """.formatted(Person.class.getName(), age));
-
-        assertTrue(parser.parse(byteBuffer));
-        object = parser.complete();
-        assertInstanceOf(Person.class, object);
-        person = (Person)object;
-        assertNull(person.name());
-        assertThat(person.age(), is(age));
-    }
 }

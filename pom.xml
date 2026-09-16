@@ -258,7 +258,7 @@
     <junit.jupiter.execution.parallel.mode.classes.default>concurrent</junit.jupiter.execution.parallel.mode.classes.default>
     <junit.jupiter.execution.parallel.mode.default>same_thread</junit.jupiter.execution.parallel.mode.default>
     <junit.jupiter.extensions.autodetection.enabled>true</junit.jupiter.extensions.autodetection.enabled>
-    <junit.platform.version>${junit.version}</junit.platform.version>
+    <junit.platform.version>1.14.4</junit.platform.version>
     <junit.version>5.14.4</junit.version>
     <junit4.version>4.13.2</junit4.version>
     <kerb-simplekdc.version>2.1.2</kerb-simplekdc.version>

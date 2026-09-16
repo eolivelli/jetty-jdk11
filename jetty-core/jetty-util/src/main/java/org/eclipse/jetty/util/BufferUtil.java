@@ -292,6 +292,21 @@ public class BufferUtil
     }
 
     /**
+     * <p>Creates a new buffer whose content is a shared subsequence of the given buffer,
+     * starting at the given absolute index and having the given length,
+     * like {@code ByteBuffer.slice(int, int)} does in Java 13+.</p>
+     * <p>The position and limit of the given buffer are not modified.</p>
+     * @param buffer the buffer to slice
+     * @param index the absolute index at which the slice starts
+     * @param length the length of the slice
+     * @return the sliced buffer
+     */
+    public static ByteBuffer absoluteSlice(ByteBuffer buffer, int index, int length)
+    {
+        return buffer.duplicate().limit(index + length).position(index).slice();
+    }
+
+    /**
      * Slice a buffer given an offset and a length, similar to RFC 7233 ranges.
      * @param buffer the buffer to slice
      * @param offset the offset, relative to the current position of the buffer, must be positive

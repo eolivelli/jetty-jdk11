@@ -491,29 +491,6 @@ public class JSONTest
     }
 
     @Test
-    public void testGenerateParseRecord()
-    {
-        // No configuration necessary for records.
-        JSON json = new JSON();
-        Person original = new Person("Jetty", 30);
-        String jsonString = json.toJSON(original);
-
-        Object object = json.parse(new JSON.StringSource(jsonString));
-        assertInstanceOf(Person.class, object);
-        Person person = (Person)object;
-        assertThat(person, is(original));
-
-        // Test null values.
-        original = new Person(null, 30);
-        jsonString = json.toJSON(original);
-
-        object = json.parse(new JSON.StringSource(jsonString));
-        assertInstanceOf(Person.class, object);
-        person = (Person)object;
-        assertThat(person, is(original));
-    }
-    
-    @Test
     public void testPrettyOutput()
     {
         JSON j = new JSON();

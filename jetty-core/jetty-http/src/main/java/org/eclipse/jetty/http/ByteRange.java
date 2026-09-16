@@ -16,6 +16,7 @@ package org.eclipse.jetty.http;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +31,57 @@ import org.slf4j.LoggerFactory;
  * Range: bytes=1-10,5-25,50-,-20
  * }</pre>
  */
-public record ByteRange(long first, long last)
+public final class ByteRange
 {
     private static final Logger LOG = LoggerFactory.getLogger(ByteRange.class);
+
+    private final long first;
+    private final long last;
+
+    public ByteRange(long first, long last)
+    {
+        this.first = first;
+        this.last = last;
+    }
+
+    /**
+     * @return the first byte of this byte range
+     */
+    public long first()
+    {
+        return first;
+    }
+
+    /**
+     * @return the last byte of this byte range
+     */
+    public long last()
+    {
+        return last;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        ByteRange that = (ByteRange)obj;
+        return first == that.first && last == that.last;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(first, last);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "ByteRange[first=" + first + ", last=" + last + "]";
+    }
 
     private ByteRange coalesce(ByteRange r)
     {

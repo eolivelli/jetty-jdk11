@@ -404,8 +404,56 @@ public class DoSHandler extends ConditionalHandler.ElseNext
      */
     public static class DelayedRejectHandler extends Handler.Abstract
     {
-        private record Exchange(Request request, Response response, Callback callback)
+        private static final class Exchange
         {
+            private final Request request;
+            private final Response response;
+            private final Callback callback;
+
+            private Exchange(Request request, Response response, Callback callback)
+            {
+                this.request = request;
+                this.response = response;
+                this.callback = callback;
+            }
+
+            public Request request()
+            {
+                return request;
+            }
+
+            public Response response()
+            {
+                return response;
+            }
+
+            public Callback callback()
+            {
+                return callback;
+            }
+
+            @Override
+            public boolean equals(Object obj)
+            {
+                if (this == obj)
+                    return true;
+                if (obj == null || getClass() != obj.getClass())
+                    return false;
+                Exchange that = (Exchange)obj;
+                return Objects.equals(request, that.request) && Objects.equals(response, that.response) && Objects.equals(callback, that.callback);
+            }
+
+            @Override
+            public int hashCode()
+            {
+                return Objects.hash(request, response, callback);
+            }
+
+            @Override
+            public String toString()
+            {
+                return "Exchange[request=" + request + ", response=" + response + ", callback=" + callback + "]";
+            }
         }
 
         private final AutoLock _lock = new AutoLock();

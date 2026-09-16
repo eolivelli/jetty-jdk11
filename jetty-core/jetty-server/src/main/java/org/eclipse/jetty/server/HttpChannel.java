@@ -13,6 +13,7 @@
 
 package org.eclipse.jetty.server;
 
+import java.util.Objects;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -179,11 +180,59 @@ public interface HttpChannel extends Invocable
      * <p>Holds the action to perform in case of idle timeout,
      * and whether the HTTP request is being handled when the
      * idle timeout occurs.</p>
-     *
-     * @param action the idle timeout action to perform
-     * @param handlingRequest whether the request is being handled
      */
-    record IdleTimeoutTask(Runnable action, boolean handlingRequest)
+    final class IdleTimeoutTask
     {
+        private final Runnable action;
+        private final boolean handlingRequest;
+
+        /**
+         * @param action the idle timeout action to perform
+         * @param handlingRequest whether the request is being handled
+         */
+        public IdleTimeoutTask(Runnable action, boolean handlingRequest)
+        {
+            this.action = action;
+            this.handlingRequest = handlingRequest;
+        }
+
+        /**
+         * @return the idle timeout action to perform
+         */
+        public Runnable action()
+        {
+            return action;
+        }
+
+        /**
+         * @return whether the request is being handled
+         */
+        public boolean handlingRequest()
+        {
+            return handlingRequest;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            IdleTimeoutTask that = (IdleTimeoutTask)obj;
+            return handlingRequest == that.handlingRequest && Objects.equals(action, that.action);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(action, handlingRequest);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "IdleTimeoutTask[action=" + action + ", handlingRequest=" + handlingRequest + "]";
+        }
     }
 }

@@ -1713,7 +1713,7 @@ public class MultiPart
                 return chunk;
             if (length == 0)
                 return last ? Content.Chunk.EOF : Content.Chunk.EMPTY;
-            return Content.Chunk.asChunk(chunk.getByteBuffer().slice(position, length), last, chunk);
+            return Content.Chunk.asChunk(BufferUtil.absoluteSlice(chunk.getByteBuffer(), position, length), last, chunk);
         }
 
         private void notifyPartBegin()

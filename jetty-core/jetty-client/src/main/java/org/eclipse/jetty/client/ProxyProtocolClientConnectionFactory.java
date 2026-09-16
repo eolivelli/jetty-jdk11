@@ -17,9 +17,9 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.net.UnixDomainSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -32,6 +32,7 @@ import org.eclipse.jetty.io.AbstractConnection;
 import org.eclipse.jetty.io.ClientConnectionFactory;
 import org.eclipse.jetty.io.Connection;
 import org.eclipse.jetty.io.EndPoint;
+import org.eclipse.jetty.io.UnixDomain;
 import org.eclipse.jetty.util.BufferUtil;
 import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.Promise;
@@ -243,10 +244,10 @@ public abstract class ProxyProtocolClientConnectionFactory extends ClientConnect
             public static Tag from(EndPoint endPoint, boolean local)
             {
                 SocketAddress src = local ? endPoint.getLocalSocketAddress() : endPoint.getRemoteSocketAddress();
-                UnixDomainSocketAddress unixSrc = src instanceof UnixDomainSocketAddress ? (UnixDomainSocketAddress)src : null;
+                Path unixSrc = UnixDomain.isUnixDomainAddress(src) ? UnixDomain.getPath(src) : null;
                 InetSocketAddress inetSrc = src instanceof InetSocketAddress ? (InetSocketAddress)src : null;
                 InetAddress srcAddress = inetSrc == null ? null : inetSrc.getAddress();
-                String srcAddr = unixSrc != null ? unixSrc.getPath().toString()
+                String srcAddr = unixSrc != null ? unixSrc.toString()
                     : srcAddress != null ? srcAddress.getHostAddress() : null;
 
                 int srcPort = inetSrc != null ? inetSrc.getPort() : 0;
@@ -260,10 +261,10 @@ public abstract class ProxyProtocolClientConnectionFactory extends ClientConnect
                 Protocol protocol = src == null ? Protocol.UNSPEC : Protocol.STREAM;
 
                 SocketAddress dst = local ? endPoint.getRemoteSocketAddress() : endPoint.getLocalSocketAddress();
-                UnixDomainSocketAddress unixDst = dst instanceof UnixDomainSocketAddress ? (UnixDomainSocketAddress)dst : null;
+                Path unixDst = UnixDomain.isUnixDomainAddress(dst) ? UnixDomain.getPath(dst) : null;
                 InetSocketAddress inetDst = dst instanceof InetSocketAddress ? (InetSocketAddress)dst : null;
                 InetAddress dstAddress = inetDst == null ? null : inetDst.getAddress();
-                String dstAddr = unixDst != null ? unixDst.getPath().toString()
+                String dstAddr = unixDst != null ? unixDst.toString()
                     : dstAddress != null ? dstAddress.getHostAddress() : null;
 
                 int dstPort = inetDst != null ? inetDst.getPort() : 0;
@@ -664,13 +665,13 @@ public abstract class ProxyProtocolClientConnectionFactory extends ClientConnect
 
                 String srcAddr = tag.getSourceAddress();
                 SocketAddress local = endPoint.getLocalSocketAddress();
-                UnixDomainSocketAddress unixLocal = local instanceof UnixDomainSocketAddress ? (UnixDomainSocketAddress)local : null;
+                Path unixLocal = UnixDomain.isUnixDomainAddress(local) ? UnixDomain.getPath(local) : null;
                 InetSocketAddress inetLocal = local instanceof InetSocketAddress ? (InetSocketAddress)local : null;
                 InetAddress localAddress = inetLocal == null ? null : inetLocal.getAddress();
                 if (srcAddr == null)
                 {
                     if (unixLocal != null)
-                        srcAddr = unixLocal.getPath().toString();
+                        srcAddr = unixLocal.toString();
                     else if (localAddress != null)
                         srcAddr = localAddress.getHostAddress();
                 }
@@ -709,13 +710,13 @@ public abstract class ProxyProtocolClientConnectionFactory extends ClientConnect
 
                 String dstAddr = tag.getDestinationAddress();
                 SocketAddress remote = endPoint.getRemoteSocketAddress();
-                UnixDomainSocketAddress unixRemote = remote instanceof UnixDomainSocketAddress ? (UnixDomainSocketAddress)remote : null;
+                Path unixRemote = UnixDomain.isUnixDomainAddress(remote) ? UnixDomain.getPath(remote) : null;
                 InetSocketAddress inetRemote = remote instanceof InetSocketAddress ? (InetSocketAddress)remote : null;
                 InetAddress remoteAddress = inetRemote == null ? null : inetRemote.getAddress();
                 if (dstAddr == null)
                 {
                     if (unixRemote != null)
-                        dstAddr = unixRemote.getPath().toString();
+                        dstAddr = unixRemote.toString();
                     else if (remoteAddress != null)
                         dstAddr = remoteAddress.getHostAddress();
                 }

@@ -118,7 +118,7 @@ public final class ContentSourcePublisherTest extends FlowPublisherVerification<
             return false;
         }
 
-        private sealed interface State permits State.Reading, State.ReadFailed, State.ReadCompleted
+        private interface State
         {
             Content.Chunk chunk();
 

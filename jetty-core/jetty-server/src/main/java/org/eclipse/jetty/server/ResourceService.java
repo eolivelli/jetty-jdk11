@@ -522,12 +522,60 @@ public class ResourceService extends ContainerLifeCycle
 
     /**
      * <p>A welcome target paired with how to process it.</p>
-     *
-     * @param target the welcome target
-     * @param mode the welcome mode
      */
-    public record WelcomeAction(String target, WelcomeMode mode)
+    public static final class WelcomeAction
     {
+        private final String target;
+        private final WelcomeMode mode;
+
+        /**
+         * @param target the welcome target
+         * @param mode the welcome mode
+         */
+        public WelcomeAction(String target, WelcomeMode mode)
+        {
+            this.target = target;
+            this.mode = mode;
+        }
+
+        /**
+         * @return the welcome target
+         */
+        public String target()
+        {
+            return target;
+        }
+
+        /**
+         * @return the welcome mode
+         */
+        public WelcomeMode mode()
+        {
+            return mode;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            WelcomeAction that = (WelcomeAction)obj;
+            return Objects.equals(target, that.target) && mode == that.mode;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(target, mode);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "WelcomeAction[target=" + target + ", mode=" + mode + "]";
+        }
     }
 
     private boolean welcome(HttpContent content, Request request, Response response, Callback callback) throws Exception

@@ -19,6 +19,7 @@ import org.eclipse.jetty.quic.api.frames.StreamFrame;
 import org.eclipse.jetty.quic.util.ErrorCode;
 import org.eclipse.jetty.quic.util.QuicException;
 import org.eclipse.jetty.quic.util.VarLenInt;
+import org.eclipse.jetty.util.BufferUtil;
 
 public class StreamParser
 {
@@ -106,7 +107,7 @@ public class StreamParser
                     }))
                     {
                         if (dataLength == 0)
-                            return result(byteBuffer.slice(byteBuffer.position(), 0), true);
+                            return result(BufferUtil.absoluteSlice(byteBuffer, byteBuffer.position(), 0), true);
                         state = State.DATA;
                     }
                 }
@@ -120,7 +121,7 @@ public class StreamParser
                         throw new QuicException(ErrorCode.FRAME_ENCODING_ERROR, "invalid_frame_size", frameType);
 
                     int length = (int)Math.min(dataLength, byteBuffer.remaining());
-                    ByteBuffer data = byteBuffer.slice(byteBuffer.position(), length);
+                    ByteBuffer data = BufferUtil.absoluteSlice(byteBuffer, byteBuffer.position(), length);
                     byteBuffer.position(byteBuffer.position() + length);
                     dataLength -= length;
                     boolean done = dataLength == 0;

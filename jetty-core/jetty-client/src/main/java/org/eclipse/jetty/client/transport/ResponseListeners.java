@@ -728,11 +728,53 @@ public class ResponseListeners
             IDLE, DEMANDED, FAILED
         }
 
-        private record Counters(int demands, int failures)
+        private static final class Counters
         {
+            private final int demands;
+            private final int failures;
+
+            private Counters(int demands, int failures)
+            {
+                this.demands = demands;
+                this.failures = failures;
+            }
+
+            public int demands()
+            {
+                return demands;
+            }
+
+            public int failures()
+            {
+                return failures;
+            }
+
             public int total()
             {
                 return demands + failures;
+            }
+
+            @Override
+            public boolean equals(Object obj)
+            {
+                if (this == obj)
+                    return true;
+                if (obj == null || getClass() != obj.getClass())
+                    return false;
+                Counters that = (Counters)obj;
+                return demands == that.demands && failures == that.failures;
+            }
+
+            @Override
+            public int hashCode()
+            {
+                return Objects.hash(demands, failures);
+            }
+
+            @Override
+            public String toString()
+            {
+                return "Counters[demands=" + demands + ", failures=" + failures + "]";
             }
         }
     }

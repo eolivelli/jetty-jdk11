@@ -19,6 +19,7 @@ import org.eclipse.jetty.quic.api.frames.ConnectionCloseFrame;
 import org.eclipse.jetty.quic.util.ErrorCode;
 import org.eclipse.jetty.quic.util.QuicException;
 import org.eclipse.jetty.quic.util.VarLenInt;
+import org.eclipse.jetty.util.BufferUtil;
 import org.eclipse.jetty.util.Utf8StringBuilder;
 
 public class ConnectionCloseParser
@@ -76,7 +77,7 @@ public class ConnectionCloseParser
                 {
                     int position = byteBuffer.position();
                     int length = (int)Math.min(reasonLength, byteBuffer.remaining());
-                    reasonBuilder.append(byteBuffer.slice(position, length));
+                    reasonBuilder.append(BufferUtil.absoluteSlice(byteBuffer, position, length));
                     byteBuffer.position(position + length);
                     reasonLength -= length;
                     if (reasonLength == 0)

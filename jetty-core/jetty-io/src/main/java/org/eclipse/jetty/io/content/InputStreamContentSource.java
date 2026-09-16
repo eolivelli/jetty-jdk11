@@ -13,6 +13,7 @@
 
 package org.eclipse.jetty.io.content;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -78,7 +79,21 @@ public class InputStreamContentSource implements Content.Source
             return;
         try
         {
-            inputStream.skipNBytes(offset - 1);
+            long toSkip = offset - 1;
+            while (toSkip > 0)
+            {
+                long skipped = inputStream.skip(toSkip);
+                if (skipped > 0)
+                {
+                    toSkip -= skipped;
+                }
+                else
+                {
+                    if (inputStream.read() < 0)
+                        throw new EOFException();
+                    toSkip--;
+                }
+            }
             if (inputStream.read() == -1)
                 throw new IllegalArgumentException("Offset out of range");
         }

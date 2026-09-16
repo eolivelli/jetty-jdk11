@@ -115,8 +115,8 @@ public class ZstandardEncoderSink extends EncoderSink
         RetainableByteBuffer direct = compression.acquireByteBuffer(size);
         ByteBuffer directBuf = direct.getByteBuffer();
         directBuf.clear();
-        directBuf.put(0, buffer, pos, length);
-        directBuf.limit(length);
+        directBuf.put(buffer.duplicate().limit(pos + length).position(pos));
+        directBuf.flip();
         // buffer.position() is NOT modified - tracking happens in continueOp()
         return direct;
     }

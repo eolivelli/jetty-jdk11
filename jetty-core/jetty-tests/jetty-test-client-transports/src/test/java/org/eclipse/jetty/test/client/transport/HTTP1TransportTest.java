@@ -42,6 +42,8 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -126,6 +128,7 @@ public class HTTP1TransportTest extends AbstractTransportTest
 
     @Test
     @DisabledOnOs(value = OS.WINDOWS, disabledReason = "Fails on Windows")
+    @EnabledForJreRange(min = JRE.JAVA_16)
     public void testUnixDomainTransport() throws Exception
     {
         UnixDomainServerConnector connector = new UnixDomainServerConnector(server, 1, 1, new HttpConnectionFactory());

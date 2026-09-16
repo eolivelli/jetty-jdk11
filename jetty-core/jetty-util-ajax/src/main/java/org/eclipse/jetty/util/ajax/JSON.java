@@ -17,7 +17,6 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Array;
-import java.lang.reflect.RecordComponent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -270,7 +269,7 @@ public class JSON
                 {
                     appendArray(buffer, collection);
                 }
-                else if (object.getClass().isRecord())
+                else if (RecordSupport.isRecord(object.getClass()))
                 {
                     appendRecord(buffer, object);
                 }
@@ -453,11 +452,11 @@ public class JSON
             Class<?> klass = object.getClass();
             buffer.append('{');
             buffer.append("\"class\":\"").append(klass.getName()).append("\"");
-            for (RecordComponent component : klass.getRecordComponents())
+            for (RecordSupport.Component component : RecordSupport.getRecordComponents(klass))
             {
                 buffer.append(',');
                 buffer.append("\"").append(component.getName()).append("\":");
-                Object value = klass.getMethod(component.getName()).invoke(object);
+                Object value = component.getAccessor().invoke(object);
                 append(buffer, value);
             }
             buffer.append('}');
@@ -520,7 +519,7 @@ public class JSON
         if (convertor != null)
             return convertor.fromJSON(map);
 
-        if (type.isRecord())
+        if (RecordSupport.isRecord(type))
             return AsyncJSON.toRecord(type, map);
 
         return map;

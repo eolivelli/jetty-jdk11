@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -184,8 +185,57 @@ public class EnvironmentBuilder
         }
     }
 
-    private record SourcePackageTargets(String sourceModuleName, String packageName, List<String> targetModuleNames)
+    private static final class SourcePackageTargets
     {
+        private final String sourceModuleName;
+        private final String packageName;
+        private final List<String> targetModuleNames;
+
+        private SourcePackageTargets(String sourceModuleName, String packageName, List<String> targetModuleNames)
+        {
+            this.sourceModuleName = sourceModuleName;
+            this.packageName = packageName;
+            this.targetModuleNames = targetModuleNames;
+        }
+
+        public String sourceModuleName()
+        {
+            return sourceModuleName;
+        }
+
+        public String packageName()
+        {
+            return packageName;
+        }
+
+        public List<String> targetModuleNames()
+        {
+            return targetModuleNames;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            SourcePackageTargets that = (SourcePackageTargets)obj;
+            return Objects.equals(sourceModuleName, that.sourceModuleName) && Objects.equals(packageName, that.packageName) && Objects.equals(targetModuleNames, that.targetModuleNames);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(sourceModuleName, packageName, targetModuleNames);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "SourcePackageTargets[sourceModuleName=" + sourceModuleName + ", packageName=" + packageName + ", targetModuleNames=" + targetModuleNames + "]";
+        }
+
         public static SourcePackageTargets from(String option)
         {
             int slash = option.indexOf('/');

@@ -15,6 +15,7 @@ package org.eclipse.jetty.client;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Objects;
 import java.util.function.BiFunction;
 
 import org.eclipse.jetty.util.TypeUtil;
@@ -427,8 +428,44 @@ public class RequestListeners implements Dumpable
         );
     }
 
-    private record ListenerDump(String name, Object listener)
+    private static final class ListenerDump
     {
+        private final String name;
+        private final Object listener;
+
+        private ListenerDump(String name, Object listener)
+        {
+            this.name = name;
+            this.listener = listener;
+        }
+
+        public String name()
+        {
+            return name;
+        }
+
+        public Object listener()
+        {
+            return listener;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            ListenerDump that = (ListenerDump)obj;
+            return Objects.equals(name, that.name) && Objects.equals(listener, that.listener);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(name, listener);
+        }
+
         @Override
         public String toString()
         {

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiPredicate;
@@ -329,12 +330,61 @@ import static java.lang.invoke.MethodType.methodType;
 public class CustomRequestLog extends ContainerLifeCycle implements RequestLog
 {
     /**
-     * Record holding extra detail for logging
-     * @param handlerName The name of the entity that handled the request
-     * @param realPath The real path on the filesystem represented by the request
+     * Holds extra detail for logging
      */
-    public record LogDetail(String handlerName, String realPath)
+    public static final class LogDetail
     {
+        private final String handlerName;
+        private final String realPath;
+
+        /**
+         * @param handlerName The name of the entity that handled the request
+         * @param realPath The real path on the filesystem represented by the request
+         */
+        public LogDetail(String handlerName, String realPath)
+        {
+            this.handlerName = handlerName;
+            this.realPath = realPath;
+        }
+
+        /**
+         * @return The name of the entity that handled the request
+         */
+        public String handlerName()
+        {
+            return handlerName;
+        }
+
+        /**
+         * @return The real path on the filesystem represented by the request
+         */
+        public String realPath()
+        {
+            return realPath;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            LogDetail that = (LogDetail)obj;
+            return Objects.equals(handlerName, that.handlerName) && Objects.equals(realPath, that.realPath);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(handlerName, realPath);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "LogDetail[handlerName=" + handlerName + ", realPath=" + realPath + "]";
+        }
     }
 
     public static final String DEFAULT_DATE_FORMAT = "dd/MMM/yyyy:HH:mm:ss ZZZ";

@@ -78,8 +78,9 @@ class MutableHttpFields implements HttpFields.Mutable
     {
         _httpCompliance = copyHttpCompliance(fields);
         _listenerSupplier = copyComplianceListener(fields);
-        if (fields instanceof org.eclipse.jetty.http.ImmutableHttpFields immutable)
+        if (fields instanceof org.eclipse.jetty.http.ImmutableHttpFields)
         {
+            org.eclipse.jetty.http.ImmutableHttpFields immutable = (org.eclipse.jetty.http.ImmutableHttpFields)fields;
             _fields = immutable._fields;
             _immutable = true;
             _size = immutable._size;
@@ -155,12 +156,21 @@ class MutableHttpFields implements HttpFields.Mutable
     {
         while (true)
         {
-            if (httpFields instanceof org.eclipse.jetty.http.ImmutableHttpFields immutable)
+            if (httpFields instanceof org.eclipse.jetty.http.ImmutableHttpFields)
+            {
+                org.eclipse.jetty.http.ImmutableHttpFields immutable = (org.eclipse.jetty.http.ImmutableHttpFields)httpFields;
                 return immutable._httpCompliance;
-            if (httpFields instanceof org.eclipse.jetty.http.MutableHttpFields mutable)
+            }
+            if (httpFields instanceof org.eclipse.jetty.http.MutableHttpFields)
+            {
+                org.eclipse.jetty.http.MutableHttpFields mutable = (org.eclipse.jetty.http.MutableHttpFields)httpFields;
                 return mutable._httpCompliance;
-            if (httpFields instanceof Mutable.Wrapper wrapper)
+            }
+            if (httpFields instanceof Mutable.Wrapper)
+            {
+                Mutable.Wrapper wrapper = (Mutable.Wrapper)httpFields;
                 httpFields = wrapper.getWrapped();
+            }
             else
                 return null;
         }
@@ -170,12 +180,21 @@ class MutableHttpFields implements HttpFields.Mutable
     {
         while (true)
         {
-            if (httpFields instanceof org.eclipse.jetty.http.ImmutableHttpFields immutable)
+            if (httpFields instanceof org.eclipse.jetty.http.ImmutableHttpFields)
+            {
+                org.eclipse.jetty.http.ImmutableHttpFields immutable = (org.eclipse.jetty.http.ImmutableHttpFields)httpFields;
                 return immutable._listenerSupplier;
-            if (httpFields instanceof org.eclipse.jetty.http.MutableHttpFields mutable)
+            }
+            if (httpFields instanceof org.eclipse.jetty.http.MutableHttpFields)
+            {
+                org.eclipse.jetty.http.MutableHttpFields mutable = (org.eclipse.jetty.http.MutableHttpFields)httpFields;
                 return mutable._listenerSupplier;
-            if (httpFields instanceof Mutable.Wrapper wrapper)
+            }
+            if (httpFields instanceof Mutable.Wrapper)
+            {
+                Mutable.Wrapper wrapper = (Mutable.Wrapper)httpFields;
                 httpFields = wrapper.getWrapped();
+            }
             else
                 return null;
         }
@@ -209,13 +228,15 @@ class MutableHttpFields implements HttpFields.Mutable
             _immutable = false;
         }
 
-        if (fields instanceof org.eclipse.jetty.http.ImmutableHttpFields immutable)
+        if (fields instanceof org.eclipse.jetty.http.ImmutableHttpFields)
         {
+            org.eclipse.jetty.http.ImmutableHttpFields immutable = (org.eclipse.jetty.http.ImmutableHttpFields)fields;
             System.arraycopy(immutable._fields, 0, _fields, _size, immutable._size);
             _size += immutable._size;
         }
-        else if (fields instanceof org.eclipse.jetty.http.MutableHttpFields mutable)
+        else if (fields instanceof org.eclipse.jetty.http.MutableHttpFields)
         {
+            org.eclipse.jetty.http.MutableHttpFields mutable = (org.eclipse.jetty.http.MutableHttpFields)fields;
             System.arraycopy(mutable._fields, 0, _fields, _size, mutable._size);
             _size += mutable._size;
         }

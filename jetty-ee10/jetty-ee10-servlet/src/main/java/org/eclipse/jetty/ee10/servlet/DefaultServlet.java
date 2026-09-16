@@ -118,9 +118,11 @@ public class DefaultServlet extends ResourceServlet
             return URIUtil.encodePath(request.getServletPath());
         }
 
-        if (request instanceof ServletApiRequest apiRequest)
-            // Strip the context path from the canonically encoded path, so no need to re-encode (and mess up %2F etc.)
+        if (request instanceof ServletApiRequest)
+        {
+            ServletApiRequest apiRequest = (ServletApiRequest)request;
             return Context.getPathInContext(request.getContextPath(), apiRequest.getRequest().getHttpURI().getCanonicalPath());
+        }
 
         return URIUtil.encodePath(request.getServletPath());
     }

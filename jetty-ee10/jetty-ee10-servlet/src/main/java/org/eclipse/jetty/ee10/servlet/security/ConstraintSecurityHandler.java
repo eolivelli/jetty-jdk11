@@ -405,8 +405,9 @@ public class ConstraintSecurityHandler extends SecurityHandler implements Constr
         rebuildMappings();
 
         Context context = ContextHandler.getCurrentContext();
-        if (context instanceof ServletContextHandler.ServletScopedContext servletScopedContext)
+        if (context instanceof ServletContextHandler.ServletScopedContext)
         {
+            ServletContextHandler.ServletScopedContext servletScopedContext = (ServletContextHandler.ServletScopedContext)context;
             ServletContext servletContext = servletScopedContext.getServletContext();
             Enumeration<String> names = servletContext.getInitParameterNames();
             while (names != null && names.hasMoreElements())

@@ -57,13 +57,23 @@ public class TrieBenchmark
         boolean caseSensitive = false;
         int capacity = 4096;
 
-        trie = switch (trieType)
+        switch (trieType)
         {
-            case ARRAY_TRIE -> new ArrayTrie<>(caseSensitive, capacity);
-            case ARRAY_TERNARY_TRIE -> new ArrayTernaryTrie<>(caseSensitive, capacity);
-            case TREE_TRIE -> new TreeTrie();
-            case HASH_TRIE -> new HashTrie(caseSensitive);
-        };
+            case ARRAY_TRIE:
+                trie = new ArrayTrie<>(caseSensitive, capacity);
+                break;
+            case ARRAY_TERNARY_TRIE:
+                trie = new ArrayTernaryTrie<>(caseSensitive, capacity);
+                break;
+            case TREE_TRIE:
+                trie = new TreeTrie();
+                break;
+            case HASH_TRIE:
+                trie = new HashTrie(caseSensitive);
+                break;
+            default:
+                throw new IllegalStateException();
+        }
 
         for (String k : HttpParser.CACHE.keySet())
             if (!trie.put(k, HttpParser.CACHE.get(k).toString()))

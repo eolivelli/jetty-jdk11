@@ -328,8 +328,11 @@ public class Request implements HttpServletRequest
             if (header == HttpHeader.SET_COOKIE || header == HttpHeader.SET_COOKIE2)
             {
                 HttpCookie httpCookie;
-                if (field instanceof HttpCookieUtils.SetCookieHttpField set)
+                if (field instanceof HttpCookieUtils.SetCookieHttpField)
+                {
+                    HttpCookieUtils.SetCookieHttpField set = (HttpCookieUtils.SetCookieHttpField)field;
                     httpCookie = set.getHttpCookie();
+                }
                 else
                     httpCookie = SET_COOKIE_PARSER.parse(field.getValue());
                 if (httpCookie == null || httpCookie.isExpired())
@@ -1241,8 +1244,11 @@ public class Request implements HttpServletRequest
     public String getRemoteHost()
     {
         SocketAddress remote = _channel.getCoreRequest().getConnectionMetaData().getRemoteSocketAddress();
-        if (remote instanceof InetSocketAddress inetSocketAddress)
+        if (remote instanceof InetSocketAddress)
+        {
+            InetSocketAddress inetSocketAddress = (InetSocketAddress)remote;
             return inetSocketAddress.getHostString();
+        }
         return remote.toString();
     }
 
@@ -1765,8 +1771,12 @@ public class Request implements HttpServletRequest
         // TODO are these still needed?
         switch (name)
         {
-            case "org.eclipse.jetty.server.Request.queryEncoding" -> setQueryEncoding(value == null ? null : value.toString());
-            case "org.eclipse.jetty.server.sendContent" -> LOG.warn("Deprecated: org.eclipse.jetty.server.sendContent");
+            case "org.eclipse.jetty.server.Request.queryEncoding":
+                setQueryEncoding(value == null ? null : value.toString());
+                break;
+            case "org.eclipse.jetty.server.sendContent":
+                LOG.warn("Deprecated: org.eclipse.jetty.server.sendContent");
+                break;
         }
 
         Object oldValue = _attributes.setAttribute(name, value);
@@ -2058,8 +2068,9 @@ public class Request implements HttpServletRequest
                 // the request prior or after dispatch may have parsed the multipart
                 Object multipart = _coreRequest.getAttribute(MultiPart.Parser.class.getName());
                 //TODO support cross environment multipart
-                if (multipart instanceof MultiPart.Parser multiPartParser)
+                if (multipart instanceof MultiPart.Parser)
                 {
+                    MultiPart.Parser multiPartParser = (MultiPart.Parser)multipart;
                     _multiParts = multiPartParser;
                     return _multiParts.getParts();
                 }

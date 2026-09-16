@@ -175,7 +175,8 @@ public interface RedirectCache
         {
             switch (status)
             {
-                case HttpStatus.MOVED_PERMANENTLY_301, HttpStatus.PERMANENT_REDIRECT_308 ->
+                case HttpStatus.MOVED_PERMANENTLY_301:
+                case HttpStatus.PERMANENT_REDIRECT_308:
                 {
                     lock.writeLock().lock();
                     try
@@ -186,9 +187,11 @@ public interface RedirectCache
                     {
                         lock.writeLock().unlock();
                     }
+                    break;
                 }
-                default ->
+                default:
                 {
+                    break;
                 }
             }
         }

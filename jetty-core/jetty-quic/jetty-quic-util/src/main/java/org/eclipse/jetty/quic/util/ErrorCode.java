@@ -58,8 +58,11 @@ public class ErrorCode
     {
         if (this == obj)
             return true;
-        if (obj instanceof ErrorCode errorCode)
+        if (obj instanceof ErrorCode)
+        {
+            ErrorCode errorCode = (ErrorCode)obj;
             return code == errorCode.code;
+        }
         return false;
     }
 

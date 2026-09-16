@@ -116,7 +116,7 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
     public static ContextHandler getCurrentContextHandler()
     {
         Context context = getCurrentContext();
-        return (context instanceof ScopedContext scopedContext) ? scopedContext.getContextHandler() : null;
+        return (context instanceof ScopedContext) ? ((ScopedContext)context).getContextHandler() : null;
     }
 
     public static ContextHandler getContextHandler(Request request)
@@ -661,8 +661,9 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
     {
         if (super.addEventListener(listener))
         {
-            if (listener instanceof ContextScopeListener contextScopeListener)
+            if (listener instanceof ContextScopeListener)
             {
+                ContextScopeListener contextScopeListener = (ContextScopeListener)listener;
                 _contextListeners.add(contextScopeListener);
                 if (CURRENT_CONTEXT.get() != null)
                     contextScopeListener.enterScope(CURRENT_CONTEXT.get(), null);
@@ -677,8 +678,9 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
     {
         if (super.removeEventListener(listener))
         {
-            if (listener instanceof ContextScopeListener contextScopeListener)
+            if (listener instanceof ContextScopeListener)
             {
+                ContextScopeListener contextScopeListener = (ContextScopeListener)listener;
                 _contextListeners.remove(contextScopeListener);
                 if (CURRENT_CONTEXT.get() != null)
                     contextScopeListener.exitScope(CURRENT_CONTEXT.get(), null);
@@ -699,10 +701,16 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
 
             switch (keyName)
             {
-                case Deployable.TEMP_DIR -> setTempDirectory(IO.asFile(value));
-                case Deployable.CONTEXT_PATH -> setContextPath((String)value);
-                case Deployable.DEFAULT_CONTEXT_PATH -> setDefaultContextPath((String)value);
-                case Deployable.BASE_RESOURCE ->
+                case Deployable.TEMP_DIR:
+                    setTempDirectory(IO.asFile(value));
+                    break;
+                case Deployable.CONTEXT_PATH:
+                    setContextPath((String)value);
+                    break;
+                case Deployable.DEFAULT_CONTEXT_PATH:
+                    setDefaultContextPath((String)value);
+                    break;
+                case Deployable.BASE_RESOURCE:
                 {
                     if (value == null)
                         continue; // skip
@@ -710,8 +718,11 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
                     ResourceFactory resourceFactory = ResourceFactory.of(this);
                     Resource resource = resourceFactory.asResource(value);
                     setBaseResource(resource);
+                    break;
                 }
-                default -> initializeDefault(keyName, value);
+                default:
+                    initializeDefault(keyName, value);
+                    break;
             }
         }
         initializeDefaultsComplete();
@@ -867,12 +878,14 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
                 Availability availability = _availability.get();
                 switch (availability)
                 {
-                    case STARTING, AVAILABLE ->
+                    case STARTING:
+                    case AVAILABLE:
                     {
                         if (_availability.compareAndSet(availability, Availability.UNAVAILABLE))
                             return;
+                        break;
                     }
-                    default ->
+                    default:
                     {
                         return;
                     }
@@ -894,8 +907,9 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
                 throw new IllegalArgumentException("Base Resource is not valid: " + baseResource);
             if (baseResource.isAlias())
             {
-                if (baseResource instanceof CombinedResource combinedResource)
+                if (baseResource instanceof CombinedResource)
                 {
+                    CombinedResource combinedResource = (CombinedResource)baseResource;
                     ResourceFactory resourceFactory = ResourceFactory.of(this);
                     List<Resource> resources = combinedResource.getResources().stream()
                         .map(r ->
@@ -1890,10 +1904,10 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
         @Override
         public boolean equals(Object o)
         {
-            return o instanceof VHost vhost &&
-                Objects.equals(_vHost, vhost._vHost) &&
-                Objects.equals(_wild, vhost._wild) &&
-                Objects.equals(_vConnector, vhost._vConnector);
+            return o instanceof VHost &&
+                Objects.equals(_vHost, ((VHost)o)._vHost) &&
+                Objects.equals(_wild, ((VHost)o)._wild) &&
+                Objects.equals(_vConnector, ((VHost)o)._vConnector);
         }
 
         @Override

@@ -92,8 +92,9 @@ public class SessionAuthentication extends AbstractUserAuthentication
 
         LoginService loginService;
         Authenticator authenticator = securityHandler.getAuthenticator();
-        if (authenticator instanceof LoginAuthenticator loginAuthenticator)
+        if (authenticator instanceof LoginAuthenticator)
         {
+            LoginAuthenticator loginAuthenticator = (LoginAuthenticator)authenticator;
             loginService = loginAuthenticator.getLoginService();
             _persistAuthenticationCredentials = loginAuthenticator.isPersistAuthenticationCredentials();
         }

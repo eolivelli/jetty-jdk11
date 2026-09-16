@@ -438,7 +438,7 @@ public class ReverseProxyTest extends AbstractProxyTest
         {
             switch (httpVersion)
             {
-                case HTTP_1_1 ->
+                case HTTP_1_1:
                 {
                     // HTTP/1.1 fails to generate the response, but does not commit,
                     // so it is able to write an error response to the client.
@@ -446,13 +446,15 @@ public class ReverseProxyTest extends AbstractProxyTest
                     assertNotNull(response);
                     assertNull(failure);
                     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, response.getStatus());
+                    break;
                 }
-                case HTTP_2 ->
+                case HTTP_2:
                 {
                     // HTTP/2 fails to generate the response, sends a GOAWAY,
                     // and the client aborts the response.
                     assertNull(response);
                     assertNotNull(failure);
+                    break;
                 }
             }
             return null;

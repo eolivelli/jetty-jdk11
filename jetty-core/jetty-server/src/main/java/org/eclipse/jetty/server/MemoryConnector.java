@@ -183,8 +183,11 @@ public class MemoryConnector extends AbstractConnector
         {
             if (this == obj)
                 return true;
-            if (obj instanceof MemorySocketAddress that)
+            if (obj instanceof MemorySocketAddress)
+            {
+                MemorySocketAddress that = (MemorySocketAddress)obj;
                 return address.equals(that.address);
+            }
             return false;
         }
 

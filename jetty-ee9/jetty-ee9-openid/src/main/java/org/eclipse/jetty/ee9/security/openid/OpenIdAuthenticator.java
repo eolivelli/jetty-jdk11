@@ -519,8 +519,9 @@ public class OpenIdAuthenticator extends LoginAuthenticator
             if (authentication != null)
             {
                 boolean isUserIdentityValid = false;
-                if (authentication instanceof Authentication.User userAuthentication && _loginService != null)
+                if (authentication instanceof Authentication.User && _loginService != null)
                 {
+                    Authentication.User userAuthentication = (Authentication.User)authentication;
                     UserIdentity userIdentity = userAuthentication.getUserIdentity();
                     Principal principal = userIdentity.getUserPrincipal();
                     if (principal instanceof OpenIdUserPrincipal)

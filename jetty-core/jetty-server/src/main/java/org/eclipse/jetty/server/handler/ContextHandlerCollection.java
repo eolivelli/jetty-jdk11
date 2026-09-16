@@ -194,8 +194,9 @@ public class ContextHandlerCollection extends Handler.Sequence
     public Set<String> getContextPaths()
     {
         List<Handler> handlers = getHandlers();
-        if (handlers instanceof Mapping mapping)
+        if (handlers instanceof Mapping)
         {
+            Mapping mapping = (Mapping)handlers;
             Index<Map.Entry<String, Branch[]>> index = mapping._pathBranches;
             return index.keySet().stream()
                 .map(index::get)

@@ -79,16 +79,18 @@ public interface UserIdentity
             if (contextHandler != null)
             {
                 Object attribute = contextHandler.getAttribute(SecurityHandler.KNOWN_ROLES_ATTRIBUTE);
-                if (attribute instanceof String[] knownRoles)
+                if (attribute instanceof String[])
                 {
+                    String[] knownRoles = (String[])attribute;
                     for (String role : knownRoles)
                     {
                         if (isUserInRole(role))
                             roles.add(role);
                     }
                 }
-                else if (attribute instanceof Collection<?> knownRoles)
+                else if (attribute instanceof Collection<?>)
                 {
+                    Collection<?> knownRoles = (Collection<?>)attribute;
                     for (Object role : knownRoles)
                     {
                         if (isUserInRole(role.toString()))

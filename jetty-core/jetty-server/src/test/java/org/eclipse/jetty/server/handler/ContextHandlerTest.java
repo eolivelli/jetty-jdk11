@@ -1230,7 +1230,7 @@ public class ContextHandlerTest
                 requests.countDown();
                 switch (request.getContext().getPathInContext(request.getHttpURI().getCanonicalPath()))
                 {
-                    case "/ignore0" ->
+                    case "/ignore0":
                     {
                         try
                         {
@@ -1243,7 +1243,7 @@ public class ContextHandlerTest
                         return false;
                     }
 
-                    case "/ignore1" ->
+                    case "/ignore1":
                     {
                         try
                         {
@@ -1256,7 +1256,7 @@ public class ContextHandlerTest
                         return false;
                     }
 
-                    case "/ok0" ->
+                    case "/ok0":
                     {
                         try
                         {
@@ -1266,9 +1266,10 @@ public class ContextHandlerTest
                         {
                             throw new RuntimeException(e);
                         }
+                        break;
                     }
 
-                    case "/ok1" ->
+                    case "/ok1":
                     {
                         try
                         {
@@ -1278,9 +1279,10 @@ public class ContextHandlerTest
                         {
                             throw new RuntimeException(e);
                         }
+                        break;
                     }
 
-                    case "/fail0" ->
+                    case "/fail0":
                     {
                         try
                         {
@@ -1293,7 +1295,7 @@ public class ContextHandlerTest
                         throw new QuietException.Exception("expected0");
                     }
 
-                    case "/fail1" ->
+                    case "/fail1":
                     {
                         try
                         {
@@ -1304,10 +1306,12 @@ public class ContextHandlerTest
                             throw new RuntimeException(e);
                         }
                         callback.failed(new QuietException.Exception("expected1"));
+                        break;
                     }
 
-                    default ->
+                    default:
                     {
+                        break;
                     }
                 }
 

@@ -323,7 +323,7 @@ public class MavenWebAppContext extends WebAppContext
             // inject configurations with config from maven plugin
             for (Configuration c : configurations)
             {
-                if (c instanceof EnvConfiguration envConfiguration)
+                if (c instanceof EnvConfiguration)
                     setAttribute(EnvConfiguration.JETTY_ENV_XML, this.getResourceFactory().newResource(getJettyEnvXml()));
             }
         }

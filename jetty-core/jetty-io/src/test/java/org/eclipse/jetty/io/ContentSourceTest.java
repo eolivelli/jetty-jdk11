@@ -157,39 +157,43 @@ public class ContentSourceTest
         ByteChannelContentSource.PathContentSource pcs1 = new ByteChannelContentSource.PathContentSource(new ByteBufferPool.Sized(byteBufferPool, false, 1024), path0123, 4, 6);
         ByteChannelContentSource.PathContentSource pcs2 = new ByteChannelContentSource.PathContentSource(new ByteBufferPool.Sized(null, false, 3), path12);
 
-        return switch (mode)
+        switch (mode)
         {
-            case "rewind" -> List.of(
-                byteBufferSource,
-                path1,
-                bccs3,
-                pcs2);
-            case "multi" -> List.of(
-                asyncSource,
-                byteBufferSource,
-                transformerSource,
-                path1,
-                inputSource,
-                inputSource2,
-                bccs3,
-                pcs2);
-            case "all" -> List.of(
-                asyncSource,
-                byteBufferSource,
-                transformerSource,
-                path0,
-                path1,
-                inputSource,
-                inputSource2,
-                bccs0,
-                bccs1,
-                bccs2,
-                bccs3,
-                pcs0,
-                pcs1,
-                pcs2);
-            default -> Collections.emptyList();
-        };
+            case "rewind":
+                return List.of(
+                    byteBufferSource,
+                    path1,
+                    bccs3,
+                    pcs2);
+            case "multi":
+                return List.of(
+                    asyncSource,
+                    byteBufferSource,
+                    transformerSource,
+                    path1,
+                    inputSource,
+                    inputSource2,
+                    bccs3,
+                    pcs2);
+            case "all":
+                return List.of(
+                    asyncSource,
+                    byteBufferSource,
+                    transformerSource,
+                    path0,
+                    path1,
+                    inputSource,
+                    inputSource2,
+                    bccs0,
+                    bccs1,
+                    bccs2,
+                    bccs3,
+                    pcs0,
+                    pcs1,
+                    pcs2);
+            default:
+                return Collections.emptyList();
+        }
     }
 
     /**

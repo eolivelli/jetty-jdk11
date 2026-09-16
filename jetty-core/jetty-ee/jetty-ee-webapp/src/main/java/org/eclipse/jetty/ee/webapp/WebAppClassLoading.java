@@ -201,11 +201,14 @@ public class WebAppClassLoading
     private static ClassMatcher getClassMatcher(Attributes attributes, String attribute, ClassMatcher defaultPatterns)
     {
         Object existing = attributes.getAttribute(attribute);
-        if (existing instanceof ClassMatcher cm)
+        if (existing instanceof ClassMatcher)
+        {
+            ClassMatcher cm = (ClassMatcher)existing;
             return cm;
+        }
 
-        ClassMatcher classMatcher = (existing instanceof String[] stringArray)
-            ? new ClassMatcher(stringArray) : new ClassMatcher(defaultPatterns);
+        ClassMatcher classMatcher = (existing instanceof String[])
+            ? new ClassMatcher((String[])existing) : new ClassMatcher(defaultPatterns);
         attributes.setAttribute(attribute, classMatcher);
         return classMatcher;
     }

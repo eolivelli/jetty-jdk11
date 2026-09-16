@@ -881,8 +881,9 @@ public class SessionHandler extends ScopedHandler implements SessionConfig.Mutab
             for (String name : session.getAttributeNameSet())
             {
                 Object value = session.getAttribute(name);
-                if (value instanceof HttpSessionActivationListener listener)
+                if (value instanceof HttpSessionActivationListener)
                 {
+                    HttpSessionActivationListener listener = (HttpSessionActivationListener)value;
                     HttpSessionEvent event = new HttpSessionEvent(session.getApi());
                     listener.sessionDidActivate(event);
                 }
@@ -895,8 +896,9 @@ public class SessionHandler extends ScopedHandler implements SessionConfig.Mutab
             for (String name : session.getAttributeNameSet())
             {
                 Object value = session.getAttribute(name);
-                if (value instanceof HttpSessionActivationListener listener)
+                if (value instanceof HttpSessionActivationListener)
                 {
+                    HttpSessionActivationListener listener = (HttpSessionActivationListener)value;
                     HttpSessionEvent event = new HttpSessionEvent(session.getApi());
                     listener.sessionWillPassivate(event);
                 }
@@ -910,11 +912,15 @@ public class SessionHandler extends ScopedHandler implements SessionConfig.Mutab
         {
             return createSession ->
             {
-                if (servletRequest instanceof HttpServletRequest request)
+                if (servletRequest instanceof HttpServletRequest)
                 {
+                    HttpServletRequest request = (HttpServletRequest)servletRequest;
                     HttpSession session = request.getSession(createSession);
-                    if (session instanceof SessionHandler.ServletSessionApi sessionApi)
+                    if (session instanceof SessionHandler.ServletSessionApi)
+                    {
+                        SessionHandler.ServletSessionApi sessionApi = (SessionHandler.ServletSessionApi)session;
                         return sessionApi.getSession();
+                    }
                 }
                 return null;
             };

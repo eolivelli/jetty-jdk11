@@ -648,19 +648,22 @@ public class CompressionHandlerTest extends AbstractCompressionTest
             {
                 switch (request.getMethod())
                 {
-                    case "GET" ->
+                    case "GET":
                     {
                         response.setStatus(200);
                         response.getHeaders().put(HttpHeader.CONTENT_TYPE, resourceContentType);
                         response.write(true, ByteBuffer.wrap(resourceBody), callback);
+                        break;
                     }
-                    case "PUT", "POST" ->
+                    case "PUT":
+                    case "POST":
                     {
                         ByteBuffer requestContent = Content.Source.asByteBuffer(request);
                         response.setStatus(200);
                         response.getHeaders().put(HttpHeader.CONTENT_TYPE, resourceContentType);
                         response.getHeaders().put("X-Request-Content-Length", requestContent.remaining());
                         response.write(true, requestContent, callback);
+                        break;
                     }
                 }
                 return true;
@@ -675,15 +678,16 @@ public class CompressionHandlerTest extends AbstractCompressionTest
         org.eclipse.jetty.client.Request request = client.newRequest(serverURI.getHost(), serverURI.getPort());
         switch (requestMethod)
         {
-            case "GET" ->
+            case "GET":
             {
                 request.method(HttpMethod.GET)
                     .headers((headers) ->
                     {
                         headers.put(HttpHeader.ACCEPT_ENCODING, compression.getEncodingName());
                     });
+                break;
             }
-            case "POST" ->
+            case "POST":
             {
                 byte[] compressed = compress(resourceBody);
                 request.method(HttpMethod.POST)
@@ -692,8 +696,9 @@ public class CompressionHandlerTest extends AbstractCompressionTest
                         headers.put(HttpHeader.CONTENT_ENCODING, compression.getEncodingName());
                     })
                     .body(new BytesRequestContent(resourceContentType, compressed));
+                break;
             }
-            case "PUT" ->
+            case "PUT":
             {
                 byte[] compressed = compress(resourceBody);
                 request.method(HttpMethod.PUT)
@@ -702,10 +707,12 @@ public class CompressionHandlerTest extends AbstractCompressionTest
                         headers.put(HttpHeader.CONTENT_ENCODING, compression.getEncodingName());
                     })
                     .body(new BytesRequestContent(resourceContentType, compressed));
+                break;
             }
-            default ->
+            default:
             {
                 fail("Unhandled request method: " + requestMethod);
+                break;
             }
         }
 
@@ -716,20 +723,22 @@ public class CompressionHandlerTest extends AbstractCompressionTest
         assertFalse(response.getHeaders().contains(HttpHeader.CONTENT_ENCODING));
         switch (requestMethod)
         {
-            case "PUT" ->
+            case "PUT":
             {
                 // PUT was excluded, so expect no automatic decompression
                 int originalLength = resourceBody.length;
                 int responseLength = response.getContent().length;
                 assertThat("Content Length", responseLength, lessThan(originalLength));
+                break;
             }
-            case "POST" ->
+            case "POST":
             {
                 // POST was included, so expect a decompression
                 String expectedLength = Integer.toString(resourceBody.length);
                 assertThat("Original Request Content Length", response.getHeaders().get("X-Request-Content-Length"), is(expectedLength));
                 byte[] content = response.getContent();
                 assertThat(content, is(resourceBody));
+                break;
             }
         }
     }

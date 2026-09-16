@@ -602,8 +602,11 @@ public class QueuedThreadPool extends ContainerLifeCycle implements ThreadFactor
     public int getMaxReservedThreads()
     {
         TryExecutor tryExecutor = _tryExecutor;
-        if (tryExecutor instanceof ReservedThreadExecutor reserved)
+        if (tryExecutor instanceof ReservedThreadExecutor)
+        {
+            ReservedThreadExecutor reserved = (ReservedThreadExecutor)tryExecutor;
             return reserved.getCapacity();
+        }
         return 0;
     }
 
@@ -615,8 +618,11 @@ public class QueuedThreadPool extends ContainerLifeCycle implements ThreadFactor
     public int getCurrentReservedThreads()
     {
         TryExecutor tryExecutor = _tryExecutor;
-        if (tryExecutor instanceof ReservedThreadExecutor reserved)
+        if (tryExecutor instanceof ReservedThreadExecutor)
+        {
+            ReservedThreadExecutor reserved = (ReservedThreadExecutor)tryExecutor;
             return reserved.getAvailable();
+        }
         return 0;
     }
 

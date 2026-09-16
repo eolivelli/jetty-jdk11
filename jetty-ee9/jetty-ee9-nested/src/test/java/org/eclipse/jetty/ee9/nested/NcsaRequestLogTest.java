@@ -528,8 +528,11 @@ public class NcsaRequestLogTest
                             }
                             catch (Throwable e)
                             {
-                                if (e instanceof HttpException httpEx)
+                                if (e instanceof HttpException)
+                                {
+                                    HttpException httpEx = (HttpException)e;
                                     response.sendError(httpEx.getCode(), httpEx.getReason());
+                                }
                                 else
                                     response.sendError(500, e.toString());
                             }

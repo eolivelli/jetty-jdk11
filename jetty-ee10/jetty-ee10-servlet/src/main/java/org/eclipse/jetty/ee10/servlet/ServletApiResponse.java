@@ -141,8 +141,11 @@ public class ServletApiResponse implements HttpServletResponse
     {
         switch (sc)
         {
-            case -1 -> getServletChannel().abort(new Request.Handler.AbortException(msg));
-            case HttpStatus.PROCESSING_102, HttpStatus.EARLY_HINTS_103 ->
+            case -1:
+                getServletChannel().abort(new Request.Handler.AbortException(msg));
+                break;
+            case HttpStatus.PROCESSING_102:
+            case HttpStatus.EARLY_HINTS_103:
             {
                 if (!isCommitted())
                 {
@@ -153,12 +156,14 @@ public class ServletApiResponse implements HttpServletResponse
                         blocker.block();
                     }
                 }
+                break;
             }
-            default ->
+            default:
             {
                 if (isCommitted())
                     throw new IllegalStateException("Committed");
                 getServletRequestInfo().getServletRequestState().sendError(sc, msg);
+                break;
             }
         }
     }
@@ -630,7 +635,7 @@ public class ServletApiResponse implements HttpServletResponse
         @Override
         public boolean equals(Object obj)
         {
-            return obj instanceof HttpCookie that && HttpCookie.equals(this, that);
+            return obj instanceof HttpCookie && HttpCookie.equals(this, (HttpCookie)obj);
         }
 
         @Override

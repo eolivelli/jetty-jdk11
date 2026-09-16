@@ -165,8 +165,11 @@ public class Flusher
         @Override
         protected void onAborted(Throwable cause)
         {
-            if (cause instanceof CancelSendException cancelSend)
+            if (cause instanceof CancelSendException)
+            {
+                CancelSendException cancelSend = (CancelSendException)cause;
                 cancelSend.setCallback(resetCallback());
+            }
         }
 
         private Callback resetCallback()
@@ -179,8 +182,11 @@ public class Flusher
         @Override
         protected void onCompleted(Throwable causeOrNull)
         {
-            if (causeOrNull instanceof CancelSendException cancelSendException)
+            if (causeOrNull instanceof CancelSendException)
+            {
+                CancelSendException cancelSendException = (CancelSendException)causeOrNull;
                 cancelSendException.complete();
+            }
             super.onCompleted(causeOrNull);
         }
 

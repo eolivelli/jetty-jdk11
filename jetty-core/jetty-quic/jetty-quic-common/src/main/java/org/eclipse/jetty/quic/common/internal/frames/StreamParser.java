@@ -55,7 +55,7 @@ public class StreamParser
         {
             switch (state)
             {
-                case FRAME_TYPE ->
+                case FRAME_TYPE:
                 {
                     if (varLenInt.tryDecode(byteBuffer, (l, v) ->
                     {
@@ -67,8 +67,9 @@ public class StreamParser
                         hasLength = (frameType & StreamFrame.LENGTH_MASK) == StreamFrame.LENGTH_MASK;
                         state = State.STREAM_ID;
                     }
+                    break;
                 }
-                case STREAM_ID ->
+                case STREAM_ID:
                 {
                     if (varLenInt.tryDecode(byteBuffer, (l, v) ->
                     {
@@ -83,8 +84,9 @@ public class StreamParser
                         else
                             state = State.DATA;
                     }
+                    break;
                 }
-                case OFFSET ->
+                case OFFSET:
                 {
                     if (varLenInt.tryDecode(byteBuffer, (l, v) ->
                     {
@@ -97,8 +99,9 @@ public class StreamParser
                         else
                             state = State.DATA;
                     }
+                    break;
                 }
-                case LENGTH ->
+                case LENGTH:
                 {
                     if (varLenInt.tryDecode(byteBuffer, (l, v) ->
                     {
@@ -110,8 +113,9 @@ public class StreamParser
                             return result(BufferUtil.absoluteSlice(byteBuffer, byteBuffer.position(), 0), true);
                         state = State.DATA;
                     }
+                    break;
                 }
-                case DATA ->
+                case DATA:
                 {
                     // SPEC: if no data length, the STREAM frame size is the max frame size.
                     if (dataLength < 0)

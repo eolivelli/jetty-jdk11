@@ -855,11 +855,12 @@ public class CrossContextDispatcherTest
         public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
         {
 
-            if (servletContext == null || !(request instanceof HttpServletRequest req) || !(response instanceof HttpServletResponse))
+            if (servletContext == null || !(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse))
             {
                 chain.doFilter(request, response);
                 return;
             }
+            HttpServletRequest req = (HttpServletRequest)request;
 
             if (req.getParameter("echo") != null && "/".equals(req.getPathInfo()))
             {

@@ -195,8 +195,9 @@ public class JAASLoginService extends ContainerLifeCycle implements LoginService
                 callbackHandler = (CallbackHandler)clazz.getDeclaredConstructor().newInstance();
             }
             
-            if (callbackHandler instanceof DefaultCallbackHandler dch)
+            if (callbackHandler instanceof DefaultCallbackHandler)
             {
+                DefaultCallbackHandler dch = (DefaultCallbackHandler)callbackHandler;
                 dch.setRequest(request);
                 dch.setCredential(credentials);
                 dch.setUserName(username);

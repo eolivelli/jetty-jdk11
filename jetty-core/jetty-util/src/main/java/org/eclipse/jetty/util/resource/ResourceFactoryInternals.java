@@ -226,13 +226,15 @@ class ResourceFactoryInternals
         {
             Objects.requireNonNull(name, "Attribute Name");
 
-            return switch (name)
+            switch (name)
             {
-                case "trackedCount" -> getTrackingCount();
-                case "trackedResources" -> getTrackedResources();
-                default ->
+                case "trackedCount":
+                    return getTrackingCount();
+                case "trackedResources":
+                    return getTrackedResources();
+                default:
                     throw new AttributeNotFoundException("Cannot find " + name + " attribute in " + this.getClass().getName());
-            };
+            }
         }
 
         @Override
@@ -346,8 +348,9 @@ class ResourceFactoryInternals
                 if (resourceFactory == null)
                     throw new IllegalArgumentException("URI scheme not registered: " + uri.getScheme());
                 Resource resource = resourceFactory.newResource(uri);
-                if (resource instanceof MountedPathResource mountedPathResource)
+                if (resource instanceof MountedPathResource)
                 {
+                    MountedPathResource mountedPathResource = (MountedPathResource)resource;
                     if (mountedPathResource.getFileSystem() != null)
                     {
                         mounted.add(mountedPathResource);

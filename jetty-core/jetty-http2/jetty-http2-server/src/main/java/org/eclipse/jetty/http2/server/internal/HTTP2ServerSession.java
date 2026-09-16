@@ -204,12 +204,18 @@ public class HTTP2ServerSession extends HTTP2Session implements ServerParser.Lis
     {
         switch (frame.getType())
         {
-            case PREFACE -> onPreface();
-            case SETTINGS ->
-                // SPEC: the required reply to this SETTINGS frame is the 101 response.
+            case PREFACE:
+                onPreface();
+                break;
+            case SETTINGS:
                 onSettings((SettingsFrame)frame, false);
-            case HEADERS -> onHeaders((HeadersFrame)frame);
-            default -> super.onFrame(frame);
+                break;
+            case HEADERS:
+                onHeaders((HeadersFrame)frame);
+                break;
+            default:
+                super.onFrame(frame);
+                break;
         }
     }
 

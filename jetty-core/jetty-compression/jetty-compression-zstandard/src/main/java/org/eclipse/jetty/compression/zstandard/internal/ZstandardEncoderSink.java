@@ -84,13 +84,23 @@ public class ZstandardEncoderSink extends EncoderSink
         while (!done)
         {
             State state = this.state.get();
-            writeRecord = switch (state)
+            switch (state)
             {
-                case CONTINUE -> continueOp(last, content);
-                case END -> endOp(last);
-                case FLUSH -> flushOp(last);
-                case FINISHED -> null;
-            };
+                case CONTINUE:
+                    writeRecord = continueOp(last, content);
+                    break;
+                case END:
+                    writeRecord = endOp(last);
+                    break;
+                case FLUSH:
+                    writeRecord = flushOp(last);
+                    break;
+                case FINISHED:
+                    writeRecord = null;
+                    break;
+                default:
+                    throw new IllegalStateException();
+            }
             if (writeRecord != null)
                 done = true;
             else if (!last && !content.hasRemaining())

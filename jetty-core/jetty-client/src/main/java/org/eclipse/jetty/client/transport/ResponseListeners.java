@@ -183,8 +183,9 @@ public class ResponseListeners
         }
         else
         {
-            if (existing instanceof ContentSourceDemultiplexer demultiplexer)
+            if (existing instanceof ContentSourceDemultiplexer)
             {
+                ContentSourceDemultiplexer demultiplexer = (ContentSourceDemultiplexer)existing;
                 demultiplexer.addContentSourceListener(listener);
             }
             else
@@ -319,18 +320,36 @@ public class ResponseListeners
             return false;
         if (includeOtherEvents)
         {
-            if (listener instanceof Response.BeginListener l)
+            if (listener instanceof Response.BeginListener)
+            {
+                Response.BeginListener l = (Response.BeginListener)listener;
                 addBeginListener(l);
-            if (listener instanceof Response.HeaderListener l)
+            }
+            if (listener instanceof Response.HeaderListener)
+            {
+                Response.HeaderListener l = (Response.HeaderListener)listener;
                 addHeaderListener(l);
-            if (listener instanceof Response.HeadersListener l)
+            }
+            if (listener instanceof Response.HeadersListener)
+            {
+                Response.HeadersListener l = (Response.HeadersListener)listener;
                 addHeadersListener(l);
-            if (listener instanceof Response.ContentSourceListener l)
+            }
+            if (listener instanceof Response.ContentSourceListener)
+            {
+                Response.ContentSourceListener l = (Response.ContentSourceListener)listener;
                 addContentSourceListener(l);
-            if (listener instanceof Response.SuccessListener l)
+            }
+            if (listener instanceof Response.SuccessListener)
+            {
+                Response.SuccessListener l = (Response.SuccessListener)listener;
                 addSuccessListener(l);
-            if (listener instanceof Response.FailureListener l)
+            }
+            if (listener instanceof Response.FailureListener)
+            {
+                Response.FailureListener l = (Response.FailureListener)listener;
                 addFailureListener(l);
+            }
         }
         Response.CompleteListener existing = completeListener;
         completeListener = existing == null ? listener : result ->
@@ -395,8 +414,9 @@ public class ResponseListeners
         }
         notifyHeaders(headersListener, response);
         ByteBuffer content = BufferUtil.EMPTY_BUFFER;
-        if (response instanceof ContentResponse contentResponse)
+        if (response instanceof ContentResponse)
         {
+            ContentResponse contentResponse = (ContentResponse)response;
             byte[] bytes = contentResponse.getContent();
             if (bytes != null && bytes.length > 0)
                 content = ByteBuffer.wrap(bytes);
@@ -464,8 +484,12 @@ public class ResponseListeners
             {
                 switch (contentSource.state)
                 {
-                    case DEMANDED -> demands++;
-                    case FAILED -> failures++;
+                    case DEMANDED:
+                        demands++;
+                        break;
+                    case FAILED:
+                        failures++;
+                        break;
                 }
             }
             return new Counters(demands, failures);

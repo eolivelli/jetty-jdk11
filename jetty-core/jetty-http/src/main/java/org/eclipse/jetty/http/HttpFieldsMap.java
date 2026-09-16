@@ -48,8 +48,9 @@ abstract class HttpFieldsMap extends AbstractMap<String, List<String>>
         @Override
         public List<String> get(Object key)
         {
-            if (key instanceof String s)
+            if (key instanceof String)
             {
+                String s = (String)key;
                 return new AbstractList<>()
                 {
                     private final List<String> values = httpFields.getValuesList(s);
@@ -89,8 +90,9 @@ abstract class HttpFieldsMap extends AbstractMap<String, List<String>>
         @Override
         public List<String> remove(Object key)
         {
-            if (key instanceof String s)
+            if (key instanceof String)
             {
+                String s = (String)key;
                 List<String> oldValue = get(s);
                 httpFields.remove(s);
                 return Collections.unmodifiableList(oldValue);
@@ -101,8 +103,11 @@ abstract class HttpFieldsMap extends AbstractMap<String, List<String>>
         @Override
         public boolean containsKey(Object key)
         {
-            if (key instanceof String s)
+            if (key instanceof String)
+            {
+                String s = (String)key;
                 return httpFields.contains(s);
+            }
             return false;
         }
 
@@ -169,8 +174,11 @@ abstract class HttpFieldsMap extends AbstractMap<String, List<String>>
         @Override
         public List<String> get(Object key)
         {
-            if (key instanceof String s)
+            if (key instanceof String)
+            {
+                String s = (String)key;
                 return Collections.unmodifiableList(httpFields.getValuesList(s));
+            }
             return null;
         }
 
@@ -189,8 +197,11 @@ abstract class HttpFieldsMap extends AbstractMap<String, List<String>>
         @Override
         public boolean containsKey(Object key)
         {
-            if (key instanceof String s)
+            if (key instanceof String)
+            {
+                String s = (String)key;
                 return httpFields.contains(s);
+            }
             return false;
         }
 
@@ -267,8 +278,11 @@ abstract class HttpFieldsMap extends AbstractMap<String, List<String>>
         {
             if (this == o)
                 return true;
-            if (o instanceof HttpFieldsEntry other)
+            if (o instanceof HttpFieldsEntry)
+            {
+                HttpFieldsEntry other = (HttpFieldsEntry)o;
                 return StringUtil.asciiEqualsIgnoreCase(_name, other.getKey());
+            }
             return false;
         }
 

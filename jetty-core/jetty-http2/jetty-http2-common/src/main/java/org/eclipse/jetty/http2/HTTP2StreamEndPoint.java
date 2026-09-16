@@ -240,12 +240,19 @@ public abstract class HTTP2StreamEndPoint implements EndPoint, Invocable
         // stream.data() would remain as a pending operation.
 
         WriteState current = writeState.get();
-        return switch (current.state)
+        switch (current.state)
         {
-            case IDLE, PENDING -> false;
-            case PENDING_OSHUT, OSHUT -> throw new EofException("Output shutdown");
-            case FAILED -> throw IO.rethrow(current.failure);
-        };
+            case IDLE:
+            case PENDING:
+                return false;
+            case PENDING_OSHUT:
+            case OSHUT:
+                throw new EofException("Output shutdown");
+            case FAILED:
+                throw IO.rethrow(current.failure);
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     @Override
@@ -309,7 +316,7 @@ public abstract class HTTP2StreamEndPoint implements EndPoint, Invocable
                 WriteState current = writeState.get();
                 switch (current.state)
                 {
-                    case IDLE ->
+                    case IDLE:
                     {
                         WriteState.Pending pending = new WriteState.Pending(WriteState.State.PENDING, this, callback);
                         if (!writeState.compareAndSet(current, pending))
@@ -317,11 +324,21 @@ public abstract class HTTP2StreamEndPoint implements EndPoint, Invocable
                         // TODO: we really need a Stream primitive to write multiple frames.
                         ByteBuffer result = coalesce(buffers);
                         stream.data(new DataFrame(stream.getId(), result, false), pending);
+                        break;
                     }
-                    case PENDING -> callback.failed(new WritePendingException());
-                    case PENDING_OSHUT, OSHUT -> callback.failed(new EofException("Output shutdown"));
-                    case FAILED -> callback.failed(current.failure);
-                    default -> callback.failed(new IllegalStateException("Unexpected state: " + current.state));
+                    case PENDING:
+                        callback.failed(new WritePendingException());
+                        break;
+                    case PENDING_OSHUT:
+                    case OSHUT:
+                        callback.failed(new EofException("Output shutdown"));
+                        break;
+                    case FAILED:
+                        callback.failed(current.failure);
+                        break;
+                    default:
+                        callback.failed(new IllegalStateException("Unexpected state: " + current.state));
+                        break;
                 }
                 return;
             }
@@ -336,15 +353,17 @@ public abstract class HTTP2StreamEndPoint implements EndPoint, Invocable
             WriteState current = writeState.get();
             switch (current.state)
             {
-                case IDLE ->
+                case IDLE:
                 {
                     if (writeState.compareAndSet(current, new WriteState(WriteState.State.FAILED, cause)))
                     {
                         stream.reset(new ResetFrame(stream.getId(), ErrorCode.CANCEL_STREAM_ERROR.code), Callback.NOOP);
                         return null;
                     }
+                    break;
                 }
-                case PENDING, PENDING_OSHUT ->
+                case PENDING:
+                case PENDING_OSHUT:
                 {
                     if (writeState.compareAndSet(current, new WriteState(WriteState.State.FAILED, cause)))
                     {
@@ -356,16 +375,18 @@ public abstract class HTTP2StreamEndPoint implements EndPoint, Invocable
                             return callbacks.newCallback();
                         }
                     }
+                    break;
                 }
-                case FAILED ->
+                case FAILED:
                 {
                     ExceptionUtil.addSuppressedIfNotAssociated(current.failure, cause);
                     return null;
                 }
-                default ->
+                default:
                 {
                     if (writeState.compareAndSet(current, new WriteState(WriteState.State.FAILED, cause)))
                         return null;
+                    break;
                 }
             }
         }
@@ -378,19 +399,21 @@ public abstract class HTTP2StreamEndPoint implements EndPoint, Invocable
             WriteState current = writeState.get();
             switch (current.state)
             {
-                case PENDING ->
+                case PENDING:
                 {
                     if (!writeState.compareAndSet(current, WriteState.IDLE))
                         continue;
                     ((WriteState.Pending)current).callback.succeeded();
+                    break;
                 }
-                case PENDING_OSHUT ->
+                case PENDING_OSHUT:
                 {
                     if (!writeState.compareAndSet(current, WriteState.OSHUT))
                         continue;
                     ((WriteState.Pending)current).callback.succeeded();
                     // Complete the shutdown of the output.
                     stream.data(new DataFrame(stream.getId(), BufferUtil.EMPTY_BUFFER, true), Callback.NOOP);
+                    break;
                 }
             }
             return;
@@ -404,11 +427,13 @@ public abstract class HTTP2StreamEndPoint implements EndPoint, Invocable
             WriteState current = writeState.get();
             switch (current.state)
             {
-                case PENDING, PENDING_OSHUT ->
+                case PENDING:
+                case PENDING_OSHUT:
                 {
                     if (!writeState.compareAndSet(current, new WriteState(WriteState.State.FAILED, failure)))
                         continue;
                     ((WriteState.Pending)current).callback.failed(failure);
+                    break;
                 }
             }
             return;

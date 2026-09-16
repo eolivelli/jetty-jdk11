@@ -181,8 +181,11 @@ public class ServerHTTP3StreamConnection extends HTTP3StreamConnection
 
             // TODO cache the HostPort?
             SocketAddress addr = getLocalSocketAddress();
-            if (addr instanceof InetSocketAddress inet)
+            if (addr instanceof InetSocketAddress)
+            {
+                InetSocketAddress inet = (InetSocketAddress)addr;
                 return new HostPort(inet.getHostString(), inet.getPort());
+            }
             return new HostPort(addr.toString(), -1);
         }
 

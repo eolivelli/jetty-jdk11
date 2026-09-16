@@ -345,33 +345,43 @@ public class Dispatcher implements RequestDispatcher
                 if (originalRequest == null)
                     originalRequest = _httpServletRequest;
 
-                return switch (name)
+                switch (name)
                 {
-                    case RequestDispatcher.FORWARD_REQUEST_URI -> originalRequest.getRequestURI();
-                    case RequestDispatcher.FORWARD_SERVLET_PATH -> originalRequest.getServletPath();
-                    case RequestDispatcher.FORWARD_PATH_INFO -> originalRequest.getPathInfo();
-                    case RequestDispatcher.FORWARD_CONTEXT_PATH -> originalRequest.getContextPath();
-                    case RequestDispatcher.FORWARD_MAPPING -> originalRequest.getHttpServletMapping();
-                    case RequestDispatcher.FORWARD_QUERY_STRING -> originalRequest.getQueryString();
-                    default -> super.getAttribute(name);
-                };
+                    case RequestDispatcher.FORWARD_REQUEST_URI:
+                        return originalRequest.getRequestURI();
+                    case RequestDispatcher.FORWARD_SERVLET_PATH:
+                        return originalRequest.getServletPath();
+                    case RequestDispatcher.FORWARD_PATH_INFO:
+                        return originalRequest.getPathInfo();
+                    case RequestDispatcher.FORWARD_CONTEXT_PATH:
+                        return originalRequest.getContextPath();
+                    case RequestDispatcher.FORWARD_MAPPING:
+                        return originalRequest.getHttpServletMapping();
+                    case RequestDispatcher.FORWARD_QUERY_STRING:
+                        return originalRequest.getQueryString();
+                    default:
+                        return super.getAttribute(name);
+                }
             }
 
             switch (name)
             {
-                case __ORIGINAL_REQUEST ->
+                case __ORIGINAL_REQUEST:
                 {
                     HttpServletRequest originalRequest = (HttpServletRequest)super.getAttribute(name);
                     return originalRequest == null ? _httpServletRequest : originalRequest;
                 }
                 // Forward should hide include.
-                case RequestDispatcher.INCLUDE_MAPPING, RequestDispatcher.INCLUDE_SERVLET_PATH,
-                     RequestDispatcher.INCLUDE_PATH_INFO, RequestDispatcher.INCLUDE_REQUEST_URI,
-                     RequestDispatcher.INCLUDE_CONTEXT_PATH, RequestDispatcher.INCLUDE_QUERY_STRING ->
+                case RequestDispatcher.INCLUDE_MAPPING:
+                case RequestDispatcher.INCLUDE_SERVLET_PATH:
+                case RequestDispatcher.INCLUDE_PATH_INFO:
+                case RequestDispatcher.INCLUDE_REQUEST_URI:
+                case RequestDispatcher.INCLUDE_CONTEXT_PATH:
+                case RequestDispatcher.INCLUDE_QUERY_STRING:
                 {
                     return null;
                 }
-                case ServletContextRequest.MULTIPART_CONFIG_ELEMENT ->
+                case ServletContextRequest.MULTIPART_CONFIG_ELEMENT:
                 {
                     // If we already have future parts, return the configuration of the wrapped request.
                     if (super.getAttribute(ServletMultiPartFormData.class.getName()) != null)
@@ -380,7 +390,7 @@ public class Dispatcher implements RequestDispatcher
                     return _mappedServlet.getServletHolder().getMultipartConfigElement();
                 }
 
-                default ->
+                default:
                 {
                     return super.getAttribute(name);
                 }
@@ -464,24 +474,31 @@ public class Dispatcher implements RequestDispatcher
             if (_named != null && name.startsWith(__INCLUDE_PREFIX))
                 return null;
 
-            return switch (name)
+            switch (name)
             {
-                case RequestDispatcher.INCLUDE_MAPPING -> _servletPathMapping;
-                case RequestDispatcher.INCLUDE_SERVLET_PATH -> _servletPathMapping.getServletPath();
-                case RequestDispatcher.INCLUDE_PATH_INFO -> _servletPathMapping.getPathInfo();
-                case RequestDispatcher.INCLUDE_REQUEST_URI -> (_uri == null) ? null : _uri.getPath();
-                case RequestDispatcher.INCLUDE_CONTEXT_PATH -> _httpServletRequest.getContextPath();
-                case RequestDispatcher.INCLUDE_QUERY_STRING -> (_uri == null) ? null : _uri.getQuery();
-                case ServletContextRequest.MULTIPART_CONFIG_ELEMENT ->
+                case RequestDispatcher.INCLUDE_MAPPING:
+                    return _servletPathMapping;
+                case RequestDispatcher.INCLUDE_SERVLET_PATH:
+                    return _servletPathMapping.getServletPath();
+                case RequestDispatcher.INCLUDE_PATH_INFO:
+                    return _servletPathMapping.getPathInfo();
+                case RequestDispatcher.INCLUDE_REQUEST_URI:
+                    return (_uri == null) ? null : _uri.getPath();
+                case RequestDispatcher.INCLUDE_CONTEXT_PATH:
+                    return _httpServletRequest.getContextPath();
+                case RequestDispatcher.INCLUDE_QUERY_STRING:
+                    return (_uri == null) ? null : _uri.getQuery();
+                case ServletContextRequest.MULTIPART_CONFIG_ELEMENT:
                 {
                     // If we already have future parts, return the configuration of the wrapped request.
                     if (super.getAttribute(ServletMultiPartFormData.class.getName()) != null)
-                        yield super.getAttribute(name);
+                        return super.getAttribute(name);
                     // otherwise, return the configuration of this mapping
-                    yield _mappedServlet.getServletHolder().getMultipartConfigElement();
+                    return _mappedServlet.getServletHolder().getMultipartConfigElement();
                 }
-                default -> super.getAttribute(name);
-            };
+                default:
+                    return super.getAttribute(name);
+            }
         }
 
         @Override
@@ -809,24 +826,31 @@ public class Dispatcher implements RequestDispatcher
         @Override
         public Object getAttribute(String name)
         {
-            return switch (name)
+            switch (name)
             {
-                case AsyncContextState.ASYNC_REQUEST_URI -> _httpServletRequest.getRequestURI();
-                case AsyncContextState.ASYNC_CONTEXT_PATH -> _httpServletRequest.getContextPath();
-                case AsyncContextState.ASYNC_MAPPING -> _httpServletRequest.getHttpServletMapping();
-                case AsyncContextState.ASYNC_PATH_INFO -> _httpServletRequest.getPathInfo();
-                case AsyncContextState.ASYNC_SERVLET_PATH -> _httpServletRequest.getServletPath();
-                case AsyncContextState.ASYNC_QUERY_STRING -> _httpServletRequest.getQueryString();
-                case ServletContextRequest.MULTIPART_CONFIG_ELEMENT ->
+                case AsyncContextState.ASYNC_REQUEST_URI:
+                    return _httpServletRequest.getRequestURI();
+                case AsyncContextState.ASYNC_CONTEXT_PATH:
+                    return _httpServletRequest.getContextPath();
+                case AsyncContextState.ASYNC_MAPPING:
+                    return _httpServletRequest.getHttpServletMapping();
+                case AsyncContextState.ASYNC_PATH_INFO:
+                    return _httpServletRequest.getPathInfo();
+                case AsyncContextState.ASYNC_SERVLET_PATH:
+                    return _httpServletRequest.getServletPath();
+                case AsyncContextState.ASYNC_QUERY_STRING:
+                    return _httpServletRequest.getQueryString();
+                case ServletContextRequest.MULTIPART_CONFIG_ELEMENT:
                 {
                     // If we already have future parts, return the configuration of the wrapped request.
                     if (super.getAttribute(ServletMultiPartFormData.class.getName()) != null)
-                        yield super.getAttribute(name);
+                        return super.getAttribute(name);
                     // otherwise, return the configuration of this mapping
-                    yield _mappedServlet.getServletHolder().getMultipartConfigElement();
+                    return _mappedServlet.getServletHolder().getMultipartConfigElement();
                 }
-                default -> super.getAttribute(name);
-            };
+                default:
+                    return super.getAttribute(name);
+            }
         }
 
         @Override
@@ -867,8 +891,11 @@ public class Dispatcher implements RequestDispatcher
                 HttpURI requestURI = HttpURI.build(http.getRequestURI()).query(http.getQueryString());
                 if (requestURI.equals(_uri))
                 {
-                    if (wrapped instanceof ParameterRequestWrapper parameterRequestWrapper)
+                    if (wrapped instanceof ParameterRequestWrapper)
+                    {
+                        ParameterRequestWrapper parameterRequestWrapper = (ParameterRequestWrapper)wrapped;
                         return parameterRequestWrapper.getParameters();
+                    }
                     return ((ServletApiRequest)wrapped).getParameters();
                 }
             }
@@ -957,20 +984,26 @@ public class Dispatcher implements RequestDispatcher
         @Override
         public Object getAttribute(String name)
         {
-            return switch (name)
+            switch (name)
             {
-                case ERROR_REQUEST_URI -> _httpServletRequest.getRequestURI();
-                case ERROR_STATUS_CODE -> super.getAttribute(ErrorHandler.ERROR_STATUS);
-                case ERROR_MESSAGE -> super.getAttribute(ErrorHandler.ERROR_MESSAGE);
-                case ERROR_SERVLET_NAME -> super.getAttribute(ErrorHandler.ERROR_ORIGIN);
-                case ERROR_EXCEPTION -> super.getAttribute(ErrorHandler.ERROR_EXCEPTION);
-                case ERROR_EXCEPTION_TYPE ->
+                case ERROR_REQUEST_URI:
+                    return _httpServletRequest.getRequestURI();
+                case ERROR_STATUS_CODE:
+                    return super.getAttribute(ErrorHandler.ERROR_STATUS);
+                case ERROR_MESSAGE:
+                    return super.getAttribute(ErrorHandler.ERROR_MESSAGE);
+                case ERROR_SERVLET_NAME:
+                    return super.getAttribute(ErrorHandler.ERROR_ORIGIN);
+                case ERROR_EXCEPTION:
+                    return super.getAttribute(ErrorHandler.ERROR_EXCEPTION);
+                case ERROR_EXCEPTION_TYPE:
                 {
                     Object err = super.getAttribute(ErrorHandler.ERROR_EXCEPTION);
-                    yield err == null ? null : err.getClass();
+                    return err == null ? null : err.getClass();
                 }
-                default -> super.getAttribute(name);
-            };
+                default:
+                    return super.getAttribute(name);
+            }
         }
 
         @Override

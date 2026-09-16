@@ -327,8 +327,9 @@ public class QuickStartGeneratorConfiguration extends AbstractConfiguration
             out.closeTag();
         }
 
-        if (security instanceof ConstraintAware ca)
+        if (security instanceof ConstraintAware)
         {
+            ConstraintAware ca = (ConstraintAware)security;
             for (String r : ca.getKnownRoles())
             {
                 out.openTag("security-role", origin(md, "security-role." + r))
@@ -362,23 +363,29 @@ public class QuickStartGeneratorConfiguration extends AbstractConfiguration
 
                 switch (authorization)
                 {
-                    case ALLOWED, INHERIT ->
+                    case ALLOWED:
+                    case INHERIT:
                     {
+                        break;
                     }
-                    case FORBIDDEN -> out.tag("auth-constraint");
-                    case ANY_USER ->
+                    case FORBIDDEN:
+                        out.tag("auth-constraint");
+                        break;
+                    case ANY_USER:
                     {
                         out.openTag("auth-constraint");
                         out.tag("role-name", "**");
                         out.closeTag();
+                        break;
                     }
-                    case KNOWN_ROLE ->
+                    case KNOWN_ROLE:
                     {
                         out.openTag("auth-constraint");
                         out.tag("role-name", "*");
                         out.closeTag();
+                        break;
                     }
-                    case SPECIFIC_ROLE ->
+                    case SPECIFIC_ROLE:
                     {
                         Set<String> roles = m.getConstraint().getRoles();
                         if (roles != null && roles.size() > 0)
@@ -391,6 +398,7 @@ public class QuickStartGeneratorConfiguration extends AbstractConfiguration
                                 }
                             out.closeTag();
                         }
+                        break;
                     }
                 }
 

@@ -100,7 +100,7 @@ public class CompressionResponse extends Response.Wrapper
 
         switch (state.get())
         {
-            case MIGHT_COMPRESS ->
+            case MIGHT_COMPRESS:
             {
                 int status = getStatus();
                 if (status > 0 && (
@@ -188,9 +188,14 @@ public class CompressionResponse extends Response.Wrapper
                 headers.computeField(HttpHeader.ETAG, (name, value) -> (value == null || value.isEmpty()) ? null : new HttpField(HttpHeader.ETAG, compression.etag(value.get(0).getValue())));
 
                 this.write(last, content, callback);
+                break;
             }
-            case COMPRESSING -> encoderSink.write(last, content, callback);
-            case NOT_COMPRESSING -> super.write(last, content, callback);
+            case COMPRESSING:
+                encoderSink.write(last, content, callback);
+                break;
+            case NOT_COMPRESSING:
+                super.write(last, content, callback);
+                break;
         }
     }
 

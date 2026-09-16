@@ -181,15 +181,21 @@ public class StdErrAppender implements JettyAppender
 
     private String renderedLevel(Level level)
     {
-        return switch (level)
+        switch (level)
         {
-            case ERROR -> "ERROR";
-            case WARN -> "WARN ";
-            case INFO -> "INFO ";
-            case DEBUG -> "DEBUG";
-            case TRACE -> "TRACE";
-            default -> "UNKNOWN";
-        };
+            case ERROR:
+                return "ERROR";
+            case WARN:
+                return "WARN ";
+            case INFO:
+                return "INFO ";
+            case DEBUG:
+                return "DEBUG";
+            case TRACE:
+                return "TRACE";
+            default:
+                return "UNKNOWN";
+        }
     }
 
     private void appendCause(StringBuilder builder, Throwable cause, String indent, Set<Throwable> visited)

@@ -83,8 +83,11 @@ public interface ConnectionMetaData extends Attributes
             return authority;
 
         SocketAddress localSocketAddress = getLocalSocketAddress();
-        if (localSocketAddress instanceof InetSocketAddress inetSocketAddress)
+        if (localSocketAddress instanceof InetSocketAddress)
+        {
+            InetSocketAddress inetSocketAddress = (InetSocketAddress)localSocketAddress;
             return new HostPort(inetSocketAddress.getHostString(), inetSocketAddress.getPort());
+        }
         else if (localSocketAddress != null)
             return new HostPort(localSocketAddress.toString());
         return null;

@@ -174,8 +174,9 @@ public class InfinispanTestSupport
         if (obj == null)
             return false;
         
-        if (obj instanceof InfinispanSessionData isd)
+        if (obj instanceof InfinispanSessionData)
         {
+            InfinispanSessionData isd = (InfinispanSessionData)obj;
             if (isd.getSerializedAttributes() != null)
                 isd.deserializeAttributes();
         }

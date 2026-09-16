@@ -242,8 +242,11 @@ public class MetaInfConfiguration extends AbstractConfiguration
         ClassLoader loader = MetaInfConfiguration.class.getClassLoader();
         while (loader != null)
         {
-            if (loader instanceof URLClassLoader urlCL)
+            if (loader instanceof URLClassLoader)
+            {
+                URLClassLoader urlCL = (URLClassLoader)loader;
                 URIUtil.streamOf(urlCL).forEach(locations::add);
+            }
             loader = loader.getParent();
         }
 

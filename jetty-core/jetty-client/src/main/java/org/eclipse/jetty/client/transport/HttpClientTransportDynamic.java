@@ -253,11 +253,18 @@ public class HttpClientTransportDynamic extends AbstractConnectorHttpClientTrans
 
     private List<String> toProtocols(HttpVersion version, boolean secure)
     {
-        return switch (version)
+        switch (version)
         {
-            case HTTP_0_9, HTTP_1_0, HTTP_1_1 -> List.of("http/1.1");
-            case HTTP_2 -> secure ? List.of("h2c", "h2") : List.of("h2c");
-            case HTTP_3 -> secure ? List.of("h3") : List.of();
-        };
+            case HTTP_0_9:
+            case HTTP_1_0:
+            case HTTP_1_1:
+                return List.of("http/1.1");
+            case HTTP_2:
+                return secure ? List.of("h2c", "h2") : List.of("h2c");
+            case HTTP_3:
+                return secure ? List.of("h3") : List.of();
+            default:
+                throw new IllegalStateException();
+        }
     }
 }

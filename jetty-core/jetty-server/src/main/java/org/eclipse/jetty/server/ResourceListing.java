@@ -80,8 +80,12 @@ public class ResourceListing
             {
                 switch (paramO)
                 {
-                    case "A" -> sortOrderAscending = true;
-                    case "D" -> sortOrderAscending = false;
+                    case "A":
+                        sortOrderAscending = true;
+                        break;
+                    case "D":
+                        sortOrderAscending = false;
+                        break;
                 }
             }
             if (StringUtil.isNotBlank(paramC))
@@ -94,12 +98,19 @@ public class ResourceListing
         }
 
         // Perform sort
-        Comparator<? super Resource> sort = switch (sortColumn)
+        Comparator<? super Resource> sort;
+        switch (sortColumn)
         {
-            case "M" -> ResourceCollators.byLastModified(sortOrderAscending);
-            case "S" -> ResourceCollators.bySize(sortOrderAscending);
-            default -> ResourceCollators.byFileName(sortOrderAscending);
-        };
+            case "M":
+                sort = ResourceCollators.byLastModified(sortOrderAscending);
+                break;
+            case "S":
+                sort = ResourceCollators.bySize(sortOrderAscending);
+                break;
+            default:
+                sort = ResourceCollators.byFileName(sortOrderAscending);
+                break;
+        }
         listing.sort(sort);
 
         String decodedBase = URIUtil.decodePath(base);
@@ -309,11 +320,21 @@ public class ResourceListing
             char c = raw.charAt(i);
             switch (c)
             {
-                case '"' -> buf.append("%22");
-                case '\'' -> buf.append("%27");
-                case '<' -> buf.append("%3C");
-                case '>' -> buf.append("%3E");
-                default -> buf.append(c);
+                case '"':
+                    buf.append("%22");
+                    break;
+                case '\'':
+                    buf.append("%27");
+                    break;
+                case '<':
+                    buf.append("%3C");
+                    break;
+                case '>':
+                    buf.append("%3E");
+                    break;
+                default:
+                    buf.append(c);
+                    break;
             }
         }
 

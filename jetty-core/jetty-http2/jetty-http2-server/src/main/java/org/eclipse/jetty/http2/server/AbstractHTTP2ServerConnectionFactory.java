@@ -45,11 +45,14 @@ public abstract class AbstractHTTP2ServerConnectionFactory extends AbstractConne
 {
     private static boolean isProtocolSupported(String protocol)
     {
-        return switch (protocol)
+        switch (protocol)
         {
-            case "h2", "h2c" -> true;
-            default -> false;
-        };
+            case "h2":
+            case "h2c":
+                return true;
+            default:
+                return false;
+        }
     }
 
     private final SessionContainer sessionContainer = new SessionContainer();

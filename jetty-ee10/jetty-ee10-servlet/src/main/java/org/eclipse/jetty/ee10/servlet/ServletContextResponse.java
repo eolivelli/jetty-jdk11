@@ -66,14 +66,20 @@ public class ServletContextResponse extends ContextResponse implements ServletCo
 
     public static ServletContextResponse getServletContextResponse(ServletResponse response)
     {
-        if (response instanceof ServletApiResponse servletApiResponse)
+        if (response instanceof ServletApiResponse)
+        {
+            ServletApiResponse servletApiResponse = (ServletApiResponse)response;
             return servletApiResponse.getServletRequestInfo().getServletChannel().getServletContextResponse();
+        }
 
         while (response instanceof ServletResponseWrapper)
         {
             response = ((ServletResponseWrapper)response).getResponse();
-            if (response instanceof ServletApiResponse servletApiResponse)
+            if (response instanceof ServletApiResponse)
+            {
+                ServletApiResponse servletApiResponse = (ServletApiResponse)response;
                 return servletApiResponse.getServletRequestInfo().getServletChannel().getServletContextResponse();
+            }
         }
 
         throw new IllegalStateException(String.format("could not find %s for %s", ServletContextResponse.class.getSimpleName(), response));
@@ -257,15 +263,21 @@ public class ServletContextResponse extends ContextResponse implements ServletCo
             {
                 switch (cb)
                 {
-                    case CLOSE -> headers.put(HttpHeader.CONNECTION, HttpHeaderValue.CLOSE.toString());
-                    case KEEP_ALIVE ->
+                    case CLOSE:
+                        headers.put(HttpHeader.CONNECTION, HttpHeaderValue.CLOSE.toString());
+                        break;
+                    case KEEP_ALIVE:
                     {
                         if (HttpVersion.HTTP_1_0.is(getRequest().getConnectionMetaData().getProtocol()))
                             headers.put(HttpHeader.CONNECTION, HttpHeaderValue.KEEP_ALIVE.toString());
+                        break;
                     }
-                    case TE -> headers.put(HttpHeader.CONNECTION, HttpHeaderValue.TE.toString());
-                    default ->
+                    case TE:
+                        headers.put(HttpHeader.CONNECTION, HttpHeaderValue.TE.toString());
+                        break;
+                    default:
                     {
+                        break;
                     }
                 }
             }
@@ -490,16 +502,18 @@ public class ServletContextResponse extends ContextResponse implements ServletCo
             if (field.getHeader() == null)
                 return super.onAddField(field);
 
-            return switch (field.getHeader())
+            switch (field.getHeader())
             {
-                case CONTENT_LENGTH ->
+                case CONTENT_LENGTH:
                 {
                     getHttpOutput().setApplicationContentLength(field.getLongValue());
-                    yield super.onAddField(field);
+                    return super.onAddField(field);
                 }
-                case CONTENT_TYPE -> setContentType(field);
-                default -> super.onAddField(field);
-            };
+                case CONTENT_TYPE:
+                    return setContentType(field);
+                default:
+                    return super.onAddField(field);
+            }
         }
 
         @Override
@@ -511,33 +525,38 @@ public class ServletContextResponse extends ContextResponse implements ServletCo
             if (field.getHeader() == null)
                 return super.onRemoveField(field);
 
-            return switch (field.getHeader())
+            switch (field.getHeader())
             {
-                case CONTENT_LENGTH ->
+                case CONTENT_LENGTH:
                 {
                     getHttpOutput().setApplicationContentLength(-1);
-                    yield super.onRemoveField(field);
+                    return super.onRemoveField(field);
                 }
-                case CONTENT_TYPE ->
+                case CONTENT_TYPE:
                 {
                     _contentType = null;
                     _mimeType = null;
                     if (!isWriting())
                     {
-                        _characterEncoding = switch (_encodingFrom)
+                        switch (_encodingFrom)
                         {
-                            case SET_CHARACTER_ENCODING, SET_LOCALE -> _characterEncoding;
-                            default ->
+                            case SET_CHARACTER_ENCODING:
+                            case SET_LOCALE:
+                                _characterEncoding = _characterEncoding;
+                                break;
+                            default:
                             {
                                 _encodingFrom = EncodingFrom.NOT_SET;
-                                yield null;
+                                _characterEncoding = null;
+                                break;
                             }
-                        };
+                        }
                     }
-                    yield super.onRemoveField(field);
+                    return super.onRemoveField(field);
                 }
-                default -> super.onRemoveField(field);
-            };
+                default:
+                    return super.onRemoveField(field);
+            }
         }
 
         @Override
@@ -551,16 +570,18 @@ public class ServletContextResponse extends ContextResponse implements ServletCo
             if (newField.getHeader() == null)
                 return newField;
 
-            return switch (newField.getHeader())
+            switch (newField.getHeader())
             {
-                case CONTENT_LENGTH ->
+                case CONTENT_LENGTH:
                 {
                     getHttpOutput().setApplicationContentLength(newField.getLongValue());
-                    yield super.onReplaceField(oldField, newField);
+                    return super.onReplaceField(oldField, newField);
                 }
-                case CONTENT_TYPE -> setContentType(newField);
-                default -> super.onReplaceField(oldField, newField);
-            };
+                case CONTENT_TYPE:
+                    return setContentType(newField);
+                default:
+                    return super.onReplaceField(oldField, newField);
+            }
         }
 
         private HttpField setContentType(HttpField field)

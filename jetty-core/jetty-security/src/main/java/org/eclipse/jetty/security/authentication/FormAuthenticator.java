@@ -201,8 +201,11 @@ public class FormAuthenticator extends LoginAuthenticator
                 session.removeAttribute(__J_URI);
 
                 Object post = session.removeAttribute(__J_POST);
-                if (post instanceof Fields futureFields)
+                if (post instanceof Fields)
+                {
+                    Fields futureFields = (Fields)post;
                     FormFields.setFields(request, futureFields);
+                }
 
                 String method = (String)session.removeAttribute(__J_METHOD);
                 if (method != null && request.getMethod().equals(method))
@@ -291,7 +294,7 @@ public class FormAuthenticator extends LoginAuthenticator
         if (LOG.isDebugEnabled())
             LOG.debug("auth {}", authenticationState);
         // Has authentication been revoked?
-        if (authenticationState instanceof Succeeded succeeded && _loginService != null && !_loginService.validate(succeeded.getUserIdentity()))
+        if (authenticationState instanceof Succeeded && _loginService != null && !_loginService.validate(((Succeeded)authenticationState).getUserIdentity()))
         {
             if (LOG.isDebugEnabled())
                 LOG.debug("auth revoked {}", authenticationState);

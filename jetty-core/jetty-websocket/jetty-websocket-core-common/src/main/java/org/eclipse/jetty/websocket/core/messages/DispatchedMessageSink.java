@@ -121,8 +121,11 @@ public abstract class DispatchedMessageSink extends AbstractMessageSink
                 // We only need to handle the error here if none of the callbacks were ever failed.
                 else if (!wasCallbackFailed.get())
                 {
-                    if (failure instanceof CompletionException completionException)
+                    if (failure instanceof CompletionException)
+                    {
+                        CompletionException completionException = (CompletionException)failure;
                         failure = completionException.getCause();
+                    }
 
                     if (onError == null)
                     {

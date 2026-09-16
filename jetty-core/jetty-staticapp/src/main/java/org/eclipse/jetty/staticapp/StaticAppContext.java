@@ -97,12 +97,19 @@ public class StaticAppContext extends ContextHandler
     {
         switch (keyName)
         {
-            case Deployable.DIR_ALLOWED ->
+            case Deployable.DIR_ALLOWED:
             {
-                if (value instanceof String str)
+                if (value instanceof String)
+                {
+                    String str = (String)value;
                     getResourceHandler().setDirAllowed(Boolean.parseBoolean(str));
-                else if (value instanceof Boolean bool)
+                }
+                else if (value instanceof Boolean)
+                {
+                    Boolean bool = (Boolean)value;
                     getResourceHandler().setDirAllowed(bool);
+                }
+                break;
             }
         }
     }

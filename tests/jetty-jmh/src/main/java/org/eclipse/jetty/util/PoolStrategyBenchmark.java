@@ -56,14 +56,23 @@ public class PoolStrategyBenchmark
     {
         misses.reset();
 
-        pool = switch (POOL_TYPE)
+        switch (POOL_TYPE)
         {
-            case "First" -> new ConcurrentPool<>(ConcurrentPool.StrategyType.FIRST, SIZE);
-            case "Random" -> new ConcurrentPool<>(ConcurrentPool.StrategyType.RANDOM, SIZE);
-            case "ThreadId" -> new ConcurrentPool<>(ConcurrentPool.StrategyType.THREAD_ID, SIZE);
-            case "RoundRobin" -> new ConcurrentPool<>(ConcurrentPool.StrategyType.ROUND_ROBIN, SIZE);
-            default -> throw new IllegalStateException();
-        };
+            case "First":
+                pool = new ConcurrentPool<>(ConcurrentPool.StrategyType.FIRST, SIZE);
+                break;
+            case "Random":
+                pool = new ConcurrentPool<>(ConcurrentPool.StrategyType.RANDOM, SIZE);
+                break;
+            case "ThreadId":
+                pool = new ConcurrentPool<>(ConcurrentPool.StrategyType.THREAD_ID, SIZE);
+                break;
+            case "RoundRobin":
+                pool = new ConcurrentPool<>(ConcurrentPool.StrategyType.ROUND_ROBIN, SIZE);
+                break;
+            default:
+                throw new IllegalStateException();
+        }
 
         for (int i = 0; i < SIZE; i++)
         {

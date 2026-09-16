@@ -106,11 +106,21 @@ public class StatisticsHandler extends EventsHandler
         _requestStats.decrement();
         switch (status / 100)
         {
-            case 1 -> _responses1xx.increment();
-            case 2 -> _responses2xx.increment();
-            case 3 -> _responses3xx.increment();
-            case 4 -> _responses4xx.increment();
-            case 5 -> _responses5xx.increment();
+            case 1:
+                _responses1xx.increment();
+                break;
+            case 2:
+                _responses2xx.increment();
+                break;
+            case 3:
+                _responses3xx.increment();
+                break;
+            case 4:
+                _responses4xx.increment();
+                break;
+            case 5:
+                _responses5xx.increment();
+                break;
         }
     }
 

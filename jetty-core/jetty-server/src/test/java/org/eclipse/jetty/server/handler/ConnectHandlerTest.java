@@ -896,7 +896,7 @@ public class ConnectHandlerTest extends AbstractConnectHandlerTest
             String cp = Request.getPathInContext(request);
             switch (cp)
             {
-                case "/echo" ->
+                case "/echo":
                 {
                     StringBuilder builder = new StringBuilder();
                     builder.append(request.getMethod()).append(" ").append(cp);
@@ -931,13 +931,16 @@ public class ConnectHandlerTest extends AbstractConnectHandlerTest
                                     response.write(true, ByteBuffer.wrap(bytes), callback);
                             });
                     }
+                    break;
                 }
-                case "/close" ->
+                case "/close":
                 {
                     request.getConnectionMetaData().getConnection().getEndPoint().close();
                     callback.succeeded();
+                    break;
                 }
-                default -> throw new IllegalStateException();
+                default:
+                    throw new IllegalStateException();
             }
             return true;
         }

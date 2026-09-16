@@ -43,7 +43,7 @@ public class AsyncContextEvent extends AsyncEvent implements Runnable
         _servletContext = ServletContextHandler.getServletContext(context);
         _state = state;
 
-        _baseURI =  (request instanceof HttpServletRequest hsr) ? HttpURI.build(hsr.getRequestURI()).query(hsr.getQueryString()) : null;
+        _baseURI =  (request instanceof HttpServletRequest) ? HttpURI.build(((HttpServletRequest)request).getRequestURI()).query(((HttpServletRequest)request).getQueryString()) : null;
 
         // TODO: Should we store a wrapped request with the attributes?
         // We are setting these attributes during startAsync, when the spec implies that

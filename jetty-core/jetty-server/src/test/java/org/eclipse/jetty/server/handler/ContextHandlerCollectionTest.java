@@ -134,12 +134,19 @@ public class ContextHandlerCollectionTest
         {
             server.start();
 
-            LocalConnector connector = switch (useConnectorNum)
+            LocalConnector connector;
+            switch (useConnectorNum)
                 {
-                    case 0 -> connector0;
-                    case 1 -> connector1;
-                    default -> fail("Unsupported connector number: " + useConnectorNum);
-                };
+                    case 0:
+                        connector = connector0;
+                        break;
+                    case 1:
+                        connector = connector1;
+                        break;
+                    default:
+                        connector = fail("Unsupported connector number: " + useConnectorNum);
+                        break;
+                }
 
             String rawRequest = String.format(("GET %s HTTP/1.1\r\n" +
                 "Host: %s\r\n" +

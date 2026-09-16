@@ -83,19 +83,20 @@ public class ServletContextRequest extends ContextRequest implements ServletCont
 
     public static ServletContextRequest getServletContextRequest(ServletRequest request)
     {
-        if (request instanceof ServletApiRequest servletApiRequest &&
-            servletApiRequest.getServletRequestInfo() instanceof ServletContextRequest servletContextRequest)
+        if (request instanceof ServletApiRequest &&
+            ((ServletApiRequest)request).getServletRequestInfo() instanceof ServletContextRequest servletContextRequest)
             return servletContextRequest;
 
         if (request.getAttribute(ServletChannel.class.getName()) instanceof ServletChannel servletChannel)
             return servletChannel.getServletContextRequest();
 
-        while (request instanceof ServletRequestWrapper wrapper)
+        while (request instanceof ServletRequestWrapper)
         {
+            ServletRequestWrapper wrapper = (ServletRequestWrapper)request;
             request = wrapper.getRequest();
 
-            if (request instanceof ServletApiRequest servletApiRequest &&
-                servletApiRequest.getServletRequestInfo() instanceof  ServletContextRequest servletContextRequest)
+            if (request instanceof ServletApiRequest &&
+                ((ServletApiRequest)request).getServletRequestInfo() instanceof  ServletContextRequest servletContextRequest)
                 return servletContextRequest;
         }
 
@@ -139,17 +140,25 @@ public class ServletContextRequest extends ContextRequest implements ServletCont
             @Override
             protected Object getSyntheticAttribute(String name)
             {
-                return switch (name)
+                switch (name)
                 {
-                    case SSL_CIPHER_SUITE -> super.getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData data ? data.cipherSuite() : null;
-                    case SSL_KEY_SIZE -> super.getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData data ? data.keySize() : null;
-                    case SSL_SESSION_ID -> super.getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData data ? data.sslSessionId() : null;
-                    case PEER_CERTIFICATES -> super.getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData data ? data.peerCertificates() : null;
-                    case ServletContextRequest.MULTIPART_CONFIG_ELEMENT -> _matchedResource.getResource().getServletHolder().getMultipartConfigElement();
-                    case FormFields.MAX_FIELDS_ATTRIBUTE -> getServletContext().getServletContextHandler().getMaxFormKeys();
-                    case FormFields.MAX_LENGTH_ATTRIBUTE -> getServletContext().getServletContextHandler().getMaxFormContentSize();
-                    default -> null;
-                };
+                    case SSL_CIPHER_SUITE:
+                        return super.getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData data ? data.cipherSuite() : null;
+                    case SSL_KEY_SIZE:
+                        return super.getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData data ? data.keySize() : null;
+                    case SSL_SESSION_ID:
+                        return super.getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData data ? data.sslSessionId() : null;
+                    case PEER_CERTIFICATES:
+                        return super.getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData data ? data.peerCertificates() : null;
+                    case ServletContextRequest.MULTIPART_CONFIG_ELEMENT:
+                        return _matchedResource.getResource().getServletHolder().getMultipartConfigElement();
+                    case FormFields.MAX_FIELDS_ATTRIBUTE:
+                        return getServletContext().getServletContextHandler().getMaxFormKeys();
+                    case FormFields.MAX_LENGTH_ATTRIBUTE:
+                        return getServletContext().getServletContextHandler().getMaxFormContentSize();
+                    default:
+                        return null;
+                }
             }
 
             @Override
@@ -403,8 +412,9 @@ public class ServletContextRequest extends ContextRequest implements ServletCont
         ServletRequest servletRequest = getServletRequest();
         if (servletRequest == null)
             return getServletApiRequest();
-        if (!(servletRequest instanceof HttpServletRequest httpServletRequest))
+        if (!(servletRequest instanceof HttpServletRequest))
             throw new IllegalStateException("Not an HTTP request");
+        HttpServletRequest httpServletRequest = (HttpServletRequest)servletRequest;
         return httpServletRequest;
     }
 
@@ -413,8 +423,9 @@ public class ServletContextRequest extends ContextRequest implements ServletCont
         ServletResponse servletResponse = getServletResponse();
         if (servletResponse == null)
             return getServletApiResponse();
-        if  (!(servletResponse instanceof HttpServletResponse httpServletResponse))
+        if  (!(servletResponse instanceof HttpServletResponse))
             throw new IllegalStateException("Not an HTTP response");
+        HttpServletResponse httpServletResponse = (HttpServletResponse)servletResponse;
         return httpServletResponse;
     }
 
@@ -453,8 +464,9 @@ public class ServletContextRequest extends ContextRequest implements ServletCont
 
     public void addEventListener(EventListener listener)
     {
-        if (listener instanceof ServletRequestAttributeListener attributeListener)
+        if (listener instanceof ServletRequestAttributeListener)
         {
+            ServletRequestAttributeListener attributeListener = (ServletRequestAttributeListener)listener;
             if (_requestAttributeListeners == null)
                 _requestAttributeListeners = new ArrayList<>();
             _requestAttributeListeners.add(attributeListener);

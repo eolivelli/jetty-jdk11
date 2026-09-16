@@ -105,7 +105,7 @@ public class PersistAuthenticationCredentialsTest
                 if (LOG.isDebugEnabled())
                     LOG.debug("auth {}", authenticationState);
                 // Has authentication been revoked?
-                if (authenticationState instanceof AuthenticationState.Succeeded succeeded && _loginService != null && !_loginService.validate(succeeded.getUserIdentity()))
+                if (authenticationState instanceof AuthenticationState.Succeeded && _loginService != null && !_loginService.validate(((AuthenticationState.Succeeded)authenticationState).getUserIdentity()))
                 {
                     if (LOG.isDebugEnabled())
                         LOG.debug("auth revoked {}", authenticationState);

@@ -181,12 +181,15 @@ public class ServletMultiPartFormData
                     ByteBufferPool byteBufferPool = servletContextRequest.getComponents().getByteBufferPool();
                     ConnectionMetaData connectionMetaData = servletContextRequest.getConnectionMetaData();
                     Connection connection = connectionMetaData.getConnection();
-                    int bufferSize = connection instanceof AbstractConnection c ? c.getInputBufferSize() : ByteBufferPool.SIZED_NON_POOLING.getSize();
+                    int bufferSize = connection instanceof AbstractConnection ? ((AbstractConnection)connection).getInputBufferSize() : ByteBufferPool.SIZED_NON_POOLING.getSize();
                     ByteBufferPool.Sized sized = new ByteBufferPool.Sized(byteBufferPool, false, bufferSize);
 
                     Content.Source source;
-                    if (servletRequest instanceof ServletApiRequest servletApiRequest)
+                    if (servletRequest instanceof ServletApiRequest)
+                    {
+                        ServletApiRequest servletApiRequest = (ServletApiRequest)servletRequest;
                         source = servletApiRequest.getRequest();
+                    }
                     else
                         source = new InputStreamContentSource(servletRequest.getInputStream(), sized);
 

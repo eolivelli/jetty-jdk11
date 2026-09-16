@@ -257,7 +257,7 @@ public class CompressionHandler extends Handler.Wrapper
                 continue;
             switch (header)
             {
-                case CONTENT_ENCODING ->
+                case CONTENT_ENCODING:
                 {
                     // We are only interested in the last encoding.
                     String contentEncoding = field.getValue();
@@ -265,8 +265,9 @@ public class CompressionHandler extends Handler.Wrapper
                         requestContentEncoding = contentEncoding;
                     else
                         requestContentEncoding = null;
+                    break;
                 }
-                case ACCEPT_ENCODING ->
+                case ACCEPT_ENCODING:
                 {
                     // Collect all Accept-Encoding headers.
                     if (qualityCSV == null)
@@ -277,9 +278,14 @@ public class CompressionHandler extends Handler.Wrapper
                         qualityCSV = new QuotedQualityCSV(httpCompliance, complianceListener, null);
                     }
                     qualityCSV.addValue(field.getValue());
+                    break;
                 }
-                case IF_MATCH -> ifMatch = HttpField.asList(ifMatch, field.getValue());
-                case IF_NONE_MATCH -> ifNoneMatch = HttpField.asList(ifNoneMatch, field.getValue());
+                case IF_MATCH:
+                    ifMatch = HttpField.asList(ifMatch, field.getValue());
+                    break;
+                case IF_NONE_MATCH:
+                    ifNoneMatch = HttpField.asList(ifNoneMatch, field.getValue());
+                    break;
             }
         }
 
@@ -295,8 +301,9 @@ public class CompressionHandler extends Handler.Wrapper
         }
         catch (Throwable x)
         {
-            if (x instanceof HttpException http)
+            if (x instanceof HttpException)
             {
+                HttpException http = (HttpException)x;
                 int statusCode = http.getCode();
                 if (statusCode == HttpStatus.UNSUPPORTED_MEDIA_TYPE_415)
                 {

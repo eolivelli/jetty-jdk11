@@ -464,7 +464,7 @@ public class ServletChannel
                     case SEND_ERROR:
                     {
                         Object errorException = _servletContextRequest.getAttribute((RequestDispatcher.ERROR_EXCEPTION));
-                        Throwable cause = errorException instanceof Throwable throwable ? throwable : null;
+                        Throwable cause = errorException instanceof Throwable ? (Throwable)errorException : null;
                         try
                         {
                             // Get ready to send an error response
@@ -657,8 +657,9 @@ public class ServletChannel
             .whenComplete((result, failure) -> asyncContext.complete());
 
         Connection connection = _servletContextRequest.getConnectionMetaData().getConnection();
-        if (connection instanceof Connection.Tunnel upgradeableConnection)
+        if (connection instanceof Connection.Tunnel)
         {
+            Connection.Tunnel upgradeableConnection = (Connection.Tunnel)connection;
             out.flush(); // commit the 101 response
             upgradeableConnection.startTunnel();
         }
@@ -940,8 +941,11 @@ public class ServletChannel
             {
                 //the container has dispatched to a different context
                 ServletContext targetContext = getServletContextHandler().getServletContext().getContext(asyncContextEvent.getDispatchContext().getContextPath());
-                if (targetContext instanceof CrossContextServletContext crossContextServletContext)
+                if (targetContext instanceof CrossContextServletContext)
+                {
+                    CrossContextServletContext crossContextServletContext = (CrossContextServletContext)targetContext;
                     dispatchCrossContextAsync(crossContextServletContext);
+                }
             }
         }
         finally

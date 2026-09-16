@@ -75,14 +75,17 @@ public class HTTP2OverQuicTest extends AbstractTest
 
         HTTP2ServerConnectionFactory h2 = new HTTP2ServerConnectionFactory(httpConfig);
 
-        connector = switch (transportType)
+        switch (transportType)
         {
-            case QUICHE ->
+            case QUICHE:
             {
                 QuicheServerQuicConfiguration serverQuicConfig = new QuicheServerQuicConfiguration(workDir.getEmptyPathDir());
-                yield new QuicheServerConnector(server, sslContextFactory, serverQuicConfig, h2);
+                connector = new QuicheServerConnector(server, sslContextFactory, serverQuicConfig, h2);
+                break;
             }
-        };
+            default:
+                throw new IllegalStateException();
+        }
         server.addConnector(connector);
 
         server.setHandler(handler);
@@ -97,10 +100,14 @@ public class HTTP2OverQuicTest extends AbstractTest
         httpClient = new HttpClient(new HttpClientTransportOverHTTP2(http2Client));
         httpClient.start();
 
-        transport = switch (transportType)
+        switch (transportType)
         {
-            case QUICHE -> new QuicheTransport(new QuicheClientQuicConfiguration());
-        };
+            case QUICHE:
+                transport = new QuicheTransport(new QuicheClientQuicConfiguration());
+                break;
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     @AfterEach

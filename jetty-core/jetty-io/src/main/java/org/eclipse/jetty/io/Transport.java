@@ -275,8 +275,11 @@ public interface Transport
         {
             if (this == obj)
                 return true;
-            if (obj instanceof Unix unix)
+            if (obj instanceof Unix)
+            {
+                Unix unix = (Unix)obj;
                 return Objects.equals(socketAddress, unix.socketAddress);
+            }
             return false;
         }
 
@@ -355,8 +358,11 @@ public interface Transport
             Transport result = getWrapped();
             while (true)
             {
-                if (result instanceof Wrapper wrapper)
+                if (result instanceof Wrapper)
+                {
+                    Wrapper wrapper = (Wrapper)result;
                     result = wrapper.getWrapped();
+                }
                 else
                     break;
             }

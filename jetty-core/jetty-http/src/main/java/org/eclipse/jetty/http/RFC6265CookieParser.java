@@ -376,20 +376,35 @@ public class RFC6265CookieParser implements CookieParser
                             // Handle $NAME entries from the older https://www.rfc-editor.org/rfc/rfc2965#section-3.4 spec
                             switch (attributeName.toLowerCase(Locale.ENGLISH))
                             {
-                                case "$path" -> cookiePath = value;
-                                case "$domain" -> cookieDomain = value;
-                                case "$port" -> cookieComment = "$port=" + value;
-                                case "$version" -> cookieVersion = Integer.parseInt(value);
+                                case "$path":
+                                    cookiePath = value;
+                                    break;
+                                case "$domain":
+                                    cookieDomain = value;
+                                    break;
+                                case "$port":
+                                    cookieComment = "$port=" + value;
+                                    break;
+                                case "$version":
+                                    cookieVersion = Integer.parseInt(value);
+                                    break;
                                 // Known and Valid attribute $NAMES that we don't do anything special with.
-                                case "$expires", "$max-age", "$commenturl", "$comment", "$discard", "$secure" ->
+                                case "$expires":
+                                case "$max-age":
+                                case "$commenturl":
+                                case "$comment":
+                                case "$discard":
+                                case "$secure":
                                 {
+                                    break;
                                     // Ignored. Not an invalid cookie, nor a compliance violation.
                                 }
-                                default ->
+                                default:
                                 {
                                     if (!ComplianceUtils.allows(_complianceMode, CookieCompliance.Violation.INVALID_COOKIES, String.format("Invalid Cookie attribute [%s]", attributeName), _complianceListener))
                                         throw new IllegalArgumentException("Invalid Cookie attribute: " + attributeName);
                                     state = State.INVALID_COOKIE;
+                                    break;
                                 }
                             }
                         }

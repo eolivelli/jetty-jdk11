@@ -144,11 +144,14 @@ public abstract class AbstractLifeCycle implements LifeCycle
     public boolean isRunning()
     {
         State state = _state;
-        return switch (state)
+        switch (state)
         {
-            case STARTED, STARTING -> true;
-            default -> false;
-        };
+            case STARTED:
+            case STARTING:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override

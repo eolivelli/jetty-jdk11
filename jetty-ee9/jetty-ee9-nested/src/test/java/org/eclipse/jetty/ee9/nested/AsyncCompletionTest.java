@@ -782,8 +782,12 @@ public class AsyncCompletionTest extends HttpServerTestFixture
 
             switch (_style)
             {
-                case BUFFER -> out.sendContent(BufferUtil.toBuffer(bytes), Callback.from(context::complete));
-                case STREAM -> out.sendContent(new ByteArrayInputStream(bytes), Callback.from(context::complete));
+                case BUFFER:
+                    out.sendContent(BufferUtil.toBuffer(bytes), Callback.from(context::complete));
+                    break;
+                case STREAM:
+                    out.sendContent(new ByteArrayInputStream(bytes), Callback.from(context::complete));
+                    break;
             }
 
             _wait.countDown();

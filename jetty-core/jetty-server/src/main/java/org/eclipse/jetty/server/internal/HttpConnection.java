@@ -793,16 +793,22 @@ public class HttpConnection extends AbstractMetaDataConnection implements Runnab
         protected void onAborted(Throwable cause)
         {
             // If the cause is a CSE, then take the callback and give it to the CSE to be called once cancellation is complete.
-            if (cause instanceof CancelSendException cancelSend)
+            if (cause instanceof CancelSendException)
+            {
+                CancelSendException cancelSend = (CancelSendException)cause;
                 cancelSend.setCallback(takeCallbackAndReset());
+            }
         }
 
         @Override
         protected void onCompleted(Throwable causeOrNull)
         {
             // If the cause is a CSE, then signal to it that the ICB is complete and any join call can return.
-            if (causeOrNull instanceof CancelSendException cancelSendException)
+            if (causeOrNull instanceof CancelSendException)
+            {
+                CancelSendException cancelSendException = (CancelSendException)causeOrNull;
                 cancelSendException.complete();
+            }
             super.onCompleted(causeOrNull);
         }
 
@@ -942,14 +948,30 @@ public class HttpConnection extends AbstractMetaDataConnection implements Runnab
                         _bytesOut.addAndGet(bytes);
                         switch (gatherWrite)
                         {
-                            case 7 -> getEndPoint().write(this, headerByteBuffer, chunkByteBuffer, contentByteBuffer);
-                            case 6 -> getEndPoint().write(this, headerByteBuffer, chunkByteBuffer);
-                            case 5 -> getEndPoint().write(this, headerByteBuffer, contentByteBuffer);
-                            case 4 -> getEndPoint().write(this, headerByteBuffer);
-                            case 3 -> getEndPoint().write(this, chunkByteBuffer, contentByteBuffer);
-                            case 2 -> getEndPoint().write(this, chunkByteBuffer);
-                            case 1 -> getEndPoint().write(this, contentByteBuffer);
-                            default -> succeeded();
+                            case 7:
+                                getEndPoint().write(this, headerByteBuffer, chunkByteBuffer, contentByteBuffer);
+                                break;
+                            case 6:
+                                getEndPoint().write(this, headerByteBuffer, chunkByteBuffer);
+                                break;
+                            case 5:
+                                getEndPoint().write(this, headerByteBuffer, contentByteBuffer);
+                                break;
+                            case 4:
+                                getEndPoint().write(this, headerByteBuffer);
+                                break;
+                            case 3:
+                                getEndPoint().write(this, chunkByteBuffer, contentByteBuffer);
+                                break;
+                            case 2:
+                                getEndPoint().write(this, chunkByteBuffer);
+                                break;
+                            case 1:
+                                getEndPoint().write(this, contentByteBuffer);
+                                break;
+                            default:
+                                succeeded();
+                                break;
                         }
 
                         return Action.SCHEDULED;

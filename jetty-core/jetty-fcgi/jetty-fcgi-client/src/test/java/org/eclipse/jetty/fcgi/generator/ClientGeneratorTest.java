@@ -84,26 +84,30 @@ public class ClientGeneratorTest
                 assertEquals(id, request);
                 switch (field.getName())
                 {
-                    case shortShortName ->
+                    case shortShortName:
                     {
                         assertEquals(shortShortValue, field.getValue());
                         params.set(params.get() * primes[0]);
+                        break;
                     }
-                    case shortLongName ->
+                    case shortLongName:
                     {
                         assertEquals(shortLongValue, field.getValue());
                         params.set(params.get() * primes[1]);
+                        break;
                     }
-                    case longShortName ->
+                    case longShortName:
                     {
                         assertEquals(longShortValue, field.getValue());
                         params.set(params.get() * primes[2]);
+                        break;
                     }
-                    default ->
+                    default:
                     {
                         assertEquals(longLongName, field.getName());
                         assertEquals(longLongValue, field.getValue());
                         params.set(params.get() * primes[3]);
+                        break;
                     }
                 }
             }

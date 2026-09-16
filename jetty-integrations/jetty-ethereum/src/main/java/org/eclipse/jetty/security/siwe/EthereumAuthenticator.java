@@ -475,13 +475,14 @@ public class EthereumAuthenticator extends LoginAuthenticator implements Dumpabl
             String message;
             switch (mimeType)
             {
-                case FORM_ENCODED ->
+                case FORM_ENCODED:
                 {
                     Fields fields = FormFields.getFields(contentSource, request, getFormEncodedCharset(request), 10, _maxMessageSize);
                     signature = fields.get("signature").getValue();
                     message = fields.get("message").getValue();
+                    break;
                 }
-                case MULTIPART_FORM_DATA ->
+                case MULTIPART_FORM_DATA:
                 {
                     MultiPartConfig config = Request.getMultiPartConfig(request, null)
                         .maxSize(_maxMessageSize)
@@ -491,8 +492,10 @@ public class EthereumAuthenticator extends LoginAuthenticator implements Dumpabl
                     MultiPartFormData.Parts parts = MultiPartFormData.from(contentSource, request, contentType, config).get();
                     signature = parts.getFirst("signature").getContentAsString(StandardCharsets.ISO_8859_1);
                     message = parts.getFirst("message").getContentAsString(StandardCharsets.ISO_8859_1);
+                    break;
                 }
-                default -> throw new ServerAuthException("Unsupported mime type: " + mimeType);
+                default:
+                    throw new ServerAuthException("Unsupported mime type: " + mimeType);
             };
 
             // The browser may convert LF to CRLF, EIP4361 specifies to only use LF.

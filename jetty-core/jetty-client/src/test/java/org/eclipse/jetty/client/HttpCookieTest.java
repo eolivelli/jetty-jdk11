@@ -187,14 +187,19 @@ public class HttpCookieTest extends AbstractHttpClientServerTest
                     List<HttpCookie> cookies = Request.getCookies(request);
                     switch (target)
                     {
-                        case "/", "/foo", "/foo/bar" ->
+                        case "/":
+                        case "/foo":
+                        case "/foo/bar":
                         {
                             assertEquals(1, cookies.size(), target);
                             HttpCookie cookie = cookies.get(0);
                             assertEquals(cookieName, cookie.getName(), target);
                             assertEquals(cookieValue, cookie.getValue(), target);
+                            break;
                         }
-                        default -> fail("Unrecognized target: " + target);
+                        default:
+                            fail("Unrecognized target: " + target);
+                            break;
                     }
                 }
             }
@@ -242,15 +247,25 @@ public class HttpCookieTest extends AbstractHttpClientServerTest
                     List<HttpCookie> cookies = Request.getCookies(request);
                     switch (target)
                     {
-                        case "/", "/foobar" -> assertEquals(0, cookies.size(), target);
-                        case "/foo", "/foo/", "/foo/bar", "/foo/bar/", "/foo/bar/baz" ->
+                        case "/":
+                        case "/foobar":
+                            assertEquals(0, cookies.size(), target);
+                            break;
+                        case "/foo":
+                        case "/foo/":
+                        case "/foo/bar":
+                        case "/foo/bar/":
+                        case "/foo/bar/baz":
                         {
                             assertEquals(1, cookies.size(), target);
                             HttpCookie cookie = cookies.get(0);
                             assertEquals(cookieName, cookie.getName(), target);
                             assertEquals(cookieValue, cookie.getValue(), target);
+                            break;
                         }
-                        default -> fail("Unrecognized Target: " + target);
+                        default:
+                            fail("Unrecognized Target: " + target);
+                            break;
                     }
                 }
             }
@@ -298,15 +313,25 @@ public class HttpCookieTest extends AbstractHttpClientServerTest
                     List<HttpCookie> cookies = Request.getCookies(request);
                     switch (target)
                     {
-                        case "/", "/foo", "/foo/", "/foobar" -> assertEquals(0, cookies.size(), target);
-                        case "/foo/bar", "/foo/bar/", "/foo/bar/baz" ->
+                        case "/":
+                        case "/foo":
+                        case "/foo/":
+                        case "/foobar":
+                            assertEquals(0, cookies.size(), target);
+                            break;
+                        case "/foo/bar":
+                        case "/foo/bar/":
+                        case "/foo/bar/baz":
                         {
                             assertEquals(1, cookies.size(), target);
                             HttpCookie cookie = cookies.get(0);
                             assertEquals(cookieName, cookie.getName(), target);
                             assertEquals(cookieValue, cookie.getValue(), target);
+                            break;
                         }
-                        default -> fail("Unrecognized Target: " + target);
+                        default:
+                            fail("Unrecognized Target: " + target);
+                            break;
                     }
                 }
             }
@@ -354,15 +379,23 @@ public class HttpCookieTest extends AbstractHttpClientServerTest
                     List<HttpCookie> cookies = Request.getCookies(request);
                     switch (target)
                     {
-                        case "/", "/foo", "/foo/barbaz" -> assertEquals(0, cookies.size(), target);
-                        case "/foo/bar", "/foo/bar/" ->
+                        case "/":
+                        case "/foo":
+                        case "/foo/barbaz":
+                            assertEquals(0, cookies.size(), target);
+                            break;
+                        case "/foo/bar":
+                        case "/foo/bar/":
                         {
                             assertEquals(1, cookies.size(), target);
                             HttpCookie cookie = cookies.get(0);
                             assertEquals(cookieName, cookie.getName(), target);
                             assertEquals(cookieValue, cookie.getValue(), target);
+                            break;
                         }
-                        default -> fail("Unrecognized Target: " + target);
+                        default:
+                            fail("Unrecognized Target: " + target);
+                            break;
                     }
                 }
             }
@@ -410,15 +443,23 @@ public class HttpCookieTest extends AbstractHttpClientServerTest
                     List<HttpCookie> cookies = Request.getCookies(request);
                     switch (target)
                     {
-                        case "/", "/foobar" -> assertEquals(0, cookies.size(), target);
-                        case "/foo", "/foo/", "/foo/bar" ->
+                        case "/":
+                        case "/foobar":
+                            assertEquals(0, cookies.size(), target);
+                            break;
+                        case "/foo":
+                        case "/foo/":
+                        case "/foo/bar":
                         {
                             assertEquals(1, cookies.size(), target);
                             HttpCookie cookie = cookies.get(0);
                             assertEquals(cookieName, cookie.getName(), target);
                             assertEquals(cookieValue, cookie.getValue(), target);
+                            break;
                         }
-                        default -> fail("Unrecognized Target: " + target);
+                        default:
+                            fail("Unrecognized Target: " + target);
+                            break;
                     }
                 }
             }
@@ -469,15 +510,21 @@ public class HttpCookieTest extends AbstractHttpClientServerTest
                     List<HttpCookie> cookies = Request.getCookies(request);
                     switch (target)
                     {
-                        case "/" -> assertEquals(0, cookies.size(), target);
-                        case "/foo", "/foo/bar" ->
+                        case "/":
+                            assertEquals(0, cookies.size(), target);
+                            break;
+                        case "/foo":
+                        case "/foo/bar":
                         {
                             assertEquals(1, cookies.size(), target);
                             HttpCookie cookie = cookies.get(0);
                             assertEquals(cookieName, cookie.getName(), target);
                             assertEquals(cookieValue2, cookie.getValue(), target);
+                            break;
                         }
-                        default -> fail("Unrecognized Target: " + target);
+                        default:
+                            fail("Unrecognized Target: " + target);
+                            break;
                     }
                 }
             }
@@ -528,22 +575,30 @@ public class HttpCookieTest extends AbstractHttpClientServerTest
                     List<HttpCookie> cookies = Request.getCookies(request);
                     switch (target)
                     {
-                        case "/" -> assertEquals(0, cookies.size(), target);
-                        case "/foo", "/foo/bar" ->
+                        case "/":
+                            assertEquals(0, cookies.size(), target);
+                            break;
+                        case "/foo":
+                        case "/foo/bar":
                         {
                             assertEquals(1, cookies.size(), target);
                             HttpCookie cookie1 = cookies.get(0);
                             assertEquals(cookieName, cookie1.getName(), target);
                             assertEquals(cookieValue1, cookie1.getValue(), target);
+                            break;
                         }
-                        case "/bar", "/bar/foo" ->
+                        case "/bar":
+                        case "/bar/foo":
                         {
                             assertEquals(1, cookies.size(), target);
                             HttpCookie cookie2 = cookies.get(0);
                             assertEquals(cookieName, cookie2.getName(), target);
                             assertEquals(cookieValue2, cookie2.getValue(), target);
+                            break;
                         }
-                        default -> fail("Unrecognized Target: " + target);
+                        default:
+                            fail("Unrecognized Target: " + target);
+                            break;
                     }
                 }
             }
@@ -594,15 +649,18 @@ public class HttpCookieTest extends AbstractHttpClientServerTest
                     List<HttpCookie> cookies = Request.getCookies(request);
                     switch (target)
                     {
-                        case "/" -> assertEquals(0, cookies.size(), target);
-                        case "/foo" ->
+                        case "/":
+                            assertEquals(0, cookies.size(), target);
+                            break;
+                        case "/foo":
                         {
                             assertEquals(1, cookies.size(), target);
                             HttpCookie cookie = cookies.get(0);
                             assertEquals(cookieName, cookie.getName(), target);
                             assertEquals(cookieValue1, cookie.getValue(), target);
+                            break;
                         }
-                        case "/foo/bar" ->
+                        case "/foo/bar":
                         {
                             assertEquals(2, cookies.size(), target);
                             HttpCookie cookie1 = cookies.get(0);
@@ -613,8 +671,11 @@ public class HttpCookieTest extends AbstractHttpClientServerTest
                             values.add(cookie1.getValue());
                             values.add(cookie2.getValue());
                             assertThat(target, values, containsInAnyOrder(cookieValue1, cookieValue2));
+                            break;
                         }
-                        default -> fail("Unrecognized Target: " + target);
+                        default:
+                            fail("Unrecognized Target: " + target);
+                            break;
                     }
                 }
             }
@@ -662,15 +723,23 @@ public class HttpCookieTest extends AbstractHttpClientServerTest
                     List<HttpCookie> cookies = Request.getCookies(request);
                     switch (target)
                     {
-                        case "/", "/foo", "/foobar" -> assertEquals(0, cookies.size(), target);
-                        case "/foo/", "/foo/bar" ->
+                        case "/":
+                        case "/foo":
+                        case "/foobar":
+                            assertEquals(0, cookies.size(), target);
+                            break;
+                        case "/foo/":
+                        case "/foo/bar":
                         {
                             assertEquals(1, cookies.size(), target);
                             HttpCookie cookie = cookies.get(0);
                             assertEquals(cookieName, cookie.getName(), target);
                             assertEquals(cookieValue, cookie.getValue(), target);
+                            break;
                         }
-                        default -> fail("Unrecognized Target: " + target);
+                        default:
+                            fail("Unrecognized Target: " + target);
+                            break;
                     }
                 }
             }

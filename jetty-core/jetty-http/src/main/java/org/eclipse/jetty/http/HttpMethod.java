@@ -179,16 +179,23 @@ public enum HttpMethod
      */
     static HttpMethod lookAheadGet(ByteBuffer buffer, int lookAhead)
     {
-        return switch (lookAhead)
+        switch (lookAhead)
         {
-            case ACL_AS_INT -> ACL;
-            case GET_AS_INT -> GET;
-            case PRI_AS_INT -> PRI;
-            case PUT_AS_INT -> PUT;
-            case POST_AS_INT -> (buffer.get(buffer.position() + 4) == ' ') ? POST : LOOK_AHEAD.getBest(buffer, 0, buffer.remaining());
-            case HEAD_AS_INT -> (buffer.get(buffer.position() + 4) == ' ') ? HEAD : LOOK_AHEAD.getBest(buffer, 0, buffer.remaining());
-            default -> LOOK_AHEAD.getBest(buffer, 0, buffer.remaining());
-        };
+            case ACL_AS_INT:
+                return ACL;
+            case GET_AS_INT:
+                return GET;
+            case PRI_AS_INT:
+                return PRI;
+            case PUT_AS_INT:
+                return PUT;
+            case POST_AS_INT:
+                return (buffer.get(buffer.position() + 4) == ' ') ? POST : LOOK_AHEAD.getBest(buffer, 0, buffer.remaining());
+            case HEAD_AS_INT:
+                return (buffer.get(buffer.position() + 4) == ' ') ? HEAD : LOOK_AHEAD.getBest(buffer, 0, buffer.remaining());
+            default:
+                return LOOK_AHEAD.getBest(buffer, 0, buffer.remaining());
+        }
     }
 
     /**

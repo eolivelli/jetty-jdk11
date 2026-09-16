@@ -219,8 +219,11 @@ public class CustomTransportTest
         {
             if (this == obj)
                 return true;
-            if (obj instanceof GatewayTransport that)
+            if (obj instanceof GatewayTransport)
+            {
+                GatewayTransport that = (GatewayTransport)obj;
                 return Objects.equals(gateway, that.gateway);
+            }
             return false;
         }
     }

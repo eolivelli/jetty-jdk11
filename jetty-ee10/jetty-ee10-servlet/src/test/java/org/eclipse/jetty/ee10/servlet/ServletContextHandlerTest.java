@@ -1818,8 +1818,9 @@ public class ServletContextHandlerTest
             @Override
             public boolean handle(Request request, Response response, Callback callback) throws Exception
             {
-                if (request instanceof ServletContextRequest servletContextRequest)
+                if (request instanceof ServletContextRequest)
                 {
+                    ServletContextRequest servletContextRequest = (ServletContextRequest)request;
                     ServletApiRequest httpServletRequest = servletContextRequest.getServletApiRequest();
                     Request.addCompletionListener(request, x -> onStreamCompleting(httpServletRequest));
                     return super.handle(request, response, Callback.from(() -> onCallbackCompleting(httpServletRequest), callback));
@@ -2761,8 +2762,9 @@ public class ServletContextHandlerTest
         Object trackedResources = mbeanServer.getAttribute(objectName, "trackedResources");
         assertNotNull(trackedResources);
         assertThat(trackedResources, instanceOf(List.class));
-        if (trackedResources instanceof List<?> trackedList)
+        if (trackedResources instanceof List<?>)
         {
+            List<?> trackedList = (List<?>)trackedResources;
             assertThat(trackedList.size(), is(1));
             Resource tracked = (Resource)trackedList.get(0);
             FileSystem originalJarFileSystem = jarResource.getPath().getFileSystem();

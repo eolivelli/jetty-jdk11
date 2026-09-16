@@ -677,8 +677,11 @@ public interface HttpFields extends Iterable<HttpField>, Supplier<HttpFields>
             @Override
             public boolean contains(Object o)
             {
-                if (o instanceof String s)
+                if (o instanceof String)
+                {
+                    String s = (String)o;
                     return seenByName != null && seenByName.contains(s) || seenByHeader.contains(HttpHeader.CACHE.get(s));
+                }
                 return false;
             }
         };
@@ -965,8 +968,8 @@ public interface HttpFields extends Iterable<HttpField>, Supplier<HttpFields>
      */
     static Map<String, List<String>> asMap(HttpFields fields)
     {
-        return (fields instanceof HttpFields.Mutable mutable)
-            ? new HttpFieldsMap.Mutable(mutable)
+        return (fields instanceof HttpFields.Mutable)
+            ? new HttpFieldsMap.Mutable((HttpFields.Mutable)fields)
             : new HttpFieldsMap.Immutable(fields);
     }
 

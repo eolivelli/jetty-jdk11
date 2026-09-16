@@ -1927,8 +1927,9 @@ public abstract class SslContextFactory extends ContainerLifeCycle implements Du
             sslParams.setCipherSuites(_selectedCipherSuites);
         if (_selectedProtocols != null)
             sslParams.setProtocols(_selectedProtocols);
-        if (this instanceof Server server)
+        if (this instanceof Server)
         {
+            Server server = (Server)this;
             if (server.getWantClientAuth())
                 sslParams.setWantClientAuth(true);
             if (server.getNeedClientAuth())

@@ -95,44 +95,49 @@ public class SessionHandlerTest
                 {
                     switch (split[0])
                     {
-                        case "set" ->
+                        case "set":
                         {
                             if (session == null)
                                 throw new IllegalStateException("No Session");
 
                             if (split.length > 2)
                                 session.setAttribute(split[1], split[2]);
+                            break;
                         }
 
-                        case "remove" ->
+                        case "remove":
                         {
                             if (session == null)
                                 throw new IllegalStateException("No Session");
 
                             if (split.length > 1)
                                 session.setAttribute(split[1], null);
+                            break;
                         }
 
-                        case "create" ->
+                        case "create":
                         {
                             if (session != null)
                                 throw new IllegalStateException("Session already created");
                             session = request.getSession(true);
+                            break;
                         }
 
-                        case "invalidate" ->
+                        case "invalidate":
                         {
                             if (session == null)
                                 throw new IllegalStateException("No Session");
                             session.invalidate();
                             session = null;
+                            break;
                         }
 
-                        case "change" ->
+                        case "change":
                         {
                             if (session == null)
                                 throw new IllegalStateException("No Session");
                             request.changeSessionId();
+                            break;
                         }
                     }
                 }

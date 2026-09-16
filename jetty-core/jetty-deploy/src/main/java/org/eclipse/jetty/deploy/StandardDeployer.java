@@ -79,8 +79,11 @@ public class StandardDeployer extends ContainerLifeCycle implements Deployer
     {
         if  (super.addEventListener(listener))
         {
-            if (listener instanceof Deployer.Listener deployerListener)
+            if (listener instanceof Deployer.Listener)
+            {
+                Deployer.Listener deployerListener = (Deployer.Listener)listener;
                 _listenerAdaptor._listeners.add(deployerListener);
+            }
             return true;
         }
         return false;
@@ -91,8 +94,11 @@ public class StandardDeployer extends ContainerLifeCycle implements Deployer
     {
         if  (super.removeEventListener(listener))
         {
-            if (listener instanceof Deployer.Listener deployerListener)
+            if (listener instanceof Deployer.Listener)
+            {
+                Deployer.Listener deployerListener = (Deployer.Listener)listener;
                 _listenerAdaptor._listeners.remove(deployerListener);
+            }
             return true;
         }
         return false;
@@ -223,8 +229,9 @@ public class StandardDeployer extends ContainerLifeCycle implements Deployer
         @Override
         public void beanAdded(Container parent, Object child)
         {
-            if (child instanceof ContextHandler contextHandler)
+            if (child instanceof ContextHandler)
             {
+                ContextHandler contextHandler = (ContextHandler)child;
                 notify(contextHandler, contextHandler.isStarted()
                     ? Deployer.Listener::onDeployed
                     : Deployer.Listener::onDeploying);
@@ -234,8 +241,9 @@ public class StandardDeployer extends ContainerLifeCycle implements Deployer
         @Override
         public void beanRemoved(Container parent, Object child)
         {
-            if (child instanceof ContextHandler contextHandler)
+            if (child instanceof ContextHandler)
             {
+                ContextHandler contextHandler = (ContextHandler)child;
                 notify(contextHandler, contextHandler.isStarted()
                     ? Deployer.Listener::onUndeploying
                     : Deployer.Listener::onUndeployed);
@@ -245,15 +253,19 @@ public class StandardDeployer extends ContainerLifeCycle implements Deployer
         @Override
         public void lifeCycleFailure(LifeCycle bean, Throwable cause)
         {
-            if (bean instanceof ContextHandler contextHandler)
+            if (bean instanceof ContextHandler)
+            {
+                ContextHandler contextHandler = (ContextHandler)bean;
                 notify(contextHandler, (dl, ch) -> dl.onFailure(ch, cause));
+            }
         }
 
         @Override
         public void lifeCycleStarted(LifeCycle bean)
         {
-            if (bean instanceof ContextHandler contextHandler)
+            if (bean instanceof ContextHandler)
             {
+                ContextHandler contextHandler = (ContextHandler)bean;
                 notify(contextHandler, Deployer.Listener::onStarted);
                 if (_contexts.contains(contextHandler))
                     notify(contextHandler, Deployer.Listener::onDeployed);
@@ -263,8 +275,9 @@ public class StandardDeployer extends ContainerLifeCycle implements Deployer
         @Override
         public void lifeCycleStarting(LifeCycle event)
         {
-            if (event instanceof ContextHandler contextHandler)
+            if (event instanceof ContextHandler)
             {
+                ContextHandler contextHandler = (ContextHandler)event;
                 if (!_contexts.contains(contextHandler))
                     notify(contextHandler, Deployer.Listener::onDeploying);
                 notify(contextHandler, Deployer.Listener::onStarting);
@@ -274,8 +287,9 @@ public class StandardDeployer extends ContainerLifeCycle implements Deployer
         @Override
         public void lifeCycleStopped(LifeCycle event)
         {
-            if (event instanceof ContextHandler contextHandler)
+            if (event instanceof ContextHandler)
             {
+                ContextHandler contextHandler = (ContextHandler)event;
                 notify(contextHandler, Deployer.Listener::onStopped);
                 if (!_contexts.contains(contextHandler))
                     notify(contextHandler, Deployer.Listener::onUndeployed);
@@ -285,8 +299,9 @@ public class StandardDeployer extends ContainerLifeCycle implements Deployer
         @Override
         public void lifeCycleStopping(LifeCycle event)
         {
-            if (event instanceof ContextHandler contextHandler)
+            if (event instanceof ContextHandler)
             {
+                ContextHandler contextHandler = (ContextHandler)event;
                 if (_contexts.contains(contextHandler))
                     notify(contextHandler, Deployer.Listener::onUndeploying);
                 notify(contextHandler, Deployer.Listener::onStopping);

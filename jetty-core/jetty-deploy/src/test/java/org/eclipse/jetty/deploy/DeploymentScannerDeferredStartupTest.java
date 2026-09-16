@@ -130,8 +130,9 @@ public class DeploymentScannerDeferredStartupTest extends AbstractCleanEnvironme
                 @Override
                 public void beanAdded(Container parent, Object child)
                 {
-                    if (child instanceof Scanner scanner)
+                    if (child instanceof Scanner)
                     {
+                        Scanner scanner = (Scanner)child;
                         scanner.addEventListener(eventCaptureListener);
                         scanner.addListener(new Scanner.ScanCycleListener()
                         {

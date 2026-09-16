@@ -54,12 +54,15 @@ public class EagerFormHandler extends Handler.Wrapper
         if (mimeType == null)
             return super.handle(request, response, callback);
 
-        return switch (mimeType)
+        switch (mimeType)
         {
-            case FORM_ENCODED -> handleFormFields(request, response, callback);
-            case MULTIPART_FORM_DATA -> handleMultiPartFormData(request, contentType, response, callback);
-            default -> super.handle(request, response, callback);
-        };
+            case FORM_ENCODED:
+                return handleFormFields(request, response, callback);
+            case MULTIPART_FORM_DATA:
+                return handleMultiPartFormData(request, contentType, response, callback);
+            default:
+                return super.handle(request, response, callback);
+        }
     }
 
     protected boolean handleFormFields(Request request, org.eclipse.jetty.server.Response response, Callback callback)

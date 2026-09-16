@@ -157,8 +157,9 @@ public interface Attributes
 
     static boolean equals(Attributes attributes, Object o)
     {
-        if (o instanceof Attributes a)
+        if (o instanceof Attributes)
         {
+            Attributes a = (Attributes)o;
             Set<String> ours = attributes.getAttributeNameSet();
             Set<String> theirs = a.getAttributeNameSet();
             if (!ours.equals(theirs))
@@ -189,8 +190,11 @@ public interface Attributes
             if (target.isAssignableFrom(attributes.getClass()))
                 return (T)attributes;
 
-            if (attributes instanceof Wrapper wrapper)
+            if (attributes instanceof Wrapper)
+            {
+                Wrapper wrapper = (Wrapper)attributes;
                 attributes = wrapper.getWrapped();
+            }
             else
                 return null;
         }

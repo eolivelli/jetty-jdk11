@@ -297,8 +297,9 @@ public abstract class AbstractConnectionPool extends ContainerLifeCycle implemen
     @Override
     public boolean accept(Connection connection)
     {
-        if (!(connection instanceof Attachable attachable))
+        if (!(connection instanceof Attachable))
             throw new IllegalArgumentException("Invalid connection object: " + connection);
+        Attachable attachable = (Attachable)connection;
         Pool.Entry<Connection> entry = pool.reserve();
         if (entry == null)
             return false;
@@ -350,8 +351,11 @@ public abstract class AbstractConnectionPool extends ContainerLifeCycle implemen
                 }
 
                 int maxUsage = getMaxUsage();
-                if (connection instanceof MaxUsable maxUsable)
+                if (connection instanceof MaxUsable)
+                {
+                    MaxUsable maxUsable = (MaxUsable)connection;
                     maxUsage = Math.min(maxUsage, maxUsable.getMaxUsage());
+                }
                 if (maxUsage > 0)
                 {
                     EntryHolder holder = (EntryHolder)((Attachable)connection).getAttachment();
@@ -378,8 +382,9 @@ public abstract class AbstractConnectionPool extends ContainerLifeCycle implemen
     @Override
     public boolean isActive(Connection connection)
     {
-        if (!(connection instanceof Attachable attachable))
+        if (!(connection instanceof Attachable))
             throw new IllegalArgumentException("Invalid connection object: " + connection);
+        Attachable attachable = (Attachable)connection;
         EntryHolder holder = (EntryHolder)attachable.getAttachment();
         if (holder == null)
             return false;
@@ -394,8 +399,9 @@ public abstract class AbstractConnectionPool extends ContainerLifeCycle implemen
 
     protected boolean deactivate(Connection connection)
     {
-        if (!(connection instanceof Attachable attachable))
+        if (!(connection instanceof Attachable))
             throw new IllegalArgumentException("Invalid connection object: " + connection);
+        Attachable attachable = (Attachable)connection;
         EntryHolder holder = (EntryHolder)attachable.getAttachment();
         if (holder == null)
             return true;
@@ -408,8 +414,11 @@ public abstract class AbstractConnectionPool extends ContainerLifeCycle implemen
         }
 
         int maxUsage = getMaxUsage();
-        if (connection instanceof MaxUsable maxUsable)
+        if (connection instanceof MaxUsable)
+        {
+            MaxUsable maxUsable = (MaxUsable)connection;
             maxUsage = maxUsable.getMaxUsage();
+        }
         if (maxUsage > 0 && holder.isOverUsed(maxUsage))
         {
             // Remove instead of release if the connection is overused.
@@ -427,8 +436,9 @@ public abstract class AbstractConnectionPool extends ContainerLifeCycle implemen
     @Override
     public boolean remove(Connection connection)
     {
-        if (!(connection instanceof Attachable attachable))
+        if (!(connection instanceof Attachable))
             throw new IllegalArgumentException("Invalid connection object: " + connection);
+        Attachable attachable = (Attachable)connection;
         EntryHolder holder = (EntryHolder)attachable.getAttachment();
         if (holder == null)
             return false;

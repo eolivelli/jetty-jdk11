@@ -374,7 +374,7 @@ public class Utf8StringBuilder implements CharsetStringBuilder
 
             switch (next)
             {
-                case UTF8_ACCEPT ->
+                case UTF8_ACCEPT:
                 {
                     if (_codep < Character.MIN_HIGH_SURROGATE)
                     {
@@ -389,8 +389,9 @@ public class Utf8StringBuilder implements CharsetStringBuilder
                     }
                     _codep = 0;
                     _state = next;
+                    break;
                 }
-                case UTF8_REJECT ->
+                case UTF8_REJECT:
                 {
                     _codep = 0;
                     _codingErrors = true;
@@ -400,8 +401,11 @@ public class Utf8StringBuilder implements CharsetStringBuilder
                         _state = UTF8_ACCEPT;
                         appendByte(b);
                     }
+                    break;
                 }
-                default -> _state = next;
+                default:
+                    _state = next;
+                    break;
             }
         }
     }

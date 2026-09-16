@@ -539,8 +539,9 @@ public class ComplianceViolationListenerTest
             if (attr == null)
                 return "null";
 
-            if (attr instanceof Request req)
+            if (attr instanceof Request)
             {
+                Request req = (Request)attr;
                 return String.format("%s %s", req.getMethod(), req.getHttpURI().toString());
             }
 

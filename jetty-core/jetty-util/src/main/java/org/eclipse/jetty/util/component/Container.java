@@ -184,8 +184,11 @@ public interface Container
      */
     static void unmanage(Object parent, Object child)
     {
-        if (parent instanceof Container container)
+        if (parent instanceof Container)
+        {
+            Container container = (Container)parent;
             container.unmanage(child);
+        }
     }
 
     /**

@@ -171,8 +171,11 @@ public class ServletContextHandler extends ContextHandler
 
     public static ServletContextHandler getServletContextHandler(jakarta.servlet.ServletContext servletContext, String purpose)
     {
-        if (servletContext instanceof ServletContextApi servletContextApi)
+        if (servletContext instanceof ServletContextApi)
+        {
+            ServletContextApi servletContextApi = (ServletContextApi)servletContext;
             return servletContextApi.getContext().getServletContextHandler();
+        }
         ServletContextHandler sch = getCurrentServletContextHandler();
         if (sch != null)
             return sch;
@@ -194,16 +197,22 @@ public class ServletContextHandler extends ContextHandler
 
     public static jakarta.servlet.ServletContext getServletContext(Context context)
     {
-        if (context instanceof ServletScopedContext servletScopedContext)
+        if (context instanceof ServletScopedContext)
+        {
+            ServletScopedContext servletScopedContext = (ServletScopedContext)context;
             return servletScopedContext.getServletContext();
+        }
         return null;
     }
 
     public static ServletContextHandler getCurrentServletContextHandler()
     {
         Context context = ContextHandler.getCurrentContext();
-        if (context instanceof ServletScopedContext servletScopedContext)
+        if (context instanceof ServletScopedContext)
+        {
+            ServletScopedContext servletScopedContext = (ServletScopedContext)context;
             return servletScopedContext.getServletContextHandler();
+        }
         return null;
     }
 
@@ -1179,8 +1188,9 @@ public class ServletContextHandler extends ContextHandler
         Attributes cache = request.getComponents().getCache();
         Object cachedChannel = cache.getAttribute(ServletChannel.class.getName());
         ServletChannel servletChannel;
-        if (cachedChannel instanceof ServletChannel sc && sc.getContext() == getContext() && !sc.isAborted())
+        if (cachedChannel instanceof ServletChannel && ((ServletChannel)cachedChannel).getContext() == getContext() && !((ServletChannel)cachedChannel).isAborted())
         {
+            ServletChannel sc = (ServletChannel)cachedChannel;
             servletChannel = sc;
         }
         else
@@ -1206,8 +1216,11 @@ public class ServletContextHandler extends ContextHandler
     @Override
     protected ContextResponse wrapResponse(ContextRequest request, Response response)
     {
-        if (request instanceof ServletContextRequest servletContextRequest)
+        if (request instanceof ServletContextRequest)
+        {
+            ServletContextRequest servletContextRequest = (ServletContextRequest)request;
             return servletContextRequest.getServletContextResponse();
+        }
         return super.wrapResponse(request, response);
     }
 
@@ -2084,39 +2097,43 @@ public class ServletContextHandler extends ContextHandler
         @Override
         public Object getAttribute(String name)
         {
-            return switch (name)
+            switch (name)
             {
-                case FormFields.MAX_FIELDS_ATTRIBUTE -> getMaxFormKeys();
-                case FormFields.MAX_LENGTH_ATTRIBUTE -> getMaxFormContentSize();
-                default -> super.getAttribute(name);
-            };
+                case FormFields.MAX_FIELDS_ATTRIBUTE:
+                    return getMaxFormKeys();
+                case FormFields.MAX_LENGTH_ATTRIBUTE:
+                    return getMaxFormContentSize();
+                default:
+                    return super.getAttribute(name);
+            }
         }
 
         @Override
         public Object setAttribute(String name, Object attribute)
         {
-            return switch (name)
+            switch (name)
             {
-                case FormFields.MAX_FIELDS_ATTRIBUTE ->
+                case FormFields.MAX_FIELDS_ATTRIBUTE:
                 {
                     int oldValue = getMaxFormKeys();
                     if (attribute == null)
                         setMaxFormKeys(DEFAULT_MAX_FORM_KEYS);
                     else
                         setMaxFormKeys(Integer.parseInt(attribute.toString()));
-                    yield oldValue;
+                    return oldValue;
                 }
-                case FormFields.MAX_LENGTH_ATTRIBUTE ->
+                case FormFields.MAX_LENGTH_ATTRIBUTE:
                 {
                     int oldValue = getMaxFormContentSize();
                     if (attribute == null)
                         setMaxFormContentSize(DEFAULT_MAX_FORM_CONTENT_SIZE);
                     else
                         setMaxFormContentSize(Integer.parseInt(attribute.toString()));
-                    yield oldValue;
+                    return oldValue;
                 }
-                default -> super.setAttribute(name, attribute);
-            };
+                default:
+                    return super.setAttribute(name, attribute);
+            }
         }
 
         @Override

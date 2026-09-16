@@ -76,8 +76,11 @@ class ImmutableHttpFields implements HttpFields
     {
         if (this == o)
             return true;
-        if (o instanceof HttpFields httpFields)
+        if (o instanceof HttpFields)
+        {
+            HttpFields httpFields = (HttpFields)o;
             return isEqualTo(httpFields);
+        }
         return false;
     }
 

@@ -2406,8 +2406,12 @@ public class ServletContextHandlerTest
                 req.setAttribute("mode.testcase", mode);
                 switch (mode)
                 {
-                    case "forward" -> requestDispatcher.forward(req, resp); // This can trigger an exception on bad query
-                    case "include" -> requestDispatcher.include(req, resp); // This can trigger an exception on bad query
+                    case "forward":
+                        requestDispatcher.forward(req, resp);
+                        break; // This can trigger an exception on bad query
+                    case "include":
+                        requestDispatcher.include(req, resp);
+                        break; // This can trigger an exception on bad query
                 }
                 // If we reached this point, then the input path isn't sufficiently bad enough to trigger
                 // a BadMessageException.  That means the testcase input is itself not valid, and should be changed or removed.
@@ -2532,8 +2536,9 @@ public class ServletContextHandlerTest
         Object trackedResources = mbeanServer.getAttribute(objectName, "trackedResources");
         assertNotNull(trackedResources);
         assertThat(trackedResources, instanceOf(List.class));
-        if (trackedResources instanceof List<?> trackedList)
+        if (trackedResources instanceof List<?>)
         {
+            List<?> trackedList = (List<?>)trackedResources;
             assertThat(trackedList.size(), is(1));
             Resource tracked = (Resource)trackedList.get(0);
             FileSystem originalJarFileSystem = jarResource.getPath().getFileSystem();

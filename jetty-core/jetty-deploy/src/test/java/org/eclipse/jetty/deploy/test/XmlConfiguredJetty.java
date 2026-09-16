@@ -202,8 +202,9 @@ public class XmlConfiguredJetty
             boolean found = false;
             for (Handler handler : _contexts.getHandlers())
             {
-                if (handler instanceof ContextHandler contextHandler)
+                if (handler instanceof ContextHandler)
                 {
+                    ContextHandler contextHandler = (ContextHandler)handler;
                     if (contextHandler.getContextPath().equals(expectedPath))
                     {
                         found = true;
@@ -221,8 +222,9 @@ public class XmlConfiguredJetty
         ContextHandler contextHandler = null;
         for (Handler handler : _contexts.getHandlers())
         {
-            if (handler instanceof ContextHandler ch)
+            if (handler instanceof ContextHandler)
             {
+                ContextHandler ch = (ContextHandler)handler;
                 if (ch.getContextPath().equals(contextPath))
                 {
                     contextHandler = ch;

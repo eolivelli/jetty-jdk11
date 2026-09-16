@@ -104,7 +104,7 @@ public class ResponseContentParser extends StreamContentParser
 
                 switch (state)
                 {
-                    case HEADERS ->
+                    case HEADERS:
                     {
                         if (httpParser.parseNext(buffer))
                         {
@@ -113,8 +113,9 @@ public class ResponseContentParser extends StreamContentParser
                                 return true;
                         }
                         remaining = buffer.remaining();
+                        break;
                     }
-                    case CONTENT_MODE ->
+                    case CONTENT_MODE:
                     {
                         // If we have no indication of the content, then
                         // the HTTP parser will assume there is no content
@@ -124,22 +125,26 @@ public class ResponseContentParser extends StreamContentParser
                                              (fields.get(HttpHeader.CONTENT_LENGTH) == null &&
                                               fields.get(HttpHeader.TRANSFER_ENCODING) == null);
                         state = rawContent ? State.RAW_CONTENT : State.HTTP_CONTENT;
+                        break;
                     }
-                    case RAW_CONTENT ->
+                    case RAW_CONTENT:
                     {
                         ByteBuffer content = buffer.asReadOnlyBuffer();
                         buffer.position(buffer.limit());
                         if (notifyContent(content))
                             return true;
                         remaining = 0;
+                        break;
                     }
-                    case HTTP_CONTENT ->
+                    case HTTP_CONTENT:
                     {
                         if (httpParser.parseNext(buffer))
                             return true;
                         remaining = buffer.remaining();
+                        break;
                     }
-                    default -> throw new IllegalStateException();
+                    default:
+                        throw new IllegalStateException();
                 }
             }
             return false;

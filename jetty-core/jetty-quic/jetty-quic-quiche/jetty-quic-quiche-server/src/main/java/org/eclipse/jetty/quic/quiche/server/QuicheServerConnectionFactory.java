@@ -51,8 +51,11 @@ public class QuicheServerConnectionFactory extends AbstractQuicheServerConnectio
     public void configure(Connector connector)
     {
         Session.Listener.Factory factory = getSessionListenerFactory();
-        if (factory instanceof ConnectionFactory.Configuring c)
+        if (factory instanceof ConnectionFactory.Configuring)
+        {
+            ConnectionFactory.Configuring c = (ConnectionFactory.Configuring)factory;
             c.configure(connector);
+        }
     }
 
     private static class ProtocolSessionListenerFactory implements Session.Listener.Factory, ConnectionFactory.Configuring
@@ -151,8 +154,11 @@ public class QuicheServerConnectionFactory extends AbstractQuicheServerConnectio
             if (connectionFactory == null)
                 throw new IllegalStateException("missing ConnectionFactory for protocol " + protocol);
             ProtocolSession pSession;
-            if (connectionFactory instanceof ProtocolSession.Factory psf)
+            if (connectionFactory instanceof ProtocolSession.Factory)
+            {
+                ProtocolSession.Factory psf = (ProtocolSession.Factory)connectionFactory;
                 pSession = psf.newProtocolSession(session, Map.of());
+            }
             else
                 pSession = new ServerProtocolSession(connector, session, connectionFactory);
             return pSession;

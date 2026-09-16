@@ -140,26 +140,37 @@ public class MessageHandler implements FrameHandler
 
         switch (frame.getOpCode())
         {
-            case OpCode.CLOSE -> onCloseFrame(frame, callback);
-            case OpCode.PING -> onPingFrame(frame, callback);
-            case OpCode.PONG -> onPongFrame(frame, callback);
-            case OpCode.TEXT ->
+            case OpCode.CLOSE:
+                onCloseFrame(frame, callback);
+                break;
+            case OpCode.PING:
+                onPingFrame(frame, callback);
+                break;
+            case OpCode.PONG:
+                onPongFrame(frame, callback);
+                break;
+            case OpCode.TEXT:
             {
                 dataType = OpCode.TEXT;
                 onTextFrame(frame, callback);
+                break;
             }
-            case OpCode.BINARY ->
+            case OpCode.BINARY:
             {
                 dataType = OpCode.BINARY;
                 onBinaryFrame(frame, callback);
+                break;
             }
-            case OpCode.CONTINUATION ->
+            case OpCode.CONTINUATION:
             {
                 onContinuationFrame(frame, callback);
                 if (frame.isFin())
                     dataType = OpCode.UNDEFINED;
+                break;
             }
-            default -> callback.failed(new IllegalStateException());
+            default:
+                callback.failed(new IllegalStateException());
+                break;
         }
     }
 
@@ -271,9 +282,14 @@ public class MessageHandler implements FrameHandler
     {
         switch (dataType)
         {
-            case OpCode.BINARY -> onBinaryFrame(frame, callback);
-            case OpCode.TEXT -> onTextFrame(frame, callback);
-            default -> throw new IllegalStateException();
+            case OpCode.BINARY:
+                onBinaryFrame(frame, callback);
+                break;
+            case OpCode.TEXT:
+                onTextFrame(frame, callback);
+                break;
+            default:
+                throw new IllegalStateException();
         }
     }
 

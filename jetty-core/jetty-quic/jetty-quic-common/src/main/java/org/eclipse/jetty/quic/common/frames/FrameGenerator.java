@@ -74,27 +74,47 @@ public class FrameGenerator
         FrameType frameType = FrameType.from(type);
         if (frameType == null)
             throw new QuicException(ErrorCode.FRAME_ENCODING_ERROR, "invalid_frame_type", type);
-        return switch (frameType)
+        switch (frameType)
         {
-            case PADDING, PING, HANDSHAKE_DONE -> generateNoContentFrame(accumulator, frame);
-            case ACK -> generateAckFrame(accumulator, (AckFrame)frame);
-            case RESET_STREAM -> generateResetStreamFrame(accumulator, (ResetFrame)frame);
-            case STOP_SENDING -> generateStopSendingFrame(accumulator, (StopSendingFrame)frame);
-            case CRYPTO -> generateCryptoFrame(accumulator, (CryptoFrame)frame);
-            case NEW_TOKEN -> generateNewTokenFrame(accumulator, (NewTokenFrame)frame);
-            case MAX_DATA -> generateMaxDataFrame(accumulator, (MaxDataFrame)frame);
-            case STREAM_MAX_DATA -> generateStreamMaxDataFrame(accumulator, (StreamMaxDataFrame)frame);
-            case MAX_STREAMS -> generateMaxStreamsFrame(accumulator, (MaxStreamsFrame)frame);
-            case DATA_BLOCKED -> generateDataBlockedFrame(accumulator, (DataBlockedFrame)frame);
-            case STREAM_DATA_BLOCKED -> generateStreamDataBlockedFrame(accumulator, (StreamDataBlockedFrame)frame);
-            case STREAMS_BLOCKED -> generateStreamsBlockedFrame(accumulator, (StreamsBlockedFrame)frame);
-            case NEW_CONNECTION_ID -> generateNewConnectionIdFrame(accumulator, (NewConnectionIdFrame)frame);
-            case RETIRE_CONNECTION_ID -> generateRetireConnectionIdFrame(accumulator, (RetireConnectionIdFrame)frame);
-            case PATH_CHALLENGE -> generatePathChallengeFrame(accumulator, (PathChallengeFrame)frame);
-            case PATH_RESPONSE -> generatePathResponseFrame(accumulator, (PathResponseFrame)frame);
-            case CONNECTION_CLOSE -> generateConnectionCloseFrame(accumulator, (ConnectionCloseFrame)frame);
-            default -> throw new QuicException(ErrorCode.FRAME_ENCODING_ERROR, "invalid_frame_type", type);
-        };
+            case PADDING:
+            case PING:
+            case HANDSHAKE_DONE:
+                return generateNoContentFrame(accumulator, frame);
+            case ACK:
+                return generateAckFrame(accumulator, (AckFrame)frame);
+            case RESET_STREAM:
+                return generateResetStreamFrame(accumulator, (ResetFrame)frame);
+            case STOP_SENDING:
+                return generateStopSendingFrame(accumulator, (StopSendingFrame)frame);
+            case CRYPTO:
+                return generateCryptoFrame(accumulator, (CryptoFrame)frame);
+            case NEW_TOKEN:
+                return generateNewTokenFrame(accumulator, (NewTokenFrame)frame);
+            case MAX_DATA:
+                return generateMaxDataFrame(accumulator, (MaxDataFrame)frame);
+            case STREAM_MAX_DATA:
+                return generateStreamMaxDataFrame(accumulator, (StreamMaxDataFrame)frame);
+            case MAX_STREAMS:
+                return generateMaxStreamsFrame(accumulator, (MaxStreamsFrame)frame);
+            case DATA_BLOCKED:
+                return generateDataBlockedFrame(accumulator, (DataBlockedFrame)frame);
+            case STREAM_DATA_BLOCKED:
+                return generateStreamDataBlockedFrame(accumulator, (StreamDataBlockedFrame)frame);
+            case STREAMS_BLOCKED:
+                return generateStreamsBlockedFrame(accumulator, (StreamsBlockedFrame)frame);
+            case NEW_CONNECTION_ID:
+                return generateNewConnectionIdFrame(accumulator, (NewConnectionIdFrame)frame);
+            case RETIRE_CONNECTION_ID:
+                return generateRetireConnectionIdFrame(accumulator, (RetireConnectionIdFrame)frame);
+            case PATH_CHALLENGE:
+                return generatePathChallengeFrame(accumulator, (PathChallengeFrame)frame);
+            case PATH_RESPONSE:
+                return generatePathResponseFrame(accumulator, (PathResponseFrame)frame);
+            case CONNECTION_CLOSE:
+                return generateConnectionCloseFrame(accumulator, (ConnectionCloseFrame)frame);
+            default:
+                throw new QuicException(ErrorCode.FRAME_ENCODING_ERROR, "invalid_frame_type", type);
+        }
     }
 
     public BytesGenerated generate(ByteBufferPool.Accumulator accumulator, StreamFrame frame, int maxDataBytes, int maxFrameBytes)

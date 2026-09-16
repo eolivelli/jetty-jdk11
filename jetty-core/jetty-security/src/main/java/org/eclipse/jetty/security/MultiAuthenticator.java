@@ -113,8 +113,9 @@ public class MultiAuthenticator extends LoginAuthenticator
     public UserIdentity login(String username, Object password, Request request, Response response)
     {
         Authenticator authenticator = getAuthenticator(request.getSession(false));
-        if (authenticator instanceof LoginAuthenticator loginAuthenticator)
+        if (authenticator instanceof LoginAuthenticator)
         {
+            LoginAuthenticator loginAuthenticator = (LoginAuthenticator)authenticator;
             doLogin(request);
             return loginAuthenticator.login(username, password, request, response);
         }
@@ -126,8 +127,9 @@ public class MultiAuthenticator extends LoginAuthenticator
     public void logout(Request request, Response response)
     {
         Authenticator authenticator = getAuthenticator(request.getSession(false));
-        if (authenticator instanceof LoginAuthenticator loginAuthenticator)
+        if (authenticator instanceof LoginAuthenticator)
         {
+            LoginAuthenticator loginAuthenticator = (LoginAuthenticator)authenticator;
             loginAuthenticator.logout(request, response);
             doLogout(request);
         }
@@ -178,10 +180,16 @@ public class MultiAuthenticator extends LoginAuthenticator
             return authenticationState;
         }
 
-        if (authenticationState instanceof AuthenticationState.Succeeded succeededState)
+        if (authenticationState instanceof AuthenticationState.Succeeded)
+        {
+            AuthenticationState.Succeeded succeededState = (AuthenticationState.Succeeded)authenticationState;
             return new MultiSucceededAuthenticationState(succeededState);
-        else if (authenticationState instanceof AuthenticationState.Deferred deferredState)
+        }
+        else if (authenticationState instanceof AuthenticationState.Deferred)
+        {
+            AuthenticationState.Deferred deferredState = (AuthenticationState.Deferred)authenticationState;
             return new MultiDelegateAuthenticationState(deferredState);
+        }
         return authenticationState;
     }
 

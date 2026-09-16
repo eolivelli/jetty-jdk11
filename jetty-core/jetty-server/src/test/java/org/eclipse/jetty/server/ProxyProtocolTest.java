@@ -65,8 +65,9 @@ public class ProxyProtocolTest
             public boolean handle(Request request, Response response, Callback callback)
             {
                 SocketAddress addr = request.getConnectionMetaData().getRemoteSocketAddress();
-                if (addr instanceof InetSocketAddress iAddr)
+                if (addr instanceof InetSocketAddress)
                 {
+                    InetSocketAddress iAddr = (InetSocketAddress)addr;
                     if (iAddr.getHostString().equals(remoteAddr) && iAddr.getPort() == remotePort)
                         callback.succeeded();
                     else

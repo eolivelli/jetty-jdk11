@@ -767,14 +767,20 @@ public class MultiPartServletTest
                 {
                     switch (dispatchType)
                     {
-                        case "forward" -> request.getRequestDispatcher("/multipart").forward(request, response);
-                        case "include" -> request.getRequestDispatcher("/multipart").include(request, response);
-                        case "async" ->
+                        case "forward":
+                            request.getRequestDispatcher("/multipart").forward(request, response);
+                            break;
+                        case "include":
+                            request.getRequestDispatcher("/multipart").include(request, response);
+                            break;
+                        case "async":
                         {
                             request.startAsync();
                             request.getAsyncContext().dispatch("/multipart");
+                            break;
                         }
-                        default -> throw new ServletException("Unknown dispatch type: " + dispatchType);
+                        default:
+                            throw new ServletException("Unknown dispatch type: " + dispatchType);
                     }
                 }
             }, "/");

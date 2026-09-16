@@ -215,11 +215,13 @@ public abstract class HttpReceiver implements Invocable
                 {
                     switch (fieldHeader)
                     {
-                        case SET_COOKIE, SET_COOKIE2 ->
+                        case SET_COOKIE:
+                        case SET_COOKIE2:
                         {
                             URI uri = exchange.getRequest().getURI();
                             if (uri != null)
                                 storeCookie(uri, field);
+                            break;
                         }
                     }
                 }

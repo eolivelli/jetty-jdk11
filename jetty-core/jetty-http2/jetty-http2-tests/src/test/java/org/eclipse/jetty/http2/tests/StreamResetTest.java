@@ -1259,7 +1259,7 @@ public class StreamResetTest extends AbstractTest
 
         // Wait until received all the frames from the server.
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() ->
-            assertTrue(inFrames.stream().anyMatch(f -> f instanceof DataFrame d && d.isEndStream()), inFrames.toString()));
+            assertTrue(inFrames.stream().anyMatch(f -> f instanceof DataFrame && ((DataFrame)f).isEndStream()), inFrames.toString()));
 
         // Verify that we only sent 1 RST_STREAM frame.
         await().during(1, TimeUnit.SECONDS).atMost(5, TimeUnit.SECONDS).untilAsserted(() ->

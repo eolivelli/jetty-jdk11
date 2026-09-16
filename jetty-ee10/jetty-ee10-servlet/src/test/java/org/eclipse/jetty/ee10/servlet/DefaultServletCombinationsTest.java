@@ -183,76 +183,92 @@ public class DefaultServletCombinationsTest
 
                     switch (requestPath)
                     {
-                        case "/" ->
+                        case "/":
                         {
                             switch (welcomeMode)
                             {
-                                case SERVE ->
+                                case SERVE:
                                 {
                                     expectedStatus = HttpStatus.OK_200;
                                     expected = "Static index.html at root";
+                                    break;
                                 }
-                                case REDIRECT ->
+                                case REDIRECT:
                                 {
                                     expectedStatus = HttpStatus.FOUND_302;
                                     expected = pathInfoOnly ? "/ctx/static/index.html" : "/ctx/index.html";
+                                    break;
                                 }
-                                case REHANDLE ->
+                                case REHANDLE:
                                 {
                                     expectedStatus = pathInfoOnly ? HttpStatus.IM_A_TEAPOT_418 : HttpStatus.NOT_FOUND_404;
                                     expected = null;
+                                    break;
                                 }
-                                default -> throw new AssertionError();
+                                default:
+                                    throw new AssertionError();
                             }
+                            break;
                         }
-                        case "/foo.welcome" ->
+                        case "/foo.welcome":
                         {
                             expectedStatus = HttpStatus.OK_200;
                             expected = pathInfoOnly ? "Static foo.welcome at root" : "Servlet at welcome extension";
+                            break;
                         }
-                        case "/subdirHtml/" ->
+                        case "/subdirHtml/":
                         {
                             switch (welcomeMode)
                             {
-                                case SERVE ->
+                                case SERVE:
                                 {
                                     expectedStatus = HttpStatus.OK_200;
                                     expected = "Static index.html at root subdirHtml";
+                                    break;
                                 }
-                                case REDIRECT ->
+                                case REDIRECT:
                                 {
                                     expectedStatus = HttpStatus.FOUND_302;
                                     expected = pathInfoOnly ? "/ctx/static/subdirHtml/index.html" : "/ctx/subdirHtml/index.html";
+                                    break;
                                 }
-                                case REHANDLE ->
+                                case REHANDLE:
                                 {
                                     expectedStatus = pathInfoOnly ? HttpStatus.IM_A_TEAPOT_418 : HttpStatus.NOT_FOUND_404;
                                     expected = null;
+                                    break;
                                 }
-                                default -> throw new AssertionError();
+                                default:
+                                    throw new AssertionError();
                             }
+                            break;
                         }
-                        case "/subdirWelcome/" ->
+                        case "/subdirWelcome/":
                         {
                             expectedStatus = HttpStatus.FORBIDDEN_403;
                             expected = null;
+                            break;
                         }
-                        case "/empty/" ->
+                        case "/empty/":
                         {
                             expectedStatus = HttpStatus.FORBIDDEN_403;
                             expected = null;
+                            break;
                         }
-                        case "/nothing/index.welcome" ->
+                        case "/nothing/index.welcome":
                         {
                             expectedStatus = pathInfoOnly ? HttpStatus.NOT_FOUND_404 : HttpStatus.OK_200;
                             expected = pathInfoOnly ? null : "Servlet at welcome extension";
+                            break;
                         }
-                        case "/nothing/" ->
+                        case "/nothing/":
                         {
                             expectedStatus = HttpStatus.NOT_FOUND_404;
                             expected = null;
+                            break;
                         }
-                        default -> throw new AssertionError();
+                        default:
+                            throw new AssertionError();
                     }
 
                     datas.add(new Data(pathInfoOnly, welcomeMode, requestPath, expectedStatus, expected));

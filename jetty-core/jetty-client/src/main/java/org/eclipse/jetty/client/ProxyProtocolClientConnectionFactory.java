@@ -698,13 +698,24 @@ public abstract class ProxyProtocolClientConnectionFactory extends ClientConnect
                 int familyAndProtocol = (family.ordinal() << 4) | protocol.ordinal();
                 buffer.put((byte)familyAndProtocol);
 
-                int length = switch (family)
+                int length;
+                switch (family)
                 {
-                    case UNSPEC -> 0;
-                    case INET4 -> 12;
-                    case INET6 -> 36;
-                    case UNIX -> 2 * UNIX_ADDRESS_MAX_LENGTH;
-                };
+                    case UNSPEC:
+                        length = 0;
+                        break;
+                    case INET4:
+                        length = 12;
+                        break;
+                    case INET6:
+                        length = 36;
+                        break;
+                    case UNIX:
+                        length = 2 * UNIX_ADDRESS_MAX_LENGTH;
+                        break;
+                    default:
+                        throw new IllegalStateException();
+                }
                 length += vectorsLength;
                 buffer.putShort((short)length);
 
@@ -727,18 +738,21 @@ public abstract class ProxyProtocolClientConnectionFactory extends ClientConnect
 
                 switch (family)
                 {
-                    case UNSPEC ->
+                    case UNSPEC:
                     {
+                        break;
                         // Nothing to do.
                     }
-                    case INET4, INET6 ->
+                    case INET4:
+                    case INET6:
                     {
                         buffer.put(InetAddress.getByName(srcAddr).getAddress());
                         buffer.put(InetAddress.getByName(dstAddr).getAddress());
                         buffer.putShort((short)srcPort);
                         buffer.putShort((short)dstPort);
+                        break;
                     }
-                    case UNIX ->
+                    case UNIX:
                     {
                         int position = buffer.position();
                         if (srcAddr != null)
@@ -755,8 +769,10 @@ public abstract class ProxyProtocolClientConnectionFactory extends ClientConnect
                         }
                         position = position + UNIX_ADDRESS_MAX_LENGTH;
                         buffer.position(position);
+                        break;
                     }
-                    default -> throw new IllegalStateException();
+                    default:
+                        throw new IllegalStateException();
                 }
 
                 if (tlvs != null)

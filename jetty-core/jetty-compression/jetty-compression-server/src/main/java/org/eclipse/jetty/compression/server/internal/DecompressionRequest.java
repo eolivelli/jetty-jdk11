@@ -81,7 +81,7 @@ public class DecompressionRequest extends Request.Wrapper implements Destroyable
 
             switch (header)
             {
-                case CONTENT_ENCODING ->
+                case CONTENT_ENCODING:
                 {
                     if (!contentEncodingSeen)
                     {
@@ -99,8 +99,11 @@ public class DecompressionRequest extends Request.Wrapper implements Destroyable
                             i.add(compression.getXContentEncodingField());
                         }
                     }
+                    break;
                 }
-                case CONTENT_LENGTH -> i.set(new HttpField("X-Content-Length", field.getValue()));
+                case CONTENT_LENGTH:
+                    i.set(new HttpField("X-Content-Length", field.getValue()));
+                    break;
             }
         }
         return newFields.asImmutable();

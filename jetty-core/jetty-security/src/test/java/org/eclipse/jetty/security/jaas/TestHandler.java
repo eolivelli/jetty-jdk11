@@ -54,8 +54,9 @@ public class TestHandler extends Handler.Abstract
         if (_hasRoles != null)
         {
             AuthenticationState authenticationState = AuthenticationState.getAuthenticationState(request);
-            if (authenticationState instanceof AuthenticationState.Succeeded userAuthentication)
+            if (authenticationState instanceof AuthenticationState.Succeeded)
             {
+                AuthenticationState.Succeeded userAuthentication = (AuthenticationState.Succeeded)authenticationState;
                 for (String role : _hasRoles)
                 {
                     if (!userAuthentication.isUserInRole(role))
@@ -70,8 +71,9 @@ public class TestHandler extends Handler.Abstract
         if (_hasntRoles != null)
         {
             AuthenticationState authenticationState = AuthenticationState.getAuthenticationState(request);
-            if (authenticationState instanceof AuthenticationState.Succeeded userAuthentication)
+            if (authenticationState instanceof AuthenticationState.Succeeded)
             {
+                AuthenticationState.Succeeded userAuthentication = (AuthenticationState.Succeeded)authenticationState;
                 for (String role : _hasntRoles)
                 {
                     if (userAuthentication.isUserInRole(role))

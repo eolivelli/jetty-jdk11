@@ -246,8 +246,11 @@ public class QoSHandler extends ConditionalHandler.Abstract
         if (maxRequests <= 0)
         {
             ThreadPool threadPool = getServer().getThreadPool();
-            if (threadPool instanceof ThreadPool.SizedThreadPool sized)
+            if (threadPool instanceof ThreadPool.SizedThreadPool)
+            {
+                ThreadPool.SizedThreadPool sized = (ThreadPool.SizedThreadPool)threadPool;
                 maxRequests = sized.getMaxThreads() / 2;
+            }
             else
                 maxRequests = ProcessorUtils.availableProcessors();
             setMaxRequestCount(maxRequests);

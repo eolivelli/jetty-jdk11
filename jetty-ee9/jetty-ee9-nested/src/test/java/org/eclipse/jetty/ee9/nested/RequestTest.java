@@ -602,8 +602,11 @@ public class RequestTest
             }
             catch (Throwable e)
             {
-                if (e instanceof HttpException httpException)
+                if (e instanceof HttpException)
+                {
+                    HttpException httpException = (HttpException)e;
                     return httpException.getCode() == 415;
+                }
                 throw e;
             }
         };

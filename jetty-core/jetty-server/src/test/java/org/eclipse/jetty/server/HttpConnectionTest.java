@@ -362,11 +362,21 @@ public class HttpConnectionTest
         {
             switch (contentLength)
             {
-                case CHUNKED -> request.append("Transfer-Encoding: chunked\r\n");
-                case DQUOTED_CHUNKED -> request.append("Transfer-Encoding: \"chunked\"\r\n");
-                case BAD_CHUNKED -> request.append("Transfer-Encoding: 'chunked'\r\n");
-                case UNKNOWN_TE -> request.append("Transfer-Encoding: bogus\r\n");
-                default -> request.append("Content-Length: ").append(contentLength).append("\r\n");
+                case CHUNKED:
+                    request.append("Transfer-Encoding: chunked\r\n");
+                    break;
+                case DQUOTED_CHUNKED:
+                    request.append("Transfer-Encoding: \"chunked\"\r\n");
+                    break;
+                case BAD_CHUNKED:
+                    request.append("Transfer-Encoding: 'chunked'\r\n");
+                    break;
+                case UNKNOWN_TE:
+                    request.append("Transfer-Encoding: bogus\r\n");
+                    break;
+                default:
+                    request.append("Content-Length: ").append(contentLength).append("\r\n");
+                    break;
             }
         }
         request.append("Content-Type: text/plain\r\n");

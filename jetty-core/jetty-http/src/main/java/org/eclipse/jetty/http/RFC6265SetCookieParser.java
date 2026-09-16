@@ -46,7 +46,7 @@ public class RFC6265SetCookieParser implements SetCookieParser
             char ch = setCookieValue.charAt(i);
             switch (state)
             {
-                case NAME ->
+                case NAME:
                 {
                     HttpTokens.Token token = HttpTokens.getToken(ch);
                     if (token == null)
@@ -67,8 +67,9 @@ public class RFC6265SetCookieParser implements SetCookieParser
                         offset = i + 1;
                         state = State.VALUE_START;
                     }
+                    break;
                 }
-                case VALUE_START ->
+                case VALUE_START:
                 {
                     if (isWhitespace(ch))
                         continue;
@@ -78,8 +79,9 @@ public class RFC6265SetCookieParser implements SetCookieParser
                         --i;
                     offset = i + 1;
                     state = State.VALUE;
+                    break;
                 }
-                case VALUE ->
+                case VALUE:
                 {
                     if (quoted && ch == '"')
                     {
@@ -99,8 +101,9 @@ public class RFC6265SetCookieParser implements SetCookieParser
                             state = State.ATTRIBUTE_NAME;
                         }
                     }
+                    break;
                 }
-                case ATTRIBUTE ->
+                case ATTRIBUTE:
                 {
                     if (isWhitespace(ch))
                         continue;
@@ -112,8 +115,9 @@ public class RFC6265SetCookieParser implements SetCookieParser
                     }
                     offset = i + 1;
                     state = State.ATTRIBUTE_NAME;
+                    break;
                 }
-                case ATTRIBUTE_NAME ->
+                case ATTRIBUTE_NAME:
                 {
                     HttpTokens.Token token = HttpTokens.getToken(ch);
                     if (token == null || token.getType() == HttpTokens.Type.CNTL)
@@ -136,8 +140,9 @@ public class RFC6265SetCookieParser implements SetCookieParser
                         offset = i + 1;
                         // Stay in the ATTRIBUTE_NAME state.
                     }
+                    break;
                 }
-                case ATTRIBUTE_VALUE_START ->
+                case ATTRIBUTE_VALUE_START:
                 {
                     if (isWhitespace(ch))
                         continue;
@@ -147,8 +152,9 @@ public class RFC6265SetCookieParser implements SetCookieParser
                         --i;
                     offset = i + 1;
                     state = State.ATTRIBUTE_VALUE;
+                    break;
                 }
-                case ATTRIBUTE_VALUE ->
+                case ATTRIBUTE_VALUE:
                 {
                     if (quoted && ch == '"')
                     {
@@ -170,21 +176,32 @@ public class RFC6265SetCookieParser implements SetCookieParser
                             state = State.ATTRIBUTE_NAME;
                         }
                     }
+                    break;
                 }
-                default -> throw new IllegalStateException("invalid state " + state);
+                default:
+                    throw new IllegalStateException("invalid state " + state);
             }
         }
 
-        return switch (state)
+        switch (state)
         {
-            case NAME -> null;
-            case VALUE_START -> HttpCookie.from(name, "");
-            case VALUE -> HttpCookie.from(name, setCookieValue.substring(offset, length).trim());
-            case ATTRIBUTE -> cookie.build();
-            case ATTRIBUTE_NAME -> setAttribute(cookie, setCookieValue.substring(offset, length).trim(), "") ? cookie.build() : null;
-            case ATTRIBUTE_VALUE_START -> setAttribute(cookie, name, "") ? cookie.build() : null;
-            case ATTRIBUTE_VALUE -> setAttribute(cookie, name, setCookieValue.substring(offset, length).trim()) ? cookie.build() : null;
-        };
+            case NAME:
+                return null;
+            case VALUE_START:
+                return HttpCookie.from(name, "");
+            case VALUE:
+                return HttpCookie.from(name, setCookieValue.substring(offset, length).trim());
+            case ATTRIBUTE:
+                return cookie.build();
+            case ATTRIBUTE_NAME:
+                return setAttribute(cookie, setCookieValue.substring(offset, length).trim(), "") ? cookie.build() : null;
+            case ATTRIBUTE_VALUE_START:
+                return setAttribute(cookie, name, "") ? cookie.build() : null;
+            case ATTRIBUTE_VALUE:
+                return setAttribute(cookie, name, setCookieValue.substring(offset, length).trim()) ? cookie.build() : null;
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     private static boolean isWhitespace(char ch)

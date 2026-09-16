@@ -186,8 +186,11 @@ public class HttpChannel implements Runnable, HttpOutput.Interceptor
 
         if (chunk.hasRemaining())
             onContent(chunk);
-        if (chunk instanceof Trailers trailers)
+        if (chunk instanceof Trailers)
+        {
+            Trailers trailers = (Trailers)chunk;
             onTrailers(trailers.getTrailers());
+        }
         if (chunk.isLast())
             onContentComplete();
 
@@ -1436,8 +1439,9 @@ public class HttpChannel implements Runnable, HttpOutput.Interceptor
             if (LOG.isDebugEnabled())
                 LOG.debug("Commit failed", x);
 
-            if (x instanceof HttpException httpException)
+            if (x instanceof HttpException)
             {
+                HttpException httpException = (HttpException)x;
                 MetaData.Response responseMeta = new MetaData.Response(httpException.getCode(), httpException.getReason(), HttpVersion.HTTP_1_1, HttpFields.build().add(HttpFields.CONNECTION_CLOSE), 0);
                 send(_request.getMetaData(), responseMeta, null, true, new Nested(getCallback())
                 {
@@ -1608,8 +1612,11 @@ public class HttpChannel implements Runnable, HttpOutput.Interceptor
                 {
                     //the container has dispatched us to a different context
                     ServletContext targetContext = _contextHandler.getServletContext().getContext(event.getDispatchContext().getContextPath());
-                    if (targetContext instanceof CrossContextServletContext crossContextServletContext)
+                    if (targetContext instanceof CrossContextServletContext)
+                    {
+                        CrossContextServletContext crossContextServletContext = (CrossContextServletContext)targetContext;
                         dispatchCrossContext(crossContextServletContext);
+                    }
                     else
                         throw new IllegalStateException("Dispatch " + _contextHandler.getContextPath() + " -> non CrossContextServletContext" + event.getDispatchContext().getContextPath() + event.getDispatchContext());
                 }

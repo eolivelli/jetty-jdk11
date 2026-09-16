@@ -202,17 +202,19 @@ public class SmallThreadPoolLoadTest extends AbstractTest
         {
             switch (HttpMethod.fromString(request.getMethod()))
             {
-                case GET ->
+                case GET:
                 {
                     int contentLength = (int)request.getHeaders().getLongField("X-Download");
                     if (contentLength > 0)
                         response.write(true, ByteBuffer.wrap(new byte[contentLength]), callback);
                     else
                         callback.succeeded();
+                    break;
                 }
-                case POST ->
+                case POST:
                 {
                     Content.copy(request, response, callback);
+                    break;
                 }
             }
             return true;

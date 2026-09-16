@@ -54,8 +54,9 @@ public class IOResources
             throw new IllegalArgumentException("Resource must exist and cannot be a directory: " + resource);
 
         // Optimize for Content.Source.Factory.
-        if (resource instanceof Content.Source.Factory factory)
+        if (resource instanceof Content.Source.Factory)
         {
+            Content.Source.Factory factory = (Content.Source.Factory)resource;
             try (Blocker.Promise<RetainableByteBuffer> promise = Blocker.promise(Retainable::retain))
             {
                 Content.Source.asRetainableByteBuffer(factory.newContentSource(bufferPool, 0L, -1L), bufferPool, bufferPool.isDirect(), Integer.MAX_VALUE, promise);
@@ -68,8 +69,11 @@ public class IOResources
         }
 
         // Optimize for MemoryResource.
-        if (resource instanceof MemoryResource memoryResource)
+        if (resource instanceof MemoryResource)
+        {
+            MemoryResource memoryResource = (MemoryResource)resource;
             return RetainableByteBuffer.wrap(ByteBuffer.wrap(memoryResource.getBytes()));
+        }
 
         long longLength = resource.length();
 
@@ -171,8 +175,11 @@ public class IOResources
             throw new IllegalArgumentException("Resource must exist and cannot be a directory: " + resource);
 
         // Try Content.Source.Factory.
-        if (resource instanceof Content.Source.Factory factory)
+        if (resource instanceof Content.Source.Factory)
+        {
+            Content.Source.Factory factory = (Content.Source.Factory)resource;
             return factory.newContentSource(bufferPool, offset, length);
+        }
 
         // Try using the resource's path if possible, as the nio API is async and helps to avoid buffer copies.
         Path path = resource.getPath();
@@ -182,8 +189,11 @@ public class IOResources
         length = TypeUtil.checkOffsetLengthSize(offset, length, resource.length());
 
         // Try an optimization for MemoryResource.
-        if (resource instanceof MemoryResource memoryResource)
+        if (resource instanceof MemoryResource)
+        {
+            MemoryResource memoryResource = (MemoryResource)resource;
             return Content.Source.from(BufferUtil.slice(ByteBuffer.wrap(memoryResource.getBytes()), Math.toIntExact(offset), Math.toIntExact(length)));
+        }
 
         // Fallback to InputStream.
         try
@@ -246,8 +256,9 @@ public class IOResources
                 throw new IllegalArgumentException("Resource must exist and cannot be a directory: " + resource);
 
             // Check if the resource is a Content.Source.Factory as the first step.
-            if (resource instanceof Content.Source.Factory factory)
+            if (resource instanceof Content.Source.Factory)
             {
+                Content.Source.Factory factory = (Content.Source.Factory)resource;
                 Content.Source source = factory.newContentSource(bufferPool, offset, length);
                 Content.copy(source, sink, callback);
                 return;
@@ -264,8 +275,9 @@ public class IOResources
             }
 
             // Directly write the byte array if the resource is a MemoryResource.
-            if (resource instanceof MemoryResource memoryResource)
+            if (resource instanceof MemoryResource)
             {
+                MemoryResource memoryResource = (MemoryResource)resource;
                 ByteBuffer byteBuffer = BufferUtil.slice(ByteBuffer.wrap(memoryResource.getBytes()), Math.toIntExact(offset), Math.toIntExact(length));
                 sink.write(true, byteBuffer, callback);
                 return;

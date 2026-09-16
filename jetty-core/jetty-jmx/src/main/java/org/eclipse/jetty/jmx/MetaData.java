@@ -237,8 +237,9 @@ class MetaData
         if (type == null || Void.TYPE.equals(type))
             return Void.TYPE;
 
-        if (type instanceof Class<?> clazz)
+        if (type instanceof Class<?>)
         {
+            Class<?> clazz = (Class<?>)type;
             if (clazz.isAnnotationPresent(ManagedObject.class))
                 return ObjectName.class;
 
@@ -246,10 +247,11 @@ class MetaData
                 return ObjectName[].class;
         }
 
-        if (type instanceof ParameterizedType parameterizedType &&
-            parameterizedType.getRawType() instanceof Class<?> clazz &&
+        if (type instanceof ParameterizedType &&
+            ((ParameterizedType)type).getRawType() instanceof Class<?> clazz &&
             Collection.class.isAssignableFrom(clazz))
         {
+            ParameterizedType parameterizedType = (ParameterizedType)type;
             Type[] genArgs = parameterizedType.getActualTypeArguments();
             if (genArgs.length == 1 && genArgs[0] instanceof Class<?> klass && klass.isAnnotationPresent(ManagedObject.class))
                 return ObjectName[].class;
@@ -271,8 +273,9 @@ class MetaData
 
         if (ObjectName[].class.equals(to))
         {
-            if (object instanceof Collection<?> collection)
+            if (object instanceof Collection<?>)
             {
+                Collection<?> collection = (Collection<?>)object;
                 int length = collection.size();
                 ObjectName[] names = new ObjectName[length];
                 int i = 0;
@@ -585,8 +588,9 @@ class MetaData
                 Annotation[] parameterAnnotations = parametersAnnotations[i];
                 for (Annotation parameterAnnotation : parameterAnnotations)
                 {
-                    if (parameterAnnotation instanceof Name name)
+                    if (parameterAnnotation instanceof Name)
                     {
+                        Name name = (Name)parameterAnnotation;
                         info = result[i] = new MBeanParameterInfo(name.value(), typeName, name.description());
                         break;
                     }

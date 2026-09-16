@@ -89,8 +89,11 @@ public class ListenerHolder extends BaseHolder<EventListener>
     private ContextHandler getContextHandler()
     {
         Context context = ContextHandler.getCurrentContext();
-        if (context instanceof ContextHandler.ScopedContext scopedContext)
+        if (context instanceof ContextHandler.ScopedContext)
+        {
+            ContextHandler.ScopedContext scopedContext = (ContextHandler.ScopedContext)context;
             return scopedContext.getContextHandler();
+        }
 
         ContextHandler contextHandler = null;
         if (getServletHandler() != null)

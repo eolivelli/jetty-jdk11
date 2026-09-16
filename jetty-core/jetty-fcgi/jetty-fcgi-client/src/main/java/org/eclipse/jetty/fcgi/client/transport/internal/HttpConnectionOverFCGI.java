@@ -258,22 +258,28 @@ public class HttpConnectionOverFCGI extends AbstractConnection implements IConne
 
         switch (state)
         {
-            case STATUS ->
+            case STATUS:
             {
+                break;
                 // Nothing to do.
             }
-            case HEADERS -> channel.responseHeaders();
-            case CONTENT ->
+            case HEADERS:
+                channel.responseHeaders();
+                break;
+            case CONTENT:
             {
                 if (notifyContentAvailable)
                     channel.responseContentAvailable();
+                break;
             }
-            case COMPLETE ->
+            case COMPLETE:
             {
+                break;
                 // Do not call channel.responseSuccess() here to give HttpReceiverOverFCGI.read(boolean) a chance to read
                 // the chunk field before channel.responseSuccess() resets it to null.
             }
-            default -> throw new IllegalStateException("Invalid state " + state);
+            default:
+                throw new IllegalStateException("Invalid state " + state);
         }
 
         return true;
@@ -514,15 +520,18 @@ public class HttpConnectionOverFCGI extends AbstractConnection implements IConne
                 LOG.debug("onContent r={},t={},b={} {}", request, stream, BufferUtil.toDetailString(buffer), networkBuffer);
             switch (stream)
             {
-                case STD_OUT ->
+                case STD_OUT:
                 {
                     Content.Chunk chunk = Content.Chunk.asChunk(buffer, false, networkBuffer);
                     channel.content(chunk);
                     state = State.CONTENT;
                     return true;
                 }
-                case STD_ERR -> LOG.info(BufferUtil.toUTF8String(buffer));
-                default -> throw new IllegalArgumentException();
+                case STD_ERR:
+                    LOG.info(BufferUtil.toUTF8String(buffer));
+                    break;
+                default:
+                    throw new IllegalArgumentException();
             }
             return false;
         }

@@ -88,7 +88,7 @@ public class SessionHandlerTest
                     String action = split[n++];
                     switch (action)
                     {
-                        case "set" ->
+                        case "set":
                         {
                             if (session == null)
                             {
@@ -97,9 +97,10 @@ public class SessionHandlerTest
                             }
 
                             session.setAttribute(split[n++], split[n++]);
+                            break;
                         }
 
-                        case "remove" ->
+                        case "remove":
                         {
                             if (session == null)
                             {
@@ -109,9 +110,10 @@ public class SessionHandlerTest
 
                             if (split.length > 1)
                                 session.setAttribute(split[n++], null);
+                            break;
                         }
 
-                        case "create" ->
+                        case "create":
                         {
                             if (session != null)
                             {
@@ -119,9 +121,10 @@ public class SessionHandlerTest
                                 return true;
                             }
                             session = request.getSession(true);
+                            break;
                         }
 
-                        case "invalidate" ->
+                        case "invalidate":
                         {
                             if (session == null)
                             {
@@ -129,9 +132,10 @@ public class SessionHandlerTest
                                 return true;
                             }
                             session.invalidate();
+                            break;
                         }
 
-                        case "change" ->
+                        case "change":
                         {
                             if (session == null)
                             {
@@ -139,6 +143,7 @@ public class SessionHandlerTest
                                 return true;
                             }
                             session.renewId(request, response);
+                            break;
                         }
                     }
                 }

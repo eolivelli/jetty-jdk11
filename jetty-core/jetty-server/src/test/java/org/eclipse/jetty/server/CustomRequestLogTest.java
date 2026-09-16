@@ -379,8 +379,11 @@ public class CustomRequestLogTest
                 {
                     // Expect the idle timeout exception.
                     Throwable cause = x.getCause();
-                    if (cause instanceof TimeoutException t)
+                    if (cause instanceof TimeoutException)
+                    {
+                        TimeoutException t = (TimeoutException)cause;
                         throw t;
+                    }
                     // Otherwise, fail the test.
                     response.setStatus(HttpStatus.BAD_REQUEST_400);
                     callback.succeeded();
@@ -663,13 +666,21 @@ public class CustomRequestLogTest
             }
         });
 
-        TimeUnit timeUnit = switch (unit)
+        TimeUnit timeUnit;
+        switch (unit)
         {
-            case "us" -> TimeUnit.MICROSECONDS;
-            case "ms" -> TimeUnit.MILLISECONDS;
-            case "s" -> TimeUnit.SECONDS;
-            default -> throw new IllegalArgumentException("invalid latency unit: " + unit);
-        };
+            case "us":
+                timeUnit = TimeUnit.MICROSECONDS;
+                break;
+            case "ms":
+                timeUnit = TimeUnit.MILLISECONDS;
+                break;
+            case "s":
+                timeUnit = TimeUnit.SECONDS;
+                break;
+            default:
+                throw new IllegalArgumentException("invalid latency unit: " + unit);
+        }
 
         HttpTester.Response response = getResponse("GET /delay HTTP/1.0\n\n");
         assertEquals(HttpStatus.OK_200, response.getStatus());

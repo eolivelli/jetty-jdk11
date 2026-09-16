@@ -144,14 +144,23 @@ public interface Dumpable
                 s = StringUtil.replace(s, "\r\n", "|");
                 s = StringUtil.replace(s, '\n', '|');
             }
-            else if (o instanceof Collection collection)
+            else if (o instanceof Collection)
+            {
+                Collection collection = (Collection)o;
                 s = String.format("%s@%x(size=%d)", TypeUtil.toShortName(o.getClass()), o.hashCode(), collection.size());
+            }
             else if (o.getClass().isArray())
                 s = String.format("%s@%x[size=%d]", o.getClass().getComponentType(), o.hashCode(), Array.getLength(o));
-            else if (o instanceof Map map)
+            else if (o instanceof Map)
+            {
+                Map map = (Map)o;
                 s = String.format("%s@%x{size=%d}", TypeUtil.toShortName(o.getClass()), o.hashCode(), map.size());
-            else if (o instanceof Map.Entry<?, ?> entry)
+            }
+            else if (o instanceof Map.Entry<?, ?>)
+            {
+                Map.Entry<?, ?> entry = (Map.Entry<?, ?>)o;
                 s = String.format("%s=%s", entry.getKey(), entry.getValue());
+            }
             else
             {
                 s = String.valueOf(o);
@@ -160,10 +169,16 @@ public interface Dumpable
             }
 
             out.append(s);
-            if (o instanceof Invocable invocable)
+            if (o instanceof Invocable)
+            {
+                Invocable invocable = (Invocable)o;
                 out.append(" ~ ").append(invocable.getInvocationType().toString());
-            if (o instanceof LifeCycle lifecycle)
+            }
+            if (o instanceof LifeCycle)
+            {
+                LifeCycle lifecycle = (LifeCycle)o;
                 out.append(" - ").append(AbstractLifeCycle.getState(lifecycle));
+            }
             out.append("\n");
         }
         catch (Throwable th)
@@ -322,8 +337,9 @@ public interface Dumpable
 
     static Dumpable named(String name, Object object)
     {
-        if (object instanceof Dumpable dumpable)
+        if (object instanceof Dumpable)
         {
+            Dumpable dumpable = (Dumpable)object;
             return new Dumpable()
             {
                 @Override
@@ -380,18 +396,21 @@ public interface Dumpable
 
         public static DumpAppendable ensure(Appendable out)
         {
-            return out instanceof DumpAppendable da ? da : new DumpAppendable(out);
+            return out instanceof DumpAppendable ? (DumpAppendable)out : new DumpAppendable(out);
         }
 
         public static void visit(Appendable out, Object item)
         {
-            if (out instanceof DumpAppendable dumpAppendable)
+            if (out instanceof DumpAppendable)
+            {
+                DumpAppendable dumpAppendable = (DumpAppendable)out;
                 dumpAppendable._visited.add(item);
+            }
         }
 
         static boolean hasVisited(Appendable out, Object item)
         {
-            return out instanceof DumpAppendable dumpAppendable && dumpAppendable._visited.contains(item);
+            return out instanceof DumpAppendable && ((DumpAppendable)out)._visited.contains(item);
         }
 
         @Override

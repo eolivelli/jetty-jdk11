@@ -80,8 +80,11 @@ public abstract class Quiche
     {
         // Quiche requires InetSocketAddress, but in principle we could transport
         // QUIC over UnixDomain or memory, so create a fake InetSocketAddress.
-        if (address instanceof InetSocketAddress inet)
+        if (address instanceof InetSocketAddress)
+        {
+            InetSocketAddress inet = (InetSocketAddress)address;
             return inet;
+        }
         int port = client ? 0xFA9E : 443;
         return new InetSocketAddress(InetAddress.getLoopbackAddress(), port);
     }

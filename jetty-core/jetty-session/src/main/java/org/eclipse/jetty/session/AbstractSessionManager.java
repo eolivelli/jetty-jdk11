@@ -1440,13 +1440,17 @@ public abstract class AbstractSessionManager extends ContainerLifeCycle implemen
 
             if (name.startsWith(ATTRIBUTE) && name.charAt(ATTRIBUTE.length()) == '.')
             {
-                return switch (name.substring(ATTRIBUTE.length() + 1))
+                switch (name.substring(ATTRIBUTE.length() + 1))
                 {
-                    case "session" -> session();
-                    case "sessionId" -> sessionId();
-                    case "sessionIdFrom" -> sessionIdFrom();
-                    default -> null;
-                };
+                    case "session":
+                        return session();
+                    case "sessionId":
+                        return sessionId();
+                    case "sessionIdFrom":
+                        return sessionIdFrom();
+                    default:
+                        return null;
+                }
             }
 
             return null;

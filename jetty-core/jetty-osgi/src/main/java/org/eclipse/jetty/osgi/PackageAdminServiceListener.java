@@ -107,8 +107,11 @@ public class PackageAdminServiceListener implements ServiceListener
                     bActivator.start(_bootBundleContext);
 
                     // if the activator has bundles to contribute to the server classpath register them
-                    if (bActivator instanceof ServerClasspathContributor.Source source && _bootBundleActivator instanceof ServerClasspathContributor.Registry registry)
+                    if (bActivator instanceof ServerClasspathContributor.Source && _bootBundleActivator instanceof ServerClasspathContributor.Registry registry)
+                    {
+                        ServerClasspathContributor.Source source = (ServerClasspathContributor.Source)bActivator;
                         source.registerServerClasspathContributors(registry);
+                    }
                 }
             }
             catch (ClassNotFoundException e)
@@ -129,8 +132,11 @@ public class PackageAdminServiceListener implements ServiceListener
         {
             try
             {
-                if (fragmentActivator instanceof ServerClasspathContributor.Source source && _bootBundleActivator instanceof ServerClasspathContributor.Registry registry)
+                if (fragmentActivator instanceof ServerClasspathContributor.Source && _bootBundleActivator instanceof ServerClasspathContributor.Registry registry)
+                {
+                    ServerClasspathContributor.Source source = (ServerClasspathContributor.Source)fragmentActivator;
                     source.unregisterServerClasspathContributors(registry);
+                }
                 fragmentActivator.getValue().stop(_bootBundleContext);
             }
             catch (Exception e)

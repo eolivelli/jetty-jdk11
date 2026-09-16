@@ -1556,26 +1556,32 @@ public class HttpChannelTest
         {
             switch (event)
             {
-                case WRITE ->
+                case WRITE:
                 {
                     if (written != null)
                         throw new IllegalStateException();
                     written = new FutureCallback();
                     response.write(true, null, written);
+                    break;
                 }
 
-                case SUCCEED -> callback.succeeded();
+                case SUCCEED:
+                    callback.succeeded();
+                    break;
 
-                case FAIL -> callback.failed(new QuietException.Exception("FAILED"));
+                case FAIL:
+                    callback.failed(new QuietException.Exception("FAILED"));
+                    break;
 
-                case PROCESSED ->
+                case PROCESSED:
                 {
                     processed.countDown();
                     processor.join(10000);
                     assertFalse(processor.isAlive());
+                    break;
                 }
 
-                case STREAM_COMPLETE ->
+                case STREAM_COMPLETE:
                 {
                     if (sendCallback.get() != null)
                         sendCallback.get().succeeded();
@@ -1584,6 +1590,7 @@ public class HttpChannelTest
                         written.get(5, TimeUnit.SECONDS);
                         assertTrue(written.isDone());
                     }
+                    break;
                 }
             }
         }

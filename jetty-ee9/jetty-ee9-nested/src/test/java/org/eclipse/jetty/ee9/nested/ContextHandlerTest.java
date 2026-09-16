@@ -335,19 +335,22 @@ public class ContextHandlerTest
 
                 switch (request.getDispatcherType())
                 {
-                    case REQUEST ->
+                    case REQUEST:
                     {
                         AsyncContext async = request.startAsync();
                         async.dispatch();
+                        break;
                     }
-                    case ASYNC ->
+                    case ASYNC:
                     {
                         response.setStatus(200);
                         response.setContentType("text/plain");
                         response.getOutputStream().print("Async\n");
+                        break;
                     }
 
-                    default -> throw new IllegalStateException();
+                    default:
+                        throw new IllegalStateException();
                 }
             }
         });
@@ -375,7 +378,7 @@ public class ContextHandlerTest
 
                 switch (request.getDispatcherType())
                 {
-                    case REQUEST ->
+                    case REQUEST:
                     {
                         AsyncContext async = request.startAsync();
                         async.start(() ->
@@ -390,15 +393,18 @@ public class ContextHandlerTest
                                 e.printStackTrace();
                             }
                         });
+                        break;
                     }
-                    case ASYNC ->
+                    case ASYNC:
                     {
                         response.setStatus(200);
                         response.setContentType("text/plain");
                         response.getOutputStream().print("Async\n");
+                        break;
                     }
 
-                    default -> throw new IllegalStateException();
+                    default:
+                        throw new IllegalStateException();
                 }
             }
         });
@@ -426,19 +432,22 @@ public class ContextHandlerTest
 
                 switch (request.getDispatcherType())
                 {
-                    case REQUEST ->
+                    case REQUEST:
                     {
                         AsyncContext async = request.startAsync();
                         async.dispatch("/async");
+                        break;
                     }
-                    case ASYNC ->
+                    case ASYNC:
                     {
                         response.setStatus(200);
                         response.setContentType("text/plain");
                         response.getOutputStream().print(String.format("Async %s\n", baseRequest.getPathInContext()));
+                        break;
                     }
 
-                    default -> throw new IllegalStateException();
+                    default:
+                        throw new IllegalStateException();
                 }
             }
         });
@@ -466,7 +475,7 @@ public class ContextHandlerTest
 
                 switch (request.getDispatcherType())
                 {
-                    case REQUEST ->
+                    case REQUEST:
                     {
                         AsyncContext async = request.startAsync(
                             new HttpServletRequestWrapper(request)
@@ -487,15 +496,18 @@ public class ContextHandlerTest
                             }
                         );
                         async.dispatch();
+                        break;
                     }
-                    case ASYNC ->
+                    case ASYNC:
                     {
                         response.setStatus(Integer.MAX_VALUE);
                         response.setContentType("text/plain");
                         response.getOutputStream().print(String.format("Async %s\n", request.getRemoteUser()));
+                        break;
                     }
 
-                    default -> throw new IllegalStateException();
+                    default:
+                        throw new IllegalStateException();
                 }
             }
         });

@@ -186,10 +186,16 @@ public class MultiAuthenticatorTest
     {
         AuthenticationState authenticationState = AuthenticationState.getAuthenticationState(request);
         AuthenticationState.Succeeded auth = null;
-        if (authenticationState instanceof AuthenticationState.Succeeded succeeded)
+        if (authenticationState instanceof AuthenticationState.Succeeded)
+        {
+            AuthenticationState.Succeeded succeeded = (AuthenticationState.Succeeded)authenticationState;
             auth = succeeded;
-        else if (authenticationState instanceof AuthenticationState.Deferred deferred)
+        }
+        else if (authenticationState instanceof AuthenticationState.Deferred)
+        {
+            AuthenticationState.Deferred deferred = (AuthenticationState.Deferred)authenticationState;
             auth = deferred.authenticate(request);
+        }
         return auth;
     }
 
@@ -305,10 +311,16 @@ public class MultiAuthenticatorTest
         private boolean onLogout(Request request, Response response, Callback callback) throws Exception
         {
             Request.AuthenticationState authState = Request.getAuthenticationState(request);
-            if (authState instanceof AuthenticationState.Succeeded succeeded)
+            if (authState instanceof AuthenticationState.Succeeded)
+            {
+                AuthenticationState.Succeeded succeeded = (AuthenticationState.Succeeded)authState;
                 succeeded.logout(request, response);
-            else if (authState instanceof AuthenticationState.Deferred deferred)
+            }
+            else if (authState instanceof AuthenticationState.Deferred)
+            {
+                AuthenticationState.Deferred deferred = (AuthenticationState.Deferred)authState;
                 deferred.logout(request, response);
+            }
             else
                 request.getSession(true).invalidate();
 

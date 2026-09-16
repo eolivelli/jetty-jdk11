@@ -110,7 +110,7 @@ public class HttpChannelAssociationTest extends AbstractTest
 
     private HttpClientTransport newHttpClientTransport(TransportType transportType, Predicate<HttpExchange> code) throws Exception
     {
-        return switch (transportType)
+        switch (transportType)
         {
             case HTTP:
             case HTTPS:
@@ -118,7 +118,7 @@ public class HttpChannelAssociationTest extends AbstractTest
                 ClientConnector clientConnector = new ClientConnector();
                 clientConnector.setSelectors(1);
                 clientConnector.setSslContextFactory(newSslContextFactoryClient());
-                yield new HttpClientTransportOverHTTP(clientConnector)
+                return new HttpClientTransportOverHTTP(clientConnector)
                 {
                     @Override
                     public org.eclipse.jetty.io.Connection newConnection(EndPoint endPoint, Map<String, Object> context)
@@ -148,7 +148,7 @@ public class HttpChannelAssociationTest extends AbstractTest
                 clientConnector.setSelectors(1);
                 clientConnector.setSslContextFactory(newSslContextFactoryClient());
                 HTTP2Client http2Client = new HTTP2Client(clientConnector);
-                yield new HttpClientTransportOverHTTP2(http2Client)
+                return new HttpClientTransportOverHTTP2(http2Client)
                 {
                     @Override
                     protected Connection newConnection(Destination destination, Session session, HTTP2Connection connection)
@@ -178,7 +178,7 @@ public class HttpChannelAssociationTest extends AbstractTest
                 clientConnector.setSslContextFactory(newSslContextFactoryClient());
                 QuicheClientQuicConfiguration clientQuicConfig = HTTP3ClientQuicConfiguration.configure(new QuicheClientQuicConfiguration());
                 HTTP3Client http3Client = new HTTP3Client(clientQuicConfig, clientConnector);
-                yield new HttpClientTransportOverHTTP3(http3Client, new QuicheTransport(clientQuicConfig))
+                return new HttpClientTransportOverHTTP3(http3Client, new QuicheTransport(clientQuicConfig))
                 {
                     @Override
                     protected org.eclipse.jetty.client.Connection newConnection(Destination destination, HTTP3SessionClient session)
@@ -206,7 +206,7 @@ public class HttpChannelAssociationTest extends AbstractTest
                 ClientConnector clientConnector = new ClientConnector();
                 clientConnector.setSelectors(1);
                 clientConnector.setSslContextFactory(newSslContextFactoryClient());
-                yield new HttpClientTransportOverFCGI(clientConnector, "")
+                return new HttpClientTransportOverFCGI(clientConnector, "")
                 {
                     @Override
                     protected org.eclipse.jetty.io.Connection newConnection(EndPoint endPoint, Destination destination, Promise<Connection> promise)
@@ -229,7 +229,9 @@ public class HttpChannelAssociationTest extends AbstractTest
                     }
                 };
             }
-        };
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     private void sleep(long time)

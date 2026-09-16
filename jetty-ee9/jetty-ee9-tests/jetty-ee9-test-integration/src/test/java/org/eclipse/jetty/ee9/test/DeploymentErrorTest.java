@@ -284,11 +284,15 @@ public class DeploymentErrorTest
 
     private WebAppContext getWebAppContext(ContextHandler contextHandler)
     {
-        if (contextHandler instanceof org.eclipse.jetty.ee9.nested.ContextHandler.CoreContextHandler coreContextHandler)
+        if (contextHandler instanceof org.eclipse.jetty.ee9.nested.ContextHandler.CoreContextHandler)
         {
+            org.eclipse.jetty.ee9.nested.ContextHandler.CoreContextHandler coreContextHandler = (org.eclipse.jetty.ee9.nested.ContextHandler.CoreContextHandler)contextHandler;
             org.eclipse.jetty.ee9.nested.ContextHandler nestedContextHandler = coreContextHandler.getContextHandler();
-            if (nestedContextHandler instanceof WebAppContext webAppContext)
+            if (nestedContextHandler instanceof WebAppContext)
+            {
+                WebAppContext webAppContext = (WebAppContext)nestedContextHandler;
                 return webAppContext;
+            }
         }
         return null;
     }

@@ -36,8 +36,11 @@ public interface Session extends Attributes
      */
     static Session getSession(Object session)
     {
-        if (session instanceof API wrapper)
+        if (session instanceof API)
+        {
+            API wrapper = (API)session;
             return wrapper.getSession();
+        }
         return null;
     }
 

@@ -212,8 +212,11 @@ public class ServletPathMapping implements HttpServletMapping
     {
         if (o == null)
             return null;
-        if (o instanceof ServletPathMapping mapping)
+        if (o instanceof ServletPathMapping)
+        {
+            ServletPathMapping mapping = (ServletPathMapping)o;
             return mapping;
+        }
         Matcher matcher = DESERIALIZE.matcher(o.toString());
         if (matcher.find())
             return new ServletPathMapping(

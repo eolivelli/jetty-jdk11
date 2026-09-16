@@ -971,7 +971,7 @@ public class StringUtil
 
             switch (state)
             {
-                case PRE_DATA ->
+                case PRE_DATA:
                 {
                     if ('"' == ch)
                     {
@@ -986,8 +986,9 @@ public class StringUtil
                         state = CsvSplitState.DATA;
                         out.append(ch);
                     }
+                    break;
                 }
-                case DATA ->
+                case DATA:
                 {
                     if (Character.isWhitespace(ch))
                     {
@@ -1005,8 +1006,9 @@ public class StringUtil
                     {
                         out.append(ch);
                     }
+                    break;
                 }
-                case WHITE ->
+                case WHITE:
                 {
                     if (Character.isWhitespace(ch))
                     {
@@ -1025,8 +1027,9 @@ public class StringUtil
                         out.append(ch);
                         last = -1;
                     }
+                    break;
                 }
-                case QUOTE ->
+                case QUOTE:
                 {
                     if ('\\' == ch)
                     {
@@ -1042,20 +1045,24 @@ public class StringUtil
                     {
                         out.append(ch);
                     }
+                    break;
                 }
-                case SLOSH ->
+                case SLOSH:
                 {
                     out.append(ch);
                     state = CsvSplitState.QUOTE;
+                    break;
                 }
-                case POST_DATA ->
+                case POST_DATA:
                 {
                     if (',' == ch)
                     {
                         state = CsvSplitState.PRE_DATA;
                     }
+                    break;
                 }
-                default -> throw new IllegalStateException(state.toString());
+                default:
+                    throw new IllegalStateException(state.toString());
             }
         }
         switch (state)
@@ -1121,17 +1128,28 @@ public class StringUtil
             char c = html.charAt(i);
             switch (c)
             {
-                case '&' -> out.append("&amp;");
-                case '<' -> out.append("&lt;");
-                case '>' -> out.append("&gt;");
-                case '\'' -> out.append("&apos;");
-                case '"' -> out.append("&quot;");
-                default ->
+                case '&':
+                    out.append("&amp;");
+                    break;
+                case '<':
+                    out.append("&lt;");
+                    break;
+                case '>':
+                    out.append("&gt;");
+                    break;
+                case '\'':
+                    out.append("&apos;");
+                    break;
+                case '"':
+                    out.append("&quot;");
+                    break;
+                default:
                 {
                     if (Character.isISOControl(c) && !Character.isWhitespace(c))
                         out.append('?');
                     else
                         out.append(c);
+                    break;
                 }
             }
         }

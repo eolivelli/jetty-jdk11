@@ -329,7 +329,7 @@ public class ShutdownService
 
                         switch (cmdLower)
                         {
-                            case "stop" -> // historic, for backward compatibility
+                            case "stop":
                             {
                                 // Stop the lifecycles, only if they are registered with the ShutdownThread, only destroying if vm is exiting
                                 LOG.info("Performing 'stop' command");
@@ -347,8 +347,9 @@ public class ShutdownService
                                     LOG.info("Exiting JVM");
                                     System.exit(0);
                                 }
+                                break;
                             }
-                            case "forcestop" ->
+                            case "forcestop":
                             {
                                 LOG.info("Performing `forced stop` command");
                                 stopComponents(exitVm);
@@ -365,8 +366,9 @@ public class ShutdownService
                                     LOG.info("Exiting JVM");
                                     System.exit(0);
                                 }
+                                break;
                             }
-                            case "stopexit" ->
+                            case "stopexit":
                             {
                                 LOG.info("Performing `stop` and `exit` commands");
                                 stopComponents(true);
@@ -380,22 +382,26 @@ public class ShutdownService
 
                                 LOG.info("Killing JVM");
                                 System.exit(0);
+                                break;
                             }
-                            case "exit" ->
+                            case "exit":
                             {
                                 processCommands = false;
 
                                 LOG.info("Killing JVM");
                                 System.exit(0);
+                                break;
                             }
-                            case "status" ->
+                            case "status":
                             {
                                 // Reply to client
                                 flush(out, "OK\r\n");
+                                break;
                             }
-                            case "pid" ->
+                            case "pid":
                             {
                                 flush(out, Long.toString(ProcessHandle.current().pid()));
+                                break;
                             }
                         }
                     }

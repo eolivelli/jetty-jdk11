@@ -57,14 +57,16 @@ public class SocketCustomizationListener implements Listener
         EndPoint endPoint = connection.getEndPoint();
         boolean ssl = false;
 
-        if (_ssl && endPoint instanceof SslEndPoint sslEndPoint)
+        if (_ssl && endPoint instanceof SslEndPoint)
         {
+            SslEndPoint sslEndPoint = (SslEndPoint)endPoint;
             endPoint = sslEndPoint.getSslConnection().getEndPoint();
             ssl = true;
         }
 
-        if (endPoint instanceof SocketChannelEndPoint socketEndPoint)
+        if (endPoint instanceof SocketChannelEndPoint)
         {
+            SocketChannelEndPoint socketEndPoint = (SocketChannelEndPoint)endPoint;
             Socket socket = socketEndPoint.getChannel().socket();
             customize(socket, connection.getClass(), ssl);
         }

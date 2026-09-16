@@ -307,11 +307,15 @@ public class HttpStatus
 
     public static boolean hasNoBody(int status)
     {
-        return switch (status)
+        switch (status)
         {
-            case NO_CONTENT_204, RESET_CONTENT_205, NOT_MODIFIED_304 -> true;
-            default -> status < OK_200;
-        };
+            case NO_CONTENT_204:
+            case RESET_CONTENT_205:
+            case NOT_MODIFIED_304:
+                return true;
+            default:
+                return status < OK_200;
+        }
     }
 
     /**

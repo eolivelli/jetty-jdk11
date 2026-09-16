@@ -348,7 +348,7 @@ public class MetaData implements Iterable<HttpField>
          */
         static Throwable getFailure(MetaData metaData)
         {
-            return metaData instanceof Failed f ? f.getFailure() : null;
+            return metaData instanceof Failed ? ((Failed)metaData).getFailure() : null;
         }
 
         /**

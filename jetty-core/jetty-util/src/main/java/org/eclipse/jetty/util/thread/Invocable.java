@@ -194,8 +194,11 @@ public interface Invocable
      */
     static Task from(InvocationType type, Runnable task)
     {
-        if (task instanceof Task t && t.getInvocationType() == type)
+        if (task instanceof Task && ((Task)task).getInvocationType() == type)
+        {
+            Task t = (Task)task;
             return t;
+        }
         return new ReadyTask(type, task);
     }
 
@@ -269,8 +272,11 @@ public interface Invocable
      */
     static InvocationType getInvocationType(Object o)
     {
-        if (o instanceof Invocable i)
+        if (o instanceof Invocable)
+        {
+            Invocable i = (Invocable)o;
             return i.getInvocationType();
+        }
         return InvocationType.BLOCKING;
     }
 

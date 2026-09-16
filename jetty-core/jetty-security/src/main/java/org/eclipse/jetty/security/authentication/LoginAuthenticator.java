@@ -269,8 +269,9 @@ public abstract class LoginAuthenticator implements Authenticator
                 Authenticator authenticator = security.getAuthenticator();
 
                 AuthenticationState authenticationState = null;
-                if (authenticator instanceof LoginAuthenticator loginAuthenticator)
+                if (authenticator instanceof LoginAuthenticator)
                 {
+                    LoginAuthenticator loginAuthenticator = (LoginAuthenticator)authenticator;
                     loginAuthenticator.logout(request, response);
                     authenticationState = new LoginAuthenticator.LoggedOutAuthentication(loginAuthenticator);
                 }

@@ -146,8 +146,9 @@ public class TrailersTest extends AbstractTest
                         return;
                     }
                     chunk.release();
-                    if (chunk instanceof Trailers contentTrailers)
+                    if (chunk instanceof Trailers)
                     {
+                        Trailers contentTrailers = (Trailers)chunk;
                         HttpFields trailers = contentTrailers.getTrailers();
                         assertNotNull(trailers.get("X-Trailer"));
                         _callback.succeeded();

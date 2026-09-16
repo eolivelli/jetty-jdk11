@@ -339,12 +339,21 @@ public class ResourceService extends ContainerLifeCycle
                 {
                     switch (field.getHeader())
                     {
-                        case IF_MATCH -> ifm = field.getValue();
-                        case IF_NONE_MATCH -> ifnm = field.getValue();
-                        case IF_MODIFIED_SINCE -> ifms = field.getValue();
-                        case IF_UNMODIFIED_SINCE -> ifums = field.getValue();
-                        default ->
+                        case IF_MATCH:
+                            ifm = field.getValue();
+                            break;
+                        case IF_NONE_MATCH:
+                            ifnm = field.getValue();
+                            break;
+                        case IF_MODIFIED_SINCE:
+                            ifms = field.getValue();
+                            break;
+                        case IF_UNMODIFIED_SINCE:
+                            ifums = field.getValue();
+                            break;
+                        default:
                         {
+                            break;
                         }
                     }
                 }
@@ -596,9 +605,15 @@ public class ResourceService extends ContainerLifeCycle
     {
         switch (welcomeAction.mode)
         {
-            case REDIRECT -> redirectWelcome(request, response, callback, welcomeAction.target);
-            case SERVE -> serveWelcome(request, response, callback, welcomeAction.target);
-            case REHANDLE -> rehandleWelcome(request, response, callback, welcomeAction.target);
+            case REDIRECT:
+                redirectWelcome(request, response, callback, welcomeAction.target);
+                break;
+            case SERVE:
+                serveWelcome(request, response, callback, welcomeAction.target);
+                break;
+            case REHANDLE:
+                rehandleWelcome(request, response, callback, welcomeAction.target);
+                break;
         }
     }
 
@@ -670,13 +685,20 @@ public class ResourceService extends ContainerLifeCycle
         String contextPath = request.getContext().getContextPath();
         WelcomeMode welcomeMode = getWelcomeMode();
 
-        welcomeTarget = switch (welcomeMode)
+        switch (welcomeMode)
         {
-            case REDIRECT, REHANDLE -> HttpURI.build(request.getHttpURI())
-                .path(URIUtil.addPaths(contextPath, welcomeTarget))
-                .getPathQuery();
-            case SERVE -> welcomeTarget;
-        };
+            case REDIRECT:
+            case REHANDLE:
+                welcomeTarget = HttpURI.build(request.getHttpURI())
+                    .path(URIUtil.addPaths(contextPath, welcomeTarget))
+                    .getPathQuery();
+                break;
+            case SERVE:
+                welcomeTarget = welcomeTarget;
+                break;
+            default:
+                throw new IllegalStateException();
+        }
 
         if (LOG.isDebugEnabled())
             LOG.debug("welcome {} {}", welcomeMode, welcomeTarget);

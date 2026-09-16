@@ -82,15 +82,17 @@ public class HttpRedirector
      */
     public boolean isRedirect(Response response)
     {
-        return switch (response.getStatus())
+        switch (response.getStatus())
         {
-            case HttpStatus.MOVED_PERMANENTLY_301,
-                HttpStatus.MOVED_TEMPORARILY_302,
-                HttpStatus.SEE_OTHER_303,
-                HttpStatus.TEMPORARY_REDIRECT_307,
-                HttpStatus.PERMANENT_REDIRECT_308 -> true;
-            default -> false;
-        };
+            case HttpStatus.MOVED_PERMANENTLY_301:
+            case HttpStatus.MOVED_TEMPORARILY_302:
+            case HttpStatus.SEE_OTHER_303:
+            case HttpStatus.TEMPORARY_REDIRECT_307:
+            case HttpStatus.PERMANENT_REDIRECT_308:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -259,33 +261,36 @@ public class HttpRedirector
     private String computeRedirectMethod(Request request, Response response)
     {
         String method = request.getMethod();
-        return switch (response.getStatus())
+        switch (response.getStatus())
         {
-            case HttpStatus.MOVED_PERMANENTLY_301 ->
+            case HttpStatus.MOVED_PERMANENTLY_301:
             {
                 if (HttpMethod.GET.is(method) || HttpMethod.HEAD.is(method) || HttpMethod.PUT.is(method))
-                    yield method;
+                    return method;
                 else if (HttpMethod.POST.is(method))
-                    yield HttpMethod.GET.asString();
-                yield method;
+                    return HttpMethod.GET.asString();
+                return method;
             }
-            case HttpStatus.MOVED_TEMPORARILY_302 ->
+            case HttpStatus.MOVED_TEMPORARILY_302:
             {
                 if (HttpMethod.HEAD.is(method) || HttpMethod.PUT.is(method))
-                    yield method;
+                    return method;
                 else
-                    yield HttpMethod.GET.asString();
+                    return HttpMethod.GET.asString();
             }
-            case HttpStatus.SEE_OTHER_303 ->
+            case HttpStatus.SEE_OTHER_303:
             {
                 if (HttpMethod.HEAD.is(method))
-                    yield method;
+                    return method;
                 else
-                    yield HttpMethod.GET.asString();
+                    return HttpMethod.GET.asString();
             }
-            case HttpStatus.TEMPORARY_REDIRECT_307, HttpStatus.PERMANENT_REDIRECT_308 -> method;
-            default -> null;
-        };
+            case HttpStatus.TEMPORARY_REDIRECT_307:
+            case HttpStatus.PERMANENT_REDIRECT_308:
+                return method;
+            default:
+                return null;
+        }
     }
 
     /**

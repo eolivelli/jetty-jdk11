@@ -92,8 +92,11 @@ public class QuicheTransport extends Transport.Wrapper
     {
         if (this == obj)
             return true;
-        if (obj instanceof QuicheTransport that)
+        if (obj instanceof QuicheTransport)
+        {
+            QuicheTransport that = (QuicheTransport)obj;
             return Objects.equals(getWrapped(), that.getWrapped());
+        }
         return false;
     }
 
@@ -175,14 +178,18 @@ public class QuicheTransport extends Transport.Wrapper
             ClientConnectionFactory connectionFactory = session.getClientConnectionFactory();
 
             ProtocolSession protocolSession = null;
-            if (connectionFactory instanceof ProtocolSession.Factory psf)
+            if (connectionFactory instanceof ProtocolSession.Factory)
+            {
+                ProtocolSession.Factory psf = (ProtocolSession.Factory)connectionFactory;
                 protocolSession = psf.newProtocolSession(session, context);
+            }
             if (protocolSession != null)
                 return protocolSession;
 
             // Support for container ClientConnectionFactory that may speak multiple protocols.
-            if (connectionFactory instanceof Container container)
+            if (connectionFactory instanceof Container)
             {
+                Container container = (Container)connectionFactory;
                 for (ProtocolSession.Factory psf : container.getBeans(ProtocolSession.Factory.class))
                 {
                     protocolSession = psf.newProtocolSession(session, context);

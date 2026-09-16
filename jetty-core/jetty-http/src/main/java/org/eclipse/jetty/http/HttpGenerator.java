@@ -639,21 +639,23 @@ public class HttpGenerator
                 {
                     switch (h)
                     {
-                        case CONTENT_LENGTH ->
+                        case CONTENT_LENGTH:
                         {
                             if (contentLength < 0)
                                 contentLength = field.getLongValue();
                             else if (contentLength != field.getLongValue())
                                 throw new HttpException.RuntimeException(INTERNAL_SERVER_ERROR_500, String.format("Incorrect Content-Length %d!=%d", contentLength, field.getLongValue()));
                             contentLengthField = true;
+                            break;
                         }
-                        case CONTENT_TYPE ->
+                        case CONTENT_TYPE:
                         {
                             // write the field to the header
                             contentType = true;
                             putTo(field, header);
+                            break;
                         }
-                        case TRANSFER_ENCODING ->
+                        case TRANSFER_ENCODING:
                         {
                             if (http11)
                             {
@@ -665,8 +667,9 @@ public class HttpGenerator
                                     transferEncoding = transferEncoding.withValues(field.getValues());
                                 chunkedHint |= field.contains(HttpHeaderValue.CHUNKED.asString());
                             }
+                            break;
                         }
-                        case CONNECTION ->
+                        case CONNECTION:
                         {
                             // Save to connection field for processing when all other fields are known
                             if (connection == null)
@@ -677,8 +680,11 @@ public class HttpGenerator
                             connectionClose |= field.contains(HttpHeaderValue.CLOSE.asString());
                             connectionKeepAlive |= field.contains(HttpHeaderValue.KEEP_ALIVE.asString());
                             connectionUpgrade |= field.contains(HttpHeaderValue.UPGRADE.asString());
+                            break;
                         }
-                        default -> putTo(field, header);
+                        default:
+                            putTo(field, header);
+                            break;
                     }
                 }
                 checkMaxHeaderBytes(header);

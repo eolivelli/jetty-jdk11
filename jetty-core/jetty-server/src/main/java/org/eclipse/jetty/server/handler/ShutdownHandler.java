@@ -181,8 +181,11 @@ public class ShutdownHandler extends Handler.Wrapper
         if (socketAddress == null)
             return false;
 
-        if (socketAddress instanceof InetSocketAddress addr)
+        if (socketAddress instanceof InetSocketAddress)
+        {
+            InetSocketAddress addr = (InetSocketAddress)socketAddress;
             return addr.getAddress().isLoopbackAddress();
+        }
 
         return false;
     }

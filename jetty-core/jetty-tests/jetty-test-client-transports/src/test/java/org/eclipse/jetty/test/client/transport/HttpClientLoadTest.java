@@ -181,11 +181,14 @@ public class HttpClientLoadTest extends AbstractTest
 
         switch (method)
         {
-            case "GET" -> request.headers(headers -> headers.put("X-Download", String.valueOf(contentLength)));
-            case "POST" ->
+            case "GET":
+                request.headers(headers -> headers.put("X-Download", String.valueOf(contentLength)));
+                break;
+            case "POST":
             {
                 request.headers(headers -> headers.put("X-Upload", String.valueOf(contentLength)));
                 request.body(new BytesRequestContent(new byte[contentLength]));
+                break;
             }
         }
 
@@ -270,7 +273,7 @@ public class HttpClientLoadTest extends AbstractTest
             String method = request.getMethod().toUpperCase(Locale.ENGLISH);
             switch (method)
             {
-                case "GET" ->
+                case "GET":
                 {
                     ByteBuffer content = BufferUtil.EMPTY_BUFFER;
                     int contentLength = (int)request.getHeaders().getLongField("X-Download");
@@ -280,13 +283,16 @@ public class HttpClientLoadTest extends AbstractTest
                         content = ByteBuffer.allocate(contentLength);
                     }
                     response.write(true, content, callback);
+                    break;
                 }
-                case "POST" ->
+                case "POST":
                 {
                     response.getHeaders().put("X-Content", request.getHeaders().getLongField("X-Upload"));
                     Content.copy(request, response, callback);
+                    break;
                 }
-                default -> throw new UnsupportedOperationException();
+                default:
+                    throw new UnsupportedOperationException();
             }
             return true;
         }

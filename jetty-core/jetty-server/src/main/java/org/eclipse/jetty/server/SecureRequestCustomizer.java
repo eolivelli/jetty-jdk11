@@ -245,12 +245,16 @@ public class SecureRequestCustomizer implements HttpConfiguration.Customizer
 
         // Some security providers (for example, Conscrypt) do not support
         // SSLSession attributes, so perform a more expensive SNI retrieval.
-        if (session instanceof ExtendedSSLSession extended)
+        if (session instanceof ExtendedSSLSession)
         {
+            ExtendedSSLSession extended = (ExtendedSSLSession)session;
             for (SNIServerName serverName : getRequestedServerNames(extended))
             {
-                if (serverName instanceof SNIHostName hostName)
+                if (serverName instanceof SNIHostName)
+                {
+                    SNIHostName hostName = (SNIHostName)serverName;
                     return hostName.getAsciiName();
+                }
             }
         }
 
@@ -320,12 +324,15 @@ public class SecureRequestCustomizer implements HttpConfiguration.Customizer
                 @Override
                 protected Object getSyntheticAttribute(String name)
                 {
-                    return switch (name)
+                    switch (name)
                     {
-                        case EndPoint.SslSessionData.ATTRIBUTE -> sslSessionData;
-                        case X509_ATTRIBUTE -> getX509(sslSessionData.sslSession());
-                        default -> null;
-                    };
+                        case EndPoint.SslSessionData.ATTRIBUTE:
+                            return sslSessionData;
+                        case X509_ATTRIBUTE:
+                            return getX509(sslSessionData.sslSession());
+                        default:
+                            return null;
+                    }
                 }
 
                 @Override

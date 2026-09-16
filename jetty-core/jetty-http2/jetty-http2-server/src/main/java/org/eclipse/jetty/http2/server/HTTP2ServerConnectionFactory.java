@@ -259,9 +259,10 @@ public class HTTP2ServerConnectionFactory extends AbstractHTTP2ServerConnectionF
             Server server = request.getConnectionMetaData().getConnector().getServer();
             for (Connector connector : server.getConnectors())
             {
-                if (connector instanceof NetworkConnector nc &&
+                if (connector instanceof NetworkConnector &&
                     connector.getProtocols().contains("h3"))
                 {
+                    NetworkConnector nc = (NetworkConnector)connector;
                     int port = nc.getLocalPort();
                     if (port > 0)
                     {

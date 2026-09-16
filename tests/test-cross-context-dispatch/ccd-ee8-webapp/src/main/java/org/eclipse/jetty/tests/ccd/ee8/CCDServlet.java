@@ -45,8 +45,9 @@ public class CCDServlet extends HttpServlet
 
         while ((step = dispatchPlan.popStep()) != null)
         {
-            if (step instanceof Step.ContextRedispatch contextRedispatchStep)
+            if (step instanceof Step.ContextRedispatch)
             {
+                Step.ContextRedispatch contextRedispatchStep = (Step.ContextRedispatch)step;
                 ServletContext otherContext = getServletContext().getContext(contextRedispatchStep.getContextPath());
                 if (otherContext == null)
                     throw new NullPointerException("ServletContext.getContext(\"" + contextRedispatchStep.getContextPath() + "\") returned null");
@@ -55,25 +56,35 @@ public class CCDServlet extends HttpServlet
                     throw new NullPointerException("ServletContext.getRequestDispatcher(\"" + contextRedispatchStep.getDispatchPath() + "\") returned null");
                 switch (contextRedispatchStep.getDispatchType())
                 {
-                    case FORWARD -> dispatcher.forward(req, resp);
-                    case INCLUDE -> dispatcher.include(req, resp);
+                    case FORWARD:
+                        dispatcher.forward(req, resp);
+                        break;
+                    case INCLUDE:
+                        dispatcher.include(req, resp);
+                        break;
                 }
                 return;
             }
-            else if (step instanceof Step.RequestDispatch requestDispatchStep)
+            else if (step instanceof Step.RequestDispatch)
             {
+                Step.RequestDispatch requestDispatchStep = (Step.RequestDispatch)step;
                 RequestDispatcher dispatcher = req.getRequestDispatcher(requestDispatchStep.getDispatchPath());
                 if (dispatcher == null)
                     throw new NullPointerException("HttpServletRequest.getRequestDispatcher(\"" + requestDispatchStep.getDispatchPath() + "\") returned null");
                 switch (requestDispatchStep.getDispatchType())
                 {
-                    case FORWARD -> dispatcher.forward(req, resp);
-                    case INCLUDE -> dispatcher.include(req, resp);
+                    case FORWARD:
+                        dispatcher.forward(req, resp);
+                        break;
+                    case INCLUDE:
+                        dispatcher.include(req, resp);
+                        break;
                 }
                 return;
             }
-            else if (step instanceof Step.GetHttpSession getHttpSessionTask)
+            else if (step instanceof Step.GetHttpSession)
             {
+                Step.GetHttpSession getHttpSessionTask = (Step.GetHttpSession)step;
                 HttpSession session = req.getSession(false);
                 if (session == null)
                 {
@@ -91,8 +102,9 @@ public class CCDServlet extends HttpServlet
                         );
                 }
             }
-            else if (step instanceof Step.HttpSessionSetAttribute sessionSetAttribute)
+            else if (step instanceof Step.HttpSessionSetAttribute)
             {
+                Step.HttpSessionSetAttribute sessionSetAttribute = (Step.HttpSessionSetAttribute)step;
                 HttpSession session = req.getSession(true);
                 req.setAttribute("session[" + req.getRequestURI() + "].id", session.getId());
                 Property prop = sessionSetAttribute.getProperty();

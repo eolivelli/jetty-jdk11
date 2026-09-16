@@ -1186,8 +1186,11 @@ public class AsyncJSON
                     return null;
                 types[i] = component.getType();
                 Object value = object.get(component.getName());
-                if (value instanceof Number number)
+                if (value instanceof Number)
+                {
+                    Number number = (Number)value;
                     value = convertNumber(types[i], number);
+                }
                 values[i] = value;
             }
             return klass.getConstructor(types).newInstance(values);
@@ -1229,11 +1232,16 @@ public class AsyncJSON
 
     private static boolean isWhitespace(byte ws)
     {
-        return switch (ws)
+        switch (ws)
         {
-            case ' ', '\n', '\r', '\t' -> true;
-            default -> false;
-        };
+            case ' ':
+            case '\n':
+            case '\r':
+            case '\t':
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**

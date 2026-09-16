@@ -46,33 +46,42 @@ public class AuthenticationTestHandler extends Handler.Abstract
             {
                 switch (action)
                 {
-                    case "authenticate" ->
+                    case "authenticate":
                     {
                         AuthenticationState.Succeeded succeeded = AuthenticationState.authenticate(request);
                         out.append(succeeded == null ? "-" : succeeded.getUserIdentity().getUserPrincipal());
+                        break;
                     }
 
-                    case "challenge" ->
+                    case "challenge":
                     {
                         AuthenticationState.Succeeded succeeded = AuthenticationState.authenticate(request, response, callback);
                         if (succeeded == null)
                             return true;
                         out.append(succeeded.getUserIdentity().getUserPrincipal());
+                        break;
                     }
 
-                    case "login" ->
+                    case "login":
                     {
                         AuthenticationState.Succeeded succeeded = AuthenticationState.login(usernames.pop(), passwords.pop(), request, response);
                         out.append(succeeded == null ? "-" : succeeded.getUserIdentity().getUserPrincipal());
+                        break;
                     }
 
-                    case "logout" -> out.append(AuthenticationState.logout(request, response));
+                    case "logout":
+                        out.append(AuthenticationState.logout(request, response));
+                        break;
 
-                    case "thread" -> out.append(TestIdentityService.USER_IDENTITY.get());
+                    case "thread":
+                        out.append(TestIdentityService.USER_IDENTITY.get());
+                        break;
 
-                    case "session" -> out.append(request.getSession(true).getId());
+                    case "session":
+                        out.append(request.getSession(true).getId());
+                        break;
 
-                    case "form" ->
+                    case "form":
                     {
                         Fields fields = FormFields.from(request).get();
                         String d = "";
@@ -81,9 +90,12 @@ public class AuthenticationTestHandler extends Handler.Abstract
                             out.append(d).append(field.getName()).append(":").append(field.getValue());
                             d = ",";
                         }
+                        break;
                     }
 
-                    default -> out.append("???");
+                    default:
+                        out.append("???");
+                        break;
                 }
 
                 out.append(',');
@@ -91,8 +103,11 @@ public class AuthenticationTestHandler extends Handler.Abstract
         }
 
         AuthenticationState authenticationState = AuthenticationState.getAuthenticationState(request);
-        if (authenticationState instanceof AuthenticationState.Succeeded succeeded)
+        if (authenticationState instanceof AuthenticationState.Succeeded)
+        {
+            AuthenticationState.Succeeded succeeded = (AuthenticationState.Succeeded)authenticationState;
             out.append(succeeded.getUserIdentity().getUserPrincipal()).append(" is OK");
+        }
         else if (authenticationState instanceof AuthenticationState.Deferred)
             out.append("Deferred");
         else if (authenticationState == null)

@@ -1113,13 +1113,17 @@ public class AsyncServletTest
 
                 switch (action)
                 {
-                    case "dispatch" -> event.getAsyncContext().dispatch();
-                    case "complete" ->
+                    case "dispatch":
+                        event.getAsyncContext().dispatch();
+                        break;
+                    case "complete":
                     {
                         event.getSuppliedResponse().getOutputStream().println("COMPLETED\n");
                         event.getAsyncContext().complete();
+                        break;
                     }
-                    case "error" -> throw new RuntimeException("error in onTimeout");
+                    case "error":
+                        throw new RuntimeException("error in onTimeout");
                 }
             }
         }
@@ -1141,11 +1145,14 @@ public class AsyncServletTest
 
                 switch (action)
                 {
-                    case "dispatch" -> event.getAsyncContext().dispatch();
-                    case "complete" ->
+                    case "dispatch":
+                        event.getAsyncContext().dispatch();
+                        break;
+                    case "complete":
                     {
                         event.getSuppliedResponse().getOutputStream().println("COMPLETED\n");
                         event.getAsyncContext().complete();
+                        break;
                     }
                 }
             }

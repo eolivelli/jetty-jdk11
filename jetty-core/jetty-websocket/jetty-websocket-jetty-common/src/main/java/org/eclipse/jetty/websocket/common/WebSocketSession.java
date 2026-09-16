@@ -74,21 +74,26 @@ public class WebSocketSession implements Session, Dumpable
     public void sendPartialBinary(ByteBuffer buffer, boolean last, Callback callback)
     {
         callback = Objects.requireNonNullElse(callback, Callback.NOOP);
-        Frame frame = switch (messageType)
+        Frame frame;
+        switch (messageType)
         {
-            case OpCode.UNDEFINED ->
+            case OpCode.UNDEFINED:
             {
                 // new message
                 messageType = OpCode.BINARY;
-                yield new Frame(OpCode.BINARY);
+                frame = new Frame(OpCode.BINARY);
+                break;
             }
-            case OpCode.BINARY -> new Frame(OpCode.CONTINUATION);
-            default ->
+            case OpCode.BINARY:
+                frame = new Frame(OpCode.CONTINUATION);
+                break;
+            default:
             {
                 callback.fail(new ProtocolException("Attempt to send partial BINARY during " + OpCode.name(messageType)));
-                yield null;
+                frame = null;
+                break;
             }
-        };
+        }
 
         if (frame != null)
         {
@@ -114,21 +119,26 @@ public class WebSocketSession implements Session, Dumpable
     @Override
     public void sendPartialText(String text, boolean last, Callback callback)
     {
-        Frame frame = switch (messageType)
+        Frame frame;
+        switch (messageType)
         {
-            case OpCode.UNDEFINED ->
+            case OpCode.UNDEFINED:
             {
                 // new message
                 messageType = OpCode.TEXT;
-                yield new Frame(OpCode.TEXT);
+                frame = new Frame(OpCode.TEXT);
+                break;
             }
-            case OpCode.TEXT -> new Frame(OpCode.CONTINUATION);
-            default ->
+            case OpCode.TEXT:
+                frame = new Frame(OpCode.CONTINUATION);
+                break;
+            default:
             {
                 callback.fail(new ProtocolException("Attempt to send partial TEXT during " + OpCode.name(messageType)));
-                yield null;
+                frame = null;
+                break;
             }
-        };
+        }
 
         if (frame != null)
         {

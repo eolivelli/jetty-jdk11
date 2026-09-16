@@ -209,21 +209,24 @@ public class ServletContextResourcesTest
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         switch (response.getStatus())
         {
-            case STATUS_EXPECTED ->
+            case STATUS_EXPECTED:
             {
                 // Expected path for malformed input
                 assertThat("response.status", response.getStatus(), is(STATUS_EXPECTED));
                 String body = response.getContent();
                 assertThat("response.body", body, containsString(
                     String.format("%s:%s", MalformedURLException.class.getName(), resourceName)));
+                break;
             }
-            case 200 ->
+            case 200:
             {
+                break;
                 // Not malformed enough, but the API is behaving properly and returns null.
             }
-            default ->
+            default:
             {
                 fail("Test failed: Unexpected behavior: Status Code: " + response.getStatus());
+                break;
             }
         }
     }

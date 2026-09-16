@@ -220,16 +220,18 @@ public class HTTP2ListenersTest extends AbstractTest
                 {
                     switch (frame.getType())
                     {
-                        case SETTINGS ->
+                        case SETTINGS:
                         {
                             if (firstPing.compareAndSet(false, true))
                                 ping(session);
+                            break;
                         }
-                        case PING ->
+                        case PING:
                         {
                             PingFrame pingFrame = (PingFrame)frame;
                             if (pingFrame.isReply() && task.cancel())
                                 httpClient.getScheduler().schedule(() -> ping(session), pingInterval, TimeUnit.MILLISECONDS);
+                            break;
                         }
                     }
                 }

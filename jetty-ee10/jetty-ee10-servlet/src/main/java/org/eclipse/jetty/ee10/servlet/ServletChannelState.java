@@ -1010,8 +1010,9 @@ public class ServletChannelState
             code = HttpStatus.INTERNAL_SERVER_ERROR_500;
             message = th.toString();
         }
-        else if (cause instanceof HttpException httpException)
+        else if (cause instanceof HttpException)
         {
+            HttpException httpException = (HttpException)cause;
             code = httpException.getCode();
             message = httpException.getReason();
         }

@@ -34,8 +34,9 @@ public class ServerConnectorListener implements LifeCycle.Listener
     @Override
     public void lifeCycleStarted(LifeCycle event)
     {
-        if (event instanceof ServerConnector serverConnector)
+        if (event instanceof ServerConnector)
         {
+            ServerConnector serverConnector = (ServerConnector)event;
             if (getFilePath() != null)
             {
                 try

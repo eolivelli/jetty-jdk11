@@ -97,7 +97,7 @@ public class PathMappingsHandler extends Handler.AbstractContainer
             throw new IllegalStateException("Unable to addHandler of self: " + handler);
 
         // Check for loops.
-        if (handler instanceof Handler.Container container && container.getDescendants().contains(this))
+        if (handler instanceof Handler.Container && ((Handler.Container)handler).getDescendants().contains(this))
             throw new IllegalStateException("loop detected: " + handler);
 
         Server server = getServer();

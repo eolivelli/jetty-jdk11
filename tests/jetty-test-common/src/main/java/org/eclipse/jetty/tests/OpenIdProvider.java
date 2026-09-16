@@ -185,11 +185,21 @@ public class OpenIdProvider extends ContainerLifeCycle
             String pathInContext = Request.getPathInContext(request);
             switch (pathInContext)
             {
-                case CONFIG_PATH -> doGetConfigServlet(request, response, callback);
-                case AUTH_PATH -> doAuthEndpoint(request, response, callback);
-                case TOKEN_PATH -> doTokenEndpoint(request, response, callback);
-                case END_SESSION_PATH -> doEndSessionEndpoint(request, response, callback);
-                default -> Response.writeError(request, response, callback, HttpStatus.NOT_FOUND_404);
+                case CONFIG_PATH:
+                    doGetConfigServlet(request, response, callback);
+                    break;
+                case AUTH_PATH:
+                    doAuthEndpoint(request, response, callback);
+                    break;
+                case TOKEN_PATH:
+                    doTokenEndpoint(request, response, callback);
+                    break;
+                case END_SESSION_PATH:
+                    doEndSessionEndpoint(request, response, callback);
+                    break;
+                default:
+                    Response.writeError(request, response, callback, HttpStatus.NOT_FOUND_404);
+                    break;
             }
 
             return true;
@@ -201,9 +211,14 @@ public class OpenIdProvider extends ContainerLifeCycle
         String method = request.getMethod();
         switch (method)
         {
-            case "GET" -> doGetAuthEndpoint(request, response, callback);
-            case "POST" -> doPostAuthEndpoint(request, response, callback);
-            default -> throw new HttpException.RuntimeException(HttpStatus.BAD_REQUEST_400, "Unsupported HTTP method: " + method);
+            case "GET":
+                doGetAuthEndpoint(request, response, callback);
+                break;
+            case "POST":
+                doPostAuthEndpoint(request, response, callback);
+                break;
+            default:
+                throw new HttpException.RuntimeException(HttpStatus.BAD_REQUEST_400, "Unsupported HTTP method: " + method);
         }
     }
 

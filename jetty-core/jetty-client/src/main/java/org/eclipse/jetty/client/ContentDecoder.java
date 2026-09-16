@@ -84,8 +84,9 @@ public interface ContentDecoder
         {
             if (this == obj)
                 return true;
-            if (!(obj instanceof Factory that))
+            if (!(obj instanceof Factory))
                 return false;
+            Factory that = (Factory)obj;
             return Objects.equals(encoding, that.encoding);
         }
 

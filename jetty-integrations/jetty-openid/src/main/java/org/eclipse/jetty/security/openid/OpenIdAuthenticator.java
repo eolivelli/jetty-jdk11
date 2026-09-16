@@ -520,8 +520,9 @@ public class OpenIdAuthenticator extends LoginAuthenticator
         if (authenticationState != null)
         {
             boolean isUserIdentityValid = false;
-            if (authenticationState instanceof AuthenticationState.Succeeded succeeded && _loginService != null)
+            if (authenticationState instanceof AuthenticationState.Succeeded && _loginService != null)
             {
+                AuthenticationState.Succeeded succeeded = (AuthenticationState.Succeeded)authenticationState;
                 UserIdentity userIdentity = succeeded.getUserIdentity();
                 Principal principal = userIdentity.getUserPrincipal();
                 if (principal instanceof OpenIdUserPrincipal)

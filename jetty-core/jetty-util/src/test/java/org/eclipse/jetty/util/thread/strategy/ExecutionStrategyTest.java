@@ -152,7 +152,7 @@ public class ExecutionStrategyTest
             {
                 // Dump state on failure
                 return String.format("Timed out waiting for latch: %s%ntasks=%d latch=%d%n%s",
-                    strategy, TASKS, latch.getCount(), threadPool instanceof Dumpable dumpable ? dumpable.dump() : "");
+                    strategy, TASKS, latch.getCount(), threadPool instanceof Dumpable ? ((Dumpable)threadPool).dump() : "");
             });
 
         LifeCycle.stop(threadPool);
@@ -218,7 +218,7 @@ public class ExecutionStrategyTest
 
         assertTrue(latch.await(30, TimeUnit.SECONDS),
             String.format("Timed out waiting for latch: %s%ntasks=%d latch=%d q=%d%n%s",
-                strategy, TASKS, latch.getCount(), q.size(), threadPool instanceof Dumpable dumpable ? dumpable.dump() : ""));
+                strategy, TASKS, latch.getCount(), q.size(), threadPool instanceof Dumpable ? ((Dumpable)threadPool).dump() : ""));
 
         LifeCycle.stop(threadPool);
     }
@@ -280,7 +280,7 @@ public class ExecutionStrategyTest
             {
                 // Dump state on failure.
                 return String.format("Timed out waiting for latch: %s%ntasks=%d latch=%d%n%s",
-                    strategy, TASKS, latch.getCount(), threadPool instanceof Dumpable dumpable ? dumpable.dump() : "");
+                    strategy, TASKS, latch.getCount(), threadPool instanceof Dumpable ? ((Dumpable)threadPool).dump() : "");
             });
 
             Throwable failure = failureRef.get();

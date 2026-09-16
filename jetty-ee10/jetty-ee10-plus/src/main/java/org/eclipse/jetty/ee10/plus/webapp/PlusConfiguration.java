@@ -122,8 +122,9 @@ public class PlusConfiguration extends AbstractConfiguration
         throws Exception
     {
         Object o = wac.removeAttribute(LOCK_JNDI_KEY);
-        if (o instanceof Integer key)
+        if (o instanceof Integer)
         {
+            Integer key = (Integer)o;
             ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(wac.getClassLoader());
 

@@ -490,8 +490,9 @@ public class HttpClientGZIPTest extends AbstractHttpClientServerTest
         Throwable cause = ee.getCause();
         while (cause != null)
         {
-            if (cause instanceof ZipException zipException)
+            if (cause instanceof ZipException)
             {
+                ZipException zipException = (ZipException)cause;
                 return zipException;
             }
             cause = cause.getCause();

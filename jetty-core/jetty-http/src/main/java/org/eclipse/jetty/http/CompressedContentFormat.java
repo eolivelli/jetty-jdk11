@@ -41,8 +41,9 @@ public class CompressedContentFormat
     @Override
     public boolean equals(Object o)
     {
-        if (!(o instanceof CompressedContentFormat ccf))
+        if (!(o instanceof CompressedContentFormat))
             return false;
+        CompressedContentFormat ccf = (CompressedContentFormat)o;
         return Objects.equals(_encoding, ccf._encoding) && Objects.equals(_extension, ccf._extension);
     }
 

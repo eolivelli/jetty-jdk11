@@ -178,8 +178,9 @@ public class JakartaWebSocketClientContainer extends JakartaWebSocketContainer i
         JakartaClientUpgradeRequest upgradeRequest = new JakartaClientUpgradeRequest(this, getWebSocketCoreClient(), destURI, configuredEndpoint);
 
         EndpointConfig config = configuredEndpoint.getConfig();
-        if (config instanceof ClientEndpointConfig clientEndpointConfig)
+        if (config instanceof ClientEndpointConfig)
         {
+            ClientEndpointConfig clientEndpointConfig = (ClientEndpointConfig)config;
             JsrUpgradeListener jsrUpgradeListener = new JsrUpgradeListener(clientEndpointConfig.getConfigurator());
             upgradeRequest.addListener(jsrUpgradeListener);
 

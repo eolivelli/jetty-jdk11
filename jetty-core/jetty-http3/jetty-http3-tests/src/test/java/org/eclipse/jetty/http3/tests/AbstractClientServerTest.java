@@ -115,14 +115,17 @@ public class AbstractClientServerTest
         serverSslContextFactory.setKeyStorePath("src/test/resources/keystore.p12");
         serverSslContextFactory.setKeyStorePassword("storepwd");
 
-        connector = switch (transportType)
+        switch (transportType)
         {
-            case H3_QUICHE ->
+            case H3_QUICHE:
             {
                 QuicheServerQuicConfiguration serverQuicConfig = HTTP3ServerQuicConfiguration.configure(new QuicheServerQuicConfiguration(workDir.getEmptyPathDir()));
-                yield new QuicheServerConnector(server, serverSslContextFactory, serverQuicConfig, serverConnectionFactory);
+                connector = new QuicheServerConnector(server, serverSslContextFactory, serverQuicConfig, serverConnectionFactory);
+                break;
             }
-        };
+            default:
+                throw new IllegalStateException();
+        }
         server.addConnector(connector);
 
         MBeanContainer mbeanContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
@@ -152,10 +155,14 @@ public class AbstractClientServerTest
 
         http3Client = new HTTP3Client(clientQuicConfig, clientConnector);
 
-        transport = switch (transportType)
+        switch (transportType)
         {
-            case H3_QUICHE -> new QuicheTransport((QuicheClientQuicConfiguration)http3Client.getClientQuicConfiguration());
-        };
+            case H3_QUICHE:
+                transport = new QuicheTransport((QuicheClientQuicConfiguration)http3Client.getClientQuicConfiguration());
+                break;
+            default:
+                throw new IllegalStateException();
+        }
 
         HttpClientTransport httpClientTransport = dynamic
             ? new HttpClientTransportDynamic(clientConnector, new ClientConnectionFactoryOverHTTP3.HTTP3(http3Client, transport))

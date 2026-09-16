@@ -359,8 +359,11 @@ public interface Request extends Attributes, Content.Source
     {
         request.addHttpStreamWrapper(stream ->
         {
-            if (stream instanceof CompletionStreamWrapper completionStreamWrapper)
+            if (stream instanceof CompletionStreamWrapper)
+            {
+                CompletionStreamWrapper completionStreamWrapper = (CompletionStreamWrapper)stream;
                 return completionStreamWrapper.addListener(listener);
+            }
             return new CompletionStreamWrapper(stream, listener);
         });
     }
@@ -426,8 +429,11 @@ public interface Request extends Attributes, Content.Source
         if (request == null)
             return null;
         SocketAddress local = request.getConnectionMetaData().getLocalSocketAddress();
-        if (local instanceof InetSocketAddress inetSocketAddress)
+        if (local instanceof InetSocketAddress)
+        {
+            InetSocketAddress inetSocketAddress = (InetSocketAddress)local;
             return getHostName(inetSocketAddress);
+        }
         return local == null ? null : local.toString();
     }
 
@@ -446,8 +452,11 @@ public interface Request extends Attributes, Content.Source
         if (request == null)
             return null;
         SocketAddress remote = request.getConnectionMetaData().getRemoteSocketAddress();
-        if (remote instanceof InetSocketAddress inetSocketAddress)
+        if (remote instanceof InetSocketAddress)
+        {
+            InetSocketAddress inetSocketAddress = (InetSocketAddress)remote;
             return getHostName(inetSocketAddress);
+        }
         return remote == null ? null : remote.toString();
     }
 
@@ -511,8 +520,11 @@ public interface Request extends Attributes, Content.Source
 
         // Is there a local port?
         SocketAddress local = request.getConnectionMetaData().getLocalSocketAddress();
-        if (local instanceof InetSocketAddress inetSocketAddress && inetSocketAddress.getPort() > 0)
+        if (local instanceof InetSocketAddress && ((InetSocketAddress)local).getPort() > 0)
+        {
+            InetSocketAddress inetSocketAddress = (InetSocketAddress)local;
             return inetSocketAddress.getPort();
+        }
 
         return -1;
     }
@@ -1078,7 +1090,7 @@ public interface Request extends Attributes, Content.Source
         {
             if (type.isInstance(request))
                 return (T)request;
-            request = request instanceof Request.Wrapper wrapper ? wrapper.getWrapped() : null;
+            request = request instanceof Request.Wrapper ? ((Request.Wrapper)request).getWrapped() : null;
         }
         return null;
     }
@@ -1106,7 +1118,7 @@ public interface Request extends Attributes, Content.Source
                 return null;
             if (type.isInstance(request))
                 return (T)request;
-            request = request instanceof Request.Wrapper wrapper ? wrapper.getWrapped() : null;
+            request = request instanceof Request.Wrapper ? ((Request.Wrapper)request).getWrapped() : null;
         }
         return null;
     }
@@ -1120,8 +1132,9 @@ public interface Request extends Attributes, Content.Source
 
     static Request unWrap(Request request)
     {
-        while (request instanceof Request.Wrapper wrapped)
+        while (request instanceof Request.Wrapper)
         {
+            Request.Wrapper wrapped = (Request.Wrapper)request;
             request = wrapped.getWrapped();
         }
         return request;
@@ -1130,8 +1143,11 @@ public interface Request extends Attributes, Content.Source
     static long getContentBytesRead(Request request)
     {
         Request originalRequest = unWrap(request);
-        if (originalRequest instanceof HttpChannelState.ChannelRequest channelRequest)
+        if (originalRequest instanceof HttpChannelState.ChannelRequest)
+        {
+            HttpChannelState.ChannelRequest channelRequest = (HttpChannelState.ChannelRequest)originalRequest;
             return channelRequest.getContentBytesRead();
+        }
         return -1;
     }
 

@@ -217,8 +217,11 @@ public class TransportParameters implements Iterable<Map.Entry<TransportParamete
         {
             if (this == obj)
                 return true;
-            if (obj instanceof Id<?> that)
+            if (obj instanceof Id<?>)
+            {
+                Id<?> that = (Id<?>)obj;
                 return id == that.id;
+            }
             return false;
         }
 

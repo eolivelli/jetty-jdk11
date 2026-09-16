@@ -114,12 +114,14 @@ public class SniX509ExtendedKeyManager extends X509ExtendedKeyManager
             .forEach(alias -> aliasMap.put(getAliasMapper().apply(alias), alias));
 
         String host = null;
-        if (session instanceof ExtendedSSLSession extended)
+        if (session instanceof ExtendedSSLSession)
         {
+            ExtendedSSLSession extended = (ExtendedSSLSession)session;
             for (SNIServerName serverName : extended.getRequestedServerNames())
             {
-                if (serverName instanceof SNIHostName hostName)
+                if (serverName instanceof SNIHostName)
                 {
+                    SNIHostName hostName = (SNIHostName)serverName;
                     host = hostName.getAsciiName();
                     break;
                 }
@@ -133,8 +135,9 @@ public class SniX509ExtendedKeyManager extends X509ExtendedKeyManager
             {
                 for (SNIMatcher matcher : matchers)
                 {
-                    if (matcher instanceof SslContextFactory.AliasSNIMatcher aliasMatcher)
+                    if (matcher instanceof SslContextFactory.AliasSNIMatcher)
                     {
+                        SslContextFactory.AliasSNIMatcher aliasMatcher = (SslContextFactory.AliasSNIMatcher)matcher;
                         host = aliasMatcher.getHost();
                         break;
                     }

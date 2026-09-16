@@ -237,7 +237,7 @@ public class HttpField
             char c = StringUtil.asciiToLowerCase(value.charAt(i));
             switch (state)
             {
-                case 0 -> // initial white space
+                case 0:
                 {
                     switch (c)
                     {
@@ -264,24 +264,27 @@ public class HttpField
                             state = 1;
                             break;
                     }
+                    break;
                 }
-                case 1 -> // In token
+                case 1:
                 {
                     switch (c)
                     {
-                        case ',' -> // next field
+                        case ',':
                         {
                             // Have we matched the token?
                             if (match == search.length())
                                 return true;
                             state = 0;
+                            break;
                         }
-                        case ';' ->
+                        case ';':
                         {
                             param = match >= 0 ? 0 : -1;
-                            state = 5; // parameter
+                            state = 5;
+                            break; // parameter
                         }
-                        default ->
+                        default:
                         {
                             if (match > 0)
                             {
@@ -290,16 +293,22 @@ public class HttpField
                                 else if (c != ' ' && c != '\t')
                                     match = -1;
                             }
+                            break;
                         }
                     }
+                    break;
                 }
-                case 2 -> // In Quoted token
+                case 2:
                 {
                     switch (c)
                     {
-                        case '\\' -> state = 3; // quoted character
-                        case '"' -> state = 4;  // end quote
-                        default ->
+                        case '\\':
+                            state = 3;
+                            break; // quoted character
+                        case '"':
+                            state = 4;
+                            break;  // end quote
+                        default:
                         {
                             if (match >= 0)
                             {
@@ -308,10 +317,12 @@ public class HttpField
                                 else
                                     match = -1;
                             }
+                            break;
                         }
                     }
+                    break;
                 }
-                case 3 -> // In Quoted character in quoted token
+                case 3:
                 {
                     if (match >= 0)
                     {
@@ -321,8 +332,9 @@ public class HttpField
                             match = -1;
                     }
                     state = 2;
+                    break;
                 }
-                case 4 -> // WS after end quote
+                case 4:
                 {
                     switch (c)
                     {
@@ -345,8 +357,9 @@ public class HttpField
                             // This is an illegal token, just ignore
                             match = -1;
                     }
+                    break;
                 }
-                case 5 -> // parameter
+                case 5:
                 {
                     switch (c)
                     {
@@ -371,8 +384,10 @@ public class HttpField
                                     param = -1;
                             }
                     }
+                    break;
                 }
-                default -> throw new IllegalStateException();
+                default:
+                    throw new IllegalStateException();
             }
         }
 
@@ -473,8 +488,9 @@ public class HttpField
     {
         if (o == this)
             return true;
-        if (!(o instanceof HttpField field))
+        if (!(o instanceof HttpField))
             return false;
+        HttpField field = (HttpField)o;
         if (_header != field.getHeader())
             return false;
         if (!_name.equalsIgnoreCase(field.getName()))

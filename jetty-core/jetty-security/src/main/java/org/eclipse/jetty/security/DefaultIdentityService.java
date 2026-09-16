@@ -39,8 +39,9 @@ public class DefaultIdentityService implements IdentityService
     @Override
     public Association associate(UserIdentity user, RunAsToken runAsToken)
     {
-        if (runAsToken instanceof RoleRunAsToken roleRunAsToken)
+        if (runAsToken instanceof RoleRunAsToken)
         {
+            RoleRunAsToken roleRunAsToken = (RoleRunAsToken)runAsToken;
             String oldAssociate = runAsRole.get();
             runAsRole.set(roleRunAsToken.getRunAsRole());
             if (oldAssociate == null)

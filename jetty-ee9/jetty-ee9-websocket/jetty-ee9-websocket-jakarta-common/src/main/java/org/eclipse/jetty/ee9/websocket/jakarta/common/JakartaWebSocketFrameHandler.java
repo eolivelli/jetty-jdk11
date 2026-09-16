@@ -630,9 +630,15 @@ public class JakartaWebSocketFrameHandler implements FrameHandler
     {
         switch (dataType)
         {
-            case OpCode.TEXT -> onText(frame, callback);
-            case OpCode.BINARY -> onBinary(frame, callback);
-            default -> callback.failed(new ProtocolException("Unable to process continuation during dataType " + dataType));
+            case OpCode.TEXT:
+                onText(frame, callback);
+                break;
+            case OpCode.BINARY:
+                onBinary(frame, callback);
+                break;
+            default:
+                callback.failed(new ProtocolException("Unable to process continuation during dataType " + dataType));
+                break;
         }
     }
 

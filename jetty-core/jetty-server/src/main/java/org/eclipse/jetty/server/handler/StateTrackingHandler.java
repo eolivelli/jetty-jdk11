@@ -760,8 +760,9 @@ public class StateTrackingHandler extends Handler.Wrapper
             public void dump(Appendable out, String indent) throws IOException
             {
                 Object demandRunner = this.demandRunner;
-                if (demandRunner instanceof Thread runThread)
+                if (demandRunner instanceof Thread)
                 {
+                    Thread runThread = (Thread)demandRunner;
                     out.append(String.format("demand: running [%s]\n", callback));
                     out.append(indent).append(new ThreadInfo(runThread).toString(indent));
                 }
@@ -926,8 +927,9 @@ public class StateTrackingHandler extends Handler.Wrapper
                 }
 
                 Object callbackRunner = this.callbackRunner;
-                if (callbackRunner instanceof Thread callbackThread)
+                if (callbackRunner instanceof Thread)
                 {
+                    Thread callbackThread = (Thread)callbackRunner;
                     out.append(indent).append(String.format("write callback: running [%s]\n", getCallback()));
                     out.append(indent).append(new ThreadInfo(callbackThread).toString(indent));
                 }

@@ -231,13 +231,19 @@ public class ConcurrentPool<P> implements Pool<P>, Dumpable
 
     private int startIndex(int size)
     {
-        return switch (strategyType)
+        switch (strategyType)
         {
-            case FIRST -> 0;
-            case RANDOM -> ThreadLocalRandom.current().nextInt(size);
-            case ROUND_ROBIN -> nextIndex.getAndUpdate(c -> Math.max(0, c + 1)) % size;
-            case THREAD_ID -> (int)(Thread.currentThread().getId() % size);
-        };
+            case FIRST:
+                return 0;
+            case RANDOM:
+                return ThreadLocalRandom.current().nextInt(size);
+            case ROUND_ROBIN:
+                return nextIndex.getAndUpdate(c -> Math.max(0, c + 1)) % size;
+            case THREAD_ID:
+                return (int)(Thread.currentThread().getId() % size);
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     private boolean release(Entry<P> entry)

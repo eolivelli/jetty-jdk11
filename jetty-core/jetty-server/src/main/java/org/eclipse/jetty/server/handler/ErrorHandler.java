@@ -132,8 +132,9 @@ public class ErrorHandler implements Request.Handler
         int code = response.getStatus();
         String message = (String)request.getAttribute(ERROR_MESSAGE);
         Throwable cause = (Throwable)request.getAttribute(ERROR_EXCEPTION);
-        if (cause instanceof HttpException httpException)
+        if (cause instanceof HttpException)
         {
+            HttpException httpException = (HttpException)cause;
             code = httpException.getCode();
             response.setStatus(code);
             if (message == null)
@@ -257,10 +258,18 @@ public class ErrorHandler implements Request.Handler
 
                     switch (type)
                     {
-                        case TEXT_HTML -> writeErrorHtml(request, writer, charset, code, message, cause);
-                        case TEXT_JSON, APPLICATION_JSON -> writeErrorJson(request, writer, code, message, cause);
-                        case TEXT_PLAIN -> writeErrorPlain(request, writer, code, message, cause);
-                        default -> throw new IllegalStateException();
+                        case TEXT_HTML:
+                            writeErrorHtml(request, writer, charset, code, message, cause);
+                            break;
+                        case TEXT_JSON:
+                        case APPLICATION_JSON:
+                            writeErrorJson(request, writer, code, message, cause);
+                            break;
+                        case TEXT_PLAIN:
+                            writeErrorPlain(request, writer, code, message, cause);
+                            break;
+                        default:
+                            throw new IllegalStateException();
                     }
 
                     writer.flush();
@@ -644,13 +653,17 @@ public class ErrorHandler implements Request.Handler
                 @Override
                 protected Object getSyntheticAttribute(String name)
                 {
-                    return switch (name)
+                    switch (name)
                     {
-                        case ERROR_MESSAGE -> message;
-                        case ERROR_EXCEPTION -> cause;
-                        case ERROR_STATUS -> status;
-                        default -> null;
-                    };
+                        case ERROR_MESSAGE:
+                            return message;
+                        case ERROR_EXCEPTION:
+                            return cause;
+                        case ERROR_STATUS:
+                            return status;
+                        default:
+                            return null;
+                    }
                 }
 
                 @Override

@@ -330,8 +330,9 @@ public class CombinedResourceTest
 
         List<URI> actual = new ArrayList<>();
         assertThat(rc2, instanceOf(CombinedResource.class));
-        if (rc2 instanceof CombinedResource combinedResource)
+        if (rc2 instanceof CombinedResource)
         {
+            CombinedResource combinedResource = (CombinedResource)rc2;
             for (Resource res : combinedResource.getResources())
                 actual.add(res.getURI());
         }

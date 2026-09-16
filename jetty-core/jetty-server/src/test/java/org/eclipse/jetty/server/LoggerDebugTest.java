@@ -138,8 +138,9 @@ public class LoggerDebugTest
             this.out = out;
             ILoggerFactory loggerFactory = LoggerFactory.getILoggerFactory();
             JettyLoggerFactory jettyFactory = null;
-            if (loggerFactory instanceof JettyLoggerFactory factory)
+            if (loggerFactory instanceof JettyLoggerFactory)
             {
+                JettyLoggerFactory factory = (JettyLoggerFactory)loggerFactory;
                 jettyFactory = factory;
             }
             Assumptions.assumeTrue(jettyFactory != null, "Not using jetty-slf4j-impl");

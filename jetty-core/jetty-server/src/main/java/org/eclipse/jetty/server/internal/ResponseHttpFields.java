@@ -74,8 +74,9 @@ public class ResponseHttpFields extends HttpFields.Mutable.Wrapper
         if (isCommitted() || newField == null || !newField.isSameName(oldField))
             return oldField;
 
-        if (oldField instanceof Persistent persistent)
+        if (oldField instanceof Persistent)
         {
+            Persistent persistent = (Persistent)oldField;
             // new field must also be persistent and clear back to the previous value
             newField = (newField instanceof PreEncodedHttpField)
                 ? new PersistentPreEncodedHttpField(oldField.getHeader(), newField.getValue(), persistent.getOriginal())
@@ -105,8 +106,11 @@ public class ResponseHttpFields extends HttpFields.Mutable.Wrapper
             for (ListIterator<HttpField> iterator = getMutableHttpFields().listIterator(size()); iterator.hasPrevious();)
             {
                 HttpField field = iterator.previous();
-                if (field instanceof Persistent persistent)
+                if (field instanceof Persistent)
+                {
+                    Persistent persistent = (Persistent)field;
                     iterator.set(persistent.getOriginal());
+                }
                 else
                     iterator.remove();
             }

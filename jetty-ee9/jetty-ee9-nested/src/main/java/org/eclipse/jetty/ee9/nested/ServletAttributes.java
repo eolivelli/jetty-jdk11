@@ -57,20 +57,31 @@ public class ServletAttributes extends Attributes.Synthetic
     @Override
     protected Object getSyntheticAttribute(String name)
     {
-        return switch (name)
+        switch (name)
         {
-            case Request.SSL_CIPHER_SUITE -> getWrapped().getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData sslSessionData ? sslSessionData.cipherSuite() : null;
-            case Request.SSL_KEY_SIZE -> getWrapped().getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData sslSessionData ? sslSessionData.keySize() : null;
-            case Request.SSL_SESSION_ID -> getWrapped().getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData sslSessionData ? sslSessionData.sslSessionId() : null;
-            case Request.PEER_CERTIFICATES -> getWrapped().getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData sslSessionData ? sslSessionData.peerCertificates() : null;
-            case AsyncContext.ASYNC_REQUEST_URI -> _async == null ? null : _async.requestURI;
-            case AsyncContext.ASYNC_CONTEXT_PATH -> _async == null ? null : _async.contextPath;
-            case AsyncContext.ASYNC_SERVLET_PATH -> _async == null ? null : _async.mapping == null ? null : _async.mapping.getServletPath();
-            case AsyncContext.ASYNC_PATH_INFO -> _async == null ? null : _async.mapping == null ? _async.pathInContext : _async.mapping.getPathInfo();
-            case AsyncContext.ASYNC_QUERY_STRING -> _async == null ? null : _async.queryString;
-            case AsyncContext.ASYNC_MAPPING -> _async == null ? null : _async.mapping;
-            default -> null;
-        };
+            case Request.SSL_CIPHER_SUITE:
+                return getWrapped().getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData sslSessionData ? sslSessionData.cipherSuite() : null;
+            case Request.SSL_KEY_SIZE:
+                return getWrapped().getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData sslSessionData ? sslSessionData.keySize() : null;
+            case Request.SSL_SESSION_ID:
+                return getWrapped().getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData sslSessionData ? sslSessionData.sslSessionId() : null;
+            case Request.PEER_CERTIFICATES:
+                return getWrapped().getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData sslSessionData ? sslSessionData.peerCertificates() : null;
+            case AsyncContext.ASYNC_REQUEST_URI:
+                return _async == null ? null : _async.requestURI;
+            case AsyncContext.ASYNC_CONTEXT_PATH:
+                return _async == null ? null : _async.contextPath;
+            case AsyncContext.ASYNC_SERVLET_PATH:
+                return _async == null ? null : _async.mapping == null ? null : _async.mapping.getServletPath();
+            case AsyncContext.ASYNC_PATH_INFO:
+                return _async == null ? null : _async.mapping == null ? _async.pathInContext : _async.mapping.getPathInfo();
+            case AsyncContext.ASYNC_QUERY_STRING:
+                return _async == null ? null : _async.queryString;
+            case AsyncContext.ASYNC_MAPPING:
+                return _async == null ? null : _async.mapping;
+            default:
+                return null;
+        }
     }
 
     @Override

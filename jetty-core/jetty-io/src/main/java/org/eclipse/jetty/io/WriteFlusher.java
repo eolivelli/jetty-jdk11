@@ -261,7 +261,7 @@ public abstract class WriteFlusher
     public InvocationType getCallbackInvocationType()
     {
         State s = _state.get();
-        return (s instanceof PendingState p) ? p.getCallbackInvocationType() : Invocable.InvocationType.BLOCKING;
+        return (s instanceof PendingState) ? ((PendingState)s).getCallbackInvocationType() : Invocable.InvocationType.BLOCKING;
     }
 
     /**
@@ -637,16 +637,25 @@ public abstract class WriteFlusher
 
     public String toStateString()
     {
-        return switch (_state.get().getType())
+        switch (_state.get().getType())
         {
-            case IDLE -> "-";
-            case FLUSHING -> "F";
-            case PENDING -> "P";
-            case COMPLETING -> "C";
-            case CANCEL -> "L";
-            case CANCELLING -> "N";
-            case FAILED -> "X";
-        };
+            case IDLE:
+                return "-";
+            case FLUSHING:
+                return "F";
+            case PENDING:
+                return "P";
+            case COMPLETING:
+                return "C";
+            case CANCEL:
+                return "L";
+            case CANCELLING:
+                return "N";
+            case FAILED:
+                return "X";
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     @Override

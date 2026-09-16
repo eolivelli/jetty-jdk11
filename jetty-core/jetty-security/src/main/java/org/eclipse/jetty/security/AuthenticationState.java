@@ -44,7 +44,7 @@ public interface AuthenticationState extends Request.AuthenticationState
     static AuthenticationState getAuthenticationState(Request request)
     {
         Request.AuthenticationState state = Request.getAuthenticationState(request);
-        return state instanceof AuthenticationState authenticationState ? authenticationState : null;
+        return state instanceof AuthenticationState ? (AuthenticationState)state : null;
     }
 
     /**
@@ -55,8 +55,9 @@ public interface AuthenticationState extends Request.AuthenticationState
     static AuthenticationState getUndeferredAuthenticationState(Request request)
     {
         AuthenticationState authenticationState = getAuthenticationState(request);
-        if (authenticationState instanceof AuthenticationState.Deferred deferred)
+        if (authenticationState instanceof AuthenticationState.Deferred)
         {
+            AuthenticationState.Deferred deferred = (AuthenticationState.Deferred)authenticationState;
             AuthenticationState undeferred = deferred.authenticate(request);
             if (undeferred == null || undeferred instanceof AuthenticationState.Deferred)
                 return null;
@@ -107,12 +108,18 @@ public interface AuthenticationState extends Request.AuthenticationState
         AuthenticationState authenticationState = getAuthenticationState(request);
 
         // resolve any Deferred authentication
-        if (authenticationState instanceof Deferred deferred)
+        if (authenticationState instanceof Deferred)
+        {
+            Deferred deferred = (Deferred)authenticationState;
             authenticationState = deferred.authenticate(request);
+        }
 
         //if authenticated, return the state
-        if (authenticationState instanceof Succeeded succeeded)
+        if (authenticationState instanceof Succeeded)
+        {
+            Succeeded succeeded = (Succeeded)authenticationState;
             return succeeded;
+        }
 
         // else null
         return null;
@@ -135,16 +142,20 @@ public interface AuthenticationState extends Request.AuthenticationState
         AuthenticationState authenticationState = getAuthenticationState(request);
 
         // resolve any Deferred authentication
-        if (authenticationState instanceof Deferred deferred)
+        if (authenticationState instanceof Deferred)
         {
+            Deferred deferred = (Deferred)authenticationState;
             authenticationState = deferred.authenticate(request, response, callback);
             if (authenticationState instanceof AuthenticationState.ResponseSent)
                 return null;
         }
 
         // if already authenticated, return the state
-        if (authenticationState instanceof Succeeded succeeded)
+        if (authenticationState instanceof Succeeded)
+        {
+            Succeeded succeeded = (Succeeded)authenticationState;
             return succeeded;
+        }
 
         Response.writeError(request, response, callback, HttpStatus.FORBIDDEN_403);
         return null;
@@ -166,8 +177,9 @@ public interface AuthenticationState extends Request.AuthenticationState
             throw new HttpException.RuntimeException(HttpStatus.INTERNAL_SERVER_ERROR_500, "Already authenticated");
 
         // Use Deferred authentication to login
-        if (authenticationState instanceof Deferred deferred)
+        if (authenticationState instanceof Deferred)
         {
+            Deferred deferred = (Deferred)authenticationState;
             Succeeded undeferred =  deferred.login(username, password, request, response);
             if (undeferred != null)
             {
@@ -184,14 +196,16 @@ public interface AuthenticationState extends Request.AuthenticationState
         AuthenticationState authenticationState = getAuthenticationState(request);
 
         //if already authenticated, return true
-        if (authenticationState instanceof Succeeded succeededAuthentication)
+        if (authenticationState instanceof Succeeded)
         {
+            Succeeded succeededAuthentication = (Succeeded)authenticationState;
             succeededAuthentication.logout(request, response);
             return true;
         }
 
-        if (authenticationState instanceof Deferred deferred)
+        if (authenticationState instanceof Deferred)
         {
+            Deferred deferred = (Deferred)authenticationState;
             deferred.logout(request, response);
             return true;
         }

@@ -573,8 +573,11 @@ public class ManagedSelector extends ContainerLifeCycle implements Dumpable
                     break;
                 if (selector == null)
                 {
-                    if (update instanceof Closeable closeable)
+                    if (update instanceof Closeable)
+                    {
+                        Closeable closeable = (Closeable)update;
                         IO.close(closeable);
+                    }
                 }
                 else
                 {
@@ -722,7 +725,7 @@ public class ManagedSelector extends ContainerLifeCycle implements Dumpable
 
         private void close(SelectableChannel channel, Object attachment)
         {
-            IO.close(attachment instanceof Closeable closeable ? closeable : channel);
+            IO.close(attachment instanceof Closeable ? (Closeable)attachment : channel);
         }
 
         private void updateKeys()
@@ -1023,10 +1026,16 @@ public class ManagedSelector extends ContainerLifeCycle implements Dumpable
                     {
                         Object attachment = key.attachment();
                         Closeable closeable;
-                        if (attachment instanceof EndPoint endPoint)
+                        if (attachment instanceof EndPoint)
+                        {
+                            EndPoint endPoint = (EndPoint)attachment;
                             closeable = Objects.requireNonNullElse(endPoint.getConnection(), endPoint);
-                        else if (attachment instanceof Closeable c)
+                        }
+                        else if (attachment instanceof Closeable)
+                        {
+                            Closeable c = (Closeable)attachment;
                             closeable = c;
+                        }
                         else
                             closeable = key.channel();
                         IO.close(closeable);

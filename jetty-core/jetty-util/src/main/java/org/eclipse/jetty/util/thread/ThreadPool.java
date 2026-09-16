@@ -118,7 +118,7 @@ public interface ThreadPool extends Executor
             return;
         }
 
-        if (executor instanceof TryExecutor tryExecutor && tryExecutor.tryExecute(task))
+        if (executor instanceof TryExecutor && ((TryExecutor)executor).tryExecute(task))
             return;
 
         Executor virtual = VirtualThreads.getVirtualThreadsExecutor(executor);
@@ -149,8 +149,9 @@ public interface ThreadPool extends Executor
         Logger log = LoggerFactory.getLogger(ThreadPool.class);
         if (log.isDebugEnabled())
             log.debug("rejected {}", task, cause);
-        if (task instanceof Closeable closeable)
+        if (task instanceof Closeable)
         {
+            Closeable closeable = (Closeable)task;
             try
             {
                 closeable.close();

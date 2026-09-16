@@ -340,23 +340,43 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
             .jettyVersion(jettyVersion)
             .build();
 
-        String encoding = switch (compressionName)
+        String encoding;
+        switch (compressionName)
         {
-            case "brotli" -> "br";
-            case "gzip" -> "gzip";
-            case "zstandard" -> "zstd";
-            case "all" -> "br;q=0.5, gzip;q=1, zstd;q=0.1";
-            default -> throw new IllegalArgumentException();
-        };
+            case "brotli":
+                encoding = "br";
+                break;
+            case "gzip":
+                encoding = "gzip";
+                break;
+            case "zstandard":
+                encoding = "zstd";
+                break;
+            case "all":
+                encoding = "br;q=0.5, gzip;q=1, zstd;q=0.1";
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
 
-        String expected = switch (compressionName)
+        String expected;
+        switch (compressionName)
         {
-            case "brotli" -> "br";
-            case "gzip" -> "gzip";
-            case "zstandard" -> "zstd";
-            case "all" -> "gzip";
-            default -> throw new IllegalArgumentException();
-        };
+            case "brotli":
+                expected = "br";
+                break;
+            case "gzip":
+                expected = "gzip";
+                break;
+            case "zstandard":
+                expected = "zstd";
+                break;
+            case "all":
+                expected = "gzip";
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
 
         String[] modules = {
             "resources",

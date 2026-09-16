@@ -496,8 +496,11 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
         {
             if (this == obj)
                 return true;
-            if (obj instanceof MemorySocketAddress that)
+            if (obj instanceof MemorySocketAddress)
+            {
+                MemorySocketAddress that = (MemorySocketAddress)obj;
                 return id == that.id;
+            }
             return false;
         }
 

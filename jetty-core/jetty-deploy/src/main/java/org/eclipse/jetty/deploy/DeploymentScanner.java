@@ -330,23 +330,25 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
 
     String getDefaultEnvironmentName()
     {
-        return switch (enabledEnvironments.size())
+        switch (enabledEnvironments.size())
         {
-            case 0 -> null;
-            case 1 -> enabledEnvironments.get(0);
-            default ->
+            case 0:
+                return null;
+            case 1:
+                return enabledEnvironments.get(0);
+            default:
             {
                 List<String> order = getEnvironmentsOrder();
                 if (order.isEmpty())
-                    yield enabledEnvironments.get(0);
+                    return enabledEnvironments.get(0);
                 for (String name : order)
                 {
                     if (enabledEnvironments.contains(name))
-                        yield name;
+                        return name;
                 }
-                yield null;
+                return null;
             }
-        };
+        }
     }
 
     private void enableEnvironment(String name)
@@ -512,12 +514,21 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
         for (Map.Entry<Path, Scanner.Notification> entry : changeSet.entrySet())
         {
             Path path = entry.getKey();
-            PathsApp.State state = switch (entry.getValue())
+            PathsApp.State state;
+            switch (entry.getValue())
             {
-                case ADDED -> PathsApp.State.ADDED;
-                case CHANGED -> PathsApp.State.CHANGED;
-                case REMOVED -> PathsApp.State.REMOVED;
-            };
+                case ADDED:
+                    state = PathsApp.State.ADDED;
+                    break;
+                case CHANGED:
+                    state = PathsApp.State.CHANGED;
+                    break;
+                case REMOVED:
+                    state = PathsApp.State.REMOVED;
+                    break;
+                default:
+                    throw new IllegalStateException();
+            }
 
             // Using lower-case as defined by System Locale, as the files themselves from System FS.
             String basename = FileID.getBasename(path).toLowerCase();
@@ -645,19 +656,22 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
 
             switch (app.getState())
             {
-                case ADDED ->
+                case ADDED:
                 {
                     // new paths are not being tracked yet.
                     startTracking(app);
                     actions.add(new DeployAction(DeployAction.Type.DEPLOY, app.getName()));
+                    break;
                 }
-                case CHANGED ->
+                case CHANGED:
                 {
                     actions.add(new DeployAction(DeployAction.Type.REDEPLOY, app.getName()));
+                    break;
                 }
-                case REMOVED ->
+                case REMOVED:
                 {
                     actions.add(new DeployAction(DeployAction.Type.UNDEPLOY, app.getName()));
+                    break;
                 }
             }
         }
@@ -832,15 +846,16 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
             {
                 switch (step.type())
                 {
-                    case UNDEPLOY ->
+                    case UNDEPLOY:
                     {
                         // Track removal
                         removedApps.add(app);
                         ContextHandler contextHandler = app.getContextHandler();
                         deployer.undeploy(contextHandler);
                         contextHandler.destroy();
+                        break;
                     }
-                    case DEPLOY ->
+                    case DEPLOY:
                     {
                         // Undo tracking for prior removal in this list of actions.
                         removedApps.remove(app); // TODO review this logic. Doesn't this untrack this app that we start tracking below?
@@ -882,9 +897,10 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
                             LOG.debug("Deploying {} to environment {}", app.getName(), envName);
 
                         deployer.deploy(app.getContextHandler());
+                        break;
                     }
 
-                    case REDEPLOY ->
+                    case REDEPLOY:
                     {
                         // Undo tracking for prior removal in this list of actions.
                         ContextHandler oldContextHandler = app.getContextHandler();
@@ -927,6 +943,7 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
 
                         deployer.redeploy(oldContextHandler, app.getContextHandler());
                         oldContextHandler.destroy();
+                        break;
                     }
                 }
             }
@@ -1116,11 +1133,16 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
             int diff = typeComparator.compare(o1, o2);
             if (diff != 0)
                 return diff;
-            return switch (o1.type())
+            switch (o1.type())
             {
-                case UNDEPLOY -> basenameComparator.compare(o2, o1);
-                case REDEPLOY, DEPLOY -> basenameComparator.compare(o1, o2);
-            };
+                case UNDEPLOY:
+                    return basenameComparator.compare(o2, o1);
+                case REDEPLOY:
+                case DEPLOY:
+                    return basenameComparator.compare(o1, o2);
+                default:
+                    throw new IllegalStateException();
+            }
         }
     }
 
@@ -1416,10 +1438,16 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
         public String getEnvironmentName()
         {
             Object obj = this.attributes.getAttribute(ContextHandlerFactory.ENVIRONMENT_ATTRIBUTE);
-            if (obj instanceof String str)
+            if (obj instanceof String)
+            {
+                String str = (String)obj;
                 return str;
-            if (obj instanceof Environment env)
+            }
+            if (obj instanceof Environment)
+            {
+                Environment env = (Environment)obj;
                 return env.getName();
+            }
             return null;
         }
 
@@ -1582,8 +1610,9 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
             Object envObj = getAttributes().getAttribute(ContextHandlerFactory.ENVIRONMENT_ATTRIBUTE);
             if (envObj != null)
             {
-                if (envObj instanceof String environmentName)
+                if (envObj instanceof String)
                 {
+                    String environmentName = (String)envObj;
                     if (StringUtil.isNotBlank(environmentName))
                     {
                         Environment env = Environment.get(environmentName);
@@ -1650,30 +1679,34 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
             {
                 switch (pathState)
                 {
-                    case UNCHANGED ->
+                    case UNCHANGED:
                     {
                         if (ret == null)
                             ret = PathsApp.State.UNCHANGED;
                         else if (ret != PathsApp.State.UNCHANGED)
                             ret = PathsApp.State.CHANGED;
+                        break;
                     }
-                    case ADDED ->
+                    case ADDED:
                     {
                         if (ret == null)
                             ret = PathsApp.State.ADDED;
                         else if (ret != PathsApp.State.ADDED)
                             ret = PathsApp.State.CHANGED;
+                        break;
                     }
-                    case CHANGED ->
+                    case CHANGED:
                     {
                         ret = PathsApp.State.CHANGED;
+                        break;
                     }
-                    case REMOVED ->
+                    case REMOVED:
                     {
                         if (ret == null)
                             ret = PathsApp.State.REMOVED;
                         else if (ret != PathsApp.State.REMOVED)
                             ret = PathsApp.State.CHANGED;
+                        break;
                     }
                 }
             }

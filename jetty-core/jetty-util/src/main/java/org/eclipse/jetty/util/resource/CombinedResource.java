@@ -72,8 +72,9 @@ public class CombinedResource extends Resource
                 throw new IllegalArgumentException("Null Resource entry encountered");
             }
 
-            if (r instanceof CombinedResource resourceCollection)
+            if (r instanceof CombinedResource)
             {
+                CombinedResource resourceCollection = (CombinedResource)r;
                 unique.addAll(gatherUniqueFlatResourceList(resourceCollection.getResources()));
             }
             else
@@ -192,12 +193,15 @@ public class CombinedResource extends Resource
             if (r.exists() && exists++ == 0)
                 path = r.getPath();
         }
-        return switch (exists)
+        switch (exists)
         {
-            case 0 -> _resources.get(0).getPath();
-            case 1 -> path;
-            default -> null;
-        };
+            case 0:
+                return _resources.get(0).getPath();
+            case 1:
+                return path;
+            default:
+                return null;
+        }
     }
 
     @Override
@@ -234,12 +238,15 @@ public class CombinedResource extends Resource
             if (r.exists() && exists++ == 0)
                 uri = r.getURI();
         }
-        return switch (exists)
+        switch (exists)
         {
-            case 0 -> _resources.get(0).getURI();
-            case 1 -> uri;
-            default -> null;
-        };
+            case 0:
+                return _resources.get(0).getURI();
+            case 1:
+                return uri;
+            default:
+                return null;
+        }
     }
 
     @Override
@@ -366,12 +373,15 @@ public class CombinedResource extends Resource
             if (r.exists() && exists++ == 0)
                 uri = r.getRealURI();
         }
-        return switch (exists)
+        switch (exists)
         {
-            case 0 -> _resources.get(0).getRealURI();
-            case 1 -> uri;
-            default -> null;
-        };
+            case 0:
+                return _resources.get(0).getRealURI();
+            case 1:
+                return uri;
+            default:
+                return null;
+        }
     }
 
     /**

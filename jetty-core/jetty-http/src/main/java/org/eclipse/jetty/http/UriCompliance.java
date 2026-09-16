@@ -351,16 +351,22 @@ public final class UriCompliance implements ComplianceViolation.Mode
         {
             String[] elements = spec.split("\\s*,\\s*");
 
-            Set<Violation> violations = switch (elements[0])
+            Set<Violation> violations;
+            switch (elements[0])
             {
-                case "0" -> noneOf(Violation.class);
-                case "*" -> allOf(Violation.class);
-                default ->
+                case "0":
+                    violations = noneOf(Violation.class);
+                    break;
+                case "*":
+                    violations = allOf(Violation.class);
+                    break;
+                default:
                 {
                     UriCompliance mode = UriCompliance.valueOf(elements[0]);
-                    yield (mode == null) ? noneOf(Violation.class) : copyOf(mode.getAllowed());
+                    violations = (mode == null) ? noneOf(Violation.class) : copyOf(mode.getAllowed());
+                    break;
                 }
-            };
+            }
 
             for (int i = 1; i < elements.length; i++)
             {

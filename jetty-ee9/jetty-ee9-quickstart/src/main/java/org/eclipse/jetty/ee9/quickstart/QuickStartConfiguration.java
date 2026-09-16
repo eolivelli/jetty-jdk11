@@ -91,10 +91,16 @@ public class QuickStartConfiguration extends AbstractConfiguration
     private static Mode getModeForContext(WebAppContext context)
     {
         Object o = context.getAttribute(MODE);
-        if (o instanceof Mode m)
+        if (o instanceof Mode)
+        {
+            Mode m = (Mode)o;
             return m;
-        if (o instanceof String s)
+        }
+        if (o instanceof String)
+        {
+            String s = (String)o;
             return Mode.valueOf(s);
+        }
         else
             return DEFAULT_MODE;
     }

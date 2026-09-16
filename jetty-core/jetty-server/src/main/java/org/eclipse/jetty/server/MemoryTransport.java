@@ -82,8 +82,11 @@ public class MemoryTransport implements Transport
     {
         if (this == obj)
             return true;
-        if (obj instanceof MemoryTransport that)
+        if (obj instanceof MemoryTransport)
+        {
+            MemoryTransport that = (MemoryTransport)obj;
             return Objects.equals(connector, that.connector);
+        }
         return false;
     }
 }

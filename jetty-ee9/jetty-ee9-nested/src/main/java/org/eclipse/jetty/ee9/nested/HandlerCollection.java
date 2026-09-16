@@ -147,8 +147,11 @@ public class HandlerCollection extends AbstractHandlerContainer
                     errors = ExceptionUtil.combine(errors, e);
                 }
             }
-            if (errors instanceof IOException ioException)
+            if (errors instanceof IOException)
+            {
+                IOException ioException = (IOException)errors;
                 throw ioException;
+            }
             ExceptionUtil.ifExceptionThrowAs(ServletException.class, errors);
         }
     }

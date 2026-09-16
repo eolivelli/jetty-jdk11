@@ -586,16 +586,31 @@ public interface ResourceFactory
         if (obj == null)
             return null;
 
-        if (obj instanceof Path path)
+        if (obj instanceof Path)
+        {
+            Path path = (Path)obj;
             return newResource(path);
-        if (obj instanceof String str)
+        }
+        if (obj instanceof String)
+        {
+            String str = (String)obj;
             return newResource(str);
-        if (obj instanceof URI uri)
+        }
+        if (obj instanceof URI)
+        {
+            URI uri = (URI)obj;
             return newResource(uri);
-        if (obj instanceof URL url)
+        }
+        if (obj instanceof URL)
+        {
+            URL url = (URL)obj;
             return newResource(url);
-        if (obj instanceof Resource res)
+        }
+        if (obj instanceof Resource)
+        {
+            Resource res = (Resource)obj;
             return res;
+        }
 
         throw new IllegalArgumentException(String.format("Cannot convert %s to a Resource", obj.getClass().getName()));
     }
@@ -909,8 +924,11 @@ public interface ResourceFactory
     {
         Objects.requireNonNull(baseResource);
 
-        if (baseResource instanceof ResourceFactory resourceFactory)
+        if (baseResource instanceof ResourceFactory)
+        {
+            ResourceFactory resourceFactory = (ResourceFactory)baseResource;
             return resourceFactory;
+        }
 
         return new ResourceFactory()
         {

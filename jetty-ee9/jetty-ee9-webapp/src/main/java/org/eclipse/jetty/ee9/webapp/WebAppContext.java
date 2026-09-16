@@ -253,14 +253,17 @@ public class WebAppContext extends ServletContextHandler implements WebAppClassL
 
             switch (keyName)
             {
-                case Deployable.WAR ->
+                case Deployable.WAR:
                 {
                     if (getWar() == null)
                         setWar((String)value);
+                    break;
                 }
-                case Deployable.TEMP_DIR -> setTempDirectory(IO.asFile(value));
+                case Deployable.TEMP_DIR:
+                    setTempDirectory(IO.asFile(value));
+                    break;
                 // copied from core ContextHandler as ee9 doesn't extend from it.
-                case Deployable.BASE_RESOURCE ->
+                case Deployable.BASE_RESOURCE:
                 {
                     if (value == null)
                         continue; // skip
@@ -268,26 +271,47 @@ public class WebAppContext extends ServletContextHandler implements WebAppClassL
                     ResourceFactory resourceFactory = ResourceFactory.of(this);
                     Resource resource = resourceFactory.asResource(value);
                     setBaseResource(resource);
+                    break;
                 }
-                case Deployable.CONFIGURATION_CLASSES -> setConfigurationClasses((String[])value);
-                case Deployable.CONTAINER_SCAN_JARS -> setAttribute(MetaInfConfiguration.CONTAINER_JAR_PATTERN, value);
-                case Deployable.CONTEXT_PATH -> setContextPath((String)value);
-                case Deployable.DEFAULT_CONTEXT_PATH ->
+                case Deployable.CONFIGURATION_CLASSES:
+                    setConfigurationClasses((String[])value);
+                    break;
+                case Deployable.CONTAINER_SCAN_JARS:
+                    setAttribute(MetaInfConfiguration.CONTAINER_JAR_PATTERN, value);
+                    break;
+                case Deployable.CONTEXT_PATH:
+                    setContextPath((String)value);
+                    break;
+                case Deployable.DEFAULT_CONTEXT_PATH:
                 {
                     // Don't set default context path, if context-path is set before init (like from XML)
                     if (isContextPathDefault())
                         setDefaultContextPath((String)value);
+                    break;
                 }
-                case Deployable.EXTRACT_WARS -> setExtractWAR((Boolean)value);
-                case Deployable.PARENT_LOADER_PRIORITY -> setParentLoaderPriority((Boolean)value);
-                case Deployable.WEBINF_SCAN_JARS -> setAttribute(MetaInfConfiguration.WEBINF_JAR_PATTERN, value);
-                case Deployable.DEFAULTS_DESCRIPTOR -> setDefaultsDescriptor((String)value);
-                case Deployable.SCI_EXCLUSION_PATTERN -> setAttribute("org.eclipse.jetty.containerInitializerExclusionPattern", value);
-                case Deployable.SCI_ORDER -> setAttribute("org.eclipse.jetty.containerInitializerOrder", value);
-                default ->
+                case Deployable.EXTRACT_WARS:
+                    setExtractWAR((Boolean)value);
+                    break;
+                case Deployable.PARENT_LOADER_PRIORITY:
+                    setParentLoaderPriority((Boolean)value);
+                    break;
+                case Deployable.WEBINF_SCAN_JARS:
+                    setAttribute(MetaInfConfiguration.WEBINF_JAR_PATTERN, value);
+                    break;
+                case Deployable.DEFAULTS_DESCRIPTOR:
+                    setDefaultsDescriptor((String)value);
+                    break;
+                case Deployable.SCI_EXCLUSION_PATTERN:
+                    setAttribute("org.eclipse.jetty.containerInitializerExclusionPattern", value);
+                    break;
+                case Deployable.SCI_ORDER:
+                    setAttribute("org.eclipse.jetty.containerInitializerOrder", value);
+                    break;
+                default:
                 {
                     if (LOG.isDebugEnabled())
                         LOG.debug("skipped init property {}={}", keyName, value);
+                    break;
                 }
             }
         }
@@ -1400,8 +1424,11 @@ public class WebAppContext extends ServletContextHandler implements WebAppClassL
             ClassLoader loader = getClassLoader();
             if (loader != _initialClassLoader)
             {
-                if (loader instanceof URLClassLoader urlClassLoader)
+                if (loader instanceof URLClassLoader)
+                {
+                    URLClassLoader urlClassLoader = (URLClassLoader)loader;
                     urlClassLoader.close();
+                }
                 setClassLoader(_initialClassLoader);
             }
 

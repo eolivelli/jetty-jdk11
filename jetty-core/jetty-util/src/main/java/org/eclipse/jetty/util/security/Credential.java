@@ -175,8 +175,11 @@ public abstract class Credential implements Serializable
         @Override
         public boolean equals(Object credential)
         {
-            if (credential instanceof Crypt c)
+            if (credential instanceof Crypt)
+            {
+                Crypt c = (Crypt)credential;
                 return stringEquals(_cooked, c._cooked);
+            }
             return false;
         }
 
@@ -216,18 +219,29 @@ public abstract class Credential implements Serializable
             try
             {
                 // Normalize to String, if possible.
-                if (credentials instanceof char[] chars)
+                if (credentials instanceof char[])
+                {
+                    char[] chars = (char[])credentials;
                     credentials = new String(chars);
-                else if (credentials instanceof Password password)
+                }
+                else if (credentials instanceof Password)
+                {
+                    Password password = (Password)credentials;
                     credentials = password.toString();
+                }
 
-                if (credentials instanceof String password)
+                if (credentials instanceof String)
+                {
+                    String password = (String)credentials;
                     return byteEquals(_digest, md5(password));
+                }
                 if (credentials instanceof MD5)
                     return equals(credentials);
-                if (credentials instanceof Credential other)
-                    // Allow the other Credential to check.
+                if (credentials instanceof Credential)
+                {
+                    Credential other = (Credential)credentials;
                     return other.check(this);
+                }
                 return false;
             }
             catch (Throwable x)
@@ -309,20 +323,34 @@ public abstract class Credential implements Serializable
             try
             {
                 // Normalize to String, if possible.
-                if (credentials instanceof char[] chars)
+                if (credentials instanceof char[])
+                {
+                    char[] chars = (char[])credentials;
                     credentials = new String(chars);
-                else if (credentials instanceof byte[] bytes)
+                }
+                else if (credentials instanceof byte[])
+                {
+                    byte[] bytes = (byte[])credentials;
                     credentials = new String(bytes, StandardCharsets.UTF_8);
-                else if (credentials instanceof Password password)
+                }
+                else if (credentials instanceof Password)
+                {
+                    Password password = (Password)credentials;
                     credentials = password.toString();
+                }
 
-                if (credentials instanceof String password)
+                if (credentials instanceof String)
+                {
+                    String password = (String)credentials;
                     return byteEquals(_digest, digest(_algorithm, password));
+                }
                 if (credentials instanceof MD)
                     return equals(credentials);
-                if (credentials instanceof Credential other)
-                    // Allow the other Credential to check.
+                if (credentials instanceof Credential)
+                {
+                    Credential other = (Credential)credentials;
                     return other.check(this);
+                }
                 return false;
             }
             catch (Throwable x)
@@ -340,8 +368,11 @@ public abstract class Credential implements Serializable
         @Override
         public boolean equals(Object obj)
         {
-            if (obj instanceof MD other)
+            if (obj instanceof MD)
+            {
+                MD other = (MD)obj;
                 return byteEquals(_digest, other._digest);
+            }
             return false;
         }
 

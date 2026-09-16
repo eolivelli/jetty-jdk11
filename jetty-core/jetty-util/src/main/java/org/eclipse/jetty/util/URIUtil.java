@@ -1173,13 +1173,18 @@ public final class URIUtil
             char c = path.charAt(i);
             switch (c)
             {
-                case '/' -> slash = true;
-                case '.' ->
+                case '/':
+                    slash = true;
+                    break;
+                case '.':
                 {
                     if (slash)
                         break loop;
+                    break;
                 }
-                default -> slash = false;
+                default:
+                    slash = false;
+                    break;
             }
 
             i++;
@@ -1201,14 +1206,15 @@ public final class URIUtil
             char c = path.charAt(i);
             switch (c)
             {
-                case '/' ->
+                case '/':
                 {
                     if (doDotsSlash(canonical, dots))
                         return null;
                     slash = true;
                     dots = 0;
+                    break;
                 }
-                case '.' ->
+                case '.':
                 {
                     // Count dots only if they are leading in the segment
                     if (dots > 0)
@@ -1218,8 +1224,9 @@ public final class URIUtil
                     else
                         canonical.append('.');
                     slash = false;
+                    break;
                 }
-                default ->
+                default:
                 {
                     // Add leading dots to the path
                     while (dots-- > 0)
@@ -1227,6 +1234,7 @@ public final class URIUtil
                     canonical.append(c);
                     dots = 0;
                     slash = false;
+                    break;
                 }
             }
             i++;

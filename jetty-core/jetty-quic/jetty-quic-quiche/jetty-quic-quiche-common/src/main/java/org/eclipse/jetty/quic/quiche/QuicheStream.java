@@ -71,17 +71,22 @@ public class QuicheStream extends AbstractStream
     public boolean isRemotelyClosed()
     {
         CloseState current = closeState.get();
-        return switch (current)
+        switch (current)
         {
-            case NOT_CLOSED, LOCALLY_CLOSED ->
+            case NOT_CLOSED:
+            case LOCALLY_CLOSED:
             {
                 boolean finished = session.isFinished(this);
                 if (finished)
                     updateCloseState(CloseState.REMOTELY_CLOSED);
-                yield finished;
+                return finished;
             }
-            case REMOTELY_CLOSED, CLOSED -> true;
-        };
+            case REMOTELY_CLOSED:
+            case CLOSED:
+                return true;
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     @Override
@@ -351,12 +356,13 @@ public class QuicheStream extends AbstractStream
             CloseState current = closeState.get();
             switch (current)
             {
-                case NOT_CLOSED ->
+                case NOT_CLOSED:
                 {
                     if (closeState.compareAndSet(current, event))
                         return;
+                    break;
                 }
-                case LOCALLY_CLOSED ->
+                case LOCALLY_CLOSED:
                 {
                     if (event == CloseState.REMOTELY_CLOSED || event == CloseState.CLOSED)
                     {
@@ -366,7 +372,7 @@ public class QuicheStream extends AbstractStream
                     }
                     return;
                 }
-                case REMOTELY_CLOSED ->
+                case REMOTELY_CLOSED:
                 {
                     if (event == CloseState.LOCALLY_CLOSED || event == CloseState.CLOSED)
                     {
@@ -376,7 +382,7 @@ public class QuicheStream extends AbstractStream
                     }
                     return;
                 }
-                case CLOSED ->
+                case CLOSED:
                 {
                     return;
                 }

@@ -206,14 +206,19 @@ public class AttributesTest
         @Override
         protected Object getSyntheticAttribute(String name)
         {
-            return switch (name)
+            switch (name)
             {
-                case "Roy" -> _roy.get();
-                case "Pris" -> _pris.get();
-                case "Zhora" -> _zhora.get();
-                case "Leon" -> _leon.get();
-                default -> null;
-            };
+                case "Roy":
+                    return _roy.get();
+                case "Pris":
+                    return _pris.get();
+                case "Zhora":
+                    return _zhora.get();
+                case "Leon":
+                    return _leon.get();
+                default:
+                    return null;
+            }
         }
 
         @Override

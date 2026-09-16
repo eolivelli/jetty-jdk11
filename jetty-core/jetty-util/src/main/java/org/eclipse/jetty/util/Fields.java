@@ -118,8 +118,9 @@ public class Fields implements Iterable<Fields.Field>
             return true;
         if (obj == null)
             return false;
-        if (obj instanceof Fields that)
+        if (obj instanceof Fields)
         {
+            Fields that = (Fields)obj;
             if (getSize() != that.getSize())
                 return false;
             if (!fields.getClass().equals(that.fields.getClass()))
@@ -409,22 +410,28 @@ public class Fields implements Iterable<Fields.Field>
 
         private static List<String> append(List<String> values, String extraValue)
         {
-            return switch (values.size())
+            switch (values.size())
             {
-                case 0 -> List.of(extraValue);
-                case 1 -> List.of(values.get(0), extraValue);
-                case 2 -> List.of(values.get(0), values.get(1), extraValue);
-                case 3 -> List.of(values.get(0), values.get(1), values.get(2), extraValue);
-                case 4 -> List.of(values.get(0), values.get(1), values.get(2), values.get(3), extraValue);
-                case 5 -> List.of(values.get(0), values.get(1), values.get(2), values.get(3), values.get(4), extraValue);
-                default ->
+                case 0:
+                    return List.of(extraValue);
+                case 1:
+                    return List.of(values.get(0), extraValue);
+                case 2:
+                    return List.of(values.get(0), values.get(1), extraValue);
+                case 3:
+                    return List.of(values.get(0), values.get(1), values.get(2), extraValue);
+                case 4:
+                    return List.of(values.get(0), values.get(1), values.get(2), values.get(3), extraValue);
+                case 5:
+                    return List.of(values.get(0), values.get(1), values.get(2), values.get(3), values.get(4), extraValue);
+                default:
                 {
                     List<String> list = new ArrayList<>(values.size() + 1);
                     list.addAll(values);
                     list.add(extraValue);
-                    yield list;
+                    return list;
                 }
-            };
+            }
         }
 
         private static List<String> append(List<String> values, List<String> moreValues)
@@ -435,31 +442,37 @@ public class Fields implements Iterable<Fields.Field>
             if (moreValues.size() == 1)
                 return append(values, moreValues.get(0));
 
-            return switch (values.size())
+            switch (values.size())
             {
-                case 0 -> moreValues;
-                case 1 -> switch (moreValues.size())
-                {
-                    case 2 -> List.of(values.get(0), moreValues.get(0), moreValues.get(1));
-                    case 3 -> List.of(values.get(0), moreValues.get(0), moreValues.get(1), moreValues.get(2));
-                    case 4 -> List.of(values.get(0), moreValues.get(0), moreValues.get(1), moreValues.get(2), moreValues.get(3));
-                    case 5 -> List.of(values.get(0), moreValues.get(0), moreValues.get(1), moreValues.get(2), moreValues.get(3), moreValues.get(4));
-                    default ->
+                case 0:
+                    return moreValues;
+                case 1:
+                    switch (moreValues.size())
                     {
-                        List<String> list = new ArrayList<>(moreValues.size() + 1);
-                        list.add(values.get(0));
-                        list.addAll(moreValues);
-                        yield list;
+                        case 2:
+                            return List.of(values.get(0), moreValues.get(0), moreValues.get(1));
+                        case 3:
+                            return List.of(values.get(0), moreValues.get(0), moreValues.get(1), moreValues.get(2));
+                        case 4:
+                            return List.of(values.get(0), moreValues.get(0), moreValues.get(1), moreValues.get(2), moreValues.get(3));
+                        case 5:
+                            return List.of(values.get(0), moreValues.get(0), moreValues.get(1), moreValues.get(2), moreValues.get(3), moreValues.get(4));
+                        default:
+                        {
+                            List<String> list = new ArrayList<>(moreValues.size() + 1);
+                            list.add(values.get(0));
+                            list.addAll(moreValues);
+                            return list;
+                        }
                     }
-                };
-                default ->
+                default:
                 {
                     List<String> list = new ArrayList<>(values.size() + moreValues.size());
                     list.addAll(values);
                     list.addAll(moreValues);
-                    yield list;
+                    return list;
                 }
-            };
+            }
         }
 
         @Override

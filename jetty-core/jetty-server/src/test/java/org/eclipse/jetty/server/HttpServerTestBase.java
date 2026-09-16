@@ -1999,8 +1999,9 @@ public abstract class HttpServerTestBase extends HttpServerTestFixture
         long total = contents.stream().mapToLong(Content.Chunk::remaining).sum();
         assertThat(total, equalTo(chunk.length * 4L));
         ByteBufferPool rbbp = _connector.getByteBufferPool();
-        if (rbbp instanceof ArrayByteBufferPool pool)
+        if (rbbp instanceof ArrayByteBufferPool)
         {
+            ArrayByteBufferPool pool = (ArrayByteBufferPool)rbbp;
             long buffersBeforeRelease = pool.getAvailableDirectByteBufferCount() + pool.getAvailableHeapByteBufferCount();
             if (LOG.isDebugEnabled())
             {

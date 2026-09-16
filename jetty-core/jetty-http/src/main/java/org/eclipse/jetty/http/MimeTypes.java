@@ -423,8 +423,11 @@ public class MimeTypes
      */
     public Charset getCharset(HttpField field) throws IllegalCharsetNameException, UnsupportedCharsetException
     {
-        if (field instanceof ContentTypeField contentTypeField)
+        if (field instanceof ContentTypeField)
+        {
+            ContentTypeField contentTypeField = (ContentTypeField)field;
             return contentTypeField.getMimeType().getCharset();
+        }
         return getCharset(field.getValue());
     }
 
@@ -871,8 +874,11 @@ public class MimeTypes
 
         assert field.getHeader() == HttpHeader.CONTENT_TYPE;
 
-        if (field instanceof MimeTypes.ContentTypeField contentTypeField)
+        if (field instanceof MimeTypes.ContentTypeField)
+        {
+            MimeTypes.ContentTypeField contentTypeField = (MimeTypes.ContentTypeField)field;
             return contentTypeField.getMimeType();
+        }
 
         return MimeTypes.CACHE.get(field.getValue());
     }
@@ -884,8 +890,11 @@ public class MimeTypes
 
         assert field.getHeader() == HttpHeader.CONTENT_TYPE;
 
-        if (field instanceof MimeTypes.ContentTypeField contentTypeField)
+        if (field instanceof MimeTypes.ContentTypeField)
+        {
+            MimeTypes.ContentTypeField contentTypeField = (MimeTypes.ContentTypeField)field;
             return contentTypeField.getMimeType().asString();
+        }
 
         return getBase(field.getValue());
     }
@@ -902,8 +911,11 @@ public class MimeTypes
 
         assert field.getHeader() == HttpHeader.CONTENT_TYPE;
 
-        if (field instanceof ContentTypeField contentTypeField)
+        if (field instanceof ContentTypeField)
+        {
+            ContentTypeField contentTypeField = (ContentTypeField)field;
             return contentTypeField._type.getCharset();
+        }
 
         String charset = getCharsetFromContentType(field.getValue());
         if (charset == null)

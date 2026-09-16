@@ -443,7 +443,7 @@ public class PathMappings<E> extends AbstractMap<PathSpec, E> implements Iterabl
     @Override
     public E get(Object key)
     {
-        return key instanceof PathSpec pathSpec ? get(pathSpec) : null;
+        return key instanceof PathSpec ? get((PathSpec)key) : null;
     }
 
     public E get(PathSpec pathSpec)
@@ -563,7 +563,7 @@ public class PathMappings<E> extends AbstractMap<PathSpec, E> implements Iterabl
     @Override
     public E remove(Object key)
     {
-        return key instanceof PathSpec pathSpec ? remove(pathSpec) : null;
+        return key instanceof PathSpec ? remove((PathSpec)key) : null;
     }
 
     public E remove(PathSpec pathSpec)

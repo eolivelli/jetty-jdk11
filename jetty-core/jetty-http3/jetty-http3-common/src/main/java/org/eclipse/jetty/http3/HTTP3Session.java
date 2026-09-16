@@ -521,8 +521,13 @@ public abstract class HTTP3Session extends ContainerLifeCycle implements Session
         {
             switch (closeState)
             {
-                case NOT_CLOSED -> notify = true;
-                case CLOSING, CLOSED -> terminate = true;
+                case NOT_CLOSED:
+                    notify = true;
+                    break;
+                case CLOSING:
+                case CLOSED:
+                    terminate = true;
+                    break;
             }
         }
 

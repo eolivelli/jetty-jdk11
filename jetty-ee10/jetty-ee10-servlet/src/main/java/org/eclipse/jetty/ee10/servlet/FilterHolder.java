@@ -203,8 +203,9 @@ public class FilterHolder extends Holder<Filter>
     {
         if (isAsyncSupported() || !request.isAsyncSupported())
             getFilter().doFilter(request, response, chain);
-        else if (request instanceof HttpServletRequest httpServletRequest)
+        else if (request instanceof HttpServletRequest)
         {
+            HttpServletRequest httpServletRequest = (HttpServletRequest)request;
             getFilter().doFilter(new HttpServletRequestWrapper(httpServletRequest)
             {
                 @Override

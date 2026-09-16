@@ -59,8 +59,11 @@ public class DoSHandler extends ConditionalHandler.ElseNext
     public static final Function<Request, String> ID_FROM_REMOTE_ADDRESS_PORT = request ->
     {
         SocketAddress remoteSocketAddress = request.getConnectionMetaData().getRemoteSocketAddress();
-        if (remoteSocketAddress instanceof InetSocketAddress inetSocketAddress)
+        if (remoteSocketAddress instanceof InetSocketAddress)
+        {
+            InetSocketAddress inetSocketAddress = (InetSocketAddress)remoteSocketAddress;
             return inetSocketAddress.toString();
+        }
         return remoteSocketAddress.toString();
     };
 
@@ -70,8 +73,11 @@ public class DoSHandler extends ConditionalHandler.ElseNext
     public static final Function<Request, String> ID_FROM_REMOTE_ADDRESS = request ->
     {
         SocketAddress remoteSocketAddress = request.getConnectionMetaData().getRemoteSocketAddress();
-        if (remoteSocketAddress instanceof InetSocketAddress inetSocketAddress)
+        if (remoteSocketAddress instanceof InetSocketAddress)
+        {
+            InetSocketAddress inetSocketAddress = (InetSocketAddress)remoteSocketAddress;
             return inetSocketAddress.getAddress().toString();
+        }
         return remoteSocketAddress.toString();
     };
 
@@ -82,8 +88,11 @@ public class DoSHandler extends ConditionalHandler.ElseNext
     public static final Function<Request, String> ID_FROM_REMOTE_PORT = request ->
     {
         SocketAddress remoteSocketAddress = request.getConnectionMetaData().getRemoteSocketAddress();
-        if (remoteSocketAddress instanceof InetSocketAddress inetSocketAddress)
+        if (remoteSocketAddress instanceof InetSocketAddress)
+        {
+            InetSocketAddress inetSocketAddress = (InetSocketAddress)remoteSocketAddress;
             return Integer.toString(inetSocketAddress.getPort());
+        }
         return remoteSocketAddress.toString();
     };
 

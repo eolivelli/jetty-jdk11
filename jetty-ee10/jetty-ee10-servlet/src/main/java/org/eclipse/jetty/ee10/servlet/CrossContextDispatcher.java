@@ -96,23 +96,35 @@ class CrossContextDispatcher implements RequestDispatcher
                         return null;*/
 
                     //Special include attributes refer to the target context and path
-                    return switch (name)
+                    switch (name)
                     {
-                        case RequestDispatcher.INCLUDE_MAPPING -> null;
-                        case RequestDispatcher.INCLUDE_SERVLET_PATH -> null;
-                        case RequestDispatcher.INCLUDE_PATH_INFO ->  _decodedPathInContext;
-                        case RequestDispatcher.INCLUDE_REQUEST_URI -> (_uri == null) ? null : _uri.getPath();
-                        case RequestDispatcher.INCLUDE_CONTEXT_PATH -> _targetContext.getContextPath();
-                        case RequestDispatcher.INCLUDE_QUERY_STRING -> (_uri == null) ? null : _uri.getQuery();
-                        case ContextHandler.CROSS_CONTEXT_ATTRIBUTE -> DispatcherType.INCLUDE.toString();
+                        case RequestDispatcher.INCLUDE_MAPPING:
+                            return null;
+                        case RequestDispatcher.INCLUDE_SERVLET_PATH:
+                            return null;
+                        case RequestDispatcher.INCLUDE_PATH_INFO:
+                            return _decodedPathInContext;
+                        case RequestDispatcher.INCLUDE_REQUEST_URI:
+                            return (_uri == null) ? null : _uri.getPath();
+                        case RequestDispatcher.INCLUDE_CONTEXT_PATH:
+                            return _targetContext.getContextPath();
+                        case RequestDispatcher.INCLUDE_QUERY_STRING:
+                            return (_uri == null) ? null : _uri.getQuery();
+                        case ContextHandler.CROSS_CONTEXT_ATTRIBUTE:
+                            return DispatcherType.INCLUDE.toString();
 
-                        case ORIGINAL_URI -> httpServletRequest.getRequestURI();
-                        case ORIGINAL_QUERY_STRING -> httpServletRequest.getQueryString();
-                        case ORIGINAL_SERVLET_MAPPING -> httpServletRequest.getHttpServletMapping();
-                        case ORIGINAL_CONTEXT_PATH -> httpServletRequest.getContextPath();
+                        case ORIGINAL_URI:
+                            return httpServletRequest.getRequestURI();
+                        case ORIGINAL_QUERY_STRING:
+                            return httpServletRequest.getQueryString();
+                        case ORIGINAL_SERVLET_MAPPING:
+                            return httpServletRequest.getHttpServletMapping();
+                        case ORIGINAL_CONTEXT_PATH:
+                            return httpServletRequest.getContextPath();
 
-                        default -> httpServletRequest.getAttribute(name);
-                    };
+                        default:
+                            return httpServletRequest.getAttribute(name);
+                    }
                 }
 
                 @Override
@@ -190,25 +202,39 @@ class CrossContextDispatcher implements RequestDispatcher
                     if (name.startsWith("javax.servlet."))
                         name = "jakarta.servlet." + name.substring(14);
 
-                    return switch (name)
+                    switch (name)
                     {
-                        case RequestDispatcher.FORWARD_REQUEST_URI -> httpServletRequest.getRequestURI();
-                        case RequestDispatcher.FORWARD_SERVLET_PATH -> httpServletRequest.getServletPath();
-                        case RequestDispatcher.FORWARD_PATH_INFO -> httpServletRequest.getPathInfo();
-                        case RequestDispatcher.FORWARD_CONTEXT_PATH -> httpServletRequest.getContextPath();
-                        case RequestDispatcher.FORWARD_MAPPING -> httpServletRequest.getHttpServletMapping();
-                        case RequestDispatcher.FORWARD_QUERY_STRING -> httpServletRequest.getQueryString();
-                        case RequestDispatcher.INCLUDE_MAPPING -> REMOVED;
-                        case RequestDispatcher.INCLUDE_REQUEST_URI -> REMOVED;
-                        case RequestDispatcher.INCLUDE_CONTEXT_PATH -> REMOVED;
-                        case RequestDispatcher.INCLUDE_QUERY_STRING -> REMOVED;
-                        case RequestDispatcher.INCLUDE_SERVLET_PATH -> REMOVED;
-                        case RequestDispatcher.INCLUDE_PATH_INFO -> REMOVED;
+                        case RequestDispatcher.FORWARD_REQUEST_URI:
+                            return httpServletRequest.getRequestURI();
+                        case RequestDispatcher.FORWARD_SERVLET_PATH:
+                            return httpServletRequest.getServletPath();
+                        case RequestDispatcher.FORWARD_PATH_INFO:
+                            return httpServletRequest.getPathInfo();
+                        case RequestDispatcher.FORWARD_CONTEXT_PATH:
+                            return httpServletRequest.getContextPath();
+                        case RequestDispatcher.FORWARD_MAPPING:
+                            return httpServletRequest.getHttpServletMapping();
+                        case RequestDispatcher.FORWARD_QUERY_STRING:
+                            return httpServletRequest.getQueryString();
+                        case RequestDispatcher.INCLUDE_MAPPING:
+                            return REMOVED;
+                        case RequestDispatcher.INCLUDE_REQUEST_URI:
+                            return REMOVED;
+                        case RequestDispatcher.INCLUDE_CONTEXT_PATH:
+                            return REMOVED;
+                        case RequestDispatcher.INCLUDE_QUERY_STRING:
+                            return REMOVED;
+                        case RequestDispatcher.INCLUDE_SERVLET_PATH:
+                            return REMOVED;
+                        case RequestDispatcher.INCLUDE_PATH_INFO:
+                            return REMOVED;
                         //TODO
                         //case ServletContextRequest.MULTIPART_CONFIG_ELEMENT -> httpServletRequest.getAttribute(ServletMultiPartFormData.class.getName());
-                        case ContextHandler.CROSS_CONTEXT_ATTRIBUTE -> DispatcherType.FORWARD.toString();
-                        default -> null;
-                    };
+                        case ContextHandler.CROSS_CONTEXT_ATTRIBUTE:
+                            return DispatcherType.FORWARD.toString();
+                        default:
+                            return null;
+                    }
                 }
 
                 @Override

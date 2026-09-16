@@ -129,10 +129,16 @@ public class MultiPartFormData
     public static Parts getParts(Attributes attributes)
     {
         Object attribute = attributes.getAttribute(MultiPartFormData.class.getName());
-        if (attribute instanceof Parts parts)
+        if (attribute instanceof Parts)
+        {
+            Parts parts = (Parts)attribute;
             return parts;
-        if (attribute instanceof CompletableFuture<?> futureParts && futureParts.isDone())
+        }
+        if (attribute instanceof CompletableFuture<?> && ((CompletableFuture<?>)attribute).isDone())
+        {
+            CompletableFuture<?> futureParts = (CompletableFuture<?>)attribute;
             return (Parts)futureParts.join();
+        }
         return null;
     }
 
@@ -272,10 +278,16 @@ public class MultiPartFormData
     public static CompletableFuture<Parts> get(Attributes attributes)
     {
         Object value = attributes.getAttribute(MultiPartFormData.class.getName());
-        if (value instanceof CompletableFuture<?> cfp)
+        if (value instanceof CompletableFuture<?>)
+        {
+            CompletableFuture<?> cfp = (CompletableFuture<?>)value;
             return (CompletableFuture<Parts>)cfp;
-        if (value instanceof Parts parts)
+        }
+        if (value instanceof Parts)
+        {
+            Parts parts = (Parts)value;
             return CompletableFuture.completedFuture(parts);
+        }
         return null;
     }
 
@@ -828,16 +840,21 @@ public class MultiPartFormData
                     {
                         switch (StringUtil.asciiToLowerCase(value))
                         {
-                            case "base64" ->
+                            case "base64":
                                 onViolation(MultiPartCompliance.Violation.BASE64_TRANSFER_ENCODING);
-                            case "quoted-printable" ->
+                                break;
+                            case "quoted-printable":
                                 onViolation(MultiPartCompliance.Violation.QUOTED_PRINTABLE_TRANSFER_ENCODING);
-                            case "8bit", "binary" ->
+                                break;
+                            case "8bit":
+                            case "binary":
                             {
+                                break;
                                 // ignore
                             }
-                            default ->
+                            default:
                                 onViolation(MultiPartCompliance.Violation.CONTENT_TRANSFER_ENCODING);
+                                break;
                         }
                     }
 

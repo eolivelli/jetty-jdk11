@@ -319,8 +319,11 @@ public class XmlConfiguration
         }
         finally
         {
-            if (parser instanceof Closeable closeable)
+            if (parser instanceof Closeable)
+            {
+                Closeable closeable = (Closeable)parser;
                 IO.close(closeable);
+            }
         }
     }
 
@@ -2015,7 +2018,7 @@ public class XmlConfiguration
             String arg = args[i];
             switch (arg)
             {
-                case "--env" ->
+                case "--env":
                 {
                     if (envBuilder != null)
                         envBuilder.build();
@@ -2026,15 +2029,32 @@ public class XmlConfiguration
                     envBuilder = new EnvironmentBuilder(envName);
                     envProperties.clear();
                     lastEnvConfiguration = null;
+                    break;
                 }
-                case "--class-path", "-cp" -> envBuilder.addClassPath(args[++i]);
-                case "--module-path", "-p" -> envBuilder.addModulePath(args[++i]);
-                case "--add-modules" -> envBuilder.addModules(args[++i]);
-                case "--patch-module" -> envBuilder.patchModule(args[++i]);
-                case "--add-opens" -> envBuilder.addOpens(args[++i]);
-                case "--add-exports" -> envBuilder.addExports(args[++i]);
-                case "--add-reads" -> envBuilder.addReads(args[++i]);
-                default ->
+                case "--class-path":
+                case "-cp":
+                    envBuilder.addClassPath(args[++i]);
+                    break;
+                case "--module-path":
+                case "-p":
+                    envBuilder.addModulePath(args[++i]);
+                    break;
+                case "--add-modules":
+                    envBuilder.addModules(args[++i]);
+                    break;
+                case "--patch-module":
+                    envBuilder.patchModule(args[++i]);
+                    break;
+                case "--add-opens":
+                    envBuilder.addOpens(args[++i]);
+                    break;
+                case "--add-exports":
+                    envBuilder.addExports(args[++i]);
+                    break;
+                case "--add-reads":
+                    envBuilder.addReads(args[++i]);
+                    break;
+                default:
                 {
                     if (envBuilder != null)
                     {
@@ -2114,6 +2134,7 @@ public class XmlConfiguration
                     {
                         throw new IllegalArgumentException(arg);
                     }
+                    break;
                 }
             }
         }
@@ -2127,8 +2148,9 @@ public class XmlConfiguration
         List<LifeCycle> started = new ArrayList<>(objects.size());
         for (Object obj : objects)
         {
-            if (obj instanceof LifeCycle lifeCycle)
+            if (obj instanceof LifeCycle)
             {
+                LifeCycle lifeCycle = (LifeCycle)obj;
                 if (!lifeCycle.isRunning())
                 {
                     lifeCycle.start();

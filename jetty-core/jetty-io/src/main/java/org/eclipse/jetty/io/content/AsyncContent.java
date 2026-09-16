@@ -114,8 +114,11 @@ public class AsyncContent implements Content.Sink, Content.Source, Closeable
                 }
             }
         }
-        if (failure != null && chunk instanceof AsyncChunk asyncChunk)
+        if (failure != null && chunk instanceof AsyncChunk)
+        {
+            AsyncChunk asyncChunk = (AsyncChunk)chunk;
             asyncChunk.failed(failure);
+        }
         if (wasEmpty)
             invoker.run(this::invokeDemandCallback);
     }
@@ -198,8 +201,11 @@ public class AsyncContent implements Content.Sink, Content.Source, Closeable
             return current;
 
         // If the chunk is not reference counted, we can succeed it now and return a chunk with a noop release.
-        if (current instanceof AsyncChunk asyncChunk)
+        if (current instanceof AsyncChunk)
+        {
+            AsyncChunk asyncChunk = (AsyncChunk)current;
             asyncChunk.succeeded();
+        }
 
         if (Content.Chunk.isFailure(current))
             return current;
@@ -263,8 +269,11 @@ public class AsyncContent implements Content.Sink, Content.Source, Closeable
         }
         drained.forEach(c ->
         {
-            if (c instanceof AsyncChunk ac)
+            if (c instanceof AsyncChunk)
+            {
+                AsyncChunk ac = (AsyncChunk)c;
                 ac.failed(failure);
+            }
         });
         invoker.run(this::invokeDemandCallback);
     }

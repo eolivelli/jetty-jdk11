@@ -91,8 +91,9 @@ public class ErrorHandler extends org.eclipse.jetty.server.handler.ErrorHandler
         // then the ErrorHandler#writeError(...) method should be used to delay
         // invoking sendError until the handling is within the ServletChannel.
         boolean enteredServletChannel = servletContextRequest.getServletChannel().getCallback() != null;
-        if (this instanceof ErrorPageMapper mapper && enteredServletChannel)
+        if (this instanceof ErrorPageMapper && enteredServletChannel)
         {
+            ErrorPageMapper mapper = (ErrorPageMapper)this;
             ErrorPageMapper.ErrorPage errorPage = mapper.getErrorPage(errorStatus, errorCause);
             if (LOG.isDebugEnabled())
                 LOG.debug("{} {} {} -> {}", context, errorStatus, errorCause, errorPage);

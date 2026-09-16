@@ -309,8 +309,11 @@ public class ContainerLifeCycle extends AbstractLifeCycle implements Container, 
     @Override
     public boolean addBean(Object o)
     {
-        if (o instanceof LifeCycle l)
+        if (o instanceof LifeCycle)
+        {
+            LifeCycle l = (LifeCycle)o;
             return addBean(o, l.isRunning() ? Managed.UNMANAGED : Managed.AUTO);
+        }
         return addBean(o, Managed.POJO);
     }
 
@@ -369,8 +372,9 @@ public class ContainerLifeCycle extends AbstractLifeCycle implements Container, 
                     break;
 
                 case AUTO:
-                    if (o instanceof LifeCycle l)
+                    if (o instanceof LifeCycle)
                     {
+                        LifeCycle l = (LifeCycle)o;
                         if (isStarting())
                         {
                             if (l.isRunning())
@@ -426,7 +430,7 @@ public class ContainerLifeCycle extends AbstractLifeCycle implements Container, 
      */
     protected final boolean installBean(Object o)
     {
-        return installBean(o, o instanceof LifeCycle l ? (l.isRunning() ? Managed.UNMANAGED : Managed.AUTO) : Managed.POJO);
+        return installBean(o, o instanceof LifeCycle ? (((LifeCycle)o).isRunning() ? Managed.UNMANAGED : Managed.AUTO) : Managed.POJO);
     }
 
     /**
@@ -457,8 +461,11 @@ public class ContainerLifeCycle extends AbstractLifeCycle implements Container, 
         newBean._managed = managed;
         _beans.add(newBean);
 
-        if (o instanceof EventListener eventListener)
+        if (o instanceof EventListener)
+        {
+            EventListener eventListener = (EventListener)o;
             addEventListener(eventListener);
+        }
 
         if (LOG.isDebugEnabled())
             LOG.debug("{}@{} added {}", getClass().getSimpleName(), hashCode(), newBean);
@@ -503,8 +510,11 @@ public class ContainerLifeCycle extends AbstractLifeCycle implements Container, 
      */
     public void addManaged(Object o)
     {
-        if (o instanceof LifeCycle lifecycle)
+        if (o instanceof LifeCycle)
+        {
+            LifeCycle lifecycle = (LifeCycle)o;
             addManaged(lifecycle);
+        }
         else
             addBean(o, Managed.POJO);
     }
@@ -521,8 +531,9 @@ public class ContainerLifeCycle extends AbstractLifeCycle implements Container, 
                 // but it will have already been added, so we will not enter this branch.
                 addBean(listener);
 
-            if (listener instanceof Container.Listener cl)
+            if (listener instanceof Container.Listener)
             {
+                Container.Listener cl = (Container.Listener)listener;
                 _listeners.add(cl);
 
                 // tell it about existing beans
@@ -551,8 +562,9 @@ public class ContainerLifeCycle extends AbstractLifeCycle implements Container, 
         if (super.removeEventListener(listener))
         {
             removeBean(listener);
-            if (listener instanceof Container.Listener cl && _listeners.remove(listener))
+            if (listener instanceof Container.Listener && _listeners.remove(listener))
             {
+                Container.Listener cl = (Container.Listener)listener;
                 // remove existing beans
                 for (Bean b : _beans)
                 {
@@ -838,12 +850,15 @@ public class ContainerLifeCycle extends AbstractLifeCycle implements Container, 
          */
         public boolean isManageable()
         {
-            return switch (_managed)
+            switch (_managed)
             {
-                case MANAGED -> true;
-                case AUTO -> _bean instanceof LifeCycle && ((LifeCycle)_bean).isStopped();
-                default -> false;
-            };
+                case MANAGED:
+                    return true;
+                case AUTO:
+                    return _bean instanceof LifeCycle && ((LifeCycle)_bean).isStopped();
+                default:
+                    return false;
+            }
         }
 
         @Override

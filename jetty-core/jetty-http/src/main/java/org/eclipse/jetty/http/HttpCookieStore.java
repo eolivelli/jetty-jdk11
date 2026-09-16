@@ -594,8 +594,9 @@ public interface HttpCookieStore
             {
                 if (this == obj)
                     return true;
-                if (!(obj instanceof StoredHttpCookie that))
+                if (!(obj instanceof StoredHttpCookie))
                     return false;
+                StoredHttpCookie that = (StoredHttpCookie)obj;
                 return getName().equals(that.getName()) &&
                        domain.equalsIgnoreCase(that.domain) &&
                        path.equals(that.path);

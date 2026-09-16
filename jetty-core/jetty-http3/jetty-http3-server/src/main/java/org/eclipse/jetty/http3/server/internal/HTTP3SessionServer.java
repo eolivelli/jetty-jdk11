@@ -166,8 +166,9 @@ public class HTTP3SessionServer extends HTTP3Session implements Session.Server
     private void notifyStreamFailure(Stream stream, Throwable failure)
     {
         Server.Listener listener = getListener();
-        if (listener instanceof Listener l)
+        if (listener instanceof Listener)
         {
+            Listener l = (Listener)listener;
             try
             {
                 l.onStreamFailure(stream, failure);

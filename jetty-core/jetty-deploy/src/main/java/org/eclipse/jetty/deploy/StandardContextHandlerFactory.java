@@ -67,10 +67,16 @@ public class StandardContextHandlerFactory implements ContextHandlerFactory
     {
         if (obj == null)
             return null;
-        if (obj instanceof Enum<?> en)
+        if (obj instanceof Enum<?>)
+        {
+            Enum<?> en = (Enum<?>)obj;
             return en.name();
-        if (obj instanceof Environment env)
+        }
+        if (obj instanceof Environment)
+        {
+            Environment env = (Environment)obj;
             return env.getName();
+        }
         return Objects.toString(obj);
     }
 
@@ -317,8 +323,11 @@ public class StandardContextHandlerFactory implements ContextHandlerFactory
         if (context == null)
             return null;
 
-        if (context instanceof ContextHandler handler)
+        if (context instanceof ContextHandler)
+        {
+            ContextHandler handler = (ContextHandler)context;
             return handler;
+        }
 
         if (Supplier.class.isAssignableFrom(context.getClass()))
         {
@@ -349,8 +358,11 @@ public class StandardContextHandlerFactory implements ContextHandlerFactory
             }
         }
 
-        if (context instanceof Deployable deployable)
+        if (context instanceof Deployable)
+        {
+            Deployable deployable = (Deployable)context;
             deployable.initializeDefaults(attributes);
+        }
     }
 
     /**

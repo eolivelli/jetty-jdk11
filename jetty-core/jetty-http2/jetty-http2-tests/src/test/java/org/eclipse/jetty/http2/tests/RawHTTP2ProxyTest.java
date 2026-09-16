@@ -491,24 +491,25 @@ public class RawHTTP2ProxyTest
             {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("CPS:{} forwarding {} from {} to {}", port, frameInfo, clientToProxyStream, proxyToServerStream);
-                return switch (frameInfo.frame.getType())
+                switch (frameInfo.frame.getType())
                 {
-                    case HEADERS ->
+                    case HEADERS:
                     {
                         HeadersFrame clientToProxyFrame = (HeadersFrame)frameInfo.frame;
                         HeadersFrame proxyToServerFrame = new HeadersFrame(proxyToServerStream.getId(), clientToProxyFrame.getMetaData(), clientToProxyFrame.getPriority(), clientToProxyFrame.isEndStream());
                         proxyToServerStream.headers(proxyToServerFrame, this);
-                        yield Action.SCHEDULED;
+                        return Action.SCHEDULED;
                     }
-                    case DATA ->
+                    case DATA:
                     {
                         DataFrame clientToProxyFrame = (DataFrame)frameInfo.frame;
                         DataFrame proxyToServerFrame = new DataFrame(proxyToServerStream.getId(), clientToProxyFrame.getByteBuffer(), clientToProxyFrame.isEndStream());
                         proxyToServerStream.data(proxyToServerFrame, this);
-                        yield Action.SCHEDULED;
+                        return Action.SCHEDULED;
                     }
-                    default -> throw new IllegalStateException();
-                };
+                    default:
+                        throw new IllegalStateException();
+                }
             }
         }
 
@@ -644,26 +645,28 @@ public class RawHTTP2ProxyTest
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("SPC:{} forwarding {} for {} to {}", port, frameInfo, serverToProxyStream, proxyToClientStream);
 
-            return switch (frameInfo.frame.getType())
+            switch (frameInfo.frame.getType())
             {
-                case HEADERS ->
+                case HEADERS:
                 {
                     HeadersFrame serverToProxyFrame = (HeadersFrame)frameInfo.frame;
                     HeadersFrame proxyToClientFrame = new HeadersFrame(proxyToClientStream.getId(), serverToProxyFrame.getMetaData(), serverToProxyFrame.getPriority(), serverToProxyFrame.isEndStream());
                     proxyToClientStream.headers(proxyToClientFrame, this);
-                    yield Action.SCHEDULED;
+                    return Action.SCHEDULED;
                 }
-                case DATA ->
+                case DATA:
                 {
                     DataFrame serverToProxyFrame = (DataFrame)frameInfo.frame;
                     DataFrame proxyToClientFrame = new DataFrame(proxyToClientStream.getId(), serverToProxyFrame.getByteBuffer(), serverToProxyFrame.isEndStream());
                     proxyToClientStream.data(proxyToClientFrame, this);
-                    yield Action.SCHEDULED;
+                    return Action.SCHEDULED;
                 }
                 // TODO
-                case PUSH_PROMISE -> throw new UnsupportedOperationException();
-                default -> throw new IllegalStateException();
-            };
+                case PUSH_PROMISE:
+                    throw new UnsupportedOperationException();
+                default:
+                    throw new IllegalStateException();
+            }
         }
 
         @Override

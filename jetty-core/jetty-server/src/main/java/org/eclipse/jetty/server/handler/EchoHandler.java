@@ -49,14 +49,21 @@ public class EchoHandler extends Handler.Abstract
             {
                 switch (field.getHeader())
                 {
-                    case CONTENT_LENGTH ->
+                    case CONTENT_LENGTH:
                     {
                         response.getHeaders().add(field);
                         contentLength = field.getLongValue();
+                        break;
                     }
-                    case CONTENT_TYPE -> response.getHeaders().add(field);
-                    case TRAILER -> response.setTrailersSupplier(HttpFields.build());
-                    case TRANSFER_ENCODING -> contentLength = Long.MAX_VALUE;
+                    case CONTENT_TYPE:
+                        response.getHeaders().add(field);
+                        break;
+                    case TRAILER:
+                        response.setTrailersSupplier(HttpFields.build());
+                        break;
+                    case TRANSFER_ENCODING:
+                        contentLength = Long.MAX_VALUE;
+                        break;
                 }
             }
         }

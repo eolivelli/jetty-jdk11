@@ -183,13 +183,15 @@ public abstract class AbstractEEActivator implements BundleActivator, ServerClas
 
                 for (AbstractContextProvider provider : osgiProviders)
                 {
-                    if (provider instanceof BundleContextProvider bundleContextProvider)
+                    if (provider instanceof BundleContextProvider)
                     {
+                        BundleContextProvider bundleContextProvider = (BundleContextProvider)provider;
                         if (bundleContextProvider.getEnvironmentName().equalsIgnoreCase(getEnvironment()))
                             contextProvider = bundleContextProvider;
                     }
-                    if (provider instanceof BundleWebAppProvider bundleWebAppProvider)
+                    if (provider instanceof BundleWebAppProvider)
                     {
+                        BundleWebAppProvider bundleWebAppProvider = (BundleWebAppProvider)provider;
                         if (bundleWebAppProvider.getEnvironmentName().equalsIgnoreCase(getEnvironment()))
                             webAppProvider = bundleWebAppProvider;
                     }

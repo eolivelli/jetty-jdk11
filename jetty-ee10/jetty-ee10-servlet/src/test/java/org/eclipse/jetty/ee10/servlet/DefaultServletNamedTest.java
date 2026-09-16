@@ -105,9 +105,14 @@ public class DefaultServletNamedTest
                 RequestDispatcher dispatcher = getServletContext().getNamedDispatcher("default");
                 switch (dispatcherType)
                 {
-                    case FORWARD -> dispatcher.forward(request, response);
-                    case INCLUDE -> dispatcher.include(request, response);
-                    default -> throw new ServletException("Test doesn't support dispatcherType: " + dispatcherType);
+                    case FORWARD:
+                        dispatcher.forward(request, response);
+                        break;
+                    case INCLUDE:
+                        dispatcher.include(request, response);
+                        break;
+                    default:
+                        throw new ServletException("Test doesn't support dispatcherType: " + dispatcherType);
                 }
             }
         };

@@ -70,12 +70,16 @@ public class ServerConfigTest
 
     private EventSocket getServerEndpoint(String path)
     {
-        return switch (path)
+        switch (path)
         {
-            case "servletConfig", "containerConfig" -> standardEndpoint;
-            case "sessionConfig" -> sessionConfigEndpoint;
-            default -> throw new IllegalStateException();
-        };
+            case "servletConfig":
+            case "containerConfig":
+                return standardEndpoint;
+            case "sessionConfig":
+                return sessionConfigEndpoint;
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     public static Stream<Arguments> data()

@@ -125,7 +125,7 @@ public class HttpStreamOverHTTP3 implements HttpStream
         {
             if (LOG.isDebugEnabled())
                 LOG.debug("onRequest() failure", x);
-            HttpException httpException = x instanceof HttpException http ? http : new HttpException.RuntimeException(HttpStatus.INTERNAL_SERVER_ERROR_500, x);
+            HttpException httpException = x instanceof HttpException ? (HttpException)x : new HttpException.RuntimeException(HttpStatus.INTERNAL_SERVER_ERROR_500, x);
             return onBadMessage(httpException);
         }
     }

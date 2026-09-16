@@ -584,13 +584,19 @@ public class GzipHandler extends Handler.Wrapper implements GzipFactory
                 continue;
             switch (header)
             {
-                case CONTENT_ENCODING ->
+                case CONTENT_ENCODING:
                 {
                     inflatable |= !seenContentEncoding && field.containsLast("gzip");
                     seenContentEncoding = true;
+                    break;
                 }
-                case ACCEPT_ENCODING -> deflatable = field.contains("gzip");
-                case IF_MATCH, IF_NONE_MATCH -> etagMatches |= field.getValue().contains(EtagUtils.ETAG_SEPARATOR);
+                case ACCEPT_ENCODING:
+                    deflatable = field.contains("gzip");
+                    break;
+                case IF_MATCH:
+                case IF_NONE_MATCH:
+                    etagMatches |= field.getValue().contains(EtagUtils.ETAG_SEPARATOR);
+                    break;
             }
         }
 
@@ -622,8 +628,11 @@ public class GzipHandler extends Handler.Wrapper implements GzipFactory
             return true;
 
         // If the request was not handled, destroy GzipRequest.
-        if (request instanceof GzipRequest gzipRequest)
+        if (request instanceof GzipRequest)
+        {
+            GzipRequest gzipRequest = (GzipRequest)request;
             gzipRequest.destroy();
+        }
 
         return false;
     }

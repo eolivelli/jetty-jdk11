@@ -167,8 +167,11 @@ public class FormFields extends ContentSourceCompletableFuture<Fields>
     @Deprecated(since = "12.1.11", forRemoval = true)
     public static Fields getFields(Content.Source source, Attributes attributes, Charset charset, int maxFields, int maxLength)
     {
-        if (attributes instanceof Request request)
+        if (attributes instanceof Request)
+        {
+            Request request = (Request)attributes;
             return join(from(source, InvocationType.NON_BLOCKING, request, charset, maxFields, maxLength));
+        }
         else
             return join(from(source, InvocationType.NON_BLOCKING, attributes, null, charset, maxFields, maxLength));
     }
@@ -207,12 +210,21 @@ public class FormFields extends ContentSourceCompletableFuture<Fields>
         catch (CompletionException e)
         {
             Throwable cause = e.getCause();
-            if (cause instanceof RuntimeException runtimeException)
+            if (cause instanceof RuntimeException)
+            {
+                RuntimeException runtimeException = (RuntimeException)cause;
                 throw runtimeException;
-            if (cause instanceof Error error)
+            }
+            if (cause instanceof Error)
+            {
+                Error error = (Error)cause;
                 throw error;
-            if (cause instanceof HttpException httpException)
+            }
+            if (cause instanceof HttpException)
+            {
+                HttpException httpException = (HttpException)cause;
                 throw new HttpException.RuntimeException(httpException.getCode(), httpException.getReason(), cause);
+            }
             throw e;
         }
     }
@@ -276,10 +288,16 @@ public class FormFields extends ContentSourceCompletableFuture<Fields>
     public static CompletableFuture<Fields> get(Request request)
     {
         Object attr = request.getAttribute(FormFields.class.getName());
-        if (attr instanceof FormFields futureFormFields)
+        if (attr instanceof FormFields)
+        {
+            FormFields futureFormFields = (FormFields)attr;
             return futureFormFields;
-        else if (attr instanceof Fields fields)
+        }
+        else if (attr instanceof Fields)
+        {
+            Fields fields = (Fields)attr;
             return CompletableFuture.completedFuture(fields);
+        }
         return EMPTY;
     }
 
@@ -384,10 +402,16 @@ public class FormFields extends ContentSourceCompletableFuture<Fields>
             maxLength = findDefaultMaxLength(request);
 
         Object attr = attributes.getAttribute(FormFields.class.getName());
-        if (attr instanceof FormFields futureFormFields)
+        if (attr instanceof FormFields)
+        {
+            FormFields futureFormFields = (FormFields)attr;
             return futureFormFields;
-        else if (attr instanceof Fields fields)
+        }
+        else if (attr instanceof Fields)
+        {
+            Fields fields = (Fields)attr;
             return CompletableFuture.completedFuture(fields);
+        }
 
         if (charset == null)
             return EMPTY;
@@ -506,13 +530,13 @@ public class FormFields extends ContentSourceCompletableFuture<Fields>
                 byte b = buffer.get();
                 switch (_percent)
                 {
-                    case 1 ->
+                    case 1:
                     {
                         _percentCode = b;
                         _percent++;
                         continue;
                     }
-                    case 2 ->
+                    case 2:
                     {
                         _percent = 0;
                         _builder.append(decodeHexByte((char)_percentCode, (char)b));
@@ -524,17 +548,25 @@ public class FormFields extends ContentSourceCompletableFuture<Fields>
                 {
                     switch (b)
                     {
-                        case '&' ->
+                        case '&':
                         {
                             String name = _builder.build();
                             onNewField(name, "");
+                            break;
                         }
-                        case '=' -> _name = _builder.build();
-                        case '+' -> _builder.append(' ');
-                        case '%' -> _percent++;
-                        default ->
+                        case '=':
+                            _name = _builder.build();
+                            break;
+                        case '+':
+                            _builder.append(' ');
+                            break;
+                        case '%':
+                            _percent++;
+                            break;
+                        default:
                         {
                             _builder.append(b);
+                            break;
                         }
                     }
                 }
@@ -542,15 +574,22 @@ public class FormFields extends ContentSourceCompletableFuture<Fields>
                 {
                     switch (b)
                     {
-                        case '&' ->
+                        case '&':
                         {
                             String value = _builder.build();
                             onNewField(_name, value);
                             _name = null;
+                            break;
                         }
-                        case '+' -> _builder.append(' ');
-                        case '%' -> _percent++;
-                        default -> _builder.append(b);
+                        case '+':
+                            _builder.append(' ');
+                            break;
+                        case '%':
+                            _percent++;
+                            break;
+                        default:
+                            _builder.append(b);
+                            break;
                     }
                 }
             }

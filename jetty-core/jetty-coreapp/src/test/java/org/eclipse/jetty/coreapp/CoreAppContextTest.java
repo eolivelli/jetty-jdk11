@@ -604,8 +604,9 @@ public class CoreAppContextTest
             Throwable throwable = assertThrows(Throwable.class, () -> startServerWithDeploy(baseDir, webapps, null));
 
             // unwrap any ExecutionExceptions
-            while (throwable instanceof ExecutionException ee)
+            while (throwable instanceof ExecutionException)
             {
+                ExecutionException ee = (ExecutionException)throwable;
                 throwable = ee.getCause();
             }
 

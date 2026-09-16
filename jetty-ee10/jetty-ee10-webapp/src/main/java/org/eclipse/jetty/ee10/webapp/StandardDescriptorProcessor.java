@@ -1351,7 +1351,7 @@ public class StandardDescriptorProcessor extends IterativeDescriptorProcessor
 
                 switch (role)
                 {
-                    case ConstraintSecurityHandler.ANY_KNOWN_ROLE -> // "*"
+                    case ConstraintSecurityHandler.ANY_KNOWN_ROLE:
                     {
                         //The hierarchy of role authorizations is:
                         // ANY_USER
@@ -1362,16 +1362,19 @@ public class StandardDescriptorProcessor extends IterativeDescriptorProcessor
                             scBase.authorization(Constraint.Authorization.KNOWN_ROLE);
                             roles = null;
                         }
+                        break;
                     }
-                    case ConstraintSecurityHandler.ANY_ROLE -> // "**"
+                    case ConstraintSecurityHandler.ANY_ROLE:
                     {
                         scBase.authorization(Constraint.Authorization.ANY_USER);
                         roles = null;
+                        break;
                     }
-                    default ->
+                    default:
                     {
                         if (roles != null)
                             roles.add(role);
+                        break;
                     }
                 }
             }

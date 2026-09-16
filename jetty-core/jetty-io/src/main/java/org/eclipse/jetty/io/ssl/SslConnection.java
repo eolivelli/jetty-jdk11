@@ -660,8 +660,9 @@ public class SslConnection extends AbstractConnection implements Connection.Upgr
         @Override
         public void setConnection(Connection connection)
         {
-            if (connection instanceof AbstractConnection c)
+            if (connection instanceof AbstractConnection)
             {
+                AbstractConnection c = (AbstractConnection)connection;
                 // This is an optimization to avoid that upper layer connections use small
                 // buffers and we need to copy decrypted data rather than decrypting in place.
                 int appBufferSize = getApplicationBufferSize();

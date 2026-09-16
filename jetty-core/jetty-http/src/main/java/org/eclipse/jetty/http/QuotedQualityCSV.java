@@ -334,8 +334,9 @@ public class QuotedQualityCSV extends QuotedCSV implements Iterable<String>
         @Override
         public boolean equals(Object obj)
         {
-            if (!(obj instanceof QualityValue that))
+            if (!(obj instanceof QualityValue))
                 return false;
+            QualityValue that = (QualityValue)obj;
             return _quality == that._quality && Objects.equals(_value, that._value) && _index == that._index;
         }
 

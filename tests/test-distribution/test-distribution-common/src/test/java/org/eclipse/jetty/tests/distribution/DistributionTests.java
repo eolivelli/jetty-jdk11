@@ -1199,7 +1199,8 @@ public class DistributionTests extends AbstractJettyHomeTest
             };
 
             // Put war into ${jetty.base}/wars/ directory
-            String coordinates = String.format("org.eclipse.jetty.demos:jetty-%s-demo-simple-webapp:war:%s", "ee8".equals(env) ? "servlet4" : "servlet5",
+            String coordinates = String.format("org.eclipse.jetty.demos:jetty-%s-demo-simple-webapp:war:%s",
+                "ee8".equals(env) ? "servlet4" : "servlet5",
                 jettyVersion);
             Path warsDir = jettyBase.resolve("wars");
             FS.ensureDirExists(warsDir);
@@ -1532,7 +1533,8 @@ public class DistributionTests extends AbstractJettyHomeTest
             String loggingConfig = "org.eclipse.jetty.LEVEL=DEBUG\n";
             Files.writeString(jettyLogging, loggingConfig, StandardOpenOption.TRUNCATE_EXISTING);
 
-            String coordinates = String.format("org.eclipse.jetty.demos:jetty-%s-demo-simple-webapp:war:%s", "ee8".equals(env) ? "servlet4" : "servlet5",
+            String coordinates = String.format("org.eclipse.jetty.demos:jetty-%s-demo-simple-webapp:war:%s",
+                "ee8".equals(env) ? "servlet4" : "servlet5",
                 jettyVersion);
             Path war = distribution.resolveArtifact(coordinates);
             distribution.installWar(war, "test");

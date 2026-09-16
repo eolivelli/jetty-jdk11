@@ -119,7 +119,10 @@ public class InvokerUtils
         public String toString()
         {
             return String.format("Arg[%s]",
-                type.getSimpleName() + (name != null ? ", name=" + name : "") + (required ? ", required" : "") + (convertible ? ", convertible" : ""));
+                type.getSimpleName() +
+                (name != null ? ", name=" + name : "") +
+                (required ? ", required" : "") +
+                (convertible ? ", convertible" : ""));
         }
     }
 

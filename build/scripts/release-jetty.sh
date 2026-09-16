@@ -167,7 +167,6 @@ if proceedyn "Are you sure you want to release using above? (y/N)" n; then
     # This is equivalent to 'mvn release:perform'
     if proceedyn "Build/Deploy from tag $TAG_NAME? (Y/n)" y; then
         mvn clean deploy -Dbuilt-by="Eclipse Jetty Team" -Peclipse-release $DEPLOY_OPTS
-        mvn njord:publish -Ddrop=false $DEPLOY_OPTS
     fi
     if proceedyn "Update working directory for $VER_NEXT? (Y/n)" y; then
         echo "Update VERSION.txt for $VER_NEXT"
@@ -204,9 +203,6 @@ if proceedyn "Are you sure you want to release using above? (y/N)" n; then
             -Dwebtide.release.tools.tagVersionPrior=$PREV_TAG -e
     fi
 
-    # here we need to add something to publish to our staging repo
-    # mvn njord:publish -Dnjord.drop=false -Dnjord.publisher=deploy -DaltDeploymentRepository=jetty-staging::https://repository.webtide.net/repository/release-staging/
-    # need an entry in settings.xml for id jetty-staging
 
 else
     echo "Not performing release"

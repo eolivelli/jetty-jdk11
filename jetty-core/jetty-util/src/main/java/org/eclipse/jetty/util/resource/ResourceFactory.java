@@ -273,8 +273,7 @@ public interface ResourceFactory
                 try
                 {
                     // Get all matching URLs
-                    // A null system ClassLoader is searched via the static ClassLoader.getSystemResources(String).
-                    Enumeration<URL> urls = source == null ? ClassLoader.getSystemResources(name) : source.getResources(name);
+                    Enumeration<URL> urls = source.getResources(name);
                     while (urls.hasMoreElements())
                     {
                         // Get the resource

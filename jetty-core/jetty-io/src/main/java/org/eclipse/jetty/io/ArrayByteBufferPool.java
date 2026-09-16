@@ -1117,9 +1117,10 @@ public class ArrayByteBufferPool implements ByteBufferPool, Dumpable
                 String stacks = w.toString();
                 return String.format("%s@%x of %d bytes on %s wrapping %s%n" +
                     " %s%n" +
-                    " acquired at %s", TypeUtil.toShortName(getClass()), hashCode(), getSize(), getAcquireInstant(), getRetained(),
-                        BufferUtil.toDetailString(getByteBuffer()),
-                        stacks);
+                    " acquired at %s",
+                    TypeUtil.toShortName(getClass()), hashCode(), getSize(), getAcquireInstant(), getRetained(),
+                    BufferUtil.toDetailString(getByteBuffer()),
+                    stacks);
             }
         }
     }

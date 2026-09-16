@@ -69,21 +69,6 @@ jobs:
           # Details on CodeQL's query packs refer to : https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
           # queries: security-extended,security-and-quality
 
-      - name: Prepare Mimir
-        shell: bash
-        run: |
-          mkdir -p ~/.mimir
-          cp .github/ci-mimir-daemon.properties ~/.mimir/daemon.properties
-
-      - name: Handle Mimir caches
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
-        with:
-          path: ~/.mimir/local
-          key: mimir-codeql-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            mimir-codeql-
-            mimir-
-
       - name: Set up Maven
         run:
           mvn -e -B -V org.apache.maven.plugins:maven-wrapper-plugin:3.3.2:wrapper "-Dmaven=3.9.16"

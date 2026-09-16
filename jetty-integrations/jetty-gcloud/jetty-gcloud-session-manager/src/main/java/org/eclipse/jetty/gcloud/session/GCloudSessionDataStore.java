@@ -334,20 +334,8 @@ public class GCloudSessionDataStore extends AbstractSessionDataStore
         @Override
         public String toString()
         {
-            return String.format("%s==%s:%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
-                TypeUtil.toShortName(this.getClass()),
-                _kind,
-                _accessed,
-                _attributes,
-                _contextPath,
-                _cookieSetTime,
-                _createTime,
-                _expiry,
-                _id,
-                _lastAccessed,
-                _lastNode,
-                _maxInactive,
-                _vhost);
+            return String.format("%s==%s:%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", TypeUtil.toShortName(this.getClass()),
+                _kind, _accessed, _attributes, _contextPath, _cookieSetTime, _createTime, _expiry, _id, _lastAccessed, _lastNode, _maxInactive, _vhost);
         }
     }
 

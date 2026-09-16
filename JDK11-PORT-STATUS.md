@@ -91,17 +91,21 @@ major 61), see the `setuid` note below.
 - `SessionHandler.ServletSessionApi.getOrCreateSession` (ee9, and the generated ee8) became
   `SessionHandler.getOrCreateSession`: a `static` member of a non-static inner class is illegal before Java 16,
   and no deprecated delegate can be left behind in the inner class for the same reason.
-- Public records converted to `final` classes (they no longer extend `java.lang.Record`; component accessor
-  names, `equals`/`hashCode`/`toString` semantics are unchanged): jetty-http `ByteRange`,
+- Public (or protected) records converted to `final` classes (they no longer extend `java.lang.Record`;
+  component accessor names, `equals`/`hashCode`/`toString` semantics are unchanged): jetty-http `ByteRange`,
   `ComplianceViolation.Event`; jetty-server `CustomRequestLog.LogDetail`, `ResourceService.WelcomeAction`,
   `HttpChannel.IdleTimeoutTask`; jetty-client `PathResponseListener.PathResponse`,
   `RedirectCache.MethodOriginTarget`; websocket `Frame.CloseStatus`; compression `EncoderSink.WriteRecord`;
   quic `FrameGenerator.BytesGenerated`, `PemPaths`, `Quiche.CloseInfo`; session
   `AbstractSessionManager.RequestedSession`; rewrite `CompactPathRule.CompactedEvent`,
-  `RewriteEncodingRule.Encoding`; deploy `DeploymentScanner.DeployAction`; ee10 `JettyWebConnection`;
+  `RewriteEncodingRule.Encoding` (protected); deploy `DeploymentScanner.DeployAction`; ee10 `JettyWebConnection`,
+  `ErrorHandler.ErrorPageMapper.ErrorPage`;
   ethereum `SignInWithEthereumToken`, `EthereumAuthenticator.SignedMessage`; demos `JettyDemos.MavenCoordinate`.
 - Where a `static` logger had to move out of an inner/anonymous class (illegal before Java 16), the logger
   category is preserved explicitly so log configuration keeps working unchanged.
+- The Mimir/Njord Maven extensions (Java 17+) are removed together with their leftovers: the CodeQL workflow
+  and `Jenkinsfile` no longer prepare a Mimir daemon, and `build/scripts/release-jetty.sh` no longer runs
+  `njord:publish` after `mvn deploy` (publishing to Central must be done by other means on this branch).
 
 ## Tooling (outside the repo, `/home/eolivelli/dev/jetty-jdk11-tools/`)
 

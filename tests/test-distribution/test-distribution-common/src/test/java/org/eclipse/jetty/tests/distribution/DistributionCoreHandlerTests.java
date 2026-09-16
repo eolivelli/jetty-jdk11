@@ -312,7 +312,8 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
             String loggingConfig = "org.eclipse.jetty.LEVEL=DEBUG\n";
             Files.writeString(jettyLogging, loggingConfig, StandardOpenOption.TRUNCATE_EXISTING);
 
-            String coordinates = String.format("org.eclipse.jetty.demos:jetty-%s-demo-simple-webapp:war:%s", "ee8".equals(env) ? "servlet4" : "servlet5",
+            String coordinates = String.format("org.eclipse.jetty.demos:jetty-%s-demo-simple-webapp:war:%s",
+                "ee8".equals(env) ? "servlet4" : "servlet5",
                 jettyVersion);
             distribution.installWar(distribution.resolveArtifact(coordinates), "test");
 

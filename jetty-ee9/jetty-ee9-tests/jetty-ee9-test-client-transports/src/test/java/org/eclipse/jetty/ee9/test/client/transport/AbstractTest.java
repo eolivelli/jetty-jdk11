@@ -314,8 +314,8 @@ public class AbstractTest
     {
         String scheme = transportType.isSecure() ? "https" : "http";
         String uri = scheme + "://localhost";
-        if (connector instanceof NetworkConnector networkConnector)
-            uri += ":" + networkConnector.getLocalPort();
+        if (connector instanceof NetworkConnector)
+            uri += ":" + ((NetworkConnector)connector).getLocalPort();
         return URI.create(uri);
     }
 

@@ -388,8 +388,9 @@ public class HttpChannel implements Runnable, HttpOutput.Interceptor
      */
     public String getLocalName()
     {
-        return getConnectionMetaData().getLocalSocketAddress() instanceof InetSocketAddress inetSocketAddress
-            ? org.eclipse.jetty.server.Request.getHostName(inetSocketAddress) : null;
+        SocketAddress localSocketAddress = getConnectionMetaData().getLocalSocketAddress();
+        return localSocketAddress instanceof InetSocketAddress
+            ? org.eclipse.jetty.server.Request.getHostName((InetSocketAddress)localSocketAddress) : null;
     }
 
     /**
@@ -411,20 +412,23 @@ public class HttpChannel implements Runnable, HttpOutput.Interceptor
      */
     public int getLocalPort()
     {
-        return getConnectionMetaData().getLocalSocketAddress() instanceof InetSocketAddress inetSocketAddress
-            ? inetSocketAddress.getPort() : 0;
+        SocketAddress localSocketAddress = getConnectionMetaData().getLocalSocketAddress();
+        return localSocketAddress instanceof InetSocketAddress
+            ? ((InetSocketAddress)localSocketAddress).getPort() : 0;
     }
 
     public InetSocketAddress getLocalAddress()
     {
-        return getConnectionMetaData().getLocalSocketAddress() instanceof InetSocketAddress inetSocketAddress
-            ? inetSocketAddress : null;
+        SocketAddress localSocketAddress = getConnectionMetaData().getLocalSocketAddress();
+        return localSocketAddress instanceof InetSocketAddress
+            ? (InetSocketAddress)localSocketAddress : null;
     }
 
     public InetSocketAddress getRemoteAddress()
     {
-        return getConnectionMetaData().getRemoteSocketAddress() instanceof InetSocketAddress inetSocketAddress
-            ? inetSocketAddress : null;
+        SocketAddress remoteSocketAddress = getConnectionMetaData().getRemoteSocketAddress();
+        return remoteSocketAddress instanceof InetSocketAddress
+            ? (InetSocketAddress)remoteSocketAddress : null;
     }
 
     /**
@@ -1604,9 +1608,9 @@ public class HttpChannel implements Runnable, HttpOutput.Interceptor
             else
             {
                 //the user has dispatched to a different context
-                if (event.getDispatchContext() instanceof CrossContextServletContext crossContextServletContext)
+                if (event.getDispatchContext() instanceof CrossContextServletContext)
                 {
-                   dispatchCrossContext(crossContextServletContext);
+                    dispatchCrossContext((CrossContextServletContext)event.getDispatchContext());
                 }
                 else
                 {
@@ -1625,8 +1629,10 @@ public class HttpChannel implements Runnable, HttpOutput.Interceptor
 
         private void dispatchCrossContext(CrossContextServletContext crossContextServletContext) throws ServletException, IOException
         {
-            if (crossContextServletContext.getTargetContext().getContextHandler() instanceof ContextHandler.CoreContextHandler coreContextHandler)
+            Object targetContextHandler = crossContextServletContext.getTargetContext().getContextHandler();
+            if (targetContextHandler instanceof ContextHandler.CoreContextHandler)
             {
+                ContextHandler.CoreContextHandler coreContextHandler = (ContextHandler.CoreContextHandler)targetContextHandler;
                 coreContextHandler.getContextHandler().handleCrossContextAsync(HttpChannel.this);
             }
         }

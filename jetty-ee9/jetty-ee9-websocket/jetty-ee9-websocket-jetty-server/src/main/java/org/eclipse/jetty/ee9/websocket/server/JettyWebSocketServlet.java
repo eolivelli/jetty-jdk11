@@ -297,8 +297,19 @@ public abstract class JettyWebSocketServlet extends HttpServlet
         }
     }
 
-    private record WrappedJettyCreator(JettyWebSocketCreator creator) implements WebSocketCreator
+    private static final class WrappedJettyCreator implements WebSocketCreator
     {
+        private final JettyWebSocketCreator creator;
+
+        private WrappedJettyCreator(JettyWebSocketCreator creator)
+        {
+            this.creator = creator;
+        }
+
+        public JettyWebSocketCreator creator()
+        {
+            return creator;
+        }
 
         private JettyWebSocketCreator getJettyWebSocketCreator()
         {
@@ -322,6 +333,29 @@ public abstract class JettyWebSocketServlet extends HttpServlet
                 callback.failed(t);
                 return null;
             }
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            WrappedJettyCreator that = (WrappedJettyCreator)obj;
+            return Objects.equals(creator, that.creator);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(creator);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "WrappedJettyCreator[creator=" + creator + "]";
         }
     }
 }

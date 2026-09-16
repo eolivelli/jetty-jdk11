@@ -88,8 +88,10 @@ public class HandlerWrapper extends AbstractHandlerContainer
     public HandlerWrapper getTail()
     {
         HandlerWrapper tail = this;
-        while (tail.getHandler() instanceof HandlerWrapper handlerWrapper)
-            tail = handlerWrapper;
+        while (tail.getHandler() instanceof HandlerWrapper)
+        {
+            tail = (HandlerWrapper)tail.getHandler();
+        }
         return tail;
     }
 

@@ -238,7 +238,6 @@ public class ExecutionStrategyTest
             ThreadLocal<Thread> threadLocal = new ThreadLocal<>();
             Producer producer = new TestProducer()
             {
-                private final ThreadLocal<Thread> THREAD = threadLocal;
                 int tasks = TASKS;
 
                 @Override
@@ -249,10 +248,10 @@ public class ExecutionStrategyTest
                         // Return a BLOCKING task.
                         return () ->
                         {
-                            Thread thread = THREAD.get();
+                            Thread thread = threadLocal.get();
                             if (thread != null)
                                 failureRef.compareAndSet(null, new AssertionError("recursion detected"));
-                            THREAD.set(Thread.currentThread());
+                            threadLocal.set(Thread.currentThread());
                             try
                             {
                                 if (tasks > 0)
@@ -265,7 +264,7 @@ public class ExecutionStrategyTest
                             }
                             finally
                             {
-                                THREAD.set(null);
+                                threadLocal.set(null);
                             }
                         };
                     }

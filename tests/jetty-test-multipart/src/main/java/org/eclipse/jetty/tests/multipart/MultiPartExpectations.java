@@ -271,12 +271,12 @@ public class MultiPartExpectations
             this.value = value;
         }
 
-        String name()
+        public String name()
         {
             return name;
         }
 
-        String value()
+        public String value()
         {
             return value;
         }

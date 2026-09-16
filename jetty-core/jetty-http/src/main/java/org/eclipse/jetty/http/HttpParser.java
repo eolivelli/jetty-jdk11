@@ -731,9 +731,7 @@ public class HttpParser
                 case HTAB:
                     throw new IllegalCharacterException(_state, t, buffer);
                 default:
-                {
                     break;
-                }
             }
         }
     }

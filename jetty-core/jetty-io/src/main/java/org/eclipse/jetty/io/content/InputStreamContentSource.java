@@ -82,16 +82,22 @@ public class InputStreamContentSource implements Content.Source
             long toSkip = offset - 1;
             while (toSkip > 0)
             {
+                // Mirror the contract of InputStream.skipNBytes(long) (Java 12+).
                 long skipped = inputStream.skip(toSkip);
-                if (skipped > 0)
+                if (skipped > 0 && skipped <= toSkip)
                 {
                     toSkip -= skipped;
                 }
-                else
+                else if (skipped == 0)
                 {
                     if (inputStream.read() < 0)
                         throw new EOFException();
                     toSkip--;
+                }
+                else
+                {
+                    // skip() returned a negative value or skipped too many bytes.
+                    throw new IOException("Unable to skip exactly");
                 }
             }
             if (inputStream.read() == -1)

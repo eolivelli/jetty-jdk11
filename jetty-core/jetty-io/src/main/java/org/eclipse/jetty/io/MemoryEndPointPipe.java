@@ -35,7 +35,8 @@ import org.slf4j.LoggerFactory;
  */
 public class MemoryEndPointPipe implements EndPoint.Pipe
 {
-    private static final Logger LOG = LoggerFactory.getLogger(MemoryEndPointPipe.class);
+    // Keep the original logger category of the inner MemoryEndPoint class.
+    private static final Logger MEMORY_END_POINT_LOG = LoggerFactory.getLogger(MemoryEndPoint.class);
     private static final RetainableByteBuffer EOF_SENTINEL = RetainableByteBuffer.wrap(BufferUtil.EMPTY_BUFFER);
 
     private final ByteBufferPool byteBufferPool;
@@ -161,8 +162,8 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
             int filled = peerEndPoint.fillInto(buffer);
             BufferUtil.flipToFlush(buffer, position);
 
-            if (LOG.isDebugEnabled())
-                LOG.debug("filled {} from {}", filled, this);
+            if (MEMORY_END_POINT_LOG.isDebugEnabled())
+                MEMORY_END_POINT_LOG.debug("filled {} from {}", filled, this);
 
             if (filled > 0)
             {
@@ -219,8 +220,8 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
 
         private void onFilled()
         {
-            if (LOG.isDebugEnabled())
-                LOG.debug("filled, notifying completeWrite {}", this);
+            if (MEMORY_END_POINT_LOG.isDebugEnabled())
+                MEMORY_END_POINT_LOG.debug("filled, notifying completeWrite {}", this);
             taskConsumer.accept(completeWriteTask);
         }
 
@@ -237,8 +238,8 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
                     return;
                 }
             }
-            if (LOG.isDebugEnabled())
-                LOG.debug("fill interested, data available {}", this);
+            if (MEMORY_END_POINT_LOG.isDebugEnabled())
+                MEMORY_END_POINT_LOG.debug("fill interested, data available {}", this);
             callback.succeeded();
         }
 
@@ -252,8 +253,8 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
                 if (peerEndPoint.buffers.isEmpty())
                     return super.tryFillInterested(callback);
             }
-            if (LOG.isDebugEnabled())
-                LOG.debug("try fill interested, data available {}", this);
+            if (MEMORY_END_POINT_LOG.isDebugEnabled())
+                MEMORY_END_POINT_LOG.debug("try fill interested, data available {}", this);
             callback.succeeded();
             return false;
         }
@@ -297,8 +298,8 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
                 }
             }
 
-            if (LOG.isDebugEnabled())
-                LOG.debug("flushed {} to {}", flushed, this);
+            if (MEMORY_END_POINT_LOG.isDebugEnabled())
+                MEMORY_END_POINT_LOG.debug("flushed {} to {}", flushed, this);
 
             if (flushed > 0)
             {
@@ -362,8 +363,8 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
 
         private void onFlushed()
         {
-            if (LOG.isDebugEnabled())
-                LOG.debug("flushed, notifying fillable {}", this);
+            if (MEMORY_END_POINT_LOG.isDebugEnabled())
+                MEMORY_END_POINT_LOG.debug("flushed, notifying fillable {}", this);
             taskConsumer.accept(fillableTask);
         }
     }

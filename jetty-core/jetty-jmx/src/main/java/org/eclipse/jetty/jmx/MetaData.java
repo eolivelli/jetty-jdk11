@@ -247,14 +247,17 @@ class MetaData
                 return ObjectName[].class;
         }
 
-        if (type instanceof ParameterizedType &&
-            ((ParameterizedType)type).getRawType() instanceof Class &&
-            Collection.class.isAssignableFrom((Class<?>)((ParameterizedType)type).getRawType()))
+        if (type instanceof ParameterizedType)
         {
             ParameterizedType parameterizedType = (ParameterizedType)type;
-            Type[] genArgs = parameterizedType.getActualTypeArguments();
-            if (genArgs.length == 1 && genArgs[0] instanceof Class && ((Class<?>)genArgs[0]).isAnnotationPresent(ManagedObject.class))
-                return ObjectName[].class;
+            Type rawType = parameterizedType.getRawType();
+            if (rawType instanceof Class && Collection.class.isAssignableFrom((Class<?>)rawType))
+            {
+                Type[] genArgs = parameterizedType.getActualTypeArguments();
+                Type genArg = genArgs.length == 1 ? genArgs[0] : null;
+                if (genArg instanceof Class && ((Class<?>)genArg).isAnnotationPresent(ManagedObject.class))
+                    return ObjectName[].class;
+            }
         }
 
         if (type.getTypeName().startsWith("org.eclipse.jetty."))

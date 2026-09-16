@@ -1446,10 +1446,8 @@ public class MultiPart
                 switch (token.getType())
                 {
                     case CR:
-                    {
-                        break;
                         // Ignore CR and loop around;
-                    }
+                        break;
                     case LF:
                     {
                         // End of fields.
@@ -1536,10 +1534,8 @@ public class MultiPart
                 switch (token.getType())
                 {
                     case CR:
-                    {
-                        break;
                         // Ignore CR and loop around;
-                    }
+                        break;
                     case LF:
                     {
                         // End of header value.

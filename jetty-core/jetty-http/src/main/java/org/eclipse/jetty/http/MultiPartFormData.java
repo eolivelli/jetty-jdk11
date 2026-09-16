@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -340,9 +341,9 @@ public class MultiPartFormData
          */
         public List<MultiPart.Part> getAll(String name)
         {
-            return parts.stream()
+            return Collections.unmodifiableList(parts.stream()
                 .filter(part -> part.getName().equals(name))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
         }
 
         /**
@@ -848,10 +849,8 @@ public class MultiPartFormData
                                 break;
                             case "8bit":
                             case "binary":
-                            {
-                                break;
                                 // ignore
-                            }
+                                break;
                             default:
                                 onViolation(MultiPartCompliance.Violation.CONTENT_TRANSFER_ENCODING);
                                 break;

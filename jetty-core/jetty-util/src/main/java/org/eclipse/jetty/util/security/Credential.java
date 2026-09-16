@@ -239,6 +239,7 @@ public abstract class Credential implements Serializable
                     return equals(credentials);
                 if (credentials instanceof Credential)
                 {
+                    // Allow the other Credential to check.
                     Credential other = (Credential)credentials;
                     return other.check(this);
                 }
@@ -348,6 +349,7 @@ public abstract class Credential implements Serializable
                     return equals(credentials);
                 if (credentials instanceof Credential)
                 {
+                    // Allow the other Credential to check.
                     Credential other = (Credential)credentials;
                     return other.check(this);
                 }

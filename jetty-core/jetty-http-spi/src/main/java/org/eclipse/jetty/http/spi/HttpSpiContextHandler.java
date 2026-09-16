@@ -54,28 +54,32 @@ public class HttpSpiContextHandler extends ContextHandler
             @Override
             public boolean handle(Request request, Response response, Callback callback)
             {
-                // HttpExchange is AutoCloseable only since Java 17, so it cannot be used in try-with-resources.
-                HttpExchange jettyHttpExchange = request.isSecure()
-                    ? new JettyHttpsExchange(_httpContext, request, response)
-                    : new JettyHttpExchange(_httpContext, request, response);
                 try
                 {
-                    Authenticator auth = _httpContext.getAuthenticator();
-                    if (auth != null && handleAuthentication(request, response, callback, jettyHttpExchange, auth))
-                        return true;
+                    // HttpExchange is AutoCloseable only since Java 17, so it cannot be used in try-with-resources;
+                    // the nested try/finally keeps the construction and the close() inside the outer catch.
+                    HttpExchange jettyHttpExchange = request.isSecure()
+                        ? new JettyHttpsExchange(_httpContext, request, response)
+                        : new JettyHttpExchange(_httpContext, request, response);
+                    try
+                    {
+                        Authenticator auth = _httpContext.getAuthenticator();
+                        if (auth != null && handleAuthentication(request, response, callback, jettyHttpExchange, auth))
+                            return true;
 
-                    new Chain(_httpContext.getFilters(), _httpHandler).doFilter(jettyHttpExchange);
-                    callback.succeeded();
+                        new Chain(_httpContext.getFilters(), _httpHandler).doFilter(jettyHttpExchange);
+                        callback.succeeded();
+                    }
+                    finally
+                    {
+                        jettyHttpExchange.close();
+                    }
                 }
                 catch (Throwable t)
                 {
                     if (LOG.isDebugEnabled())
                         LOG.debug("Failed to handle", t);
                     Response.writeError(request, response, callback, 500, null, t);
-                }
-                finally
-                {
-                    jettyHttpExchange.close();
                 }
                 return true;
             }

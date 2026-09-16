@@ -237,7 +237,7 @@ public class HttpField
             char c = StringUtil.asciiToLowerCase(value.charAt(i));
             switch (state)
             {
-                case 0:
+                case 0: // initial white space
                 {
                     switch (c)
                     {
@@ -266,11 +266,11 @@ public class HttpField
                     }
                     break;
                 }
-                case 1:
+                case 1: // In token
                 {
                     switch (c)
                     {
-                        case ',':
+                        case ',': // next field
                         {
                             // Have we matched the token?
                             if (match == search.length())
@@ -281,8 +281,8 @@ public class HttpField
                         case ';':
                         {
                             param = match >= 0 ? 0 : -1;
-                            state = 5;
-                            break; // parameter
+                            state = 5; // parameter
+                            break;
                         }
                         default:
                         {
@@ -298,16 +298,16 @@ public class HttpField
                     }
                     break;
                 }
-                case 2:
+                case 2: // In Quoted token
                 {
                     switch (c)
                     {
                         case '\\':
-                            state = 3;
-                            break; // quoted character
+                            state = 3; // quoted character
+                            break;
                         case '"':
-                            state = 4;
-                            break;  // end quote
+                            state = 4;  // end quote
+                            break;
                         default:
                         {
                             if (match >= 0)
@@ -322,7 +322,7 @@ public class HttpField
                     }
                     break;
                 }
-                case 3:
+                case 3: // In Quoted character in quoted token
                 {
                     if (match >= 0)
                     {
@@ -334,7 +334,7 @@ public class HttpField
                     state = 2;
                     break;
                 }
-                case 4:
+                case 4: // WS after end quote
                 {
                     switch (c)
                     {
@@ -359,7 +359,7 @@ public class HttpField
                     }
                     break;
                 }
-                case 5:
+                case 5: // parameter
                 {
                     switch (c)
                     {

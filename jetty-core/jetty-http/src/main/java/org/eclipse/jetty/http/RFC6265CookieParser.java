@@ -395,10 +395,8 @@ public class RFC6265CookieParser implements CookieParser
                                 case "$comment":
                                 case "$discard":
                                 case "$secure":
-                                {
-                                    break;
                                     // Ignored. Not an invalid cookie, nor a compliance violation.
-                                }
+                                    break;
                                 default:
                                 {
                                     if (!ComplianceUtils.allows(_complianceMode, CookieCompliance.Violation.INVALID_COOKIES, String.format("Invalid Cookie attribute [%s]", attributeName), _complianceListener))

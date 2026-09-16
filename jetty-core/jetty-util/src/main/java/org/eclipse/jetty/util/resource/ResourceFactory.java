@@ -13,7 +13,6 @@
 
 package org.eclipse.jetty.util.resource;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -234,6 +233,12 @@ public interface ResourceFactory
      *     Child resources of these resources, should be created using {@link Resource#resolve(String)}
      * </p>
      *
+     * <p>
+     *     A {@code null} ClassLoader (for example a {@code null} thread context ClassLoader)
+     *     is skipped, so that it never falls back to the system ClassLoader when
+     *     {@code searchSystemClassLoader} is {@code false}.
+     * </p>
+     *
      * @param resource the resource name to find in a classloader
      * @param searchSystemClassLoader true to search {@link ClassLoader#getSystemResource(String)}, false to skip
      * @return The new Resource, which may be a {@link CombinedResource} if multiple directory resources are found.
@@ -244,9 +249,15 @@ public interface ResourceFactory
         if (StringUtil.isBlank(resource))
             throw new IllegalArgumentException("Resource String is invalid: " + resource);
 
+        // The ClassLoaders to search, in order; a null ClassLoader is skipped, as searching it
+        // via the static ClassLoader.getSystemResources(String) would search the system ClassLoader.
         List<ClassLoader> sources = new ArrayList<>();
-        sources.add(Thread.currentThread().getContextClassLoader());
-        sources.add(ResourceFactory.class.getClassLoader());
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        if (contextClassLoader != null)
+            sources.add(contextClassLoader);
+        ClassLoader factoryClassLoader = ResourceFactory.class.getClassLoader();
+        if (factoryClassLoader != null)
+            sources.add(factoryClassLoader);
         if (searchSystemClassLoader)
             sources.add(ClassLoader.getSystemClassLoader());
 
@@ -262,6 +273,7 @@ public interface ResourceFactory
                 try
                 {
                     // Get all matching URLs
+                    // A null system ClassLoader is searched via the static ClassLoader.getSystemResources(String).
                     Enumeration<URL> urls = source == null ? ClassLoader.getSystemResources(name) : source.getResources(name);
                     while (urls.hasMoreElements())
                     {

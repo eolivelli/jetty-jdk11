@@ -14,6 +14,7 @@
 package org.eclipse.jetty.http;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -262,7 +263,7 @@ public class QuotedQualityCSV extends QuotedCSV implements Iterable<String>
 
     public List<QualityValue> getQualityValues()
     {
-        return _qualities.stream().sorted().collect(Collectors.toList());
+        return Collections.unmodifiableList(_qualities.stream().sorted().collect(Collectors.toList()));
     }
 
     @Override

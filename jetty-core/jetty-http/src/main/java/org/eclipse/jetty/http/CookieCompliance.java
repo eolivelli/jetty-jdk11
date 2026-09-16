@@ -272,16 +272,8 @@ public class CookieCompliance implements ComplianceViolation.Mode
                     CookieCompliance mode = valueOf(elements[0]);
                     if (mode == null)
                         throw new IllegalArgumentException("Unknown base mode: " + elements[0]);
-                    if (mode.getAllowed().isEmpty())
-                    {
-                        violations = noneOf(Violation.class);
-                        break;
-                    }
-                    else
-                    {
-                        violations = copyOf(mode.getAllowed());
-                        break;
-                    }
+                    violations = mode.getAllowed().isEmpty() ? noneOf(Violation.class) : copyOf(mode.getAllowed());
+                    break;
                 }
             }
 

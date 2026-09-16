@@ -300,9 +300,12 @@ public class BufferUtil
      * @param index the absolute index at which the slice starts
      * @param length the length of the slice
      * @return the sliced buffer
+     * @throws IndexOutOfBoundsException if {@code index} is negative, {@code length} is negative,
+     * or {@code index + length} is greater than {@code buffer.limit()}
      */
     public static ByteBuffer absoluteSlice(ByteBuffer buffer, int index, int length)
     {
+        Objects.checkFromIndexSize(index, length, buffer.limit());
         return buffer.duplicate().limit(index + length).position(index).slice();
     }
 
@@ -316,9 +319,13 @@ public class BufferUtil
      * @param source the source buffer
      * @param offset the absolute index in the source buffer from which the copy starts
      * @param length the number of bytes to copy
+     * @throws IndexOutOfBoundsException if the given ranges are out of bounds of the
+     * respective buffer limits
      */
     public static void absolutePut(ByteBuffer target, int index, ByteBuffer source, int offset, int length)
     {
+        Objects.checkFromIndexSize(index, length, target.limit());
+        Objects.checkFromIndexSize(offset, length, source.limit());
         ByteBuffer src = source.duplicate().limit(offset + length).position(offset);
         ByteBuffer dst = target.duplicate().limit(index + length).position(index);
         dst.put(src);

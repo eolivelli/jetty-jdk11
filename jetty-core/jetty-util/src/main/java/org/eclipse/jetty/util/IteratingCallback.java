@@ -349,9 +349,7 @@ public abstract class IteratingCallback implements Callback
                 case PENDING:
                 case COMPLETE:
                 case CLOSED:
-                {
                     break;
-                }
             }
         }
         if (process)

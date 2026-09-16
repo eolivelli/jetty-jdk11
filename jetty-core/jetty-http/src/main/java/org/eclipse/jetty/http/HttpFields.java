@@ -1501,7 +1501,7 @@ public interface HttpFields extends Iterable<HttpField>, Supplier<HttpFields>
         default Mutable computeField(HttpHeader header, BiFunction<HttpHeader, List<HttpField>, HttpField> computeFn)
         {
             Objects.requireNonNull(header);
-            HttpField result = computeFn.apply(header, stream().filter(f -> f.getHeader() == header).collect(Collectors.toList()));
+            HttpField result = computeFn.apply(header, Collections.unmodifiableList(stream().filter(f -> f.getHeader() == header).collect(Collectors.toList())));
             return result != null ? put(result) : remove(header);
         }
 
@@ -1516,7 +1516,7 @@ public interface HttpFields extends Iterable<HttpField>, Supplier<HttpFields>
         default Mutable computeField(String name, BiFunction<String, List<HttpField>, HttpField> computeFn)
         {
             Objects.requireNonNull(name);
-            HttpField result = computeFn.apply(name, stream().filter(f -> f.is(name)).collect(Collectors.toList()));
+            HttpField result = computeFn.apply(name, Collections.unmodifiableList(stream().filter(f -> f.is(name)).collect(Collectors.toList())));
             return result != null ? put(result) : remove(name);
         }
 

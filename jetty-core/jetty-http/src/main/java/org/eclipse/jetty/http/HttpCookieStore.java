@@ -17,6 +17,7 @@ import java.net.URI;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -333,11 +334,11 @@ public interface HttpCookieStore
             lock.readLock().lock();
             try
             {
-                return cookies.values().stream()
+                return Collections.unmodifiableList(cookies.values().stream()
                     .flatMap(Collection::stream)
                     .filter(Predicate.not(StoredHttpCookie::isExpired))
                     .map(HttpCookie.class::cast)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList()));
             }
             finally
             {

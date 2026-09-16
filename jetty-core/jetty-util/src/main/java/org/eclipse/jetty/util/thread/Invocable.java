@@ -194,10 +194,11 @@ public interface Invocable
      */
     static Task from(InvocationType type, Runnable task)
     {
-        if (task instanceof Task && ((Task)task).getInvocationType() == type)
+        if (task instanceof Task)
         {
             Task t = (Task)task;
-            return t;
+            if (t.getInvocationType() == type)
+                return t;
         }
         return new ReadyTask(type, task);
     }

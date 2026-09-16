@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -148,6 +149,34 @@ public class ProcessWrapper implements AutoCloseable
         private ShowLogOnTimeout(ProcessWrapper run)
         {
             this.run = run;
+        }
+
+        public ProcessWrapper run()
+        {
+            return run;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            ShowLogOnTimeout<?> that = (ShowLogOnTimeout<?>)obj;
+            return Objects.equals(run, that.run);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(run);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "ShowLogOnTimeout[run=" + run + "]";
         }
 
         @Override

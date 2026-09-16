@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.nio.file.ProviderNotFoundException;
 import java.nio.file.attribute.FileTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -251,7 +252,7 @@ public class FileSystemPool implements Dumpable
     {
         try (AutoLock ignore = poolLock.lock())
         {
-            return pool.values().stream().map(m -> m.mount).collect(Collectors.toList());
+            return Collections.unmodifiableList(pool.values().stream().map(m -> m.mount).collect(Collectors.toList()));
         }
     }
 

@@ -22,13 +22,6 @@
   </properties>
 
   <dependencies>
-    <!-- Referenced by the ee10-demo-jndi module: make sure it is in the local repository for the offline distribution tests -->
-    <dependency>
-      <groupId>jakarta.mail</groupId>
-      <artifactId>jakarta.mail-api</artifactId>
-      <version>${jakarta.mail.api.version}</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>com.github.dasniko</groupId>
       <artifactId>testcontainers-keycloak</artifactId>
@@ -145,6 +138,13 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <!-- Referenced by the ee10-demo-jndi module: make sure it is in the local repository for the offline distribution tests -->
+    <dependency>
+      <groupId>jakarta.mail</groupId>
+      <artifactId>jakarta.mail-api</artifactId>
+      <version>${jakarta.mail.api.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.awaitility</groupId>

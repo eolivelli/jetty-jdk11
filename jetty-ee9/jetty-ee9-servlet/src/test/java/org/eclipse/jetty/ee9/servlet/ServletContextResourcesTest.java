@@ -219,10 +219,8 @@ public class ServletContextResourcesTest
                 break;
             }
             case 200:
-            {
-                break;
                 // Not malformed enough, but the API is behaving properly and returns null.
-            }
+                break;
             default:
             {
                 fail("Test failed: Unexpected behavior: Status Code: " + response.getStatus());

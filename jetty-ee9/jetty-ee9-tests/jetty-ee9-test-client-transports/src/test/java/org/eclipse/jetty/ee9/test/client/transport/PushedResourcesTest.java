@@ -29,6 +29,7 @@ import org.eclipse.jetty.client.Result;
 import org.eclipse.jetty.client.RetainingResponseListener;
 import org.eclipse.jetty.ee9.servlet.DefaultServlet;
 import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.toolchain.test.MavenTestingUtils;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -307,8 +308,9 @@ public class PushedResourcesTest extends AbstractTest
 
         String scheme = transportType.isSecure() ? "https" : "http";
         String uri = scheme + "://localhost";
-        if (connector instanceof NetworkConnector)
-            uri += ":" + ((NetworkConnector)connector).getLocalPort();
+        AbstractConnector abstractConnector = connector;
+        if (abstractConnector instanceof NetworkConnector)
+            uri += ":" + ((NetworkConnector)abstractConnector).getLocalPort();
         URI theURI = URI.create(uri + "/serverpushtck/foo");
 
         ContentResponse response = client.newRequest(theURI)

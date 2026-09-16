@@ -538,9 +538,7 @@ public class ResourceService
                                 ifums = field.getValue();
                                 break;
                             default:
-                            {
                                 break;
-                            }
                         }
                     }
                 }

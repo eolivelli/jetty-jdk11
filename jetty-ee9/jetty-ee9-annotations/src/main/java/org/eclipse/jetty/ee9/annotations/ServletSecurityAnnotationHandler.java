@@ -27,6 +27,7 @@ import org.eclipse.jetty.ee9.nested.ServletConstraint;
 import org.eclipse.jetty.ee9.security.ConstraintAware;
 import org.eclipse.jetty.ee9.security.ConstraintMapping;
 import org.eclipse.jetty.ee9.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.ee9.security.SecurityHandler;
 import org.eclipse.jetty.ee9.servlet.ServletHolder;
 import org.eclipse.jetty.ee9.servlet.ServletMapping;
 import org.eclipse.jetty.ee9.webapp.WebAppContext;
@@ -61,7 +62,7 @@ public class ServletSecurityAnnotationHandler extends AbstractIntrospectableAnno
     @Override
     public void doHandle(Class<?> clazz)
     {
-        Object handler = _context.getSecurityHandler();
+        SecurityHandler handler = _context.getSecurityHandler();
         if (!(handler instanceof ConstraintAware))
         {
             LOG.warn("SecurityHandler not ConstraintAware, skipping security annotation processing");

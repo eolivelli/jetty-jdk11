@@ -1245,7 +1245,7 @@ public class HttpChannelState
             if (servletContext instanceof CrossContextServletContext)
             {
                 CrossContextServletContext crossContextServletContext = (CrossContextServletContext)servletContext;
-                Object targetContextHandler = crossContextServletContext.getTargetContext().getContextHandler();
+                org.eclipse.jetty.server.handler.ContextHandler targetContextHandler = crossContextServletContext.getTargetContext().getContextHandler();
                 if (targetContextHandler instanceof ContextHandler.CoreContextHandler)
                     return ((ContextHandler.CoreContextHandler)targetContextHandler).getContextHandler();
             }

@@ -52,9 +52,9 @@ public class DelegatedJettyClientUpgradeRequest implements UpgradeRequest
     @Override
     public List<HttpCookie> getCookies()
     {
-        return delegate.getCookies().stream()
+        return Collections.unmodifiableList(delegate.getCookies().stream()
             .map(org.eclipse.jetty.http.HttpCookie::asJavaNetHttpCookie)
-            .collect(Collectors.toList());
+            .collect(Collectors.toList()));
     }
 
     @Override

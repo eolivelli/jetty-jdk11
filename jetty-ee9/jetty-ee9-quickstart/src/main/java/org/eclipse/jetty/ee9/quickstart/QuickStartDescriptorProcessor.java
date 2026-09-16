@@ -136,10 +136,8 @@ public class QuickStartDescriptorProcessor extends IterativeDescriptorProcessor 
         switch (name)
         {
             case QuickStartGeneratorConfiguration.ORIGIN:
-            {
-                break;
                 //value already contains what we need
-            }
+                break;
             case ServletContext.ORDERED_LIBS:
             case AnnotationConfiguration.CONTAINER_INITIALIZERS:
             case MetaInfConfiguration.METAINF_TLDS:
@@ -222,9 +220,7 @@ public class QuickStartDescriptorProcessor extends IterativeDescriptorProcessor 
                 break;
             }
             default:
-            {
                 break;
-            }
         }
     }
     

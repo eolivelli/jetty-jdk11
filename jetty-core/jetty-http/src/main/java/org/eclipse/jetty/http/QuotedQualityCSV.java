@@ -152,7 +152,7 @@ public class QuotedQualityCSV extends QuotedCSV implements Iterable<String>
     protected void parsedValueAndParams(StringBuilder buffer)
     {
         // No value? then this isn't a Quality based CSV. Skip.
-        if (buffer.isEmpty())
+        if (buffer.length() == 0)
             return;
 
         super.parsedValueAndParams(buffer);
@@ -175,7 +175,7 @@ public class QuotedQualityCSV extends QuotedCSV implements Iterable<String>
     protected void parsedValue(StringBuilder buffer)
     {
         // ignore empty values
-        if (buffer.isEmpty())
+        if (buffer.length() == 0)
             return;
 
         // We have to convert to String anyway for QualityValue below.

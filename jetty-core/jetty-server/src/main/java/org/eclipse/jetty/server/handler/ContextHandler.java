@@ -124,7 +124,8 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
         ContextRequest contextRequest = Request.asInContext(request, ContextRequest.class);
         if (contextRequest == null)
             return null;
-        return contextRequest.getContext() instanceof ScopedContext scoped ? scoped.getContextHandler() : null;
+        Context context = contextRequest.getContext();
+        return context instanceof ScopedContext ? ((ScopedContext)context).getContextHandler() : null;
     }
 
     /*
@@ -538,8 +539,10 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
     public String getClassPath()
     {
         // TODO may need to handle one level of parent classloader for API ?
-        if (_classLoader == null || !(_classLoader instanceof URLClassLoader loader))
+        ClassLoader classLoader = _classLoader;
+        if (!(classLoader instanceof URLClassLoader))
             return null;
+        URLClassLoader loader = (URLClassLoader)classLoader;
 
         String classpath = URIUtil.streamOf(loader)
             .map(URI::toASCIIString)
@@ -1096,8 +1099,9 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
                 //Get the host
                 String host = null;
                 int port = 0;
-                if (connectors[0] instanceof NetworkConnector connector)
+                if (connectors[0] instanceof NetworkConnector)
                 {
+                    NetworkConnector connector = (NetworkConnector)connectors[0];
                     host = connector.getHost();
                     port = connector.getLocalPort();
                     if (port < 0)

@@ -400,8 +400,10 @@ public interface Handler extends LifeCycle, Destroyable, Request.Handler
         default Singleton getTail()
         {
             Singleton tail = this;
-            while (tail.getHandler() instanceof Singleton wrapped)
-                tail = wrapped;
+            while (tail.getHandler() instanceof Singleton)
+            {
+                tail = (Singleton)tail.getHandler();
+            }
             return tail;
         }
 

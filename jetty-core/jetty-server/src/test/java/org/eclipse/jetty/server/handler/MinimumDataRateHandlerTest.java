@@ -28,6 +28,7 @@ import org.eclipse.jetty.server.LocalConnector;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.BufferUtil;
 import org.eclipse.jetty.util.Callback;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -348,7 +349,7 @@ public class MinimumDataRateHandlerTest
                         // Only partially write the response to simulate TCP congestion.
                         // The data rate timeout should fire and fail the Handler callback.
                         int length = byteBuffer.remaining() / 2;
-                        ByteBuffer partial = byteBuffer.slice(byteBuffer.position(), length);
+                        ByteBuffer partial = BufferUtil.absoluteSlice(byteBuffer, byteBuffer.position(), length);
                         byteBuffer.position(byteBuffer.position() + length);
                         super.write(false, partial, Callback.NOOP);
                     }

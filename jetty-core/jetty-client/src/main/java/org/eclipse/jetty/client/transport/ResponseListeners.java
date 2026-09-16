@@ -208,10 +208,10 @@ public class ResponseListeners
     {
         if (hasContentSourceListeners())
         {
-            if (contentSourceListener instanceof ContentSourceDemultiplexer demultiplexer)
+            if (contentSourceListener instanceof ContentSourceDemultiplexer)
             {
                 // More than 1 ContentSourceListeners -> notify the demultiplexer.
-                notifyContentSource(demultiplexer, response, contentSource);
+                notifyContentSource((ContentSourceDemultiplexer)contentSourceListener, response, contentSource);
             }
             else
             {

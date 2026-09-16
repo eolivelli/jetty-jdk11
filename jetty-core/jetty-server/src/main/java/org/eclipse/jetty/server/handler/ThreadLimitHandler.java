@@ -14,6 +14,7 @@
 package org.eclipse.jetty.server.handler;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritePendingException;
 import java.util.ArrayDeque;
@@ -218,8 +219,10 @@ public class ThreadLimitHandler extends ConditionalHandler.Abstract
         // If no remote IP from a header, determine it directly from the channel
         // Do not use the request methods, as they may have been lied to by the
         // RequestCustomizer!
-        if (baseRequest.getConnectionMetaData().getRemoteSocketAddress() instanceof InetSocketAddress inetAddr)
+        SocketAddress remoteSocketAddress = baseRequest.getConnectionMetaData().getRemoteSocketAddress();
+        if (remoteSocketAddress instanceof InetSocketAddress)
         {
+            InetSocketAddress inetAddr = (InetSocketAddress)remoteSocketAddress;
             // TODO ????
             if (inetAddr.getAddress() != null)
                 return inetAddr.getAddress().getHostAddress();

@@ -858,9 +858,10 @@ public abstract class ConditionalHandler extends Handler.Wrapper
         @Override
         protected boolean onConditionsMet(Request request, Response response, Callback callback) throws Exception
         {
-            if (!(getHandler() instanceof Singleton nextHandler))
+            Handler handler = getHandler();
+            if (!(handler instanceof Singleton))
                 return false;
-            Handler nextNext = nextHandler.getHandler();
+            Handler nextNext = ((Singleton)handler).getHandler();
             return nextNext != null && nextNext.handle(request, response, callback);
         }
     }

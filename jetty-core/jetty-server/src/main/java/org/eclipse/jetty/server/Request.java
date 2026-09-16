@@ -1174,8 +1174,9 @@ public interface Request extends Attributes, Content.Source
      */
     static AuthenticationState getAuthenticationState(Request request)
     {
-        if (request.getAttribute(AuthenticationState.class.getName()) instanceof AuthenticationState authenticationState)
-            return authenticationState;
+        Object authenticationState = request.getAttribute(AuthenticationState.class.getName());
+        if (authenticationState instanceof AuthenticationState)
+            return (AuthenticationState)authenticationState;
         return AuthenticationState.NONE;
     }
 

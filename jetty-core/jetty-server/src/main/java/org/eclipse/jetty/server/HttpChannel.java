@@ -145,8 +145,9 @@ public interface HttpChannel extends Invocable
      */
     static HttpChannel from(Request request)
     {
-        if (Request.unWrap(request).getComponents() instanceof HttpChannel httpChannel)
-            return httpChannel;
+        Components components = Request.unWrap(request).getComponents();
+        if (components instanceof HttpChannel)
+            return (HttpChannel)components;
         throw new IllegalStateException("Unable to find HttpChannel from " + request);
     }
 

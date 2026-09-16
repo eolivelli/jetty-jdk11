@@ -278,7 +278,7 @@ public class ContentSourceTest
                         break;
                     }
 
-                    if (chunk.hasRemaining() && builder.isEmpty())
+                    if (chunk.hasRemaining() && builder.length() == 0)
                         assertTrue(source.rewind());
 
                     if (chunk.hasRemaining())

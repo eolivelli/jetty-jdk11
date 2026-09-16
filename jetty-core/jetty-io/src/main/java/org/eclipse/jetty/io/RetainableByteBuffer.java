@@ -1100,7 +1100,7 @@ public interface RetainableByteBuffer extends Retainable
             {
                 // No space for the whole buffer, so put as much as we can
                 int position = _byteBuffer.position();
-                _byteBuffer.put(position, bytes, bytes.position(), space);
+                BufferUtil.absolutePut(_byteBuffer, position, bytes, bytes.position(), space);
                 _byteBuffer.position(position + space);
                 bytes.position(bytes.position() + space);
                 return false;

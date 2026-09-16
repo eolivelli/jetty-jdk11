@@ -1065,7 +1065,7 @@ public class HttpParser
                         case TCHAR:
                         case VCHAR:
                         case COLON:
-                            if (_string.isEmpty())
+                            if (_string.length() == 0)
                             {
                                 // This is the first char of the version, so try a quick lookup
                                 HttpVersion version = HttpVersion.CACHE.getBest(buffer);
@@ -1097,7 +1097,12 @@ public class HttpParser
                                                 _requestHandler.startRequest(_methodString, _uri.toCompleteString(), _version);
                                                 break;
 
-                                            case SPACE, ALPHA, DIGIT, TCHAR, VCHAR, COLON:
+                                            case SPACE:
+                                            case ALPHA:
+                                            case DIGIT:
+                                            case TCHAR:
+                                            case VCHAR:
+                                            case COLON:
                                                 // This version was just a prefix to the full version, so append it and the next char and continue
                                                 _string.append(versionString);
                                                 _string.append(next.getChar());
@@ -1935,7 +1940,7 @@ public class HttpParser
                             // The cast to int is safe, since remaining is an int.
                             length = (int)content;
                         }
-                        _contentChunk = buffer.slice(buffer.position(), length);
+                        _contentChunk = BufferUtil.absoluteSlice(buffer, buffer.position(), length);
 
                         _contentPosition += length;
                         buffer.position(buffer.position() + length);
@@ -1998,7 +2003,7 @@ public class HttpParser
                     else
                     {
                         int length = (int)Math.min(remaining, chunkLength);
-                        _contentChunk = buffer.slice(buffer.position(), length);
+                        _contentChunk = BufferUtil.absoluteSlice(buffer, buffer.position(), length);
 
                         _contentPosition += length;
                         _chunkOffset += length;

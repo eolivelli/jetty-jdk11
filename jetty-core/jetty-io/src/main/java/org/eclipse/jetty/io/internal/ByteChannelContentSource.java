@@ -137,9 +137,9 @@ public class ByteChannelContentSource implements Content.Source
                 {
                     lockedSetTerminal(Content.Chunk.from(new ClosedChannelException(), true));
                 }
-                else if (_byteChannel instanceof SeekableByteChannel seekableByteChannel)
+                else if (_byteChannel instanceof SeekableByteChannel)
                 {
-                    seekableByteChannel.position(_offset);
+                    ((SeekableByteChannel)_byteChannel).position(_offset);
                     _offsetRemaining = 0;
                 }
             }

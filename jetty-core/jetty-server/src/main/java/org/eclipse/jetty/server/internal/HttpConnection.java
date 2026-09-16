@@ -939,7 +939,7 @@ public class HttpConnection extends AbstractMetaDataConnection implements Runnab
                             gatherWrite += 1;
                             if (_generator.isChunking() && contentByteBuffer.remaining() > chunkMaxLength)
                             {
-                                ByteBuffer slice = contentByteBuffer.slice(contentByteBuffer.position(), chunkMaxLength);
+                                ByteBuffer slice = BufferUtil.absoluteSlice(contentByteBuffer, contentByteBuffer.position(), chunkMaxLength);
                                 contentByteBuffer.position(contentByteBuffer.position() + chunkMaxLength);
                                 contentByteBuffer = slice;
                             }
@@ -1065,46 +1065,6 @@ public class HttpConnection extends AbstractMetaDataConnection implements Runnab
         public String toString()
         {
             return String.format("%s[i=%s,cb=%s]", super.toString(), _info, _callback);
-        }
-
-        private static class CancelSendException extends IOException
-        {
-            private final CountDownLatch _complete = new CountDownLatch(2);
-            private Callback _callback;
-
-            public CancelSendException(Throwable cause)
-            {
-                super(cause);
-            }
-
-            public void complete()
-            {
-                _complete.countDown();
-            }
-
-            public Callback join()
-            {
-                try
-                {
-                    _complete.await();
-                }
-                catch (InterruptedException x)
-                {
-                    Throwable cause = getCause();
-                    if (cause == null)
-                        throw new RuntimeException(x);
-                    ExceptionUtil.addSuppressedIfNotAssociated(cause, x);
-                    throw ExceptionUtil.asRuntimeException(cause);
-                }
-
-                return _callback;
-            }
-
-            public void setCallback(Callback callback)
-            {
-                _callback = callback;
-                _complete.countDown();
-            }
         }
     }
 
@@ -1678,9 +1638,10 @@ public class HttpConnection extends AbstractMetaDataConnection implements Runnab
                 return;
             }
 
-            if (_httpChannel.getRequest().getAttribute(HttpStream.UPGRADE_CONNECTION_ATTRIBUTE) instanceof Connection upgradeConnection)
+            Object upgradeConnection = _httpChannel.getRequest().getAttribute(HttpStream.UPGRADE_CONNECTION_ATTRIBUTE);
+            if (upgradeConnection instanceof Connection)
             {
-                getEndPoint().upgrade(upgradeConnection);
+                getEndPoint().upgrade((Connection)upgradeConnection);
                 _httpChannel.recycle();
                 _parser.close();
                 _generator.reset();
@@ -1782,6 +1743,46 @@ public class HttpConnection extends AbstractMetaDataConnection implements Runnab
      * HttpParser converts some bad message event into early EOF.
      * However, we want to send a 400 (not a 500) to the client because it's a client error.
      */
+    private static class CancelSendException extends IOException
+    {
+        private final CountDownLatch _complete = new CountDownLatch(2);
+        private Callback _callback;
+
+        public CancelSendException(Throwable cause)
+        {
+            super(cause);
+        }
+
+        public void complete()
+        {
+            _complete.countDown();
+        }
+
+        public Callback join()
+        {
+            try
+            {
+                _complete.await();
+            }
+            catch (InterruptedException x)
+            {
+                Throwable cause = getCause();
+                if (cause == null)
+                    throw new RuntimeException(x);
+                ExceptionUtil.addSuppressedIfNotAssociated(cause, x);
+                throw ExceptionUtil.asRuntimeException(cause);
+            }
+
+            return _callback;
+        }
+
+        public void setCallback(Callback callback)
+        {
+            _callback = callback;
+            _complete.countDown();
+        }
+    }
+
     private static class HttpEofException extends EofException implements HttpException
     {
         private HttpEofException()

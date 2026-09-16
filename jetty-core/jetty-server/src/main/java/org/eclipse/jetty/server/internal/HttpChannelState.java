@@ -1383,10 +1383,10 @@ public class HttpChannelState implements HttpChannel, Components
                 {
                     if (_writeCallback != null)
                     {
-                        if (_writeCallback instanceof InterimCallback interimCallback)
+                        if (_writeCallback instanceof InterimCallback)
                         {
                             // Do this write after the interim callback.
-                            interimCallback.whenComplete((v, t) -> write(last, content, writeCallback));
+                            ((InterimCallback)_writeCallback).whenComplete((v, t) -> write(last, content, writeCallback));
                             return;
                         }
                         writeFailure = new WritePendingException();

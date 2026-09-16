@@ -649,8 +649,8 @@ public class ArrayByteBufferPool implements ByteBufferPool, Dumpable
         private int evict()
         {
             Pool.Entry<RetainableByteBuffer.Pooled> entry;
-            if (_pool instanceof BucketCompoundPool compound)
-                entry = compound.evict();
+            if (_pool instanceof BucketCompoundPool)
+                entry = ((BucketCompoundPool)_pool).evict();
             else
                 entry = _pool.acquire();
 
@@ -844,22 +844,6 @@ public class ArrayByteBufferPool implements ByteBufferPool, Dumpable
                 );
             }
         }
-
-        private static class BucketCompoundPool extends CompoundPool<RetainableByteBuffer.Pooled>
-        {
-            private BucketCompoundPool(ConcurrentPool<RetainableByteBuffer.Pooled> concurrentBucket, QueuedPool<RetainableByteBuffer.Pooled> queuedBucket)
-            {
-                super(concurrentBucket, queuedBucket);
-            }
-
-            private Pool.Entry<RetainableByteBuffer.Pooled> evict()
-            {
-                Entry<RetainableByteBuffer.Pooled> entry = getSecondaryPool().acquire();
-                if (entry == null)
-                    entry = getPrimaryPool().acquire();
-                return entry;
-            }
-        }
     }
 
     private class ReservedBuffer extends RetainableByteBuffer.Pooled
@@ -899,8 +883,8 @@ public class ArrayByteBufferPool implements ByteBufferPool, Dumpable
         private PooledBuffer(ByteBuffer buffer, RetainedBucket bucket, Pool.Entry<RetainableByteBuffer.Pooled> entry)
         {
             super(ArrayByteBufferPool.this, buffer, new ReferenceCounter(0));
-            if (getWrapped() instanceof  ReferenceCounter referenceCounter)
-                _referenceCounter = referenceCounter;
+            if (getWrapped() instanceof ReferenceCounter)
+                _referenceCounter = (ReferenceCounter)getWrapped();
             else
                 throw new IllegalArgumentException();
             _bucket = Objects.requireNonNull(bucket);
@@ -1285,6 +1269,22 @@ public class ArrayByteBufferPool implements ByteBufferPool, Dumpable
                         BufferUtil.toDetailString(getByteBuffer()),
                         stacks);
             }
+        }
+    }
+
+    private static class BucketCompoundPool extends CompoundPool<RetainableByteBuffer.Pooled>
+    {
+        private BucketCompoundPool(ConcurrentPool<RetainableByteBuffer.Pooled> concurrentBucket, QueuedPool<RetainableByteBuffer.Pooled> queuedBucket)
+        {
+            super(concurrentBucket, queuedBucket);
+        }
+
+        private Pool.Entry<RetainableByteBuffer.Pooled> evict()
+        {
+            Entry<RetainableByteBuffer.Pooled> entry = getSecondaryPool().acquire();
+            if (entry == null)
+                entry = getPrimaryPool().acquire();
+            return entry;
         }
     }
 }

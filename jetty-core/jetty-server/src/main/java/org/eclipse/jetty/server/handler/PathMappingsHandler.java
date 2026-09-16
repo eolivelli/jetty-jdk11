@@ -198,9 +198,9 @@ public class PathMappingsHandler extends Handler.AbstractContainer
                     // Start with wrapper context path, and add onto it.
                     String contextPath = getWrapped().getContext().getContextPath();
 
-                    if (pathSpec instanceof ServletPathSpec servletPathSpec)
+                    if (pathSpec instanceof ServletPathSpec)
                     {
-                        return appendContextPath(contextPath, servletPathSpec.getPrefix());
+                        return appendContextPath(contextPath, ((ServletPathSpec)pathSpec).getPrefix());
                     }
                     else
                     {

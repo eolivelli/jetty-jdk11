@@ -451,7 +451,8 @@ public class CustomRequestLog extends ContainerLifeCycle implements RequestLog
      */
     public static boolean isLogDetailRequired(Server server)
     {
-        return server.getRequestLog() instanceof CustomRequestLog customRequestLog && customRequestLog.isLogDetailRequired();
+        RequestLog requestLog = server.getRequestLog();
+        return requestLog instanceof CustomRequestLog && ((CustomRequestLog)requestLog).isLogDetailRequired();
     }
 
     /**

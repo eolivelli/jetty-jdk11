@@ -141,7 +141,7 @@ public interface ContentDecoder
             StringBuilder header = new StringBuilder();
             factories.forEach((encoding, value) ->
             {
-                if (!header.isEmpty())
+                if (header.length() > 0)
                     header.append(", ");
                 header.append(encoding);
                 float weight = value.getWeight();

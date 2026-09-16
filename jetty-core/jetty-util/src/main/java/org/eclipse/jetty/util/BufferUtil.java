@@ -307,6 +307,24 @@ public class BufferUtil
     }
 
     /**
+     * <p>Copies {@code length} bytes from the source buffer, starting at the given absolute
+     * source index, into the target buffer, starting at the given absolute target index,
+     * like {@code ByteBuffer.put(int, ByteBuffer, int, int)} does in Java 16+.</p>
+     * <p>The positions and limits of both buffers are not modified.</p>
+     * @param target the target buffer
+     * @param index the absolute index in the target buffer at which the copy starts
+     * @param source the source buffer
+     * @param offset the absolute index in the source buffer from which the copy starts
+     * @param length the number of bytes to copy
+     */
+    public static void absolutePut(ByteBuffer target, int index, ByteBuffer source, int offset, int length)
+    {
+        ByteBuffer src = source.duplicate().limit(offset + length).position(offset);
+        ByteBuffer dst = target.duplicate().limit(index + length).position(index);
+        dst.put(src);
+    }
+
+    /**
      * Slice a buffer given an offset and a length, similar to RFC 7233 ranges.
      * @param buffer the buffer to slice
      * @param offset the offset, relative to the current position of the buffer, must be positive

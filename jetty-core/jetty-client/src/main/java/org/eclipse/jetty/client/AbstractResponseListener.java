@@ -219,8 +219,8 @@ public abstract class AbstractResponseListener implements Response.Listener
     {
         Content.Source result;
         // Take the DynamicCapacity's content source only if the content hasn't been already taken.
-        if (content == null && accumulator instanceof RetainableByteBuffer.DynamicCapacity dynamic)
-            result = dynamic.takeContentSource();
+        if (content == null && accumulator instanceof RetainableByteBuffer.DynamicCapacity)
+            result = ((RetainableByteBuffer.DynamicCapacity)accumulator).takeContentSource();
         else
             result = Content.Source.from(ByteBuffer.wrap(takeContent()));
         return result;

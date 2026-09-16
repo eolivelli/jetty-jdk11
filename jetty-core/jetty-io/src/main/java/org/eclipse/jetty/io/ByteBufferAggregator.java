@@ -90,7 +90,7 @@ public class ByteBufferAggregator
         int copySize = Math.min(_currentSize - _aggregatedSize, buffer.remaining());
 
         ByteBuffer byteBuffer = _retainableByteBuffer.getByteBuffer();
-        byteBuffer.put(byteBuffer.position(), buffer, buffer.position(), copySize);
+        BufferUtil.absolutePut(byteBuffer, byteBuffer.position(), buffer, buffer.position(), copySize);
         byteBuffer.position(byteBuffer.position() + copySize);
         buffer.position(buffer.position() + copySize);
         _aggregatedSize += copySize;

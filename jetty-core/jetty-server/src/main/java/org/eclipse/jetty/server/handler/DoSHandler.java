@@ -184,8 +184,8 @@ public class DoSHandler extends ConditionalHandler.ElseNext
     public void setServer(Server server)
     {
         super.setServer(server);
-        if (_rejectHandler instanceof Handler handler)
-            handler.setServer(server);
+        if (_rejectHandler instanceof Handler)
+            ((Handler)_rejectHandler).setServer(server);
     }
 
     @Override

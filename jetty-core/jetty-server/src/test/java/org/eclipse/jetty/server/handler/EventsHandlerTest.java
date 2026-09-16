@@ -82,7 +82,7 @@ public class EventsHandlerTest
         AtomicReference<String> attribute = new AtomicReference<>();
         EventsHandler eventsHandler = new EventsHandler(new EchoHandler())
         {
-            static final String ATTRIBUTE_NAME = EventsHandlerTest.class.getName();
+            final String ATTRIBUTE_NAME = EventsHandlerTest.class.getName();
 
             @Override
             protected void onBeforeHandling(Request request)

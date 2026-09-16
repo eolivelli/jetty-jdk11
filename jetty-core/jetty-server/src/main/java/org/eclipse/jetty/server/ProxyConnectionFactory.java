@@ -790,7 +790,7 @@ public class ProxyConnectionFactory extends DetectorConnectionFactory
                 close();
             }
 
-            private static String toUnixDomainPath(byte[] bytes)
+            private String toUnixDomainPath(byte[] bytes)
             {
                 // Unix-Domain paths are zero-terminated.
                 int i = 0;

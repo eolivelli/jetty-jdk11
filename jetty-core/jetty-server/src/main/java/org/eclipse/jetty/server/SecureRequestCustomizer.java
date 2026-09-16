@@ -53,6 +53,10 @@ public class SecureRequestCustomizer implements HttpConfiguration.Customizer
     public static final String X509_ATTRIBUTE = "org.eclipse.jetty.server.x509";
 
     private static final Logger LOG = LoggerFactory.getLogger(SecureRequestCustomizer.class);
+    private static final Set<String> SSL_SESSION_DATA_ATTRIBUTES = Set.of(
+        EndPoint.SslSessionData.ATTRIBUTE,
+        X509_ATTRIBUTE
+    );
 
     private boolean _sniRequired;
     private boolean _sniHostCheck;
@@ -312,10 +316,6 @@ public class SecureRequestCustomizer implements HttpConfiguration.Customizer
 
     protected class SecureRequestWithSslSessionData extends Request.AttributesWrapper
     {
-        private static final Set<String> ATTRIBUTES = Set.of(
-            EndPoint.SslSessionData.ATTRIBUTE,
-            X509_ATTRIBUTE
-        );
 
         protected SecureRequestWithSslSessionData(Request request, EndPoint.SslSessionData sslSessionData)
         {
@@ -338,7 +338,7 @@ public class SecureRequestCustomizer implements HttpConfiguration.Customizer
                 @Override
                 protected Set<String> getSyntheticNameSet()
                 {
-                    return ATTRIBUTES;
+                    return SSL_SESSION_DATA_ATTRIBUTES;
                 }
             });
         }

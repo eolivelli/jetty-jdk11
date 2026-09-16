@@ -429,7 +429,7 @@ public interface HttpURI
                 if (hasFragment)
                     out.append('#').append(_fragment);
 
-                if (!out.isEmpty())
+                if (out.length() > 0)
                     _uri = out.toString();
                 else
                     _uri = "";

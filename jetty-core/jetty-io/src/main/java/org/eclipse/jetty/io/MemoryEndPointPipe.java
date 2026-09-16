@@ -35,6 +35,9 @@ import org.slf4j.LoggerFactory;
  */
 public class MemoryEndPointPipe implements EndPoint.Pipe
 {
+    private static final Logger LOG = LoggerFactory.getLogger(MemoryEndPointPipe.class);
+    private static final RetainableByteBuffer EOF_SENTINEL = RetainableByteBuffer.wrap(BufferUtil.EMPTY_BUFFER);
+
     private final ByteBufferPool byteBufferPool;
     private final LocalEndPoint localEndPoint;
     private final RemoteEndPoint remoteEndPoint;
@@ -86,9 +89,6 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
      */
     private class MemoryEndPoint extends AbstractEndPoint
     {
-        private static final Logger LOG = LoggerFactory.getLogger(MemoryEndPoint.class);
-        private static final RetainableByteBuffer EOF = RetainableByteBuffer.wrap(BufferUtil.EMPTY_BUFFER);
-
         private final AutoLock lock = new AutoLock();
         private final Deque<RetainableByteBuffer> buffers = new ArrayDeque<>();
         private final SocketAddress localAddress;
@@ -187,7 +187,7 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
                     RetainableByteBuffer data = buffers.peek();
                     if (data == null)
                         return filled;
-                    if (data == EOF)
+                    if (data == EOF_SENTINEL)
                         return filled > 0 ? filled : -1;
 
                     int space = buffer.remaining();
@@ -326,7 +326,7 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
             if (length < remaining)
             {
                 // Partial copy.
-                copy.append(buffer.slice(buffer.position(), length));
+                copy.append(BufferUtil.absoluteSlice(buffer, buffer.position(), length));
                 buffer.position(buffer.position() + length);
             }
             else
@@ -342,7 +342,7 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
             super.doShutdownOutput();
             try (AutoLock ignored = lock.lock())
             {
-                buffers.offer(EOF);
+                buffers.offer(EOF_SENTINEL);
             }
             onFlushed();
         }
@@ -354,8 +354,8 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
             try (AutoLock ignored = lock.lock())
             {
                 RetainableByteBuffer last = buffers.peekLast();
-                if (last != EOF)
-                    buffers.offer(EOF);
+                if (last != EOF_SENTINEL)
+                    buffers.offer(EOF_SENTINEL);
             }
             onFlushed();
         }

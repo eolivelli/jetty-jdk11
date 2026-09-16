@@ -371,10 +371,18 @@ public class EagerContentHandler extends ConditionalHandler.ElseNext
         public ContentLoader newContentLoader(String contentType, String mimeType, Handler handler, Request request, Response response, Callback callback)
         {
             MultiPartConfig config = _multiPartConfig;
-            if (config == null && request.getContext().getAttribute(MultiPartConfig.class.getName()) instanceof MultiPartConfig mpc)
-                config = mpc;
-            if (config == null && handler.getServer().getAttribute(MultiPartConfig.class.getName()) instanceof MultiPartConfig mpc)
-                config = mpc;
+            if (config == null)
+            {
+                Object contextConfig = request.getContext().getAttribute(MultiPartConfig.class.getName());
+                if (contextConfig instanceof MultiPartConfig)
+                    config = (MultiPartConfig)contextConfig;
+            }
+            if (config == null)
+            {
+                Object serverConfig = handler.getServer().getAttribute(MultiPartConfig.class.getName());
+                if (serverConfig instanceof MultiPartConfig)
+                    config = (MultiPartConfig)serverConfig;
+            }
             if (config == null)
                 return null;
 

@@ -80,8 +80,9 @@ public class RequestListeners implements Dumpable
             queuedListener = null;
             return true;
         }
-        if (queuedListener instanceof QueuedListenerLink link)
+        if (queuedListener instanceof QueuedListenerLink)
         {
+            QueuedListenerLink link = (QueuedListenerLink)queuedListener;
             Request.QueuedListener remaining = link.remove(listener);
             if (remaining != null)
             {
@@ -123,8 +124,9 @@ public class RequestListeners implements Dumpable
             beginListener = null;
             return true;
         }
-        if (beginListener instanceof BeginListenerLink link)
+        if (beginListener instanceof BeginListenerLink)
         {
+            BeginListenerLink link = (BeginListenerLink)beginListener;
             Request.BeginListener remaining = link.remove(listener);
             if (remaining != null)
             {
@@ -166,8 +168,9 @@ public class RequestListeners implements Dumpable
             headersListener = null;
             return true;
         }
-        if (headersListener instanceof HeadersListenerLink link)
+        if (headersListener instanceof HeadersListenerLink)
         {
+            HeadersListenerLink link = (HeadersListenerLink)headersListener;
             Request.HeadersListener remaining = link.remove(listener);
             if (remaining != null)
             {
@@ -209,8 +212,9 @@ public class RequestListeners implements Dumpable
             commitListener = null;
             return true;
         }
-        if (commitListener instanceof CommitListenerLink link)
+        if (commitListener instanceof CommitListenerLink)
         {
+            CommitListenerLink link = (CommitListenerLink)commitListener;
             Request.CommitListener remaining = link.remove(listener);
             if (remaining != null)
             {
@@ -252,8 +256,9 @@ public class RequestListeners implements Dumpable
             contentListener = null;
             return true;
         }
-        if (contentListener instanceof ContentListenerLink link)
+        if (contentListener instanceof ContentListenerLink)
         {
+            ContentListenerLink link = (ContentListenerLink)contentListener;
             Request.ContentListener remaining = link.remove(listener);
             if (remaining != null)
             {
@@ -300,8 +305,9 @@ public class RequestListeners implements Dumpable
             successListener = null;
             return true;
         }
-        if (successListener instanceof SuccessListenerLink link)
+        if (successListener instanceof SuccessListenerLink)
         {
+            SuccessListenerLink link = (SuccessListenerLink)successListener;
             Request.SuccessListener remaining = link.remove(listener);
             if (remaining != null)
             {
@@ -343,8 +349,9 @@ public class RequestListeners implements Dumpable
             failureListener = null;
             return true;
         }
-        if (failureListener instanceof FailureListenerLink link)
+        if (failureListener instanceof FailureListenerLink)
         {
+            FailureListenerLink link = (FailureListenerLink)failureListener;
             Request.FailureListener remaining = link.remove(listener);
             if (remaining != null)
             {

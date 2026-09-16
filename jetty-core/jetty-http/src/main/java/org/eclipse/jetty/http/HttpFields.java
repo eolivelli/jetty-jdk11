@@ -1601,11 +1601,11 @@ public interface HttpFields extends Iterable<HttpField>, Supplier<HttpFields>
                 {
                     if (v == null)
                         continue;
-                    if (!value.isEmpty())
+                    if (value.length() > 0)
                         value.append(", ");
                     value.append(v);
                 }
-                if (!value.isEmpty())
+                if (value.length() > 0)
                     return value.toString();
             }
 
@@ -1635,7 +1635,7 @@ public interface HttpFields extends Iterable<HttpField>, Supplier<HttpFields>
             for (HttpField f : fields)
             {
                 // Always append multiple fields into a single field value
-                if (!v.isEmpty())
+                if (v.length() > 0)
                     v.append(", ");
                 v.append(f.getValue());
 
@@ -1695,7 +1695,7 @@ public interface HttpFields extends Iterable<HttpField>, Supplier<HttpFields>
             for (HttpField f : fields)
             {
                 // Always append multiple fields into a single field value
-                if (!v.isEmpty())
+                if (v.length() > 0)
                     v.append(", ");
                 v.append(f.getValue());
 

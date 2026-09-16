@@ -175,8 +175,8 @@ public class MockHttpStream implements HttpStream
             }
 
             if (response.getHttpFields().contains(HttpHeader.CONNECTION, HttpHeaderValue.CLOSE.asString()) &&
-                _channel.getConnectionMetaData() instanceof MockConnectionMetaData mock)
-                mock.notPersistent();
+                _channel.getConnectionMetaData() instanceof MockConnectionMetaData)
+                ((MockConnectionMetaData)_channel.getConnectionMetaData()).notPersistent();
         }
 
         if (content != null)
@@ -232,8 +232,8 @@ public class MockHttpStream implements HttpStream
     public Throwable consumeAvailable()
     {
         Throwable throwable = HttpStream.consumeAvailable(this, new HttpConfiguration());
-        if (throwable != null && _channel.getConnectionMetaData() instanceof MockConnectionMetaData mock)
-            mock.notPersistent();
+        if (throwable != null && _channel.getConnectionMetaData() instanceof MockConnectionMetaData)
+            ((MockConnectionMetaData)_channel.getConnectionMetaData()).notPersistent();
         return throwable;
     }
 
@@ -265,8 +265,8 @@ public class MockHttpStream implements HttpStream
     @Override
     public void failed(Throwable x)
     {
-        if (_channel.getConnectionMetaData() instanceof MockConnectionMetaData mock)
-            mock.notPersistent();
+        if (_channel.getConnectionMetaData() instanceof MockConnectionMetaData)
+            ((MockConnectionMetaData)_channel.getConnectionMetaData()).notPersistent();
         if (_complete.compareAndSet(null, x == null ? new Throwable() : x))
             _completed.countDown();
     }

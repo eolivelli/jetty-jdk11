@@ -250,7 +250,7 @@ public abstract class HttpConnection implements IConnection, Attachable
         {
             if (builder == null)
                 builder = new StringBuilder();
-            if (!builder.isEmpty())
+            if (builder.length() > 0)
                 builder.append("; ");
             builder.append(cookie.getName()).append("=").append(cookie.getValue());
         }

@@ -23,6 +23,7 @@ import org.eclipse.jetty.http3.qpack.internal.instruction.SetCapacityInstruction
 import org.eclipse.jetty.http3.qpack.internal.parser.DecoderInstructionParser;
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.io.RetainableByteBuffer;
+import org.eclipse.jetty.util.BufferUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -129,7 +130,7 @@ public class DecoderInstructionParserTest
         // Parse the buffer 1 byte at a time.
         while (buffer.hasRemaining())
         {
-            ByteBuffer oneByte = buffer.slice(buffer.position(), 1);
+            ByteBuffer oneByte = BufferUtil.absoluteSlice(buffer, buffer.position(), 1);
             _instructionParser.parse(oneByte);
             buffer.position(buffer.position() + 1);
         }

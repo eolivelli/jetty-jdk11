@@ -131,8 +131,10 @@ public class ForwardedRequestCustomizerTest
         {
             actual = new Actual();
             actual.wasSecure.set(request.isSecure());
-            if (request.getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData sslSessionData)
+            Object sslSessionAttribute = request.getAttribute(EndPoint.SslSessionData.ATTRIBUTE);
+            if (sslSessionAttribute instanceof EndPoint.SslSessionData)
             {
+                EndPoint.SslSessionData sslSessionData = (EndPoint.SslSessionData)sslSessionAttribute;
                 actual.sslSession.set(sslSessionData.sslSessionId());
                 actual.sslCertificate.set(sslSessionData.cipherSuite());
             }

@@ -276,9 +276,7 @@ public class ServletContextResponse extends ContextResponse implements ServletCo
                         headers.put(HttpHeader.CONNECTION, HttpHeaderValue.TE.toString());
                         break;
                     default:
-                    {
                         break;
-                    }
                 }
             }
         }
@@ -542,7 +540,6 @@ public class ServletContextResponse extends ContextResponse implements ServletCo
                         {
                             case SET_CHARACTER_ENCODING:
                             case SET_LOCALE:
-                                _characterEncoding = _characterEncoding;
                                 break;
                             default:
                             {

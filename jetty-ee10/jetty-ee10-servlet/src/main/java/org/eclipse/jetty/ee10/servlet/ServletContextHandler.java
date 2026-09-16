@@ -1010,19 +1010,22 @@ public class ServletContextHandler extends ContextHandler
     private void relinkHandlers()
     {
         Singleton handler = this;
+        Handler wrapped;
 
         // link session handler
         if (getSessionHandler() != null)
         {
-            while (!(handler.getHandler() instanceof SessionHandler) &&
-                !(handler.getHandler() instanceof SecurityHandler) &&
-                !(handler.getHandler() instanceof ServletHandler) &&
-                handler.getHandler() instanceof Singleton)
+            wrapped = handler.getHandler();
+            while (!(wrapped instanceof SessionHandler) &&
+                !(wrapped instanceof SecurityHandler) &&
+                !(wrapped instanceof ServletHandler) &&
+                wrapped instanceof Singleton)
             {
-                handler = (Singleton)handler.getHandler();
+                handler = (Singleton)wrapped;
+                wrapped = handler.getHandler();
             }
 
-            if (handler.getHandler() != _sessionHandler)
+            if (wrapped != _sessionHandler)
                 doSetHandler(handler, _sessionHandler);
             handler = _sessionHandler;
         }
@@ -1030,14 +1033,16 @@ public class ServletContextHandler extends ContextHandler
         // link security handler
         if (getSecurityHandler() != null)
         {
-            while (!(handler.getHandler() instanceof SecurityHandler) &&
-                !(handler.getHandler() instanceof ServletHandler) &&
-                handler.getHandler() instanceof Singleton)
+            wrapped = handler.getHandler();
+            while (!(wrapped instanceof SecurityHandler) &&
+                !(wrapped instanceof ServletHandler) &&
+                wrapped instanceof Singleton)
             {
-                handler = (Singleton)handler.getHandler();
+                handler = (Singleton)wrapped;
+                wrapped = handler.getHandler();
             }
 
-            if (handler.getHandler() != _securityHandler)
+            if (wrapped != _securityHandler)
                 doSetHandler(handler, _securityHandler);
             handler = _securityHandler;
         }
@@ -1045,13 +1050,15 @@ public class ServletContextHandler extends ContextHandler
         // link servlet handler
         if (getServletHandler() != null)
         {
-            while (!(handler.getHandler() instanceof ServletHandler) &&
-                handler.getHandler() instanceof Singleton)
+            wrapped = handler.getHandler();
+            while (!(wrapped instanceof ServletHandler) &&
+                wrapped instanceof Singleton)
             {
-                handler = (Singleton)handler.getHandler();
+                handler = (Singleton)wrapped;
+                wrapped = handler.getHandler();
             }
 
-            if (handler.getHandler() != _servletHandler)
+            if (wrapped != _servletHandler)
                 doSetHandler(handler, _servletHandler);
         }
     }
@@ -1189,9 +1196,9 @@ public class ServletContextHandler extends ContextHandler
         Attributes cache = request.getComponents().getCache();
         Object cachedChannel = cache.getAttribute(ServletChannel.class.getName());
         ServletChannel servletChannel;
-        if (cachedChannel instanceof ServletChannel && ((ServletChannel)cachedChannel).getContext() == getContext() && !((ServletChannel)cachedChannel).isAborted())
+        ServletChannel sc = cachedChannel instanceof ServletChannel ? (ServletChannel)cachedChannel : null;
+        if (sc != null && sc.getContext() == getContext() && !sc.isAborted())
         {
-            ServletChannel sc = (ServletChannel)cachedChannel;
             servletChannel = sc;
         }
         else
@@ -1670,13 +1677,14 @@ public class ServletContextHandler extends ContextHandler
             Singleton wrapper = this;
             while (wrapper != null)
             {
-                if (wrapper.getHandler() == handler)
+                Handler wrapped = wrapper.getHandler();
+                if (wrapped == handler)
                 {
                     doSetHandler(wrapper, replacement);
                     break;
                 }
 
-                wrapper = (wrapper.getHandler() instanceof Singleton) ? (Singleton)wrapper.getHandler() : null;
+                wrapper = (wrapped instanceof Singleton) ? (Singleton)wrapped : null;
             }
         }
 

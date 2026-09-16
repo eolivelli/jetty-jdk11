@@ -926,12 +926,12 @@ public class AsyncMiddleManServlet extends AbstractProxyServlet
             this.callback = callback;
         }
 
-        private ByteBuffer buffer()
+        public ByteBuffer buffer()
         {
             return buffer;
         }
 
-        private Callback callback()
+        public Callback callback()
         {
             return callback;
         }

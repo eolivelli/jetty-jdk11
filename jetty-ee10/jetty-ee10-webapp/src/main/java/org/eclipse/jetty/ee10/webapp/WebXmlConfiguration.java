@@ -18,6 +18,7 @@ import java.net.URI;
 import java.net.URL;
 
 import org.eclipse.jetty.ee10.servlet.ErrorPageErrorHandler;
+import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.util.StringUtil;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceFactory;
@@ -128,7 +129,7 @@ public class WebXmlConfiguration extends AbstractConfiguration
         context.setWelcomeFiles(null);
 
         //TODO: ErrorPageErrorHandler is not an ErrorHandler
-        Object errorHandler = context.getErrorHandler();
+        Request.Handler errorHandler = context.getErrorHandler();
         if (errorHandler instanceof ErrorPageErrorHandler)
             ((ErrorPageErrorHandler)errorHandler).setErrorPages(null);
 

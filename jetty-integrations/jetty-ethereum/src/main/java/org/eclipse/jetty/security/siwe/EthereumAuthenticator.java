@@ -497,7 +497,7 @@ public class EthereumAuthenticator extends LoginAuthenticator implements Dumpabl
                 }
                 default:
                     throw new ServerAuthException("Unsupported mime type: " + mimeType);
-            };
+            }
 
             // The browser may convert LF to CRLF, EIP4361 specifies to only use LF.
             message = message.replace("\r\n", "\n");

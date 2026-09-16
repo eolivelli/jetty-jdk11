@@ -365,9 +365,7 @@ public class QuickStartGeneratorConfiguration extends AbstractConfiguration
                 {
                     case ALLOWED:
                     case INHERIT:
-                    {
                         break;
-                    }
                     case FORBIDDEN:
                         out.tag("auth-constraint");
                         break;

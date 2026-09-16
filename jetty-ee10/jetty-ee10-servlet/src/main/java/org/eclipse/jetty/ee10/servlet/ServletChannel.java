@@ -894,12 +894,12 @@ public class ServletChannel
             AsyncContextEvent asyncContextEvent = _state.getAsyncContextEvent();
             String dispatchString = asyncContextEvent.getDispatchPath();
 
-            Object dispatchContext = asyncContextEvent.getDispatchContext();
+            ServletContext dispatchContext = asyncContextEvent.getDispatchContext();
             if (dispatchContext instanceof CrossContextServletContext)
             {
                 dispatchCrossContextAsync((CrossContextServletContext)dispatchContext);
             }
-            else if (asyncContextEvent.getDispatchContext() == null)
+            else if (dispatchContext == null)
             {
                 //the user dispatched to the current context
                 targetContextHandler.requestInitialized(servletContextRequest, servletApiRequest);

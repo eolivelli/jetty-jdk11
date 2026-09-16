@@ -762,9 +762,10 @@ public class HttpRequest implements Request
             // This has the effect of changing this method from mostly throwing a TimeoutException
             // to always throwing an ExecutionException(TimeoutException).
             // Thus, for backwards compatibility we unwrap the TimeoutException here.
-            if (x.getCause() instanceof TimeoutException)
+            Throwable cause = x.getCause();
+            if (cause instanceof TimeoutException)
             {
-                TimeoutException t = (TimeoutException)x.getCause();
+                TimeoutException t = (TimeoutException)cause;
                 abort(t);
                 throw t;
             }

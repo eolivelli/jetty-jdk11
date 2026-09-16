@@ -854,16 +854,10 @@ public class CustomRequestLog extends ContainerLifeCycle implements RequestLog
             }
             case "C":
             {
-                if (StringUtil.isEmpty(arg))
-                {
-                    specificHandle = lookup.findStatic(CustomRequestLog.class, "logRequestCookies", logType);
-                    break;
-                }
-                else
-                {
-                    specificHandle = lookup.findStatic(CustomRequestLog.class, "logRequestCookie", logTypeArg).bindTo(arg);
-                    break;
-                }
+                specificHandle = StringUtil.isEmpty(arg)
+                    ? lookup.findStatic(CustomRequestLog.class, "logRequestCookies", logType)
+                    : lookup.findStatic(CustomRequestLog.class, "logRequestCookie", logTypeArg).bindTo(arg);
+                break;
             }
             case "D":
                 specificHandle = lookup.findStatic(CustomRequestLog.class, "logLatencyMicroseconds", logType);

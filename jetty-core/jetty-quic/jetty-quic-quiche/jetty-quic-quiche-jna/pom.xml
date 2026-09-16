@@ -52,4 +52,27 @@
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <!-- The native access option is unknown to the JDK 11 launcher, so it is only applied on JDK 17+. -->
+      <id>enable-native-access-jna</id>
+      <activation>
+        <jdk>[17,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>@{argLine}
+                ${jetty.surefire.argLine}
+                --enable-native-access com.sun.jna</argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>

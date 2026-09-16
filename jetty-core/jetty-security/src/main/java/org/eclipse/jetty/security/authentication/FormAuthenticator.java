@@ -293,8 +293,9 @@ public class FormAuthenticator extends LoginAuthenticator
         AuthenticationState authenticationState = session == null ? null : (AuthenticationState)session.getAttribute(SessionAuthentication.AUTHENTICATED_ATTRIBUTE);
         if (LOG.isDebugEnabled())
             LOG.debug("auth {}", authenticationState);
+        Succeeded succeeded = authenticationState instanceof Succeeded ? (Succeeded)authenticationState : null;
         // Has authentication been revoked?
-        if (authenticationState instanceof Succeeded && _loginService != null && !_loginService.validate(((Succeeded)authenticationState).getUserIdentity()))
+        if (succeeded != null && _loginService != null && !_loginService.validate(succeeded.getUserIdentity()))
         {
             if (LOG.isDebugEnabled())
                 LOG.debug("auth revoked {}", authenticationState);

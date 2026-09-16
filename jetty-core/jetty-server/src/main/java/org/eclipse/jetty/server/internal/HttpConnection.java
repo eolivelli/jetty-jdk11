@@ -1739,10 +1739,6 @@ public class HttpConnection extends AbstractMetaDataConnection implements Runnab
         }
     }
 
-    /**
-     * HttpParser converts some bad message event into early EOF.
-     * However, we want to send a 400 (not a 500) to the client because it's a client error.
-     */
     private static class CancelSendException extends IOException
     {
         private final CountDownLatch _complete = new CountDownLatch(2);
@@ -1783,6 +1779,10 @@ public class HttpConnection extends AbstractMetaDataConnection implements Runnab
         }
     }
 
+    /**
+     * HttpParser converts some bad message event into early EOF.
+     * However, we want to send a 400 (not a 500) to the client because it's a client error.
+     */
     private static class HttpEofException extends EofException implements HttpException
     {
         private HttpEofException()

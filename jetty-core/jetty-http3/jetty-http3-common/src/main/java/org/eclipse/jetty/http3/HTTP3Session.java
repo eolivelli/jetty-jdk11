@@ -704,9 +704,7 @@ public abstract class HTTP3Session extends ContainerLifeCycle implements Session
                 }
                 case NOT_CLOSED:
                 case CLOSED:
-                {
                     break;
-                }
                 default:
                 {
                     throw new IllegalStateException();

@@ -191,11 +191,11 @@ public class GzipDecoderSource extends DecoderSource
                         break;
                     }
                     case XFL:
-                        state = State.OS;
-                        break; // Skip XFL
+                        state = State.OS; // Skip XFL
+                        break;
                     case OS:
-                        state = State.FLAGS;
-                        break; // Skip OS
+                        state = State.FLAGS; // Skip OS
+                        break;
                     case EXTRA_LENGTH:
                     {
                         value += (long)(currByte & 0xFF) << 8 * size;

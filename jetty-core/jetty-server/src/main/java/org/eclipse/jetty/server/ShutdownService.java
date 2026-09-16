@@ -329,7 +329,7 @@ public class ShutdownService
 
                         switch (cmdLower)
                         {
-                            case "stop":
+                            case "stop": // historic, for backward compatibility
                             {
                                 // Stop the lifecycles, only if they are registered with the ShutdownThread, only destroying if vm is exiting
                                 LOG.info("Performing 'stop' command");

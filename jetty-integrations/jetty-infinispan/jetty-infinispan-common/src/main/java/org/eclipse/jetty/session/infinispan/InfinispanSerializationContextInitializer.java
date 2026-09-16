@@ -52,14 +52,7 @@ public class InfinispanSerializationContextInitializer implements SerializationC
     @Override
     public void registerSchema(SerializationContext serCtx)
     {
-        try
-        {
-            serCtx.registerProtoFiles(FileDescriptorSource.fromResources(getProtoFileName()));
-        }
-        catch (IOException e)
-        {
-            throw new UncheckedIOException(e);
-        }
+        serCtx.registerProtoFiles(FileDescriptorSource.fromString(getProtoFileName(), getProtoFile()));
     }
 
     @Override

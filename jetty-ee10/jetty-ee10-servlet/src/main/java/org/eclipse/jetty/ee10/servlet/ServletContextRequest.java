@@ -439,8 +439,7 @@ public class ServletContextRequest extends ContextRequest implements ServletCont
             return getServletApiRequest();
         if (!(servletRequest instanceof HttpServletRequest))
             throw new IllegalStateException("Not an HTTP request");
-        HttpServletRequest httpServletRequest = (HttpServletRequest)servletRequest;
-        return httpServletRequest;
+        return (HttpServletRequest)servletRequest;
     }
 
     public HttpServletResponse getHttpServletResponse()
@@ -450,8 +449,7 @@ public class ServletContextRequest extends ContextRequest implements ServletCont
             return getServletApiResponse();
         if  (!(servletResponse instanceof HttpServletResponse))
             throw new IllegalStateException("Not an HTTP response");
-        HttpServletResponse httpServletResponse = (HttpServletResponse)servletResponse;
-        return httpServletResponse;
+        return (HttpServletResponse)servletResponse;
     }
 
     public ServletRequest getServletRequest()

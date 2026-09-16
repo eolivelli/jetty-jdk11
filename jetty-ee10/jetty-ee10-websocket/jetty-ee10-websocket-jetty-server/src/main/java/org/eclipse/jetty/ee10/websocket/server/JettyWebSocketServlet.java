@@ -299,7 +299,7 @@ public abstract class JettyWebSocketServlet extends HttpServlet
             this.creator = creator;
         }
 
-        private JettyWebSocketCreator creator()
+        public JettyWebSocketCreator creator()
         {
             return creator;
         }

@@ -1256,7 +1256,9 @@ public class DistributionTests extends AbstractJettyHomeTest
             .jettyVersion(jettyVersion)
             .build();
 
-        try (JettyHomeTester.Run configure = distribution.start("--add-modules=http,ee10-deploy"))
+        // The Servlet 6.1 demo war was removed with the ee11 environment, so this test
+        // uses the Servlet 5 demo war, which belongs to the ee9 environment.
+        try (JettyHomeTester.Run configure = distribution.start("--add-modules=http,ee9-deploy"))
         {
             assertTrue(configure.awaitForStart());
             assertEquals(0, configure.getExitValue());

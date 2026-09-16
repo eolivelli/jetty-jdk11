@@ -547,8 +547,8 @@ public class CreationTest
                     assertNotNull(session);
                     assertEquals(_id, session.getId());
                     assertNotNull(session.getAttribute("value"));
-                    assertNull(session.getAttribute("B"));
-                    break; //check we don't see stuff from other context
+                    assertNull(session.getAttribute("B")); //check we don't see stuff from other context
+                    break;
                 }
                 case "forwardc":
                 {

@@ -58,6 +58,7 @@ import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.io.EofException;
 import org.eclipse.jetty.io.content.InputStreamContentSource;
 import org.eclipse.jetty.logging.StacklessLogging;
+import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ErrorHandler;
@@ -807,7 +808,7 @@ public class MultiPartServletTest
             servletContextHandler.addServlet(servletHolder, "/multipart");
         }, eager);
 
-        Object serverErrorHandler = server.getErrorHandler();
+        Request.Handler serverErrorHandler = server.getErrorHandler();
         if (serverErrorHandler instanceof ErrorHandler)
             ((ErrorHandler)serverErrorHandler).setShowStacks(true);
 

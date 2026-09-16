@@ -185,6 +185,9 @@ public class JettyDemos
         return result;
     }
 
+    /**
+     * Maven coordinate of a demo artifact.
+     */
     public static final class MavenCoordinate
     {
         private final String groupId;

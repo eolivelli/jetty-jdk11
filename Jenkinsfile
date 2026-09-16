@@ -144,12 +144,15 @@ def mavenBuild(jdk, cmdline, mvnName) {
                "MAVEN_OPTS=-Xms3G -Xmx5G -Djava.awt.headless=true"]) {
       configFileProvider(
         [configFile(fileId: 'oss-settings.xml', variable: 'GLOBAL_MVN_SETTINGS')]) {
-          extraArgs = " -Dmaven.test.failure.ignore=true "
+          // Same rule as before the build-cache extension was removed: test failures are only
+          // tolerated on the release branch or when a PR asks for it with a label.
+          def ignoreTestFailures = (env.BRANCH_NAME == 'jetty-12.1.x')
           if (env.BRANCH_NAME ==~ /PR-\d+/) {
-            if (pullRequest.labels.contains("build-all-tests")) {
-              extraArgs = " -Dmaven.test.failure.ignore=true "
+            if (pullRequest.labels.contains("build-all-tests") || pullRequest.labels.contains("build-no-cache")) {
+              ignoreTestFailures = true
             }
           }
+          extraArgs = ignoreTestFailures ? " -Dmaven.test.failure.ignore=true " : ""
           def dashProfile = ""
           if(useEclipseDash()) {
             dashProfile = " -Peclipse-dash "

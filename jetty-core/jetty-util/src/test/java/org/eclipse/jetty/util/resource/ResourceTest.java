@@ -37,7 +37,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnJre;
 import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Isolated;
@@ -527,6 +529,7 @@ public class ResourceTest
     }
 
     @Test
+    @DisabledOnJre(value = JRE.JAVA_11, disabledReason = "jrt:/<module> paths require the newer jrt file system layout")
     public void testJrtResourceModule()
     {
         Resource resource = ResourceFactory.root().newResource("jrt:/java.base");

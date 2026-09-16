@@ -91,6 +91,8 @@ public class FileSystemPool implements Dumpable
         Map<String, String> env = new HashMap<>();
         // Key and Value documented at https://docs.oracle.com/en/java/javase/17/docs/api/jdk.zipfs/module-summary.html
         env.put("releaseVersion", "runtime");
+        // Java 11 and 12 use this older key for the same feature.
+        env.put("multi-release", "runtime");
         ENV_MULTIRELEASE_RUNTIME = env;
     }
 

@@ -31,6 +31,8 @@ import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -445,6 +447,7 @@ public class BufferUtilTest
     }
 
     @Test
+    @DisabledOnJre(value = JRE.JAVA_11, disabledReason = "jrt:/<module> paths require the newer jrt file system layout")
     public void testToMappedBufferResource() throws Exception
     {
         Path testZip = MavenTestingUtils.getTestResourcePathFile("TestData/test.zip");

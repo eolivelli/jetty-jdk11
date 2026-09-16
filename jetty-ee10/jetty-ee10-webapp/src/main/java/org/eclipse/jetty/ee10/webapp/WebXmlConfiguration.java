@@ -128,8 +128,9 @@ public class WebXmlConfiguration extends AbstractConfiguration
         context.setWelcomeFiles(null);
 
         //TODO: ErrorPageErrorHandler is not an ErrorHandler
-        if (context.getErrorHandler() instanceof ErrorPageErrorHandler errorPageErrorHandler)
-            errorPageErrorHandler.setErrorPages(null);
+        Object errorHandler = context.getErrorHandler();
+        if (errorHandler instanceof ErrorPageErrorHandler)
+            ((ErrorPageErrorHandler)errorHandler).setErrorPages(null);
 
         // TODO remove classpaths from classloader
     }

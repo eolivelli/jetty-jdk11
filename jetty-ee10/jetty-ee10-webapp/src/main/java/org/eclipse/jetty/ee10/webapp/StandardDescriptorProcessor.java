@@ -46,6 +46,7 @@ import org.eclipse.jetty.ee10.servlet.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.http.pathmap.ServletPathSpec;
 import org.eclipse.jetty.security.Authenticator;
 import org.eclipse.jetty.security.Constraint;
+import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.authentication.FormAuthenticator;
 import org.eclipse.jetty.util.ArrayUtil;
 import org.eclipse.jetty.util.Loader;
@@ -1325,11 +1326,13 @@ public class StandardDescriptorProcessor extends IterativeDescriptorProcessor
 
     public void visitSecurityConstraint(WebAppContext context, Descriptor descriptor, XmlParser.Node node)
     {
-        if (!(context.getSecurityHandler() instanceof ConstraintAware constraintAware))
+        SecurityHandler securityHandler = context.getSecurityHandler();
+        if (!(securityHandler instanceof ConstraintAware))
         {
             LOG.warn("security-constraint declared but SecurityHandler not ConstraintAware");
             return;
         }
+        ConstraintAware constraintAware = (ConstraintAware)securityHandler;
 
         Constraint.Builder scBase = new Constraint.Builder(Constraint.ALLOWED_ANY_TRANSPORT);
 
@@ -1396,17 +1399,22 @@ public class StandardDescriptorProcessor extends IterativeDescriptorProcessor
         {
             data = data.get("transport-guarantee");
             String guarantee = data.toString(false, true).toUpperCase(Locale.ENGLISH);
-            scBase.transport(
-                switch (guarantee)
-                {
-                    case "INTEGRAL", "CONFIDENTIAL" -> Constraint.Transport.SECURE;
-                    case "NONE" -> Constraint.Transport.ANY;
-                    default ->
-                    {
-                        LOG.warn("Unknown user-data-constraint: {}", guarantee);
-                        yield null;
-                    }
-                });
+            Constraint.Transport transport;
+            switch (guarantee)
+            {
+                case "INTEGRAL":
+                case "CONFIDENTIAL":
+                    transport = Constraint.Transport.SECURE;
+                    break;
+                case "NONE":
+                    transport = Constraint.Transport.ANY;
+                    break;
+                default:
+                    LOG.warn("Unknown user-data-constraint: {}", guarantee);
+                    transport = null;
+                    break;
+            }
+            scBase.transport(transport);
         }
         Iterator<XmlParser.Node> iter = node.iterator("web-resource-collection");
         while (iter.hasNext())

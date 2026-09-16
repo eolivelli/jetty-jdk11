@@ -437,8 +437,9 @@ public class SessionHandler extends AbstractSessionManager implements Handler.Si
         if (nonServletSessionRequest != null)
             return nonServletSessionRequest.getManagedSession();
 
-        if (request.getSession(false) instanceof ManagedSession managedSession)
-            return managedSession;
+        Session session = request.getSession(false);
+        if (session instanceof ManagedSession)
+            return (ManagedSession)session;
         return null;
     }
 

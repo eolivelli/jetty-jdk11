@@ -18,6 +18,7 @@ import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Objects;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -97,8 +98,10 @@ public class ErrorHandler extends org.eclipse.jetty.server.handler.ErrorHandler
             ErrorPageMapper.ErrorPage errorPage = mapper.getErrorPage(errorStatus, errorCause);
             if (LOG.isDebugEnabled())
                 LOG.debug("{} {} {} -> {}", context, errorStatus, errorCause, errorPage);
-            if (errorPage != null && context.getServletContext().getRequestDispatcher(errorPage.errorPage) instanceof Dispatcher errorDispatcher)
+            Object requestDispatcher = errorPage == null ? null : context.getServletContext().getRequestDispatcher(errorPage.errorPage());
+            if (requestDispatcher instanceof Dispatcher)
             {
+                Dispatcher errorDispatcher = (Dispatcher)requestDispatcher;
                 try
                 {
                     try
@@ -189,8 +192,75 @@ public class ErrorHandler extends org.eclipse.jetty.server.handler.ErrorHandler
             THROWABLE, STATUS_CODE, GLOBAL
         }
 
-        record ErrorPage(String errorPage, PageLookupTechnique match, Throwable error, Throwable cause, Class<?> matchedClass)
+        final class ErrorPage
         {
+            private final String errorPage;
+            private final PageLookupTechnique match;
+            private final Throwable error;
+            private final Throwable cause;
+            private final Class<?> matchedClass;
+
+            public ErrorPage(String errorPage, PageLookupTechnique match, Throwable error, Throwable cause, Class<?> matchedClass)
+            {
+                this.errorPage = errorPage;
+                this.match = match;
+                this.error = error;
+                this.cause = cause;
+                this.matchedClass = matchedClass;
+            }
+
+            public String errorPage()
+            {
+                return errorPage;
+            }
+
+            public PageLookupTechnique match()
+            {
+                return match;
+            }
+
+            public Throwable error()
+            {
+                return error;
+            }
+
+            public Throwable cause()
+            {
+                return cause;
+            }
+
+            public Class<?> matchedClass()
+            {
+                return matchedClass;
+            }
+
+            @Override
+            public boolean equals(Object obj)
+            {
+                if (this == obj)
+                    return true;
+                if (obj == null || getClass() != obj.getClass())
+                    return false;
+                ErrorPage that = (ErrorPage)obj;
+                return Objects.equals(errorPage, that.errorPage) &&
+                    Objects.equals(match, that.match) &&
+                    Objects.equals(error, that.error) &&
+                    Objects.equals(cause, that.cause) &&
+                    Objects.equals(matchedClass, that.matchedClass);
+            }
+
+            @Override
+            public int hashCode()
+            {
+                return Objects.hash(errorPage, match, error, cause, matchedClass);
+            }
+
+            @Override
+            public String toString()
+            {
+                return "ErrorPage[errorPage=" + errorPage + ", match=" + match + ", error=" + error +
+                    ", cause=" + cause + ", matchedClass=" + matchedClass + "]";
+            }
         }
 
         ErrorPage getErrorPage(Integer errorStatusCode, Throwable error);

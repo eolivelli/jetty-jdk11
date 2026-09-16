@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import jakarta.servlet.ServletException;
@@ -164,8 +165,76 @@ public class DefaultServletCombinationsTest
         }
     }
 
-    record Data(boolean pathInfoOnly, ResourceService.WelcomeMode welcomeMode, String requestPath, int expectedStatus, String expected)
+    static final class Data
     {
+        private final boolean pathInfoOnly;
+        private final ResourceService.WelcomeMode welcomeMode;
+        private final String requestPath;
+        private final int expectedStatus;
+        private final String expected;
+
+        Data(boolean pathInfoOnly, ResourceService.WelcomeMode welcomeMode, String requestPath, int expectedStatus, String expected)
+        {
+            this.pathInfoOnly = pathInfoOnly;
+            this.welcomeMode = welcomeMode;
+            this.requestPath = requestPath;
+            this.expectedStatus = expectedStatus;
+            this.expected = expected;
+        }
+
+        public boolean pathInfoOnly()
+        {
+            return pathInfoOnly;
+        }
+
+        public ResourceService.WelcomeMode welcomeMode()
+        {
+            return welcomeMode;
+        }
+
+        public String requestPath()
+        {
+            return requestPath;
+        }
+
+        public int expectedStatus()
+        {
+            return expectedStatus;
+        }
+
+        public String expected()
+        {
+            return expected;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Data that = (Data)obj;
+            return pathInfoOnly == that.pathInfoOnly &&
+                Objects.equals(welcomeMode, that.welcomeMode) &&
+                Objects.equals(requestPath, that.requestPath) &&
+                expectedStatus == that.expectedStatus &&
+                Objects.equals(expected, that.expected);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(pathInfoOnly, welcomeMode, requestPath, expectedStatus, expected);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Data[pathInfoOnly=" + pathInfoOnly + ", welcomeMode=" + welcomeMode +
+                ", requestPath=" + requestPath + ", expectedStatus=" + expectedStatus +
+                ", expected=" + expected + "]";
+        }
     }
 
     public static Stream<Data> data()

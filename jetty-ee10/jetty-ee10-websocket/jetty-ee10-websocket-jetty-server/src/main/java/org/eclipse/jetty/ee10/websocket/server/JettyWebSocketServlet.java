@@ -16,6 +16,7 @@ package org.eclipse.jetty.ee10.websocket.server;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.Set;
 
 import jakarta.servlet.ServletException;
@@ -289,8 +290,19 @@ public abstract class JettyWebSocketServlet extends HttpServlet
         }
     }
 
-    private record WrappedJettyCreator(JettyWebSocketCreator creator) implements WebSocketCreator
+    private static final class WrappedJettyCreator implements WebSocketCreator
     {
+        private final JettyWebSocketCreator creator;
+
+        private WrappedJettyCreator(JettyWebSocketCreator creator)
+        {
+            this.creator = creator;
+        }
+
+        private JettyWebSocketCreator creator()
+        {
+            return creator;
+        }
 
         private JettyWebSocketCreator getJettyWebSocketCreator()
         {
@@ -322,6 +334,29 @@ public abstract class JettyWebSocketServlet extends HttpServlet
                 }
                 return null;
             }
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            WrappedJettyCreator that = (WrappedJettyCreator)obj;
+            return Objects.equals(creator, that.creator);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(creator);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "WrappedJettyCreator[creator=" + creator + "]";
         }
     }
 }

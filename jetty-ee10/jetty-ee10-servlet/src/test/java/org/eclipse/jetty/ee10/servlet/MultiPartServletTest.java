@@ -807,8 +807,9 @@ public class MultiPartServletTest
             servletContextHandler.addServlet(servletHolder, "/multipart");
         }, eager);
 
-        if (server.getErrorHandler() instanceof ErrorHandler errorHandler)
-            errorHandler.setShowStacks(true);
+        Object serverErrorHandler = server.getErrorHandler();
+        if (serverErrorHandler instanceof ErrorHandler)
+            ((ErrorHandler)serverErrorHandler).setShowStacks(true);
 
         try (Socket socket = new Socket("localhost", connector.getLocalPort()))
         {

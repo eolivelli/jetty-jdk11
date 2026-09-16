@@ -646,9 +646,10 @@ public class ResourceServlet extends HttpServlet
         HttpServletMapping mapping = request.getHttpServletMapping();
         if (included)
         {
-            if (request.getAttribute(Dispatcher.INCLUDE_MAPPING) instanceof HttpServletMapping httpServletMapping)
+            Object includeMapping = request.getAttribute(Dispatcher.INCLUDE_MAPPING);
+            if (includeMapping instanceof HttpServletMapping)
             {
-                mapping = httpServletMapping;
+                mapping = (HttpServletMapping)includeMapping;
             }
             else
             {

@@ -430,8 +430,10 @@ public class ServletChannelState
                     _state = State.HANDLING;
                     if (_servletChannel.getResponse().getStatus() != 0)
                     {
-                        if (_servletChannel.getRequest().getAttribute(ERROR_STATUS) instanceof Integer errorCode)
+                        Object errorStatus = _servletChannel.getRequest().getAttribute(ERROR_STATUS);
+                        if (errorStatus instanceof Integer)
                         {
+                            int errorCode = (Integer)errorStatus;
                             _servletChannel.getServletRequestState().sendError(errorCode, null);
                             _requestState = RequestState.BLOCKING;
                             _sendError = false;

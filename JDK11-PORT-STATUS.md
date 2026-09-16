@@ -49,4 +49,4 @@ Branch `jetty-12.1.x-jdk11` (from `jetty-12.1.x` @ bdc419f91bd). PR: https://git
 
 | Round | Reviewers | Findings (high/medium/low/nit) | Outcome |
 |---|---|---|---|
-| 1 | 7 reviewers: build/poms, core hand-port, desugar core main, desugar EE main, desugar tests, wave-1 EE, wave-1 core | in progress | |
+| 1 | 7 reviewers: build/poms, core hand-port, desugar core main, desugar EE main, desugar tests, wave-1 EE, wave-1 core (reports in `jetty-jdk11-tools/review/round1/`) | 0 / 10 / 25 / ~35 — no behavioural defect in the mechanical passes (all 2052 text blocks and 452 `formatted` calls re-verified programmatically, `javac -Xlint:fallthrough` clean); mediums: `HttpSpiContextHandler` try/finally error path, `BufferUtil.absoluteSlice/absolutePut` missing limit checks, `Handler.getTail()` double read, `PathMappingsHandler.getHandlers()` immutability, 4× comments dropped by the switch rewriter, `jetty-setuid-jna` 2.0.3 is Java 17 (downloaded by the `setuid` module), undocumented `getOrCreateSession` API move | 5 workers fixing (util/io/http, server/client/…, ee10/integrations, build/home/docs, ee9), then a `String.format` layout pass, then re-review |

@@ -323,8 +323,9 @@ public class ServletApiRequest implements HttpServletRequest
         }
         else
         {
-            if (_async.getRequest() instanceof HttpServletRequest asyncHttpServletRequest)
-                httpServletRequest = asyncHttpServletRequest;
+            ServletRequest asyncRequest = _async.getRequest();
+            if (asyncRequest instanceof HttpServletRequest)
+                httpServletRequest = (HttpServletRequest)asyncRequest;
             else
                 httpServletRequest = _servletContextRequest.getHttpServletRequest();
         }

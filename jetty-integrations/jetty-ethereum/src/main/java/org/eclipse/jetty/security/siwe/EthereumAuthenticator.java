@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
@@ -834,11 +835,54 @@ public class EthereumAuthenticator extends LoginAuthenticator implements Dumpabl
         }
     }
 
-    public record SignedMessage(String message, String signature)
+    public static final class SignedMessage
     {
+        private final String message;
+        private final String signature;
+
+        public SignedMessage(String message, String signature)
+        {
+            this.message = message;
+            this.signature = signature;
+        }
+
+        public String message()
+        {
+            return message;
+        }
+
+        public String signature()
+        {
+            return signature;
+        }
+
         public String recoverAddress()
         {
             return EthereumUtil.recoverAddress(this);
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            SignedMessage that = (SignedMessage)obj;
+            return Objects.equals(message, that.message) &&
+                Objects.equals(signature, that.signature);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(message, signature);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "SignedMessage[message=" + message + ", signature=" + signature + "]";
         }
     }
 }

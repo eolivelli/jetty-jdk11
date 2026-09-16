@@ -71,12 +71,6 @@ public class ServletInputStreamWrapper extends ServletInputStream
     }
 
     @Override
-    public void skipNBytes(long n) throws IOException
-    {
-        _servletInputStream.skipNBytes(n);
-    }
-
-    @Override
     public int available() throws IOException
     {
         return _servletInputStream.available();

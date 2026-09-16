@@ -58,11 +58,13 @@ public class ServletSecurityAnnotationHandler extends AbstractIntrospectableAnno
     @Override
     public void doHandle(Class<?> clazz)
     {
-        if (!(_context.getSecurityHandler() instanceof ConstraintAware securityHandler))
+        Object handler = _context.getSecurityHandler();
+        if (!(handler instanceof ConstraintAware))
         {
             LOG.warn("SecurityHandler not ConstraintAware, skipping security annotation processing");
             return;
         }
+        ConstraintAware securityHandler = (ConstraintAware)handler;
 
         ServletSecurity servletSecurity = clazz.getAnnotation(ServletSecurity.class);
         if (servletSecurity == null)

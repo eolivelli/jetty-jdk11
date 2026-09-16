@@ -87,6 +87,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ErrorPageTest
 {
     private static final Logger LOG = LoggerFactory.getLogger(ErrorPageTest.class);
+    private static final AtomicInteger NESTED_SEND_ERROR_COUNTER = new AtomicInteger();
 
     private Server _server;
     private LocalConnector _connector;
@@ -446,12 +447,10 @@ public class ErrorPageTest
 
         HttpServlet syncSendErrorServlet = new HttpServlet()
         {
-            public static final AtomicInteger COUNTER = new AtomicInteger();
-
             @Override
             protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
             {
-                int count = COUNTER.incrementAndGet();
+                int count = NESTED_SEND_ERROR_COUNTER.incrementAndGet();
 
                 PrintWriter writer = response.getWriter();
                 writer.println("this is the " + count + " time this error page is being accessed");

@@ -901,8 +901,9 @@ public class ServletContextHandler extends ContextHandler
     @Override
     public ServletScopedContext getContext()
     {
-        if (super.getContext() instanceof ServletScopedContext servletScopedContext)
-            return servletScopedContext;
+        ScopedContext context = super.getContext();
+        if (context instanceof ServletScopedContext)
+            return (ServletScopedContext)context;
         throw new IllegalStateException("Context is not ServletScopedContext");
     }
 
@@ -1016,9 +1017,9 @@ public class ServletContextHandler extends ContextHandler
             while (!(handler.getHandler() instanceof SessionHandler) &&
                 !(handler.getHandler() instanceof SecurityHandler) &&
                 !(handler.getHandler() instanceof ServletHandler) &&
-                handler.getHandler() instanceof Singleton wrapped)
+                handler.getHandler() instanceof Singleton)
             {
-                handler = wrapped;
+                handler = (Singleton)handler.getHandler();
             }
 
             if (handler.getHandler() != _sessionHandler)
@@ -1031,9 +1032,9 @@ public class ServletContextHandler extends ContextHandler
         {
             while (!(handler.getHandler() instanceof SecurityHandler) &&
                 !(handler.getHandler() instanceof ServletHandler) &&
-                handler.getHandler() instanceof Singleton wrapped)
+                handler.getHandler() instanceof Singleton)
             {
-                handler = wrapped;
+                handler = (Singleton)handler.getHandler();
             }
 
             if (handler.getHandler() != _securityHandler)
@@ -1045,9 +1046,9 @@ public class ServletContextHandler extends ContextHandler
         if (getServletHandler() != null)
         {
             while (!(handler.getHandler() instanceof ServletHandler) &&
-                handler.getHandler() instanceof Singleton wrapped)
+                handler.getHandler() instanceof Singleton)
             {
-                handler = wrapped;
+                handler = (Singleton)handler.getHandler();
             }
 
             if (handler.getHandler() != _servletHandler)
@@ -1235,8 +1236,12 @@ public class ServletContextHandler extends ContextHandler
         {
             // If we have a Servlet ErrorHandler, then writeError will return false, and it will signal
             // the ServletChannel to trigger a sendError() when it is started.
-            if (request.getContext().getErrorHandler() instanceof org.eclipse.jetty.server.handler.ErrorHandler errorHandler)
+            Request.Handler contextErrorHandler = request.getContext().getErrorHandler();
+            if (contextErrorHandler instanceof org.eclipse.jetty.server.handler.ErrorHandler)
+            {
+                org.eclipse.jetty.server.handler.ErrorHandler errorHandler = (org.eclipse.jetty.server.handler.ErrorHandler)contextErrorHandler;
                 return errorHandler.writeError(request, response, callback, HttpStatus.NOT_FOUND_404);
+            }
             Response.writeError(request, response, callback, HttpStatus.NOT_FOUND_404);
             return true;
         }
@@ -1671,7 +1676,7 @@ public class ServletContextHandler extends ContextHandler
                     break;
                 }
 
-                wrapper = (wrapper.getHandler() instanceof Singleton wrapped) ? wrapped : null;
+                wrapper = (wrapper.getHandler() instanceof Singleton) ? (Singleton)wrapper.getHandler() : null;
             }
         }
 

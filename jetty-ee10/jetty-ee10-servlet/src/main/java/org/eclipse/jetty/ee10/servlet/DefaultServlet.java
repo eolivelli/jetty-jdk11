@@ -111,8 +111,9 @@ public class DefaultServlet extends ResourceServlet
 
         if (included)
         {
-            if (request.getAttribute(Dispatcher.INCLUDE_SERVLET_PATH) instanceof String servletPath)
-                return URIUtil.encodePath(servletPath);
+            Object servletPath = request.getAttribute(Dispatcher.INCLUDE_SERVLET_PATH);
+            if (servletPath instanceof String)
+                return URIUtil.encodePath((String)servletPath);
 
             // must be an include of a named dispatcher.  Just use the whole URI
             return URIUtil.encodePath(request.getServletPath());

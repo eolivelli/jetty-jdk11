@@ -1501,8 +1501,10 @@ public class WebAppContext extends ServletContextHandler implements WebAppClassL
          */
 
         java.util.Collection<String> pathMappings = registration.getMappings();
-        if (pathMappings != null && getSecurityHandler() instanceof ConstraintAware constraintAware)
+        SecurityHandler securityHandler = getSecurityHandler();
+        if (pathMappings != null && securityHandler instanceof ConstraintAware)
         {
+            ConstraintAware constraintAware = (ConstraintAware)securityHandler;
             ConstraintSecurityHandler.createConstraint(registration.getName(), servletSecurityElement);
 
             for (String pathSpec : pathMappings)

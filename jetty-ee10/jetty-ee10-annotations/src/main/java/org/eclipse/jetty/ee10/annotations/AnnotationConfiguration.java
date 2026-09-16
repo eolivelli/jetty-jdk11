@@ -435,8 +435,9 @@ public class AnnotationConfiguration extends AbstractConfiguration
 
     private State getState(WebAppContext context)
     {
-        if (context.getAttribute(STATE) instanceof State state)
-            return state;
+        Object attribute = context.getAttribute(STATE);
+        if (attribute instanceof State)
+            return (State)attribute;
         throw new IllegalStateException("No state");
     }
     
@@ -483,8 +484,10 @@ public class AnnotationConfiguration extends AbstractConfiguration
             classMap.clear();
         context.removeAttribute(CLASS_INHERITANCE_MAP);
 
-        if (!(context.removeAttribute(STATE) instanceof State state))
+        Object attribute = context.removeAttribute(STATE);
+        if (!(attribute instanceof State))
             throw new IllegalStateException("No state");
+        State state = (State)attribute;
         state._discoverableAnnotationHandlers.clear();
         state._classInheritanceHandler = null;
         state._containerInitializerAnnotationHandlers.clear();

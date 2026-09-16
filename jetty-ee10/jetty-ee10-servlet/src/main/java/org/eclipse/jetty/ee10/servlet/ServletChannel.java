@@ -370,14 +370,16 @@ public class ServletChannel
 
     public InetSocketAddress getLocalAddress()
     {
-        return getRequest().getConnectionMetaData().getLocalSocketAddress() instanceof InetSocketAddress inetSocketAddress
-            ? inetSocketAddress : null;
+        SocketAddress local = getRequest().getConnectionMetaData().getLocalSocketAddress();
+        return local instanceof InetSocketAddress
+            ? (InetSocketAddress)local : null;
     }
 
     public InetSocketAddress getRemoteAddress()
     {
-        return getRequest().getConnectionMetaData().getRemoteSocketAddress() instanceof InetSocketAddress inetSocketAddress
-            ? inetSocketAddress : null;
+        SocketAddress remote = getRequest().getConnectionMetaData().getRemoteSocketAddress();
+        return remote instanceof InetSocketAddress
+            ? (InetSocketAddress)remote : null;
     }
 
     /**
@@ -892,9 +894,10 @@ public class ServletChannel
             AsyncContextEvent asyncContextEvent = _state.getAsyncContextEvent();
             String dispatchString = asyncContextEvent.getDispatchPath();
 
-            if (asyncContextEvent.getDispatchContext() instanceof CrossContextServletContext crossContextServletContext)
+            Object dispatchContext = asyncContextEvent.getDispatchContext();
+            if (dispatchContext instanceof CrossContextServletContext)
             {
-                dispatchCrossContextAsync(crossContextServletContext);
+                dispatchCrossContextAsync((CrossContextServletContext)dispatchContext);
             }
             else if (asyncContextEvent.getDispatchContext() == null)
             {

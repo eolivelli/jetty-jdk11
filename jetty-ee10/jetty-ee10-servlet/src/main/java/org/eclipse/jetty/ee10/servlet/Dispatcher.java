@@ -192,8 +192,10 @@ public class Dispatcher implements RequestDispatcher
             {
                 String targetQuery = (_uri == null) ? null : _uri.getQuery();
 
-                if (getRequest() instanceof ServletApiRequest servletApiRequest)
+                ServletRequest request = getRequest();
+                if (request instanceof ServletApiRequest)
                 {
+                    ServletApiRequest servletApiRequest = (ServletApiRequest)request;
                     Fields parameters = servletApiRequest.getParameters();
 
                     if (targetQuery == null)

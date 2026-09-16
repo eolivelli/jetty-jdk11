@@ -457,36 +457,56 @@ public class ConstraintSecurityHandler extends SecurityHandler implements Constr
 
         Set<String> roles = null;
         Constraint.Authorization authorizationB = constraintB.getAuthorization();
-        Constraint.Authorization authorization = authorizationB == null ? authorizationA : switch (authorizationB)
+        Constraint.Authorization authorization;
+        if (authorizationB == null)
         {
-            // Forbidden takes precedence
-            case FORBIDDEN -> Constraint.Authorization.FORBIDDEN;
-
-            // A constraint with no authorization takes precedence over any roles constraints, but not FORBIDDEN
-            case ALLOWED -> authorizationA == Constraint.Authorization.FORBIDDEN
-                ? Constraint.Authorization.FORBIDDEN
-                : Constraint.Authorization.ALLOWED;
-
-            // The "**" role, which is any role (known or otherwise), has precedence over everything but FORBIDDEN and NONE
-            case ANY_USER -> (authorizationA == Constraint.Authorization.FORBIDDEN || authorizationA == Constraint.Authorization.ALLOWED)
-                ? authorizationA
-                : Constraint.Authorization.ANY_USER;
-
-            // The "*" role, which is any known role, only has precedence over SPECIFIC roles
-            case KNOWN_ROLE -> (authorizationA == Constraint.Authorization.KNOWN_ROLE || authorizationA == Constraint.Authorization.SPECIFIC_ROLE)
-                ? Constraint.Authorization.KNOWN_ROLE
-                : authorizationA;
-
-            // Specific roles only combine with other specific roles, otherwise one of the above cases apply
-            case SPECIFIC_ROLE ->
+            authorization = authorizationA;
+        }
+        else
+        {
+            switch (authorizationB)
             {
-                if (authorizationA == Constraint.Authorization.SPECIFIC_ROLE)
-                    roles = Stream.concat(constraintA.getRoles().stream(), constraintB.getRoles().stream()).collect(Collectors.toSet());
-                yield authorizationA;
-            }
+                // Forbidden takes precedence
+                case FORBIDDEN:
+                    authorization = Constraint.Authorization.FORBIDDEN;
+                    break;
 
-            case INHERIT -> authorizationA;
-        };
+                // A constraint with no authorization takes precedence over any roles constraints, but not FORBIDDEN
+                case ALLOWED:
+                    authorization = authorizationA == Constraint.Authorization.FORBIDDEN
+                        ? Constraint.Authorization.FORBIDDEN
+                        : Constraint.Authorization.ALLOWED;
+                    break;
+
+                // The "**" role, which is any role (known or otherwise), has precedence over everything but FORBIDDEN and NONE
+                case ANY_USER:
+                    authorization = (authorizationA == Constraint.Authorization.FORBIDDEN || authorizationA == Constraint.Authorization.ALLOWED)
+                        ? authorizationA
+                        : Constraint.Authorization.ANY_USER;
+                    break;
+
+                // The "*" role, which is any known role, only has precedence over SPECIFIC roles
+                case KNOWN_ROLE:
+                    authorization = (authorizationA == Constraint.Authorization.KNOWN_ROLE || authorizationA == Constraint.Authorization.SPECIFIC_ROLE)
+                        ? Constraint.Authorization.KNOWN_ROLE
+                        : authorizationA;
+                    break;
+
+                // Specific roles only combine with other specific roles, otherwise one of the above cases apply
+                case SPECIFIC_ROLE:
+                    if (authorizationA == Constraint.Authorization.SPECIFIC_ROLE)
+                        roles = Stream.concat(constraintA.getRoles().stream(), constraintB.getRoles().stream()).collect(Collectors.toSet());
+                    authorization = authorizationA;
+                    break;
+
+                case INHERIT:
+                    authorization = authorizationA;
+                    break;
+
+                default:
+                    throw new IllegalStateException();
+            }
+        }
 
         Transport transportA = constraintA.getTransport();
         Transport transportB = constraintB.getTransport();

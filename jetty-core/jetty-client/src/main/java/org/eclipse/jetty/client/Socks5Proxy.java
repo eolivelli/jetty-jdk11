@@ -211,9 +211,14 @@ public class Socks5Proxy extends Proxy
             {
                 switch (state)
                 {
-                    case HANDSHAKE -> receiveHandshake();
-                    case CONNECT -> receiveConnect();
-                    default -> throw new IllegalStateException();
+                    case HANDSHAKE:
+                        receiveHandshake();
+                        break;
+                    case CONNECT:
+                        receiveConnect();
+                        break;
+                    default:
+                        throw new IllegalStateException();
                 }
             }
             catch (Throwable x)
@@ -367,21 +372,31 @@ public class Socks5Proxy extends Proxy
             byte status = byteBuffer.get();
             switch (status)
             {
-                case 0 ->
+                case 0:
                 {
                     // Consume the buffer before upgrading to the tunnel.
                     byteBuffer.position(length);
                     tunnel();
+                    break;
                 }
-                case 1 -> throw new IOException("SOCKS5 general failure");
-                case 2 -> throw new IOException("SOCKS5 connection not allowed");
-                case 3 -> throw new IOException("SOCKS5 network unreachable");
-                case 4 -> throw new IOException("SOCKS5 host unreachable");
-                case 5 -> throw new IOException("SOCKS5 connection refused");
-                case 6 -> throw new IOException("SOCKS5 timeout expired");
-                case 7 -> throw new IOException("SOCKS5 unsupported command");
-                case 8 -> throw new IOException("SOCKS5 unsupported address");
-                default -> throw new IOException("SOCKS5 unknown status: " + status);
+                case 1:
+                    throw new IOException("SOCKS5 general failure");
+                case 2:
+                    throw new IOException("SOCKS5 connection not allowed");
+                case 3:
+                    throw new IOException("SOCKS5 network unreachable");
+                case 4:
+                    throw new IOException("SOCKS5 host unreachable");
+                case 5:
+                    throw new IOException("SOCKS5 connection refused");
+                case 6:
+                    throw new IOException("SOCKS5 timeout expired");
+                case 7:
+                    throw new IOException("SOCKS5 unsupported command");
+                case 8:
+                    throw new IOException("SOCKS5 unsupported address");
+                default:
+                    throw new IOException("SOCKS5 unknown status: " + status);
             }
         }
 

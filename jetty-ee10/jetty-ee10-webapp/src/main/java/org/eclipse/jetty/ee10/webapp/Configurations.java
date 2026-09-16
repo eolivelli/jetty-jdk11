@@ -27,6 +27,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.Loader;
@@ -214,7 +215,7 @@ public class Configurations extends AbstractList<Configuration> implements Dumpa
         {
             configurations = new Configurations(Configurations.getKnown().stream()
                 .filter(Configuration::isEnabledByDefault)
-                .toList());
+                .collect(Collectors.toList()));
         }
 
         if (LOG.isDebugEnabled())
@@ -245,7 +246,7 @@ public class Configurations extends AbstractList<Configuration> implements Dumpa
 
     public Configurations(String... configurationClassNames)
     {
-        this(Arrays.stream(configurationClassNames).map(Configurations::newConfiguration).toList());
+        this(Arrays.stream(configurationClassNames).map(Configurations::newConfiguration).collect(Collectors.toList()));
     }
 
     protected static Configuration newConfiguration(String classname)
@@ -330,14 +331,14 @@ public class Configurations extends AbstractList<Configuration> implements Dumpa
 
     public void remove(Configuration... configurations)
     {
-        List<String> names = Arrays.stream(configurations).map(c -> c.getClass().getName()).toList();
+        List<String> names = Arrays.stream(configurations).map(c -> c.getClass().getName()).collect(Collectors.toList());
         _configurations.removeIf(configuration -> names.contains(configuration.getClass().getName()));
     }
 
     @SafeVarargs
     public final void remove(Class<? extends Configuration>... configClass)
     {
-        List<String> names = Arrays.stream(configClass).map(Class::getName).toList();
+        List<String> names = Arrays.stream(configClass).map(Class::getName).collect(Collectors.toList());
         _configurations.removeIf(configuration -> names.contains(configuration.getClass().getName()));
     }
 

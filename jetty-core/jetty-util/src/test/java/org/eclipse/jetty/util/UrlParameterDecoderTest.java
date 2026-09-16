@@ -158,7 +158,7 @@ public class UrlParameterDecoderTest
         for (String key : expectedParams.keySet())
         {
             Fields.Field field = fields.get(key);
-            String message = "Fields[%s]".formatted(key);
+            String message = String.format("Fields[%s]", key);
             assertNotNull(field, message);
             assertEquals(expectedParams.get(key), field.getValues(), message);
         }
@@ -459,7 +459,7 @@ public class UrlParameterDecoderTest
         for (String key : expectedParams.keySet())
         {
             Fields.Field field = fields.get(key);
-            String message = "Fields[%s]".formatted(key);
+            String message = String.format("Fields[%s]", key);
             assertNotNull(field, message);
             assertEquals(expectedParams.get(key), field.getValue(), message);
         }
@@ -560,7 +560,7 @@ public class UrlParameterDecoderTest
         for (String key : expectedParams.keySet())
         {
             Fields.Field field = fields.get(key);
-            String message = "Fields[%s]".formatted(key);
+            String message = String.format("Fields[%s]", key);
             assertNotNull(field, message);
             assertEquals(expectedParams.get(key), field.getValue(), message);
         }
@@ -675,19 +675,17 @@ public class UrlParameterDecoderTest
 
     @ParameterizedTest
     @CsvSource(delimiter = '|', useHeadersInDisplayName = false,
-        textBlock = """
-            # query         | expectedName | expectedValue
-            a=bad_%e0%b     | a            | bad_�
-            b=bad_%e0%ba    | b            | bad_�
-            c=short%a       | c            | short%a
-            d=b%aam         | d            | b�m
-            e=%%TOK%%       | e            | %%TOK%%
-            f=%aardvark     | f            | �rdvark
-            g=b%ar          | g            | b%ar
-            h=end%          | h            | end%
-            # This shows how the '&' symbol does not get swallowed by a bad pct-encoding.
-            i=%&z=2         | i            | %
-            """)
+        textBlock = "# query         | expectedName | expectedValue\n" +
+            "a=bad_%e0%b     | a            | bad_�\n" +
+            "b=bad_%e0%ba    | b            | bad_�\n" +
+            "c=short%a       | c            | short%a\n" +
+            "d=b%aam         | d            | b�m\n" +
+            "e=%%TOK%%       | e            | %%TOK%%\n" +
+            "f=%aardvark     | f            | �rdvark\n" +
+            "g=b%ar          | g            | b%ar\n" +
+            "h=end%          | h            | end%\n" +
+            "# This shows how the '&' symbol does not get swallowed by a bad pct-encoding.\n" +
+            "i=%&z=2         | i            | %\n")
     public void testDecodeAllowBadSequence(String query, String expectedName, String expectedValue) throws IOException
     {
         Fields fields = new Fields();
@@ -753,7 +751,7 @@ public class UrlParameterDecoderTest
         assertThat("Field count", fields.getSize(), is(expected.size()));
         for (String expectedKey : expected.keySet())
         {
-            String message = "Field[%s]".formatted(expectedKey);
+            String message = String.format("Field[%s]", expectedKey);
             Fields.Field field = fields.get(expectedKey);
             assertNotNull(field, message);
             assertEquals(expected.get(expectedKey), field.getValue(), message);
@@ -778,7 +776,7 @@ public class UrlParameterDecoderTest
         assertThat("Field count", fields.getSize(), is(expected.size()));
         for (String expectedKey : expected.keySet())
         {
-            String message = "Field[%s]".formatted(expectedKey);
+            String message = String.format("Field[%s]", expectedKey);
             Fields.Field field = fields.get(expectedKey);
             assertNotNull(field, message);
             assertEquals(expected.get(expectedKey), field.getValue(), message);
@@ -804,7 +802,7 @@ public class UrlParameterDecoderTest
             assertThat("Field count", fields.getSize(), is(expected.size()));
             for (String expectedKey : expected.keySet())
             {
-                String message = "Field[%s]".formatted(expectedKey);
+                String message = String.format("Field[%s]", expectedKey);
                 Fields.Field field = fields.get(expectedKey);
                 assertNotNull(field, message);
                 assertEquals(expected.get(expectedKey), field.getValue(), message);

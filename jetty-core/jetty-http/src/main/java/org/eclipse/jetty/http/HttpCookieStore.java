@@ -17,6 +17,7 @@ import java.net.URI;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.Objects;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.util.NanoTime;
 import org.eclipse.jetty.util.StringUtil;
@@ -332,11 +334,11 @@ public interface HttpCookieStore
             lock.readLock().lock();
             try
             {
-                return cookies.values().stream()
+                return Collections.unmodifiableList(cookies.values().stream()
                     .flatMap(Collection::stream)
                     .filter(Predicate.not(StoredHttpCookie::isExpired))
                     .map(HttpCookie.class::cast)
-                    .toList();
+                    .collect(Collectors.toList()));
             }
             finally
             {
@@ -593,8 +595,9 @@ public interface HttpCookieStore
             {
                 if (this == obj)
                     return true;
-                if (!(obj instanceof StoredHttpCookie that))
+                if (!(obj instanceof StoredHttpCookie))
                     return false;
+                StoredHttpCookie that = (StoredHttpCookie)obj;
                 return getName().equals(that.getName()) &&
                        domain.equalsIgnoreCase(that.domain) &&
                        path.equals(that.path);

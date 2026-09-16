@@ -30,9 +30,7 @@ public class BarebonesAddUnknownTest extends AbstractUseCase
         setupStandardHomeDir();
 
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            """, UTF_8);
+            "--modules=main\n", UTF_8);
 
         // === Prepare Jetty Base using Main
         List<String> prepareArgs = List.of(

@@ -429,7 +429,7 @@ public interface HttpURI
                 if (hasFragment)
                     out.append('#').append(_fragment);
 
-                if (!out.isEmpty())
+                if (out.length() > 0)
                     _uri = out.toString();
                 else
                     _uri = "";
@@ -1480,16 +1480,20 @@ public interface HttpURI
                                 {
                                     mark = i + 1;
                                     _path = "";
-                                    state = switch (c)
+                                    switch (c)
                                     {
-                                        case '?' -> State.QUERY;
-                                        case '#' ->
+                                        case '?':
+                                            state = State.QUERY;
+                                            break;
+                                        case '#':
                                         {
                                             addViolation(Violation.FRAGMENT);
-                                            yield State.FRAGMENT;
+                                            state = State.FRAGMENT;
+                                            break;
                                         }
-                                        default -> throw new IllegalArgumentException("Bad authority");
-                                    };
+                                        default:
+                                            throw new IllegalArgumentException("Bad authority");
+                                    }
                                 }
                                 break;
                             case ';':
@@ -1586,7 +1590,7 @@ public interface HttpURI
                         {
                             switch (c)
                             {
-                                case '@' ->
+                                case '@':
                                 {
                                     if (_user != null)
                                         throw new IllegalArgumentException("Bad authority");
@@ -1596,39 +1600,48 @@ public interface HttpURI
                                     addViolation(Violation.USER_INFO);
                                     mark = i + 1;
                                     state = State.HOST_OR_USER;
+                                    break;
                                 }
-                                case '/' ->
+                                case '/':
                                 {
                                     // It was a port, so it must be an integer
                                     _port = TypeUtil.parseInt(uri, mark, i - mark, 10);
                                     pathMark = mark = i;
                                     segment = mark + 1;
                                     state = State.PATH;
+                                    break;
                                 }
-                                case '?', '#' ->
+                                case '?':
+                                case '#':
                                 {
                                     _port = TypeUtil.parseInt(uri, mark, i - mark, 10);
                                     mark = i + 1;
                                     _path = "";
-                                    state = switch (c)
+                                    switch (c)
                                     {
-                                        case '?' -> State.QUERY;
-                                        case '#' ->
+                                        case '?':
+                                            state = State.QUERY;
+                                            break;
+                                        case '#':
                                         {
                                             addViolation(Violation.FRAGMENT);
-                                            yield State.FRAGMENT;
+                                            state = State.FRAGMENT;
+                                            break;
                                         }
-                                        default -> throw new IllegalStateException();
-                                    };
+                                        default:
+                                            throw new IllegalStateException();
+                                    }
+                                    break;
                                 }
-                                case ';' ->
+                                case ';':
                                 {
                                     throw new IllegalArgumentException("Bad authority");
                                 }
-                                default ->
+                                default:
                                 {
                                     if (!isDigit(c) && !isUnreservedPctEncodedOrSubDelim(c))
                                         throw new IllegalArgumentException("Bad authority");
+                                    break;
                                 }
                             }
                         }

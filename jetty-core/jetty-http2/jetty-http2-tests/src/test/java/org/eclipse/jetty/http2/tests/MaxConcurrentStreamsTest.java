@@ -472,22 +472,25 @@ public class MaxConcurrentStreamsTest extends AbstractTest
                 MetaData.Request request = (MetaData.Request)frame.getMetaData();
                 switch (request.getHttpURI().getPath())
                 {
-                    case "/1" ->
+                    case "/1":
                     {
                         // Do not return to cause TCP congestion.
                         assertTrue(awaitLatch(request1Latch, 15, TimeUnit.SECONDS));
                         MetaData.Response response1 = new MetaData.Response(HttpStatus.OK_200, null, HttpVersion.HTTP_2, HttpFields.EMPTY);
                         stream.headers(new HeadersFrame(stream.getId(), response1, null, true), Callback.NOOP);
+                        break;
                     }
-                    case "/3" ->
+                    case "/3":
                     {
                         MetaData.Response response3 = new MetaData.Response(HttpStatus.OK_200, null, HttpVersion.HTTP_2, HttpFields.EMPTY);
                         stream.headers(new HeadersFrame(stream.getId(), response3, null, true), Callback.NOOP);
+                        break;
                     }
-                    default ->
+                    default:
                     {
                         MetaData.Response response = new MetaData.Response(HttpStatus.INTERNAL_SERVER_ERROR_500, null, HttpVersion.HTTP_2, HttpFields.EMPTY);
                         stream.headers(new HeadersFrame(stream.getId(), response, null, true), Callback.NOOP);
+                        break;
                     }
                 }
                 return null;
@@ -583,7 +586,7 @@ public class MaxConcurrentStreamsTest extends AbstractTest
                 MetaData.Request request = (MetaData.Request)frame.getMetaData();
                 switch (request.getHttpURI().getPath())
                 {
-                    case "/prime" ->
+                    case "/prime":
                     {
                         session1 = stream.getSession();
                         // Send another request from here to force the opening of the 2nd connection.
@@ -592,14 +595,16 @@ public class MaxConcurrentStreamsTest extends AbstractTest
                             MetaData.Response response = new MetaData.Response(result.getResponse().getStatus(), null, HttpVersion.HTTP_2, HttpFields.EMPTY);
                             stream.headers(new HeadersFrame(stream.getId(), response, null, true), Callback.NOOP);
                         });
+                        break;
                     }
-                    case "/prime2" ->
+                    case "/prime2":
                     {
                         session2 = stream.getSession();
                         MetaData.Response response = new MetaData.Response(HttpStatus.OK_200, null, HttpVersion.HTTP_2, HttpFields.EMPTY);
                         stream.headers(new HeadersFrame(stream.getId(), response, null, true), Callback.NOOP);
+                        break;
                     }
-                    case "/update_max_streams" ->
+                    case "/update_max_streams":
                     {
                         Session session = stream.getSession() == session1 ? session2 : session1;
                         Map<Integer, Integer> settings = new HashMap<>();
@@ -607,12 +612,14 @@ public class MaxConcurrentStreamsTest extends AbstractTest
                         session.settings(new SettingsFrame(settings, false), Callback.NOOP);
                         MetaData.Response response = new MetaData.Response(HttpStatus.OK_200, null, HttpVersion.HTTP_2, HttpFields.EMPTY);
                         stream.headers(new HeadersFrame(stream.getId(), response, null, true), Callback.NOOP);
+                        break;
                     }
-                    default ->
+                    default:
                     {
                         sleep(processing);
                         MetaData.Response response = new MetaData.Response(HttpStatus.OK_200, null, HttpVersion.HTTP_2, HttpFields.EMPTY);
                         stream.headers(new HeadersFrame(stream.getId(), response, null, true), Callback.NOOP);
+                        break;
                     }
                 }
                 return null;

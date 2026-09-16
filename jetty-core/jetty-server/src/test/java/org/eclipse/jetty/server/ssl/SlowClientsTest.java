@@ -118,12 +118,10 @@ public class SlowClientsTest
                         socket.setSoTimeout(contentLength / 1024);
                         OutputStream output = socket.getOutputStream();
                         String target = "/" + k;
-                        String rawRequest = """
-                            GET %s HTTP/1.1\r
-                            Host: localhost\r
-                            Connection: close\r
-                            \r
-                            """.formatted(target);
+                        String rawRequest = String.format("GET %s HTTP/1.1\r\n" +
+                            "Host: localhost\r\n" +
+                            "Connection: close\r\n" +
+                            "\r\n", target);
                         output.write(rawRequest.getBytes(StandardCharsets.UTF_8));
                         output.flush();
 

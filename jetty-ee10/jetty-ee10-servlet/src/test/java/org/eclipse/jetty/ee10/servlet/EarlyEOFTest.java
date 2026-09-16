@@ -93,12 +93,11 @@ public class EarlyEOFTest
 
         try (SocketChannel channel = SocketChannel.open(new InetSocketAddress("localhost", connector.getLocalPort())))
         {
-            String request = """
-                POST /ctx/path/early HTTP/1.1\r
-                Host: localhost\r
-                Content-Length: 10\r
-                
-                0""";
+            String request = "POST /ctx/path/early HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Content-Length: 10\r\n" +
+                "\n" +
+                "0";
             channel.write(UTF_8.encode(request));
             // Close output before sending the whole content.
             channel.shutdownOutput();

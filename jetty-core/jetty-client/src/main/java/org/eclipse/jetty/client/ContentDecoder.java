@@ -84,8 +84,9 @@ public interface ContentDecoder
         {
             if (this == obj)
                 return true;
-            if (!(obj instanceof Factory that))
+            if (!(obj instanceof Factory))
                 return false;
+            Factory that = (Factory)obj;
             return Objects.equals(encoding, that.encoding);
         }
 
@@ -140,7 +141,7 @@ public interface ContentDecoder
             StringBuilder header = new StringBuilder();
             factories.forEach((encoding, value) ->
             {
-                if (!header.isEmpty())
+                if (header.length() > 0)
                     header.append(", ");
                 header.append(encoding);
                 float weight = value.getWeight();

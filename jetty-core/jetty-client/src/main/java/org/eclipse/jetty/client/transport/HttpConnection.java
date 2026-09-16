@@ -160,8 +160,9 @@ public abstract class HttpConnection implements IConnection, Attachable
 
         boolean applyProxyAuthentication = false;
         ProxyConfiguration.Proxy proxy = destination.getProxy();
-        if (proxy instanceof HttpProxy httpProxy)
+        if (proxy instanceof HttpProxy)
         {
+            HttpProxy httpProxy = (HttpProxy)proxy;
             boolean tunnelled = httpProxy.requiresTunnel(destination.getOrigin());
             if (!tunnelled)
             {
@@ -249,7 +250,7 @@ public abstract class HttpConnection implements IConnection, Attachable
         {
             if (builder == null)
                 builder = new StringBuilder();
-            if (!builder.isEmpty())
+            if (builder.length() > 0)
                 builder.append("; ");
             builder.append(cookie.getName()).append("=").append(cookie.getValue());
         }

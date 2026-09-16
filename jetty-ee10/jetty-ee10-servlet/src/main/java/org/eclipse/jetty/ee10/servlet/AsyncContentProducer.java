@@ -329,8 +329,11 @@ class AsyncContentProducer implements ContentProducer
                 _firstByteNanoTime = NanoTime.now();
             if (LOG.isDebugEnabled())
                 LOG.debug("readChunk() updated _bytesArrived to {} and _firstByteTimeStamp to {} {}", _bytesArrived, _firstByteNanoTime, this);
-            if (chunk instanceof Trailers trailers)
+            if (chunk instanceof Trailers)
+            {
+                Trailers trailers = (Trailers)chunk;
                 _servletChannel.onTrailers(trailers.getTrailers());
+            }
         }
         if (LOG.isDebugEnabled())
             LOG.debug("readChunk() produced {} {}", chunk, this);

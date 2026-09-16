@@ -61,8 +61,11 @@ public abstract class AbstractConnection implements Connection
     @Override
     public void removeEventListener(EventListener eventListener)
     {
-        if (eventListener instanceof Listener listener)
+        if (eventListener instanceof Listener)
+        {
+            Listener listener = (Listener)eventListener;
             _listeners.remove(listener);
+        }
     }
 
     public int getInputBufferSize()
@@ -139,8 +142,11 @@ public abstract class AbstractConnection implements Connection
         if (_endPoint.isOpen())
         {
             boolean close = true;
-            if (cause instanceof TimeoutException timeout)
+            if (cause instanceof TimeoutException)
+            {
+                TimeoutException timeout = (TimeoutException)cause;
                 close = onReadTimeout(timeout);
+            }
             if (close)
             {
                 if (_endPoint.isOutputShutdown())

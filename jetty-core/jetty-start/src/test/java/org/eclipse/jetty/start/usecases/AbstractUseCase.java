@@ -102,52 +102,44 @@ public abstract class AbstractUseCase
         FS.ensureDirExists(modules);
 
         Files.writeString(modules.resolve("base.mod"),
-            """
-                [optional]
-                optional
-                [lib]
-                lib/base.jar
-                [xml]
-                etc/base.xml
-                """, UTF_8);
+            "[optional]\n" +
+            "optional\n" +
+            "[lib]\n" +
+            "lib/base.jar\n" +
+            "[xml]\n" +
+            "etc/base.xml\n", UTF_8);
         Files.writeString(modules.resolve("extra.mod"),
-            """
-                [depend]
-                main
-                [lib]
-                lib/extra/*.jar
-                [xml]
-                etc/extra.xml
-                [ini]
-                extra.prop=value0
-                """, UTF_8);
+            "[depend]\n" +
+            "main\n" +
+            "[lib]\n" +
+            "lib/extra/*.jar\n" +
+            "[xml]\n" +
+            "etc/extra.xml\n" +
+            "[ini]\n" +
+            "extra.prop=value0\n", UTF_8);
         Files.writeString(modules.resolve("main.mod"),
-            """
-                [depend]
-                base
-                [optional]
-                optional
-                [lib]
-                lib/main.jar
-                lib/other.jar
-                [xml]
-                etc/main.xml
-                [files]
-                maindir/
-                [ini]
-                main.prop=value0
-                [ini-template]
-                # main.prop=valueT
-                """, UTF_8);
+            "[depend]\n" +
+            "base\n" +
+            "[optional]\n" +
+            "optional\n" +
+            "[lib]\n" +
+            "lib/main.jar\n" +
+            "lib/other.jar\n" +
+            "[xml]\n" +
+            "etc/main.xml\n" +
+            "[files]\n" +
+            "maindir/\n" +
+            "[ini]\n" +
+            "main.prop=value0\n" +
+            "[ini-template]\n" +
+            "# main.prop=valueT\n", UTF_8);
         Files.writeString(modules.resolve("optional.mod"),
-            """
-                [lib]
-                lib/optional.jar
-                [xml]
-                etc/optional.xml
-                [ini]
-                optional.prop=value0
-                """, UTF_8);
+            "[lib]\n" +
+            "lib/optional.jar\n" +
+            "[xml]\n" +
+            "etc/optional.xml\n" +
+            "[ini]\n" +
+            "optional.prop=value0\n", UTF_8);
     }
 
     public static class ExecResults

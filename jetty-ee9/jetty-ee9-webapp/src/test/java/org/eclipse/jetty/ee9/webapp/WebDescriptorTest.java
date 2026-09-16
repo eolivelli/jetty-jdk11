@@ -67,15 +67,13 @@ public class WebDescriptorTest
             version = "4.0";
         }
 
-        return """
-            <?xml version="1.0" encoding="UTF-8"?>
-            <web-app xmlns="%s"
-                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                     metadata-complete="false"
-                     xsi:schemaLocation="%s"
-                     version="%s">
-              <display-name>Empty WebApp Descriptor</display-name>
-            </web-app>
-            """.formatted(namespace, schemaLocation, version);
+        return String.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<web-app xmlns=\"%s\"\n" +
+            "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+            "         metadata-complete=\"false\"\n" +
+            "         xsi:schemaLocation=\"%s\"\n" +
+            "         version=\"%s\">\n" +
+            "  <display-name>Empty WebApp Descriptor</display-name>\n" +
+            "</web-app>\n", namespace, schemaLocation, version);
     }
 }

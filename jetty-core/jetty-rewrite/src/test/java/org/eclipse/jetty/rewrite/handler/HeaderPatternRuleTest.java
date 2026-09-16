@@ -48,11 +48,9 @@ public class HeaderPatternRuleTest extends AbstractRuleTest
         HeaderPatternRule rule = new HeaderPatternRule("/", name, value);
         start(rule);
 
-        String request = """
-            GET / HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(200, response.getStatus());
@@ -70,11 +68,9 @@ public class HeaderPatternRuleTest extends AbstractRuleTest
             HeaderPatternRule rule = new HeaderPatternRule("/", name, value);
             start(rule);
 
-            String request = """
-                GET / HTTP/1.1
-                Host: localhost
-                            
-                """;
+            String request = "GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "\n";
 
             HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
             assertEquals(200, response.getStatus());

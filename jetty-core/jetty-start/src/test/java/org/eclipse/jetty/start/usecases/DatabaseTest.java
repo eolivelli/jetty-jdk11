@@ -39,24 +39,18 @@ public class DatabaseTest extends AbstractUseCase
         FS.ensureDirExists(baseDir.resolve("lib"));
         FS.ensureDirExists(baseDir.resolve("lib/db"));
         Files.writeString(baseDir.resolve("etc/db.xml"),
-            """
-            <!-- build up org.eclipse.jetty.plus.jndi.Resource here  -->
-            """, UTF_8);
+            "<!-- build up org.eclipse.jetty.plus.jndi.Resource here  -->\n", UTF_8);
         FS.touch(baseDir.resolve("lib/db/bonecp.jar"));
         FS.touch(baseDir.resolve("lib/db/mysql-driver.jar"));
         Files.writeString(baseDir.resolve("modules/db.mod"),
-            """
-            [lib]
-            lib/db/*.jar
-            [xml]
-            etc/db.xml
-            """, UTF_8);
+            "[lib]\n" +
+            "lib/db/*.jar\n" +
+            "[xml]\n" +
+            "etc/db.xml\n", UTF_8);
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main,db
-            mysql.user=frank
-            mysql.pass=secret
-            """, UTF_8);
+            "--modules=main,db\n" +
+            "mysql.user=frank\n" +
+            "mysql.pass=secret\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = Collections.emptyList();

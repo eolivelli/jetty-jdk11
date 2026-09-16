@@ -709,11 +709,16 @@ public class HttpOutput extends ServletOutputStream
     {
         try (AutoLock ignored = _channelState.lock())
         {
-            return switch (_apiState)
+            switch (_apiState)
             {
-                case ASYNC, READY, PENDING, UNREADY -> true;
-                default -> false;
-            };
+                case ASYNC:
+                case READY:
+                case PENDING:
+                case UNREADY:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 
@@ -1376,21 +1381,27 @@ public class HttpOutput extends ServletOutputStream
     {
         try (AutoLock ignored = _channelState.lock())
         {
-            return switch (_apiState)
+            switch (_apiState)
             {
-                case BLOCKING, READY -> true;
-                case ASYNC ->
+                case BLOCKING:
+                case READY:
+                    return true;
+                case ASYNC:
                 {
                     _apiState = ApiState.READY;
-                    yield true;
+                    return true;
                 }
-                case PENDING ->
+                case PENDING:
                 {
                     _apiState = ApiState.UNREADY;
-                    yield false;
+                    return false;
                 }
-                case BLOCKED, UNREADY -> false;
-            };
+                case BLOCKED:
+                case UNREADY:
+                    return false;
+                default:
+                    throw new IllegalStateException();
+            }
         }
     }
 

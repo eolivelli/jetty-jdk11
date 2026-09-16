@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import jakarta.servlet.MultipartConfigElement;
@@ -160,18 +161,16 @@ public class RequestTest
         });
 
         String rawResponse = _connector.getResponse(
-            """
-                GET / HTTP/1.1
-                Host: local
-                Connection: close
-                Accept: */*
-                RaNdOm: value
-                Accept-Charset: UTF-8
-                accept-charset: UTF-16
-                Foo-Bar: one
-                foo-bar: two
-                
-                """);
+            "GET / HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "Accept: */*\n" +
+            "RaNdOm: value\n" +
+            "Accept-Charset: UTF-8\n" +
+            "accept-charset: UTF-16\n" +
+            "Foo-Bar: one\n" +
+            "foo-bar: two\n" +
+            "\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
     }
@@ -191,13 +190,11 @@ public class RequestTest
         });
 
         String rawResponse = _connector.getResponse(
-            """
-                GET / HTTP/1.1
-                Host: local
-                Connection: close
-                X-Forwarded-Proto: https
-                
-                """);
+            "GET / HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "X-Forwarded-Proto: https\n" +
+            "\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
         assertThat("request.isSecure", resultIsSecure.get(), is(true));
@@ -220,12 +217,10 @@ public class RequestTest
         });
 
         String rawResponse = _connector.getResponse(
-            """
-                CONNECT myhost:9999 HTTP/1.1\r
-                Host: myhost:9999\r
-                Connection: close\r
-                \r
-                """);
+            "CONNECT myhost:9999 HTTP/1.1\r\n" +
+            "Host: myhost:9999\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
         assertThat("request.getRequestURL", resultRequestURL.get(), is("http://myhost:9999/"));
@@ -244,12 +239,10 @@ public class RequestTest
         });
 
         String rawResponse = _connector.getResponse(
-            """
-                CONNECT myhost:9999 HTTP/1.1\r
-                Host: otherhost:8888\r
-                Connection: close\r
-                \r
-                """);
+            "CONNECT myhost:9999 HTTP/1.1\r\n" +
+            "Host: otherhost:8888\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST_400));
     }
@@ -284,17 +277,15 @@ public class RequestTest
                     pathInfo = iae.toString();
                 }
 
-                resp.getOutputStream().println("requestURI=%s servletPath=%s pathInfo=%s".formatted(requestURI, servletPath, pathInfo));
+                resp.getOutputStream().println(String.format("requestURI=%s servletPath=%s pathInfo=%s", requestURI, servletPath, pathInfo));
             }
         });
 
         _connector.getConnectionFactory(HttpConnectionFactory.class).getHttpConfiguration().setUriCompliance(UriCompliance.RFC3986);
-        String rawRequest = """
-            GET /test/foo%2fbar HTTP/1.1\r
-            Host: localhost\r
-            Connection: close\r
-            \r
-            """;
+        String rawRequest = "GET /test/foo%2fbar HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         String rawResponse = _connector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST_400));
@@ -338,12 +329,10 @@ public class RequestTest
         });
 
         String rawResponse = _connector.getResponse(
-            """
-                GET /test/path%20info/foo%2cbar HTTP/1.1\r
-                Host: localhost\r
-                Connection: close\r
-                \r
-                """);
+            "GET /test/path%20info/foo%2cbar HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
         assertThat("request.getRequestURI", resultRequestURI.get(), is("/test/path%20info/foo%2cbar"));
@@ -368,21 +357,19 @@ public class RequestTest
 
         try (LocalConnector.LocalEndPoint connection = _connector.connect())
         {
-            connection.addInput("""
-                GET /one HTTP/1.1\r
-                Host: myhost\r
-                Cookie: name1=value1; name2=value2\r
-                \r
-                GET /two HTTP/1.1\r
-                Host: myhost\r
-                Cookie: name1=value1; name2=value2\r
-                \r
-                GET /three HTTP/1.1\r
-                Host: myhost\r
-                Cookie: name1=value1; name3=value3\r
-                Connection: close\r
-                \r
-                """);
+            connection.addInput("GET /one HTTP/1.1\r\n" +
+                "Host: myhost\r\n" +
+                "Cookie: name1=value1; name2=value2\r\n" +
+                "\r\n" +
+                "GET /two HTTP/1.1\r\n" +
+                "Host: myhost\r\n" +
+                "Cookie: name1=value1; name2=value2\r\n" +
+                "\r\n" +
+                "GET /three HTTP/1.1\r\n" +
+                "Host: myhost\r\n" +
+                "Cookie: name1=value1; name3=value3\r\n" +
+                "Connection: close\r\n" +
+                "\r\n");
 
             assertThat(connection.getResponse(), containsString(" 200 OK"));
             assertThat(connection.getResponse(), containsString(" 200 OK"));
@@ -390,7 +377,7 @@ public class RequestTest
         }
 
         assertThat(cookieHistory.size(), is(6));
-        assertThat(cookieHistory.stream().map(c -> c.getName() + "=" + c.getValue()).toList(), contains(
+        assertThat(cookieHistory.stream().map(c -> c.getName() + "=" + c.getValue()).collect(Collectors.toList()), contains(
             "name1=value1",
             "name2=value2",
             "name1=value1",
@@ -488,12 +475,10 @@ public class RequestTest
         });
 
         String rawResponse = _connector.getResponse(
-            """
-                GET /test HTTP/1.1\r
-                Host: host\r
-                Connection: close\r
-                \r
-                """);
+            "GET /test HTTP/1.1\r\n" +
+            "Host: host\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
         assertThat(response.getContent(), containsString("OK"));
@@ -516,12 +501,10 @@ public class RequestTest
         });
 
         String rawResponse = _connector.getResponse(
-            """
-                GET /test HTTP/1.1\r
-                Host: host\r
-                Connection: close\r
-                \r
-                """);
+            "GET /test HTTP/1.1\r\n" +
+            "Host: host\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
     }
@@ -540,15 +523,13 @@ public class RequestTest
         });
 
         String rawResponse = _connector.getResponse(
-            """
-                POST /test HTTP/1.1\r
-                Host: host\r
-                Content-Type:text/plain; charset=Unknown\r
-                Content-Length: 10\r
-                Connection: close\r
-                \r
-                1234567890\r
-                """);
+            "POST /test HTTP/1.1\r\n" +
+            "Host: host\r\n" +
+            "Content-Type:text/plain; charset=Unknown\r\n" +
+            "Content-Length: 10\r\n" +
+            "Connection: close\r\n" +
+            "\r\n" +
+            "1234567890\r\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
     }
@@ -598,12 +579,10 @@ public class RequestTest
 
         URI serverURI = _server.getURI();
 
-        String rawRequest = """
-            GET /foo HTTP/1.1
-            Host: %s
-            Connection: close
-            
-            """.formatted(hostHeader);
+        String rawRequest = String.format("GET /foo HTTP/1.1\n" +
+            "Host: %s\n" +
+            "Connection: close\n" +
+            "\n", hostHeader);
 
         try (Socket client = new Socket(hostHeader, serverURI.getPort()))
         {
@@ -626,14 +605,12 @@ public class RequestTest
 
     @ParameterizedTest
     @CsvSource(delimiter = '|', useHeadersInDisplayName = false,
-        textBlock = """
-        # query         | expectedName | expectedValue
-        a=bad_%e0%b     | a            | bad_�
-        a=bad_%e0%b&b=2 | a            | bad_�
-        a=bad_%e0%ba    | a            | bad_�
-        b=short%a       | b            | short%a
-        c=%%TOK%%       | c            | %%TOK%%
-        """)
+        textBlock = "# query         | expectedName | expectedValue\n" +
+            "a=bad_%e0%b     | a            | bad_�\n" +
+            "a=bad_%e0%b&b=2 | a            | bad_�\n" +
+            "a=bad_%e0%ba    | a            | bad_�\n" +
+            "b=short%a       | b            | short%a\n" +
+            "c=%%TOK%%       | c            | %%TOK%%\n")
     public void testBadUtf8Query(String query, String expectedName, String expectedValue) throws Exception
     {
         HttpServlet servlet = new HttpServlet()
@@ -655,12 +632,10 @@ public class RequestTest
 
         //Send a request with query string with illegal hex code to cause
         //an exception parsing the params
-        String request = """
-            GET /?@QUERY@ HTTP/1.1\r
-            Host: whatever\r
-            Connection: close
-            
-            """.replaceAll("@QUERY@", query);
+        String request = ("GET /?@QUERY@ HTTP/1.1\r\n" +
+            "Host: whatever\r\n" +
+            "Connection: close\n" +
+            "\n").replaceAll("@QUERY@", query);
 
         String rawResponse = _connector.getResponse(request);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -690,26 +665,22 @@ public class RequestTest
         });
 
         String rawResponse = _connector.getResponse(
-            """
-                POST /test/parameters?a=1&a=2&b=one&c= HTTP/1.1\r
-                Host: localhost\r
-                Connection: close\r
-                Content-Type: application/x-www-form-urlencoded\r
-                Content-Length: 23\r
-                \r
-                a=3&b=two&b=three&d=xyz\r
-                """);
+            "POST /test/parameters?a=1&a=2&b=one&c= HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Connection: close\r\n" +
+            "Content-Type: application/x-www-form-urlencoded\r\n" +
+            "Content-Length: 23\r\n" +
+            "\r\n" +
+            "a=3&b=two&b=three&d=xyz\r\n");
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
         assertThat(parameterMap.get(), is("{a=[1, 2, 3],b=[one, two, three],c=[],d=[xyz]}"));
-        assertThat(response.getContent().replaceAll("\r\n", "\n"), is("""
-            1
-            2
-            3
-            [one, two, three]
-            []
-            [xyz]
-            """));
+        assertThat(response.getContent().replaceAll("\r\n", "\n"), is("1\n" +
+            "2\n" +
+            "3\n" +
+            "[one, two, three]\n" +
+            "[]\n" +
+            "[xyz]\n"));
     }
 
     static Stream<Arguments> suspiciousCharactersLegacy()

@@ -369,12 +369,15 @@ public class ContentSourceTransformerTest
             protected Content.Chunk transform(Content.Chunk rawChunk)
             {
                 String decoded = UTF_8.decode(rawChunk.getByteBuffer()).toString();
-                return switch (decoded)
+                switch (decoded)
                 {
-                    case "B" -> Content.Chunk.from(originalFailure1, false);
-                    case "D" -> Content.Chunk.from(originalFailure2, false);
-                    default -> Content.Chunk.from(UTF_8.encode(decoded), rawChunk.isLast());
-                };
+                    case "B":
+                        return Content.Chunk.from(originalFailure1, false);
+                    case "D":
+                        return Content.Chunk.from(originalFailure2, false);
+                    default:
+                        return Content.Chunk.from(UTF_8.encode(decoded), rawChunk.isLast());
+                }
             }
         };
 

@@ -433,7 +433,7 @@ public class HttpInputIntegrationTest
                                     int i = read.getAndIncrement();
                                     if (b != expected.charAt(i))
                                     {
-                                        onError(new AssertionError("'%c'!='%c' at %d".formatted(expected.charAt(i), (char)b, i)));
+                                        onError(new AssertionError(String.format("'%c'!='%c' at %d", expected.charAt(i), (char)b, i)));
                                     }
                                 }
                                 catch (IOException e)

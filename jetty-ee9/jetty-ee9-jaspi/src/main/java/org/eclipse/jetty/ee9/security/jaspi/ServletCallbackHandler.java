@@ -60,8 +60,9 @@ public class ServletCallbackHandler implements CallbackHandler
             {
                 _groupPrincipals.set((GroupPrincipalCallback)callback);
             }
-            else if (callback instanceof PasswordValidationCallback passwordValidationCallback)
+            else if (callback instanceof PasswordValidationCallback)
             {
+                PasswordValidationCallback passwordValidationCallback = (PasswordValidationCallback)callback;
                 @SuppressWarnings("unused")
                 Subject subject = passwordValidationCallback.getSubject();
 
@@ -74,8 +75,9 @@ public class ServletCallbackHandler implements CallbackHandler
                     passwordValidationCallback.getSubject().getPrivateCredentials().add(user);
                 }
             }
-            else if (callback instanceof CredentialValidationCallback credentialValidationCallback)
+            else if (callback instanceof CredentialValidationCallback)
             {
+                CredentialValidationCallback credentialValidationCallback = (CredentialValidationCallback)callback;
                 Subject subject = credentialValidationCallback.getSubject();
                 LoginCallback loginCallback = new LoginCallbackImpl(subject,
                     credentialValidationCallback.getUsername(),

@@ -31,19 +31,17 @@ public class UrlEncodedUtf8Test
 {
     @ParameterizedTest
     @CsvSource(delimiter = '|', useHeadersInDisplayName = false,
-        textBlock = """
-        # query         | expectedName | expectedValue
-        a=bad_%e0%b     | a            | bad_�
-        b=bad_%e0%ba    | b            | bad_�
-        c=short%a       | c            | short%a
-        d=b%aam         | d            | b�m
-        e=%%TOK%%       | e            | %%TOK%%
-        f=%aardvark     | f            | �rdvark
-        g=b%ar          | g            | b%ar
-        h=end%          | h            | end%
-        # This shows how the '&' symbol does not get swallowed by a bad pct-encoding.
-        i=%&z=2         | i            | %
-        """)
+        textBlock = "# query         | expectedName | expectedValue\n" +
+            "a=bad_%e0%b     | a            | bad_�\n" +
+            "b=bad_%e0%ba    | b            | bad_�\n" +
+            "c=short%a       | c            | short%a\n" +
+            "d=b%aam         | d            | b�m\n" +
+            "e=%%TOK%%       | e            | %%TOK%%\n" +
+            "f=%aardvark     | f            | �rdvark\n" +
+            "g=b%ar          | g            | b%ar\n" +
+            "h=end%          | h            | end%\n" +
+            "# This shows how the '&' symbol does not get swallowed by a bad pct-encoding.\n" +
+            "i=%&z=2         | i            | %\n")
     public void testDecodeAllowBadSequence(String query, String expectedName, String expectedValue)
     {
         Fields fields = new Fields();
@@ -56,14 +54,12 @@ public class UrlEncodedUtf8Test
 
     @ParameterizedTest
     @CsvSource(delimiter = '|', useHeadersInDisplayName = false,
-        textBlock = """
-            # query         | expectedName | expectedValue
-            a=good          | a            | good
-            b=go%2fod       | b            | go/od
-            c=quot%22       | c            | quot"
-            d=fo o          | d            | fo o
-            e=%25TOK%25     | e            | %TOK%
-            """)
+        textBlock = "# query         | expectedName | expectedValue\n" +
+            "a=good          | a            | good\n" +
+            "b=go%2fod       | b            | go/od\n" +
+            "c=quot%22       | c            | quot\"\n" +
+            "d=fo o          | d            | fo o\n" +
+            "e=%25TOK%25     | e            | %TOK%\n")
     public void testDecodeValid(String query, String expectedName, String expectedValue)
     {
         Fields fields = new Fields();

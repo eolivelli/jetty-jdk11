@@ -55,26 +55,24 @@ public class RedispatchTests extends AbstractRedispatchTest
         InitializedJettyBase jettyBase = new InitializedJettyBase(testInfo);
 
         // Now add the filter to the webapp xml init
-        String xml = """
-            <?xml version="1.0"?>
-            <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure_10_0.dtd">
-            <Configure class="org.eclipse.jetty.ee8.webapp.WebAppContext">
-              <Set name="contextPath">/ccd-ee8</Set>
-              <Set name="war"><Property name="jetty.webapps" default="." />/ccd-ee8</Set>
-              <Set name="crossContextDispatchSupported">true</Set>
-              <Call name="addFilter">
-                <Arg type="String">org.eclipse.jetty.tests.ccd.ee8.InternalRequestURIFilter</Arg>
-                <Arg type="String">/*</Arg>
-                <Arg>
-                  <Call class="java.util.EnumSet" name="of">
-                    <Arg><Get class="javax.servlet.DispatcherType" name="REQUEST"/></Arg>
-                    <Arg><Get class="javax.servlet.DispatcherType" name="FORWARD"/></Arg>
-                    <Arg><Get class="javax.servlet.DispatcherType" name="INCLUDE"/></Arg>
-                  </Call>
-                </Arg>
-              </Call>
-            </Configure>
-            """;
+        String xml = "<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure_10_0.dtd\">\n" +
+            "<Configure class=\"org.eclipse.jetty.ee8.webapp.WebAppContext\">\n" +
+            "  <Set name=\"contextPath\">/ccd-ee8</Set>\n" +
+            "  <Set name=\"war\"><Property name=\"jetty.webapps\" default=\".\" />/ccd-ee8</Set>\n" +
+            "  <Set name=\"crossContextDispatchSupported\">true</Set>\n" +
+            "  <Call name=\"addFilter\">\n" +
+            "    <Arg type=\"String\">org.eclipse.jetty.tests.ccd.ee8.InternalRequestURIFilter</Arg>\n" +
+            "    <Arg type=\"String\">/*</Arg>\n" +
+            "    <Arg>\n" +
+            "      <Call class=\"java.util.EnumSet\" name=\"of\">\n" +
+            "        <Arg><Get class=\"javax.servlet.DispatcherType\" name=\"REQUEST\"/></Arg>\n" +
+            "        <Arg><Get class=\"javax.servlet.DispatcherType\" name=\"FORWARD\"/></Arg>\n" +
+            "        <Arg><Get class=\"javax.servlet.DispatcherType\" name=\"INCLUDE\"/></Arg>\n" +
+            "      </Call>\n" +
+            "    </Arg>\n" +
+            "  </Call>\n" +
+            "</Configure>\n";
         // Note: the InternalRequestURIFilter messes with the requestURI
         Files.writeString(jettyBase.jettyBase.resolve("webapps/ccd-ee8.xml"), xml, StandardCharsets.UTF_8);
 

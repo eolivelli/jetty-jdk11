@@ -316,7 +316,7 @@ public class Request implements HttpServletRequest
         {
             for (Cookie cookie : cookies)
             {
-                if (!cookieBuilder.isEmpty())
+                if (cookieBuilder.length() > 0)
                     cookieBuilder.append("; ");
                 cookieBuilder.append(cookie.getName()).append("=").append(cookie.getValue());
             }
@@ -328,18 +328,21 @@ public class Request implements HttpServletRequest
             if (header == HttpHeader.SET_COOKIE || header == HttpHeader.SET_COOKIE2)
             {
                 HttpCookie httpCookie;
-                if (field instanceof HttpCookieUtils.SetCookieHttpField set)
+                if (field instanceof HttpCookieUtils.SetCookieHttpField)
+                {
+                    HttpCookieUtils.SetCookieHttpField set = (HttpCookieUtils.SetCookieHttpField)field;
                     httpCookie = set.getHttpCookie();
+                }
                 else
                     httpCookie = SET_COOKIE_PARSER.parse(field.getValue());
                 if (httpCookie == null || httpCookie.isExpired())
                     continue;
-                if (!cookieBuilder.isEmpty())
+                if (cookieBuilder.length() > 0)
                     cookieBuilder.append("; ");
                 cookieBuilder.append(httpCookie.getName()).append("=").append(httpCookie.getValue());
             }
         }
-        if (!cookieBuilder.isEmpty())
+        if (cookieBuilder.length() > 0)
             fields.put(HttpHeader.COOKIE, cookieBuilder.toString());
 
         String query = getQueryString();
@@ -958,16 +961,16 @@ public class Request implements HttpServletRequest
         List<String> acceptable = fields.getQualityCSV(HttpHeader.ACCEPT_LANGUAGE)
             .stream()
             .filter(StringUtil::isNotBlank)
-            .toList();
+            .collect(Collectors.toList());
 
         // handle no locale
         if (acceptable.isEmpty())
             return Locale.getDefault();
 
         // return sorted list of locales, with known locales in quality order before unknown locales in quality order
-        List<Locale> locales = acceptable.stream().map(Locale::forLanguageTag).toList();
+        List<Locale> locales = acceptable.stream().map(Locale::forLanguageTag).collect(Collectors.toList());
         // Filter again, only allowing known locales
-        List<Locale> known = locales.stream().filter(MimeTypes::isKnownLocale).toList();
+        List<Locale> known = locales.stream().filter(MimeTypes::isKnownLocale).collect(Collectors.toList());
         if (known.isEmpty())
             return Locale.getDefault();
         return known.get(0);
@@ -1228,7 +1231,8 @@ public class Request implements HttpServletRequest
      */
     public InetSocketAddress getRemoteInetSocketAddress()
     {
-        return _channel.getCoreRequest().getConnectionMetaData().getRemoteSocketAddress() instanceof InetSocketAddress inetSocketAddr ? inetSocketAddr : null;
+        SocketAddress remoteSocketAddress = _channel.getCoreRequest().getConnectionMetaData().getRemoteSocketAddress();
+        return remoteSocketAddress instanceof InetSocketAddress ? (InetSocketAddress)remoteSocketAddress : null;
     }
 
     @Override
@@ -1241,8 +1245,11 @@ public class Request implements HttpServletRequest
     public String getRemoteHost()
     {
         SocketAddress remote = _channel.getCoreRequest().getConnectionMetaData().getRemoteSocketAddress();
-        if (remote instanceof InetSocketAddress inetSocketAddress)
+        if (remote instanceof InetSocketAddress)
+        {
+            InetSocketAddress inetSocketAddress = (InetSocketAddress)remote;
             return inetSocketAddress.getHostString();
+        }
         return remote.toString();
     }
 
@@ -1765,8 +1772,12 @@ public class Request implements HttpServletRequest
         // TODO are these still needed?
         switch (name)
         {
-            case "org.eclipse.jetty.server.Request.queryEncoding" -> setQueryEncoding(value == null ? null : value.toString());
-            case "org.eclipse.jetty.server.sendContent" -> LOG.warn("Deprecated: org.eclipse.jetty.server.sendContent");
+            case "org.eclipse.jetty.server.Request.queryEncoding":
+                setQueryEncoding(value == null ? null : value.toString());
+                break;
+            case "org.eclipse.jetty.server.sendContent":
+                LOG.warn("Deprecated: org.eclipse.jetty.server.sendContent");
+                break;
         }
 
         Object oldValue = _attributes.setAttribute(name, value);
@@ -2058,8 +2069,9 @@ public class Request implements HttpServletRequest
                 // the request prior or after dispatch may have parsed the multipart
                 Object multipart = _coreRequest.getAttribute(MultiPart.Parser.class.getName());
                 //TODO support cross environment multipart
-                if (multipart instanceof MultiPart.Parser multiPartParser)
+                if (multipart instanceof MultiPart.Parser)
                 {
+                    MultiPart.Parser multiPartParser = (MultiPart.Parser)multipart;
                     _multiParts = multiPartParser;
                     return _multiParts.getParts();
                 }
@@ -2179,8 +2191,10 @@ public class Request implements HttpServletRequest
         List<ComplianceViolation.Event> nonComplianceWarnings = _multiParts.getNonComplianceWarnings();
         for (ComplianceViolation.Event nc : nonComplianceWarnings)
         {
-            if (nc.mode() instanceof MultiPartCompliance multiPartCompliance)
+            ComplianceViolation.Mode mode = nc.mode();
+            if (mode instanceof MultiPartCompliance)
             {
+                MultiPartCompliance multiPartCompliance = (MultiPartCompliance)mode;
                 MultiPartCompliance.Violation violation = (MultiPartCompliance.Violation)nc.violation();
                 if (!ComplianceUtils.allows(multiPartCompliance, violation, complianceViolationListener))
                 {

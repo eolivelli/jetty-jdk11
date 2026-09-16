@@ -336,8 +336,9 @@ public abstract class SelectorManager extends ContainerLifeCycle implements Dump
     protected void endPointClosed(EndPoint endpoint)
     {
         Object transport = endpoint.getTransport();
-        if (transport instanceof SelectableChannel selectableChannel)
+        if (transport instanceof SelectableChannel)
         {
+            SelectableChannel selectableChannel = (SelectableChannel)transport;
             for (AcceptListener l : _acceptListeners)
             {
                 try

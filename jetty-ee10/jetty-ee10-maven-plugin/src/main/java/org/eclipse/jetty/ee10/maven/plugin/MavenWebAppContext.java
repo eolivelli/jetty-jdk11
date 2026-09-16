@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.jetty.ee10.plus.webapp.EnvConfiguration;
@@ -233,7 +234,7 @@ public class MavenWebAppContext extends WebAppContext
             // We have to assume that mounting can happen.
             List<Resource> resources = Stream.of(resourceBases)
                 .map(s -> ResourceFactory.of(this).newResource(s))
-                .toList();
+                .collect(Collectors.toList());
 
             setBaseResource(ResourceFactory.combine(resources));
         }
@@ -322,7 +323,7 @@ public class MavenWebAppContext extends WebAppContext
             // inject configurations with config from maven plugin
             for (Configuration c : configurations)
             {
-                if (c instanceof EnvConfiguration envConfiguration)
+                if (c instanceof EnvConfiguration)
                     setAttribute(EnvConfiguration.JETTY_ENV_XML, this.getResourceFactory().newResource(getJettyEnvXml()));
             }
         }

@@ -182,8 +182,10 @@ public class HTTP2ServerSession extends HTTP2Session implements ServerParser.Lis
 
     private void notifyStreamFailure(Stream stream, Throwable failure, Callback callback)
     {
-        if (listener instanceof Listener l)
+        ServerSessionListener sessionListener = listener;
+        if (sessionListener instanceof Listener)
         {
+            Listener l = (Listener)sessionListener;
             try
             {
                 l.onStreamFailure(stream, failure, callback);
@@ -204,12 +206,19 @@ public class HTTP2ServerSession extends HTTP2Session implements ServerParser.Lis
     {
         switch (frame.getType())
         {
-            case PREFACE -> onPreface();
-            case SETTINGS ->
+            case PREFACE:
+                onPreface();
+                break;
+            case SETTINGS:
                 // SPEC: the required reply to this SETTINGS frame is the 101 response.
                 onSettings((SettingsFrame)frame, false);
-            case HEADERS -> onHeaders((HeadersFrame)frame);
-            default -> super.onFrame(frame);
+                break;
+            case HEADERS:
+                onHeaders((HeadersFrame)frame);
+                break;
+            default:
+                super.onFrame(frame);
+                break;
         }
     }
 

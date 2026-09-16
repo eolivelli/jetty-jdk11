@@ -150,10 +150,16 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
     {
         if (super.addEventListener(listener))
         {
-            if (listener instanceof FrameListener frameListener)
+            if (listener instanceof FrameListener)
+            {
+                FrameListener frameListener = (FrameListener)listener;
                 frameListeners.add(frameListener);
-            if (listener instanceof LifeCycleListener lifeCycleListener)
+            }
+            if (listener instanceof LifeCycleListener)
+            {
+                LifeCycleListener lifeCycleListener = (LifeCycleListener)listener;
                 lifeCycleListeners.add(lifeCycleListener);
+            }
             return true;
         }
         return false;
@@ -164,10 +170,16 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
     {
         if (super.removeEventListener(listener))
         {
-            if (listener instanceof FrameListener frameListener)
+            if (listener instanceof FrameListener)
+            {
+                FrameListener frameListener = (FrameListener)listener;
                 frameListeners.remove(frameListener);
-            if (listener instanceof LifeCycleListener lifeCycleListener)
+            }
+            if (listener instanceof LifeCycleListener)
+            {
+                LifeCycleListener lifeCycleListener = (LifeCycleListener)listener;
                 lifeCycleListeners.remove(lifeCycleListener);
+            }
             return true;
         }
         return false;
@@ -477,7 +489,7 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
             int value = entry.getValue();
             switch (key)
             {
-                case SettingsFrame.HEADER_TABLE_SIZE ->
+                case SettingsFrame.HEADER_TABLE_SIZE:
                 {
                     if (LOG.isDebugEnabled())
                         LOG.debug("Updating HPACK {} max table capacity to {} for {}", local ? "decoder" : "encoder", value, this);
@@ -491,15 +503,17 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
                         hpackEncoder.setMaxTableCapacity(value);
                         hpackEncoder.setTableCapacity(Math.min(value, getMaxEncoderTableCapacity()));
                     }
+                    break;
                 }
-                case SettingsFrame.ENABLE_PUSH ->
+                case SettingsFrame.ENABLE_PUSH:
                 {
                     boolean enabled = value == 1;
                     if (LOG.isDebugEnabled())
                         LOG.debug("{} push for {}", enabled ? "Enabling" : "Disabling", this);
                     pushEnabled = enabled;
+                    break;
                 }
-                case SettingsFrame.MAX_CONCURRENT_STREAMS ->
+                case SettingsFrame.MAX_CONCURRENT_STREAMS:
                 {
                     if (LOG.isDebugEnabled())
                         LOG.debug("Updating max {} concurrent streams to {} for {}", local ? "remote" : "local", value, this);
@@ -507,14 +521,16 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
                         maxRemoteStreams = value;
                     else
                         maxLocalStreams = value;
+                    break;
                 }
-                case SettingsFrame.INITIAL_WINDOW_SIZE ->
+                case SettingsFrame.INITIAL_WINDOW_SIZE:
                 {
                     if (LOG.isDebugEnabled())
                         LOG.debug("Updating initial stream window size to {} for {}", value, this);
                     flowControl.updateInitialStreamWindow(this, value, local);
+                    break;
                 }
-                case SettingsFrame.MAX_FRAME_SIZE ->
+                case SettingsFrame.MAX_FRAME_SIZE:
                 {
                     if (LOG.isDebugEnabled())
                         LOG.debug("Updating {} max frame size to {} for {}", local ? "parser" : "generator", value, this);
@@ -522,8 +538,9 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
                         parser.setMaxFrameSize(value);
                     else
                         generator.setMaxFrameSize(value);
+                    break;
                 }
-                case SettingsFrame.MAX_HEADER_LIST_SIZE ->
+                case SettingsFrame.MAX_HEADER_LIST_SIZE:
                 {
                     if (LOG.isDebugEnabled())
                         LOG.debug("Updating {} max header list size to {} for {}", local ? "decoder" : "encoder", value, this);
@@ -536,18 +553,21 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
                         HpackEncoder hpackEncoder = generator.getHpackEncoder();
                         hpackEncoder.setMaxHeaderListSize(Math.min(value, hpackEncoder.getMaxHeaderListSize()));
                     }
+                    break;
                 }
-                case SettingsFrame.ENABLE_CONNECT_PROTOCOL ->
+                case SettingsFrame.ENABLE_CONNECT_PROTOCOL:
                 {
                     boolean enabled = value == 1;
                     if (LOG.isDebugEnabled())
                         LOG.debug("{} CONNECT protocol for {}", enabled ? "Enabling" : "Disabling", this);
                     connectProtocolEnabled = enabled;
+                    break;
                 }
-                default ->
+                default:
                 {
                     if (LOG.isDebugEnabled())
                         LOG.debug("Unknown setting {}:{} for {}", key, value, this);
+                    break;
                 }
             }
         }
@@ -1701,16 +1721,18 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
         {
             switch (frame.getType())
             {
-                case HEADERS ->
+                case HEADERS:
                 {
                     HeadersFrame headersFrame = (HeadersFrame)frame;
                     stream.updateClose(headersFrame.isEndStream(), CloseState.Event.BEFORE_SEND);
+                    break;
                 }
-                case SETTINGS ->
+                case SETTINGS:
                 {
                     SettingsFrame settingsFrame = (SettingsFrame)frame;
                     if (!settingsFrame.isReply())
                         configure(settingsFrame.getSettings(), true);
+                    break;
                 }
             }
         }
@@ -1731,17 +1753,19 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
 
             switch (frame.getType())
             {
-                case HEADERS ->
+                case HEADERS:
                 {
                     HeadersFrame headersFrame = (HeadersFrame)frame;
                     if (headersFrame.getMetaData().isRequest())
                         onStreamOpened(stream);
                     if (stream.updateClose(headersFrame.isEndStream(), CloseState.Event.AFTER_SEND))
                         removeStream(stream);
+                    break;
                 }
-                case WINDOW_UPDATE ->
+                case WINDOW_UPDATE:
                 {
                     flowControl.windowUpdate(HTTP2Session.this, stream, (WindowUpdateFrame)frame);
+                    break;
                 }
             }
 
@@ -1917,7 +1941,7 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
             {
                 switch (closed)
                 {
-                    case NOT_CLOSED ->
+                    case NOT_CLOSED:
                     {
                         goAwaySent = frame;
                         closed = CloseState.LOCALLY_CLOSED;
@@ -1933,8 +1957,9 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
                             };
                             tryRunZeroStreamsAction = streamCount.get() == 0;
                         }
+                        break;
                     }
-                    case LOCALLY_CLOSED ->
+                    case LOCALLY_CLOSED:
                     {
                         if (frame.isGraceful())
                         {
@@ -1959,8 +1984,9 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
                                     LOG.debug("Already sent, ignored GOAWAY {} for {}", frame, HTTP2Session.this);
                             }
                         }
+                        break;
                     }
-                    case REMOTELY_CLOSED ->
+                    case REMOTELY_CLOSED:
                     {
                         goAwaySent = frame;
                         sendGoAway = true;
@@ -1989,12 +2015,14 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
                                 tryRunZeroStreamsAction = streamCount.get() == 0;
                             }
                         }
+                        break;
                     }
-                    default ->
+                    default:
                     {
                         // Already closing or closed, ignore it.
                         if (LOG.isDebugEnabled())
                             LOG.debug("Already closed, ignored {} for {}", frame, HTTP2Session.this);
+                        break;
                     }
                 }
             }
@@ -2030,7 +2058,10 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
             {
                 switch (closed)
                 {
-                    case NOT_CLOSED, REMOTELY_CLOSED, LOCALLY_CLOSED, CLOSING ->
+                    case NOT_CLOSED:
+                    case REMOTELY_CLOSED:
+                    case LOCALLY_CLOSED:
+                    case CLOSING:
                     {
                         if (goAwaySent == null || goAwaySent.isGraceful())
                             goAwaySent = goAwayFrame = newGoAwayFrame(ErrorCode.NO_ERROR.code, reason);
@@ -2039,8 +2070,9 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
                         zeroStreamsAction = null;
                         if (failure == null)
                             failure = cause;
+                        break;
                     }
-                    default ->
+                    default:
                     {
                         return;
                     }
@@ -2065,7 +2097,7 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
             {
                 switch (closed)
                 {
-                    case NOT_CLOSED ->
+                    case NOT_CLOSED:
                     {
                         goAwayRecv = frame;
                         if (frame.isGraceful())
@@ -2083,8 +2115,9 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
                             tryRunZeroStreamsAction = streamCount.get() == 0;
                             failStreams = true;
                         }
+                        break;
                     }
-                    case LOCALLY_CLOSED ->
+                    case LOCALLY_CLOSED:
                     {
                         goAwayRecv = frame;
                         if (frame.isGraceful())
@@ -2110,8 +2143,9 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
                                 failStreams = true;
                             }
                         }
+                        break;
                     }
-                    case REMOTELY_CLOSED ->
+                    case REMOTELY_CLOSED:
                     {
                         if (frame.isGraceful())
                         {
@@ -2136,12 +2170,14 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
                             tryRunZeroStreamsAction = streamCount.get() == 0;
                             failStreams = true;
                         }
+                        break;
                     }
-                    default ->
+                    default:
                     {
                         // Already closing or closed, ignore it.
                         if (LOG.isDebugEnabled())
                             LOG.debug("Already closed, ignored {} for {}", frame, HTTP2Session.this);
+                        break;
                     }
                 }
             }
@@ -2171,29 +2207,33 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
             {
                 switch (closed)
                 {
-                    case NOT_CLOSED, LOCALLY_CLOSED ->
+                    case NOT_CLOSED:
+                    case LOCALLY_CLOSED:
                     {
                         if (LOG.isDebugEnabled())
                             LOG.debug("Unexpected ISHUT for {}", HTTP2Session.this);
                         closed = CloseState.CLOSING;
                         failure = cause = new ClosedChannelException();
+                        break;
                     }
-                    case REMOTELY_CLOSED ->
+                    case REMOTELY_CLOSED:
                     {
                         closed = CloseState.CLOSING;
                         GoAwayFrame goAwayFrame = newGoAwayFrame(ErrorCode.NO_ERROR.code, reason);
                         zeroStreamsAction = () -> terminate(goAwayFrame);
                         failure = cause = new ClosedChannelException();
                         failStreams = true;
+                        break;
                     }
-                    case CLOSING ->
+                    case CLOSING:
                     {
                         if (failure == null)
                             failure = new ClosedChannelException();
                         cause = failure;
                         failStreams = true;
+                        break;
                     }
-                    default ->
+                    default:
                     {
                         if (LOG.isDebugEnabled())
                             LOG.debug("Already closed, ignoring ISHUT for {}", HTTP2Session.this);
@@ -2233,14 +2273,15 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
             {
                 switch (closed)
                 {
-                    case NOT_CLOSED ->
+                    case NOT_CLOSED:
                     {
                         long elapsed = NanoTime.millisSince(idleNanoTime);
                         if (elapsed < endPoint.getIdleTimeout())
                             return false;
                         notify = true;
+                        break;
                     }
-                    case LOCALLY_CLOSED ->
+                    case LOCALLY_CLOSED:
                     {
                         // Timed out while waiting for closing events, fail all the streams.
                         if (goAwaySent.isGraceful())
@@ -2252,8 +2293,9 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
                         closed = CloseState.CLOSING;
                         zeroStreamsAction = null;
                         failure = cause;
+                        break;
                     }
-                    case REMOTELY_CLOSED ->
+                    case REMOTELY_CLOSED:
                     {
                         goAwaySent = newGoAwayFrame(ErrorCode.NO_ERROR.code, reason);
                         sendGoAway = true;
@@ -2261,8 +2303,11 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
                         closed = CloseState.CLOSING;
                         zeroStreamsAction = null;
                         failure = cause;
+                        break;
                     }
-                    default -> terminate = true;
+                    default:
+                        terminate = true;
+                        break;
                 }
             }
 
@@ -2311,15 +2356,18 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
             {
                 switch (closed)
                 {
-                    case NOT_CLOSED, LOCALLY_CLOSED, REMOTELY_CLOSED ->
+                    case NOT_CLOSED:
+                    case LOCALLY_CLOSED:
+                    case REMOTELY_CLOSED:
                     {
                         // Send another GOAWAY with the error code.
                         goAwaySent = goAwayFrame = newGoAwayFrame(error, reason);
                         closed = CloseState.CLOSING;
                         zeroStreamsAction = null;
                         failure = cause = toFailure(error, reason);
+                        break;
                     }
-                    default ->
+                    default:
                     {
                         if (LOG.isDebugEnabled())
                             LOG.debug("Already closed, ignored session failure {}", HTTP2Session.this, failure);
@@ -2346,12 +2394,15 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
             {
                 switch (closed)
                 {
-                    case NOT_CLOSED, LOCALLY_CLOSED, REMOTELY_CLOSED ->
+                    case NOT_CLOSED:
+                    case LOCALLY_CLOSED:
+                    case REMOTELY_CLOSED:
                     {
                         closed = CloseState.CLOSING;
                         failure = x;
+                        break;
                     }
-                    default ->
+                    default:
                     {
                         return;
                     }
@@ -2413,27 +2464,30 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
 
                 switch (closed)
                 {
-                    case LOCALLY_CLOSED ->
+                    case LOCALLY_CLOSED:
                     {
                         if (goAwaySent.isGraceful())
                         {
                             action = zeroStreamsAction;
                             zeroStreamsAction = null;
                         }
+                        break;
                     }
-                    case REMOTELY_CLOSED ->
+                    case REMOTELY_CLOSED:
                     {
                         if (goAwaySent != null && goAwaySent.isGraceful())
                         {
                             action = zeroStreamsAction;
                             zeroStreamsAction = null;
                         }
+                        break;
                     }
-                    case CLOSING ->
+                    case CLOSING:
                     {
                         closed = CloseState.CLOSED;
                         action = zeroStreamsAction;
                         zeroStreamsAction = null;
+                        break;
                     }
                 }
             }
@@ -2537,15 +2591,20 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
             boolean created;
             try (AutoLock ignored = lock.lock())
             {
-                created = switch (closed)
+                switch (closed)
                 {
-                    case NOT_CLOSED -> true;
-                    case LOCALLY_CLOSED ->
+                    case NOT_CLOSED:
+                        created = true;
+                        break;
+                    case LOCALLY_CLOSED:
                         // SPEC: streams larger than GOAWAY's lastStreamId are dropped.
                         // Allow creation of streams that may have been in-flight.
-                        streamId <= goAwaySent.getLastStreamId();
-                    default -> false;
-                };
+                        created = streamId <= goAwaySent.getLastStreamId();
+                        break;
+                    default:
+                        created = false;
+                        break;
+                }
             }
             if (created)
                 HTTP2Session.this.onStreamCreated(streamId);
@@ -2814,11 +2873,11 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
                 );
             }
         }
+    }
 
-        private static class Slot
-        {
-            private volatile List<Entry> entries;
-        }
+    private static class Slot
+    {
+        private volatile List<Entry> entries;
     }
 
     private class StreamTimeouts extends CyclicTimeouts<HTTP2Stream>

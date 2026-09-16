@@ -266,13 +266,17 @@ public class Invoker extends HttpServlet
         {
             if (_included)
             {
-                return switch (name)
+                switch (name)
                 {
-                    case Dispatcher.INCLUDE_REQUEST_URI -> URIUtil.addPaths(URIUtil.addPaths(getContextPath(), _servletPath), _pathInfo);
-                    case Dispatcher.INCLUDE_PATH_INFO -> _pathInfo;
-                    case Dispatcher.INCLUDE_SERVLET_PATH -> _servletPath;
-                    default -> super.getAttribute(name);
-                };
+                    case Dispatcher.INCLUDE_REQUEST_URI:
+                        return URIUtil.addPaths(URIUtil.addPaths(getContextPath(), _servletPath), _pathInfo);
+                    case Dispatcher.INCLUDE_PATH_INFO:
+                        return _pathInfo;
+                    case Dispatcher.INCLUDE_SERVLET_PATH:
+                        return _servletPath;
+                    default:
+                        return super.getAttribute(name);
+                }
             }
             return super.getAttribute(name);
         }

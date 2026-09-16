@@ -514,8 +514,9 @@ public class ResourceService
             String ifms = null;
             String ifums = null;
 
-            if (request instanceof Request baseRequest)
+            if (request instanceof Request)
             {
+                Request baseRequest = (Request)request;
                 httpConfiguration = baseRequest.getHttpChannel().getHttpConfiguration();
                 // Find multiple fields by iteration as an optimization 
                 for (HttpField field : baseRequest.getHttpFields())
@@ -524,13 +525,20 @@ public class ResourceService
                     {
                         switch (field.getHeader())
                         {
-                            case IF_MATCH -> ifm = field.getValue();
-                            case IF_NONE_MATCH -> ifnm = field.getValue();
-                            case IF_MODIFIED_SINCE -> ifms = field.getValue();
-                            case IF_UNMODIFIED_SINCE -> ifums = field.getValue();
-                            default ->
-                            {
-                            }
+                            case IF_MATCH:
+                                ifm = field.getValue();
+                                break;
+                            case IF_NONE_MATCH:
+                                ifnm = field.getValue();
+                                break;
+                            case IF_MODIFIED_SINCE:
+                                ifms = field.getValue();
+                                break;
+                            case IF_UNMODIFIED_SINCE:
+                                ifums = field.getValue();
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }
@@ -895,8 +903,9 @@ public class ResourceService
 
     protected void putHeaders(HttpServletResponse response, HttpContent content, long contentLength)
     {
-        if (response instanceof Response r)
+        if (response instanceof Response)
         {
+            Response r = (Response)response;
             r.putHeaders(content, contentLength, _etags);
             HttpFields.Mutable fields = r.getHttpFields();
             if (_acceptRanges && !fields.contains(HttpHeader.ACCEPT_RANGES))

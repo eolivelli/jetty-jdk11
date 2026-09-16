@@ -64,6 +64,6 @@ public abstract class PatternRule extends Rule
     @Override
     public String toString()
     {
-        return "%s[pattern=%s]".formatted(super.toString(), getPattern());
+        return String.format("%s[pattern=%s]", super.toString(), getPattern());
     }
 }

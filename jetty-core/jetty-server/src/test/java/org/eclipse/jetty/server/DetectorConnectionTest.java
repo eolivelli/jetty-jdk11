@@ -269,13 +269,11 @@ public class DetectorConnectionTest
 
         start(detector, http);
 
-        String request = """
-            PROXY TCP 1.2.3.4 5.6.7.8 111 222\r
-            GET /path HTTP/1.1\r
-            Host: server:80\r
-            Connection: close\r
-            \r
-            """;
+        String request = "PROXY TCP 1.2.3.4 5.6.7.8 111 222\r\n" +
+            "GET /path HTTP/1.1\r\n" +
+            "Host: server:80\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         String response = getResponse(request);
 
         assertThat(response, Matchers.containsString("HTTP/1.1 200"));
@@ -300,12 +298,10 @@ public class DetectorConnectionTest
 
         start(detector, http);
 
-        String request = """
-            GET /path HTTP/1.1\r
-            Host: server:80\r
-            Connection: close\r
-            \r
-            """;
+        String request = "GET /path HTTP/1.1\r\n" +
+            "Host: server:80\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         String response = getResponseOverSsl(request);
 
         assertThat(response, Matchers.containsString("HTTP/1.1 200"));
@@ -326,13 +322,11 @@ public class DetectorConnectionTest
 
         start(detector, http);
 
-        String request = """
-            PROXY TCP 1.2.3.4 5.6.7.8 111 222\r
-            GET /path HTTP/1.1\r
-            Host: server:80\r
-            Connection: close\r
-            \r
-            """;
+        String request = "PROXY TCP 1.2.3.4 5.6.7.8 111 222\r\n" +
+            "GET /path HTTP/1.1\r\n" +
+            "Host: server:80\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         String response = getResponseOverSsl(request);
 
         // SSL matched, so the upgrade was made to HTTP which does not understand the proxy request
@@ -354,12 +348,10 @@ public class DetectorConnectionTest
 
         start(detector, http);
 
-        String request = """
-            GET /path HTTP/1.1\r
-            Host: server:80\r
-            Connection: close\r
-            \r
-            """;
+        String request = "GET /path HTTP/1.1\r\n" +
+            "Host: server:80\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         String response = getResponse(request);
 
         assertThat(response, Matchers.containsString("HTTP/1.1 200"));
@@ -381,13 +373,11 @@ public class DetectorConnectionTest
 
         start(sslDetector, proxyDetector, http);
 
-        String request = """
-            PROXY TCP 1.2.3.4 5.6.7.8 111 222\r
-            GET /path HTTP/1.1\r
-            Host: server:80\r
-            Connection: close\r
-            \r
-            """;
+        String request = "PROXY TCP 1.2.3.4 5.6.7.8 111 222\r\n" +
+            "GET /path HTTP/1.1\r\n" +
+            "Host: server:80\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         String response = getResponseOverSsl(request);
 
         // SSL matched, so the upgrade was made to proxy which itself upgraded to HTTP
@@ -417,12 +407,10 @@ public class DetectorConnectionTest
 
         start(detector, http);
 
-        String request = """
-            GET /path HTTP/1.1\r
-            Host: server:80\r
-            Connection: close\r
-            \r
-            """;
+        String request = "GET /path HTTP/1.1\r\n" +
+            "Host: server:80\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         String response = getResponse(request);
 
         assertEquals("No upgrade for you", response);
@@ -444,13 +432,11 @@ public class DetectorConnectionTest
 
         start(detector, http);
 
-        String request = """
-            PROXY TCP 1.2.3.4 5.6.7.8 111 222\r
-            GET /path HTTP/1.1\r
-            Host: server:80\r
-            Connection: close\r
-            \r
-            """;
+        String request = "PROXY TCP 1.2.3.4 5.6.7.8 111 222\r\n" +
+            "GET /path HTTP/1.1\r\n" +
+            "Host: server:80\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         String response = getResponse(request);
 
         // ProxyConnectionFactory has no next protocol -> it cannot upgrade
@@ -471,12 +457,10 @@ public class DetectorConnectionTest
 
         start(detector, http);
 
-        String request = """
-            GET /path HTTP/1.1\r
-            Host: server:80\r
-            Connection: close\r
-            \r
-            """;
+        String request = "GET /path HTTP/1.1\r\n" +
+            "Host: server:80\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         String clearTextResponse = getResponse(request);
         String sslResponse = getResponseOverSsl(request);
 
@@ -498,12 +482,10 @@ public class DetectorConnectionTest
 
         start(detector);
 
-        String request = """
-            GET /path HTTP/1.1\r
-            Host: server:80\r
-            Connection: close\r
-            \r
-            """;
+        String request = "GET /path HTTP/1.1\r\n" +
+            "Host: server:80\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         String response = getResponse(request);
 
         assertThat(response, Matchers.nullValue());
@@ -534,12 +516,10 @@ public class DetectorConnectionTest
                 "3039" + // 12345
                 "1F90"; // 8080
 
-        String httpReq = """
-            GET /path HTTP/1.1\r
-            Host: server:80\r
-            Connection: close\r
-            \r
-            """;
+        String httpReq = "GET /path HTTP/1.1\r\n" +
+            "Host: server:80\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
 
         String response = getResponse(StringUtil.fromHexString(proxyReq), httpReq.getBytes(StandardCharsets.US_ASCII));
         assertThat(response, Matchers.nullValue());
@@ -602,12 +582,10 @@ public class DetectorConnectionTest
                 "3039" + // 12345
                 "1F90"; // 8080
 
-        String httpReq = """
-            GET /path HTTP/1.1\r
-            Host: server:80\r
-            Connection: close\r
-            \r
-            """;
+        String httpReq = "GET /path HTTP/1.1\r\n" +
+            "Host: server:80\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         String response = getResponse(StringUtil.fromHexString(proxyReq), httpReq.getBytes(StandardCharsets.US_ASCII));
 
         assertThat(response, Matchers.nullValue());
@@ -649,12 +627,10 @@ public class DetectorConnectionTest
 
         start(detector, noUpgradeTo);
 
-        String request = """
-            GET /path HTTP/1.1\r
-            Host: server:80\r
-            Connection: close\r
-            \r
-            """;
+        String request = "GET /path HTTP/1.1\r\n" +
+            "Host: server:80\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         String response = getResponse(request);
 
         assertThat(response, Matchers.nullValue());

@@ -16,7 +16,6 @@ package org.eclipse.jetty.security.authentication;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serial;
 import java.io.Serializable;
 import javax.security.auth.Subject;
 
@@ -42,7 +41,6 @@ public class SessionAuthentication extends LoginAuthenticator.UserAuthentication
 {
     private static final Logger LOG = LoggerFactory.getLogger(SessionAuthentication.class);
 
-    @Serial
     private static final long serialVersionUID = -4643200685888258706L;
 
     public static final String AUTHENTICATED_ATTRIBUTE = "org.eclipse.jetty.security.UserIdentity";
@@ -75,7 +73,6 @@ public class SessionAuthentication extends LoginAuthenticator.UserAuthentication
         return super.getUserIdentity();
     }
 
-    @Serial
     private void readObject(ObjectInputStream stream)
         throws IOException, ClassNotFoundException
     {
@@ -91,8 +88,9 @@ public class SessionAuthentication extends LoginAuthenticator.UserAuthentication
 
         LoginService loginService;
         Authenticator authenticator = securityHandler.getAuthenticator();
-        if (authenticator instanceof LoginAuthenticator loginAuthenticator)
+        if (authenticator instanceof LoginAuthenticator)
         {
+            LoginAuthenticator loginAuthenticator = (LoginAuthenticator)authenticator;
             loginService = loginAuthenticator.getLoginService();
             _persistAuthenticationCredentials = loginAuthenticator.isPersistAuthenticationCredentials();
         }
@@ -143,7 +141,6 @@ public class SessionAuthentication extends LoginAuthenticator.UserAuthentication
         }
     }
 
-    @Serial
     protected Object readResolve()
     {
         // A SessionAuthentication without a UserIdentity is invalid, and should be deserialized as null instead
@@ -157,7 +154,6 @@ public class SessionAuthentication extends LoginAuthenticator.UserAuthentication
         return this;
     }
 
-    @Serial
     private void writeObject(ObjectOutputStream out) throws IOException
     {
         ObjectOutputStream.PutField fields = out.putFields();

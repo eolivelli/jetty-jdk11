@@ -58,18 +58,21 @@ public abstract class ContentSourceTransformer implements Content.Source
             State current = state.get();
             switch (current.type)
             {
-                case IDLE ->
+                case IDLE:
                 {
                     if (state.compareAndSet(current, State.READING))
                         return null;
+                    break;
                 }
-                case READING -> throw new ReadPendingException();
-                case EOF ->
+                case READING:
+                    throw new ReadPendingException();
+                case EOF:
                 {
                     return Content.Chunk.EOF;
                 }
-                case FAILING -> throw new IllegalStateException();
-                case FAILED ->
+                case FAILING:
+                    throw new IllegalStateException();
+                case FAILED:
                 {
                     return ((State.Failed)current).chunk;
                 }
@@ -165,36 +168,44 @@ public abstract class ContentSourceTransformer implements Content.Source
             State current = state.get();
             switch (current.type)
             {
-                case IDLE, EOF, FAILED -> throw new IllegalStateException();
-                case READING ->
+                case IDLE:
+                case EOF:
+                case FAILED:
+                    throw new IllegalStateException();
+                case READING:
                 {
                     switch (targetType)
                     {
-                        case IDLE ->
+                        case IDLE:
                         {
                             if (state.compareAndSet(current, State.IDLE))
                                 return chunk;
+                            break;
                         }
-                        case FAILED ->
+                        case FAILED:
                         {
                             if (state.compareAndSet(current, new State.Failed(chunk)))
                             {
                                 dispose(chunk.getFailure());
                                 return chunk;
                             }
+                            break;
                         }
-                        case EOF ->
+                        case EOF:
                         {
                             if (state.compareAndSet(current, State.EOF))
                             {
                                 release();
                                 return chunk;
                             }
+                            break;
                         }
-                        default -> throw new IllegalStateException();
+                        default:
+                            throw new IllegalStateException();
                     }
+                    break;
                 }
-                case FAILING ->
+                case FAILING:
                 {
                     Content.Chunk failedChunk = ((State.Failing)current).chunk;
                     Throwable failure = failedChunk.getFailure();
@@ -205,6 +216,7 @@ public abstract class ContentSourceTransformer implements Content.Source
                         dispose(failure);
                         return chunk;
                     }
+                    break;
                 }
             }
         }
@@ -233,20 +245,22 @@ public abstract class ContentSourceTransformer implements Content.Source
             State current = state.get();
             switch (current.type)
             {
-                case IDLE ->
+                case IDLE:
                 {
                     if (state.compareAndSet(current, new State.Failed(Content.Chunk.from(failure, true))))
                     {
                         dispose(failure);
                         return;
                     }
+                    break;
                 }
-                case READING ->
+                case READING:
                 {
                     if (state.compareAndSet(current, new State.Failing(Content.Chunk.from(failure, true))))
                         return;
+                    break;
                 }
-                default ->
+                default:
                 {
                     return;
                 }
@@ -321,22 +335,24 @@ public abstract class ContentSourceTransformer implements Content.Source
      */
     public boolean isComplete()
     {
-        return switch (state.get().type)
+        switch (state.get().type)
         {
-            case EOF, FAILED -> true;
-            default -> false;
-        };
+            case EOF:
+            case FAILED:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override
     public String toString()
     {
-        return "%s@%x[state=%s,source=%s]".formatted(
+        return String.format("%s@%x[state=%s,source=%s]",
             TypeUtil.toShortName(getClass()),
             hashCode(),
             state.get(),
-            rawSource
-        );
+            rawSource);
     }
 
     /**
@@ -350,7 +366,7 @@ public abstract class ContentSourceTransformer implements Content.Source
      * <p>FAILING -> FAILED, when just before returning, {@link #read()} detects a concurrent call to {@link #fail(Throwable)}</p>
      *
      */
-    private static sealed class State
+    private static class State
     {
         private static final State IDLE = new Idle();
         private static final State READING = new Reading();

@@ -45,6 +45,8 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -235,6 +237,7 @@ public class FastCGIProxyHandlerTest
     }
 
     @Test
+    @EnabledForJreRange(min = JRE.JAVA_16)
     public void testUnixDomain() throws Exception
     {
         Path path = Files.createTempFile("unix", ".sock");

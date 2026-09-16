@@ -228,8 +228,9 @@ public abstract class AbstractSession extends ContainerLifeCycle implements Sess
     {
         try
         {
-            if (listener instanceof AbstractSession.Listener extended)
-                return extended.onLocalShutdown(this);
+            Session.Listener sessionListener = listener;
+            if (sessionListener instanceof AbstractSession.Listener)
+                return ((AbstractSession.Listener)sessionListener).onLocalShutdown(this);
             return CompletableFuture.completedFuture(this);
         }
         catch (Throwable x)
@@ -258,8 +259,9 @@ public abstract class AbstractSession extends ContainerLifeCycle implements Sess
     {
         try
         {
-            if (listener instanceof AbstractSession.Listener extended)
-                extended.onLocalClose(this, frame, promise);
+            Session.Listener sessionListener = listener;
+            if (sessionListener instanceof AbstractSession.Listener)
+                ((AbstractSession.Listener)sessionListener).onLocalClose(this, frame, promise);
             else
                 promise.succeeded(this);
         }
@@ -304,7 +306,7 @@ public abstract class AbstractSession extends ContainerLifeCycle implements Sess
     @Override
     public String toString()
     {
-        return "%s@%x".formatted(TypeUtil.toShortName(getClass()), hashCode());
+        return String.format("%s@%x", TypeUtil.toShortName(getClass()), hashCode());
     }
 
     public interface Listener extends Session.Listener

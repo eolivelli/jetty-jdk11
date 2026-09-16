@@ -127,12 +127,10 @@ public class RequestTest
     @Test
     public void testEncodedSpace() throws Exception
     {
-        String request = """
-                GET /fo%6f%20bar HTTP/1.1\r
-                Host: local\r
-                Connection: close\r
-                \r
-                """;
+        String request = "GET /fo%6f%20bar HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
         assertThat(response.getContent(), containsString("httpURI.path=/fo%6f%20bar"));
@@ -142,12 +140,10 @@ public class RequestTest
     @Test
     public void testEncodedPath() throws Exception
     {
-        String request = """
-                GET /fo%6f%2fbar HTTP/1.1\r
-                Host: local\r
-                Connection: close\r
-                \r
-                """;
+        String request = "GET /fo%6f%2fbar HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.BAD_REQUEST_400, response.getStatus());
     }
@@ -205,18 +201,16 @@ public class RequestTest
             }
         });
         server.start();
-        String request = """
-                GET %s HTTP/1.1\r
-                Host: local\r
-                Connection: close\r
-                \r
-                """.formatted(uri);
+        String request = String.format("GET %s HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n", uri);
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertThat(response.getStatus(), is(status));
         if (content != null)
         {
             if (status == 200)
-                assertThat(response.getContent(), is("authority=\"%s\"".formatted(content)));
+                assertThat(response.getContent(), is(String.format("authority=\"%s\"", content)));
             else
                 assertThat(response.getContent(), containsString(content));
         }
@@ -254,12 +248,10 @@ public class RequestTest
         });
         server.setHandler(fooContext);
         server.start();
-        String request = """
-                GET /foo/zed%2Fbar HTTP/1.1\r
-                Host: local\r
-                Connection: close\r
-                \r
-                """;
+        String request = "GET /foo/zed%2Fbar HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
         assertThat(response.getContent(), is("pathInContext=\"/zed%2Fbar\""));
@@ -268,12 +260,10 @@ public class RequestTest
     @Test
     public void testConnectRequestURLSameAsHost() throws Exception
     {
-        String request = """
-                CONNECT myhost:9999 HTTP/1.1\r
-                Host: myhost:9999\r
-                Connection: close\r
-                \r
-                """;
+        String request = "CONNECT myhost:9999 HTTP/1.1\r\n" +
+            "Host: myhost:9999\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
 
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -286,12 +276,10 @@ public class RequestTest
     @Test
     public void testConnectRequestURLDifferentThanHost() throws Exception
     {
-        String request = """
-                CONNECT myhost:9999 HTTP/1.1\r
-                Host: otherhost:8888\r
-                Connection: close\r
-                \r
-                """;
+        String request = "CONNECT myhost:9999 HTTP/1.1\r\n" +
+            "Host: otherhost:8888\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.BAD_REQUEST_400, response.getStatus());
     }
@@ -320,11 +308,9 @@ public class RequestTest
         });
         server.start();
 
-        String request = """
-                GET /foo HTTP/1.1\r
-                Host: local\r
-                \r
-                """;
+        String request = "GET /foo HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
         assertThat(response.getLongField(HttpHeader.CONTENT_LENGTH), greaterThan(0L));
@@ -366,11 +352,9 @@ public class RequestTest
         });
         server.start();
 
-        String request = """
-                GET /foo HTTP/1.1\r
-                Host: local\r
-                \r
-                """;
+        String request = "GET /foo HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
         assertNull(response.getField(HttpHeader.CONTENT_LENGTH));
@@ -456,11 +440,9 @@ public class RequestTest
 
         server.start();
 
-        String rawRequest = """
-            GET / HTTP/1.1
-            Host: tester
-            
-            """;
+        String rawRequest = "GET / HTTP/1.1\n" +
+            "Host: tester\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(rawRequest));
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
@@ -491,11 +473,9 @@ public class RequestTest
 
         server.start();
 
-        String rawRequest = """
-                HEAD / HTTP/1.1
-                Host: tester
-
-                """;
+        String rawRequest = "HEAD / HTTP/1.1\n" +
+            "Host: tester\n" +
+            "\n";
 
         LocalConnector.LocalEndPoint localEndPoint = connector.executeRequest(rawRequest);
         ByteBuffer rawResponse = localEndPoint.waitForResponse(true, 2, TimeUnit.SECONDS);
@@ -529,12 +509,10 @@ public class RequestTest
 
         server.start();
 
-        String rawRequest = """
-                HEAD / HTTP/1.1
-                Host: tester
-                Connection: close
-                
-                """;
+        String rawRequest = "HEAD / HTTP/1.1\n" +
+            "Host: tester\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseHeadResponse(connector.getResponse(rawRequest));
         assertNotNull(response);
@@ -570,13 +548,11 @@ public class RequestTest
     {
         connector.getConnectionFactory(HttpConnectionFactory.class).getHttpConfiguration().setHttpCompliance(HttpCompliance.LEGACY);
         acceptLanguage = acceptLanguage == null ? "" : (HttpHeader.ACCEPT_LANGUAGE.asString() + ": " + acceptLanguage + "\n");
-        String rawRequest = """
-                GET / HTTP/1.1
-                Host: tester
-                Connection: close
-                %s
-                
-                """.formatted(acceptLanguage);
+        String rawRequest = String.format("GET / HTTP/1.1\n" +
+            "Host: tester\n" +
+            "Connection: close\n" +
+            "%s\n" +
+            "\n", acceptLanguage);
 
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(rawRequest));
         assertNotNull(response);

@@ -413,19 +413,21 @@ public class WebSocketConnection extends AbstractConnection implements Connectio
 
             switch (demand)
             {
-                case NOT_DEMANDING ->
+                case NOT_DEMANDING:
                 {
                     fillingAndParsing = false;
                     if (networkBuffer != null && networkBuffer.isEmpty())
                         releaseNetworkBuffer();
                     return false;
                 }
-                case DEMANDING, CANCELLED ->
+                case DEMANDING:
+                case CANCELLED:
                 {
                     // If demand was canceled, this creates synthetic demand in order to read until EOF.
                     return true;
                 }
-                default -> throw new IllegalStateException(demand.name());
+                default:
+                    throw new IllegalStateException(demand.name());
             }
         }
     }
@@ -466,17 +468,21 @@ public class WebSocketConnection extends AbstractConnection implements Connectio
                 LOG.debug("fillAndParse() {} {}", state, this);
             switch (state)
             {
-                case IDLE -> state = State.FILLING_AND_PARSING;
-                case FILLING_AND_PARSING ->
+                case IDLE:
+                    state = State.FILLING_AND_PARSING;
+                    break;
+                case FILLING_AND_PARSING:
                 {
                     state = State.MORE_FILLING_AND_PARSING;
                     return;
                 }
-                case CLOSED, CLOSING ->
+                case CLOSED:
+                case CLOSING:
                 {
                     return;
                 }
-                default -> throw new IllegalStateException(state.name());
+                default:
+                    throw new IllegalStateException(state.name());
             }
         }
 
@@ -578,7 +584,7 @@ public class WebSocketConnection extends AbstractConnection implements Connectio
                 {
                     switch (state)
                     {
-                        case MORE_FILLING_AND_PARSING ->
+                        case MORE_FILLING_AND_PARSING:
                         {
                             if (registerFillInterested)
                             {
@@ -590,15 +596,20 @@ public class WebSocketConnection extends AbstractConnection implements Connectio
                                 fillingAndParsing = true;
                                 state = State.FILLING_AND_PARSING;
                             }
+                            break;
                         }
-                        case FILLING_AND_PARSING -> state = State.IDLE;
-                        case CLOSING ->
+                        case FILLING_AND_PARSING:
+                            state = State.IDLE;
+                            break;
+                        case CLOSING:
                         {
                             state = State.CLOSED;
                             close = true;
                             closeCause = this.closeCause;
+                            break;
                         }
-                        default -> throw new IllegalStateException(state.name());
+                        default:
+                            throw new IllegalStateException(state.name());
                     }
 
                     if (LOG.isDebugEnabled())
@@ -640,13 +651,16 @@ public class WebSocketConnection extends AbstractConnection implements Connectio
         {
             switch (state)
             {
-                case IDLE -> state = State.OPENING;
-                case CLOSED ->
+                case IDLE:
+                    state = State.OPENING;
+                    break;
+                case CLOSED:
                 {
                     // Nothing to do.
                     return;
                 }
-                default -> throw new IllegalStateException(state.name());
+                default:
+                    throw new IllegalStateException(state.name());
             }
         }
 
@@ -659,14 +673,18 @@ public class WebSocketConnection extends AbstractConnection implements Connectio
         {
             switch (state)
             {
-                case OPENING -> state = State.IDLE;
-                case CLOSING ->
+                case OPENING:
+                    state = State.IDLE;
+                    break;
+                case CLOSING:
                 {
                     state = State.CLOSED;
                     close = true;
                     closeCause = this.closeCause;
+                    break;
                 }
-                default -> throw new IllegalStateException(state.name());
+                default:
+                    throw new IllegalStateException(state.name());
             }
         }
 

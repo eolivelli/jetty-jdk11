@@ -13,7 +13,6 @@
 
 package org.eclipse.jetty.util.resource;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -25,6 +24,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.util.FileID;
 import org.eclipse.jetty.util.StringUtil;
@@ -233,6 +233,12 @@ public interface ResourceFactory
      *     Child resources of these resources, should be created using {@link Resource#resolve(String)}
      * </p>
      *
+     * <p>
+     *     A {@code null} ClassLoader (for example a {@code null} thread context ClassLoader)
+     *     is skipped, so that it never falls back to the system ClassLoader when
+     *     {@code searchSystemClassLoader} is {@code false}.
+     * </p>
+     *
      * @param resource the resource name to find in a classloader
      * @param searchSystemClassLoader true to search {@link ClassLoader#getSystemResource(String)}, false to skip
      * @return The new Resource, which may be a {@link CombinedResource} if multiple directory resources are found.
@@ -243,23 +249,23 @@ public interface ResourceFactory
         if (StringUtil.isBlank(resource))
             throw new IllegalArgumentException("Resource String is invalid: " + resource);
 
-        // We need a local interface to combine static and non-static methods
-        interface Source
-        {
-            Enumeration<URL> getResources(String name) throws IOException;
-        }
-
-        List<Source> sources = new ArrayList<>();
-        sources.add(Thread.currentThread().getContextClassLoader()::getResources);
-        sources.add(ResourceFactory.class.getClassLoader()::getResources);
+        // The ClassLoaders to search, in order; a null ClassLoader is skipped, as searching it
+        // via the static ClassLoader.getSystemResources(String) would search the system ClassLoader.
+        List<ClassLoader> sources = new ArrayList<>();
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        if (contextClassLoader != null)
+            sources.add(contextClassLoader);
+        ClassLoader factoryClassLoader = ResourceFactory.class.getClassLoader();
+        if (factoryClassLoader != null)
+            sources.add(factoryClassLoader);
         if (searchSystemClassLoader)
-            sources.add(ClassLoader::getSystemResources);
+            sources.add(ClassLoader.getSystemClassLoader());
 
         List<Resource> resources = new ArrayList<>();
         String[] names = resource.startsWith("/") ? new String[] {resource, resource.substring(1)} : new String[] {resource};
 
         // For each source of resource
-        for (Source source : sources)
+        for (ClassLoader source : sources)
         {
             // for each variation of the resource name
             for (String name : names)
@@ -498,7 +504,7 @@ public interface ResourceFactory
         if ((uris == null) || (uris.isEmpty()))
             throw new IllegalArgumentException("List of URIs is invalid");
 
-        return combine(uris.stream().map(this::newResource).toList());
+        return combine(uris.stream().map(this::newResource).collect(Collectors.toList()));
     }
 
     /**
@@ -585,18 +591,33 @@ public interface ResourceFactory
         if (obj == null)
             return null;
 
-        if (obj instanceof Path path)
+        if (obj instanceof Path)
+        {
+            Path path = (Path)obj;
             return newResource(path);
-        if (obj instanceof String str)
+        }
+        if (obj instanceof String)
+        {
+            String str = (String)obj;
             return newResource(str);
-        if (obj instanceof URI uri)
+        }
+        if (obj instanceof URI)
+        {
+            URI uri = (URI)obj;
             return newResource(uri);
-        if (obj instanceof URL url)
+        }
+        if (obj instanceof URL)
+        {
+            URL url = (URL)obj;
             return newResource(url);
-        if (obj instanceof Resource res)
+        }
+        if (obj instanceof Resource)
+        {
+            Resource res = (Resource)obj;
             return res;
+        }
 
-        throw new IllegalArgumentException("Cannot convert %s to a Resource".formatted(obj.getClass().getName()));
+        throw new IllegalArgumentException(String.format("Cannot convert %s to a Resource", obj.getClass().getName()));
     }
 
     /**
@@ -908,8 +929,11 @@ public interface ResourceFactory
     {
         Objects.requireNonNull(baseResource);
 
-        if (baseResource instanceof ResourceFactory resourceFactory)
+        if (baseResource instanceof ResourceFactory)
+        {
+            ResourceFactory resourceFactory = (ResourceFactory)baseResource;
             return resourceFactory;
+        }
 
         return new ResourceFactory()
         {

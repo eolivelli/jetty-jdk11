@@ -914,8 +914,9 @@ public class HttpChannelState
             code = HttpStatus.INTERNAL_SERVER_ERROR_500;
             message = th.toString();
         }
-        else if (cause instanceof HttpException httpException)
+        else if (cause instanceof HttpException)
         {
+            HttpException httpException = (HttpException)cause;
             code = httpException.getCode();
             message = httpException.getReason();
         }
@@ -1241,13 +1242,18 @@ public class HttpChannelState
         if (event != null)
         {
             ServletContext servletContext = event.getServletContext();
-            if (servletContext instanceof CrossContextServletContext crossContextServletContext)
+            if (servletContext instanceof CrossContextServletContext)
             {
-                if (crossContextServletContext.getTargetContext().getContextHandler() instanceof ContextHandler.CoreContextHandler coreContextHandler)
-                    return  coreContextHandler.getContextHandler();
+                CrossContextServletContext crossContextServletContext = (CrossContextServletContext)servletContext;
+                org.eclipse.jetty.server.handler.ContextHandler targetContextHandler = crossContextServletContext.getTargetContext().getContextHandler();
+                if (targetContextHandler instanceof ContextHandler.CoreContextHandler)
+                    return ((ContextHandler.CoreContextHandler)targetContextHandler).getContextHandler();
             }
-            if (servletContext instanceof ContextHandler.APIContext apiContext)
+            if (servletContext instanceof ContextHandler.APIContext)
+            {
+                ContextHandler.APIContext apiContext = (ContextHandler.APIContext)servletContext;
                 return apiContext.getContextHandler();
+            }
         }
         return null;
     }

@@ -85,11 +85,9 @@ public class StateTrackingHandlerTest
         });
         start(stateTrackingHandler);
 
-        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("""
-            GET / HTTP/1.1
-            Host: localhost
-            
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n"));
 
         assertEquals(HttpStatus.OK_200, response.getStatus());
 
@@ -116,11 +114,9 @@ public class StateTrackingHandlerTest
         });
         start(stateTrackingHandler);
 
-        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("""
-            GET / HTTP/1.1
-            Host: localhost
-            
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n"));
 
         assertEquals(HttpStatus.OK_200, response.getStatus());
 
@@ -146,11 +142,9 @@ public class StateTrackingHandlerTest
         });
         start(stateTrackingHandler);
 
-        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("""
-            GET / HTTP/1.1
-            Host: localhost
-            
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n"));
 
         assertEquals(HttpStatus.OK_200, response.getStatus());
 
@@ -191,11 +185,9 @@ public class StateTrackingHandlerTest
         });
         start(stateTrackingHandler);
 
-        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("""
-            GET / HTTP/1.1
-            Host: localhost
-            
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n"));
 
         assertEquals(HttpStatus.NOT_FOUND_404, response.getStatus());
 
@@ -231,11 +223,9 @@ public class StateTrackingHandlerTest
         });
         start(stateTrackingHandler);
 
-        String response = connector.getResponse("""
-            GET / HTTP/1.1
-            Host: localhost
-            
-            """, 2 * timeout, TimeUnit.MILLISECONDS);
+        String response = connector.getResponse("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n", 2 * timeout, TimeUnit.MILLISECONDS);
 
         // There should be no response, as the callback was not completed.
         assertNull(response);
@@ -261,11 +251,9 @@ public class StateTrackingHandlerTest
         });
         start(stateTrackingHandler);
 
-        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("""
-            GET / HTTP/1.1
-            Host: localhost
-            
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n"));
 
         assertNotNull(response);
         assertEquals(HttpStatus.NOT_FOUND_404, response.getStatus());
@@ -293,11 +281,9 @@ public class StateTrackingHandlerTest
         });
         start(stateTrackingHandler);
 
-        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("""
-            GET / HTTP/1.1
-            Host: localhost
-            
-            """, 2 * timeout, TimeUnit.MILLISECONDS));
+        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n", 2 * timeout, TimeUnit.MILLISECONDS));
 
         // There should be an error response.
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, response.getStatus());
@@ -335,11 +321,9 @@ public class StateTrackingHandlerTest
         });
         start(stateTrackingHandler);
 
-        String response = connector.getResponse("""
-            GET / HTTP/1.1
-            Host: localhost
-            
-            """, 2 * timeout, TimeUnit.MILLISECONDS);
+        String response = connector.getResponse("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n", 2 * timeout, TimeUnit.MILLISECONDS);
 
         // There should be no response, as the callback was not completed.
         assertNull(response);
@@ -393,12 +377,11 @@ public class StateTrackingHandlerTest
         });
         start(stateTrackingHandler);
 
-        try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest("""
-            POST / HTTP/1.1
-            Host: localhost
-            Content-Length: 1
-            
-            A"""))
+        try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest("POST / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Content-Length: 1\n" +
+            "\n" +
+            "A"))
         {
             await().atMost(2 * timeout, TimeUnit.MILLISECONDS).until(listener::events, contains("demand-blocked"));
 
@@ -457,11 +440,9 @@ public class StateTrackingHandlerTest
         });
         start(wrapper);
 
-        try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest("""
-            GET / HTTP/1.1
-            Host: localhost
-            
-            """))
+        try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n"))
         {
             await().atMost(2 * timeout, TimeUnit.MILLISECONDS).until(listener::events, contains("write-blocked"));
 
@@ -511,11 +492,9 @@ public class StateTrackingHandlerTest
         });
         start(wrapper);
 
-        try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest("""
-            GET / HTTP/1.1
-            Host: localhost
-            
-            """))
+        try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n"))
         {
             await().atMost(3 * timeout, TimeUnit.MILLISECONDS).until(listener::events, contains("write-callback", "handler"));
 
@@ -555,11 +534,9 @@ public class StateTrackingHandlerTest
         });
         start(stateTrackingHandler);
 
-        try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest("""
-            GET / HTTP/1.1
-            Host: localhost
-            
-            """))
+        try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n"))
         {
             await().atMost(2 * timeout, TimeUnit.MILLISECONDS).until(listener::events, contains("write-callback-blocked"));
 
@@ -621,12 +598,10 @@ public class StateTrackingHandlerTest
         });
         start(stateTrackingHandler);
 
-        try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest("""
-            POST / HTTP/1.1
-            Host: localhost
-            Content-Length: 2
-            
-            """))
+        try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest("POST / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Content-Length: 2\n" +
+            "\n"))
         {
             // Wait to return from handle(), then send the first chunk of content.
             Thread.sleep(500);
@@ -677,11 +652,9 @@ public class StateTrackingHandlerTest
         });
         start(stateTrackingHandler);
 
-        try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest("""
-            GET / HTTP/1.1
-            Host: localhost
-            
-            """))
+        try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n"))
         {
             // Wait to detect the blocked demand callback, then add the last chunk of content.
             await().atMost(2 * timeout, TimeUnit.MILLISECONDS).until(listener::events, contains("write-callback-blocked"));
@@ -711,11 +684,9 @@ public class StateTrackingHandlerTest
         });
         start(stateTrackingHandler);
 
-        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("""
-            GET / HTTP/1.1
-            Host: localhost
-            
-            """, 5, TimeUnit.SECONDS));
+        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n", 5, TimeUnit.SECONDS));
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, response.getStatus());
         assertThat(listener.events(), contains("exception"));

@@ -14,7 +14,6 @@
 package org.eclipse.jetty.ee9.security.openid;
 
 import java.io.IOException;
-import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -520,8 +519,9 @@ public class OpenIdAuthenticator extends LoginAuthenticator
             if (authentication != null)
             {
                 boolean isUserIdentityValid = false;
-                if (authentication instanceof Authentication.User userAuthentication && _loginService != null)
+                if (authentication instanceof Authentication.User && _loginService != null)
                 {
+                    Authentication.User userAuthentication = (Authentication.User)authentication;
                     UserIdentity userIdentity = userAuthentication.getUserIdentity();
                     Principal principal = userIdentity.getUserPrincipal();
                     if (principal instanceof OpenIdUserPrincipal)
@@ -753,7 +753,6 @@ public class OpenIdAuthenticator extends LoginAuthenticator
 
     private static class MRUMap extends LinkedHashMap<String, UriRedirectInfo>
     {
-        @Serial
         private static final long serialVersionUID = 5375723072014233L;
 
         private final int _size;
@@ -772,7 +771,6 @@ public class OpenIdAuthenticator extends LoginAuthenticator
 
     private static class UriRedirectInfo implements Serializable
     {
-        @Serial
         private static final long serialVersionUID = 139567755844461433L;
 
         private final String _uri;

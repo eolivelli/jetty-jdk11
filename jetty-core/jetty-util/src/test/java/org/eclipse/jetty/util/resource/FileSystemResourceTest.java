@@ -32,6 +32,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.toolchain.test.FS;
 import org.eclipse.jetty.toolchain.test.IO;
@@ -501,7 +502,7 @@ public class FileSystemResourceTest
 
         Resource base = ResourceFactory.root().newResource(dir);
         List<Resource> listing = base.list();
-        List<String> actualFileNames = listing.stream().map(Resource::getFileName).toList();
+        List<String> actualFileNames = listing.stream().map(Resource::getFileName).collect(Collectors.toList());
 
         assertThat(actualFileNames, containsInAnyOrder(expectedFileNames));
     }

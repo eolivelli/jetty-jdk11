@@ -55,7 +55,7 @@ public class ServerMBean extends Handler.AbstractMBean
         String name = server.getName();
         if (name != null)
             return name;
-        return "%s@%x".formatted(TypeUtil.toShortName(server.getClass()), server.hashCode());
+        return String.format("%s@%x", TypeUtil.toShortName(server.getClass()), server.hashCode());
     }
 
     @ManagedAttribute("The contexts on this server")
@@ -81,12 +81,11 @@ public class ServerMBean extends Handler.AbstractMBean
     public String getUpTime()
     {
         Duration upTime = Duration.ofMillis(getManagedObject().getUptimeMillis());
-        return "%d:%02d:%02d:%02d.%03d".formatted(
+        return String.format("%d:%02d:%02d:%02d.%03d",
             upTime.toDaysPart(),
             upTime.toHoursPart(),
             upTime.toMinutesPart(),
             upTime.toSecondsPart(),
-            upTime.toMillisPart()
-        );
+            upTime.toMillisPart());
     }
 }

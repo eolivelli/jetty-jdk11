@@ -161,8 +161,11 @@ public interface RetainableByteBuffer extends Retainable
     {
         if (!isMutable() || isRetained())
             throw new ReadOnlyBufferException();
-        if (this instanceof Mutable mutable)
+        if (this instanceof Mutable)
+        {
+            Mutable mutable = (Mutable)this;
             return mutable;
+        }
         throw new ReadOnlyBufferException();
     }
 
@@ -723,7 +726,7 @@ public interface RetainableByteBuffer extends Retainable
         @Override
         public String toString()
         {
-            return "%s@%x[%s]".formatted(TypeUtil.toShortName(getClass()), hashCode(), getWrapped());
+            return String.format("%s@%x[%s]", TypeUtil.toShortName(getClass()), hashCode(), getWrapped());
         }
 
         @Override
@@ -1097,7 +1100,7 @@ public interface RetainableByteBuffer extends Retainable
             {
                 // No space for the whole buffer, so put as much as we can
                 int position = _byteBuffer.position();
-                _byteBuffer.put(position, bytes, bytes.position(), space);
+                BufferUtil.absolutePut(_byteBuffer, position, bytes, bytes.position(), space);
                 _byteBuffer.position(position + space);
                 bytes.position(bytes.position() + space);
                 return false;
@@ -1141,8 +1144,9 @@ public interface RetainableByteBuffer extends Retainable
         {
             assert !isRetained();
 
-            if (bytes instanceof DynamicCapacity dynamic)
+            if (bytes instanceof DynamicCapacity)
             {
+                DynamicCapacity dynamic = (DynamicCapacity)bytes;
                 int length = bytes.remaining();
                 int space = _byteBuffer.remaining();
 
@@ -1425,7 +1429,7 @@ public interface RetainableByteBuffer extends Retainable
         @Override
         public String toDetailString()
         {
-            return "%s@%x".formatted(TypeUtil.toShortName(getClass()), hashCode());
+            return String.format("%s@%x", TypeUtil.toShortName(getClass()), hashCode());
         }
     }
 
@@ -1491,7 +1495,7 @@ public interface RetainableByteBuffer extends Retainable
          */
         public DynamicCapacity(ByteBufferPool pool)
         {
-            this(null, pool instanceof ByteBufferPool.Sized sized ? sized : new ByteBufferPool.Sized(pool), -1, -1);
+            this(null, pool instanceof ByteBufferPool.Sized ? (ByteBufferPool.Sized)pool : new ByteBufferPool.Sized(pool), -1, -1);
         }
 
         /**
@@ -1584,11 +1588,13 @@ public interface RetainableByteBuffer extends Retainable
             if (LOG.isDebugEnabled())
                 LOG.debug("getByteBuffer {}", this);
             checkNotReleased();
-            return switch (_buffers.size())
+            switch (_buffers.size())
             {
-                case 0 -> BufferUtil.EMPTY_BUFFER;
-                case 1 -> _buffers.get(0).getByteBuffer();
-                default ->
+                case 0:
+                    return BufferUtil.EMPTY_BUFFER;
+                case 1:
+                    return _buffers.get(0).getByteBuffer();
+                default:
                 {
                     long size = size();
                     if (size > Integer.MAX_VALUE)
@@ -1607,9 +1613,9 @@ public interface RetainableByteBuffer extends Retainable
                     _buffers.clear();
                     _buffers.add(combined);
                     _aggregate = null;
-                    yield combined.getByteBuffer();
+                    return combined.getByteBuffer();
                 }
-            };
+            }
         }
 
         @Override
@@ -1746,19 +1752,20 @@ public interface RetainableByteBuffer extends Retainable
             if (LOG.isDebugEnabled())
                 LOG.debug("takeByteArray {}", this);
             checkNotReleased();
-            return switch (_buffers.size())
+            switch (_buffers.size())
             {
-                case 0 -> BufferUtil.EMPTY_BYTES;
-                case 1 ->
+                case 0:
+                    return BufferUtil.EMPTY_BYTES;
+                case 1:
                 {
                     RetainableByteBuffer buffer = _buffers.get(0);
                     _aggregate = null;
                     _buffers.clear();
                     byte[] array = BufferUtil.toArray(buffer.getByteBuffer());
                     buffer.release();
-                    yield array;
+                    return array;
                 }
-                default ->
+                default:
                 {
                     long size = size();
                     if (size > Integer.MAX_VALUE)
@@ -1777,9 +1784,9 @@ public interface RetainableByteBuffer extends Retainable
                     }
                     _buffers.clear();
                     _aggregate = null;
-                    yield array;
+                    return array;
                 }
-            };
+            }
         }
 
         @Override
@@ -2049,8 +2056,11 @@ public interface RetainableByteBuffer extends Retainable
                 return;
             for (RetainableByteBuffer rbb : _buffers)
             {
-                if (rbb instanceof DynamicCapacity dynamic)
+                if (rbb instanceof DynamicCapacity)
+                {
+                    DynamicCapacity dynamic = (DynamicCapacity)rbb;
                     dynamic.clear();
+                }
                 rbb.release();
             }
             _buffers.clear();
@@ -2154,8 +2164,9 @@ public interface RetainableByteBuffer extends Retainable
                 throw new IllegalStateException("Cannot append to a retained instance");
 
             // Optimize appending dynamics
-            if (retainableBytes instanceof DynamicCapacity dynamicCapacity)
+            if (retainableBytes instanceof DynamicCapacity)
             {
+                DynamicCapacity dynamicCapacity = (DynamicCapacity)retainableBytes;
                 for (Iterator<RetainableByteBuffer> i = dynamicCapacity._buffers.iterator(); i.hasNext();)
                 {
                     RetainableByteBuffer buffer = i.next();
@@ -2400,17 +2411,21 @@ public interface RetainableByteBuffer extends Retainable
             _aggregate = null;
             switch (_buffers.size())
             {
-                case 0 -> callback.succeeded();
-                case 1 ->
+                case 0:
+                    callback.succeeded();
+                    break;
+                case 1:
                 {
                     RetainableByteBuffer buffer = _buffers.get(0);
                     buffer.writeTo(sink, last, Callback.from(this::clear, callback));
+                    break;
                 }
-                default ->
+                default:
                 {
                     // Can we do a gather write?
-                    if (!last && sink instanceof EndPoint endPoint)
+                    if (!last && sink instanceof EndPoint)
                     {
+                        EndPoint endPoint = (EndPoint)sink;
                         ByteBuffer[] buffers = new ByteBuffer[_buffers.size()];
                         int i = 0;
                         for (RetainableByteBuffer rbb : _buffers)
@@ -2442,6 +2457,7 @@ public interface RetainableByteBuffer extends Retainable
                             super.onCompleted(causeOrNull);
                         }
                     }.iterate();
+                    break;
                 }
             }
         }
@@ -2451,10 +2467,16 @@ public interface RetainableByteBuffer extends Retainable
             List<Content.Chunk> list = new ArrayList<>();
             for (RetainableByteBuffer buffer : _buffers)
             {
-                if (buffer instanceof Content.Chunk chunk)
+                if (buffer instanceof Content.Chunk)
+                {
+                    Content.Chunk chunk = (Content.Chunk)buffer;
                     list.add(chunk);
-                else if (buffer instanceof DynamicCapacity dynamic)
+                }
+                else if (buffer instanceof DynamicCapacity)
+                {
+                    DynamicCapacity dynamic = (DynamicCapacity)buffer;
                     list.addAll(flattenToChunks(dynamic));
+                }
                 else
                     list.add(Content.Chunk.asChunk(buffer.getByteBuffer(), false, buffer));
             }
@@ -2468,10 +2490,16 @@ public interface RetainableByteBuffer extends Retainable
             List<Content.Chunk> list = new ArrayList<>();
             for (RetainableByteBuffer buffer : dynamic._buffers)
             {
-                if (buffer instanceof Content.Chunk chunk)
+                if (buffer instanceof Content.Chunk)
+                {
+                    Content.Chunk chunk = (Content.Chunk)buffer;
                     list.add(chunk);
-                else if (buffer instanceof DynamicCapacity d)
+                }
+                else if (buffer instanceof DynamicCapacity)
+                {
+                    DynamicCapacity d = (DynamicCapacity)buffer;
                     list.addAll(flattenToChunks(d));
+                }
                 else
                     list.add(Content.Chunk.asChunk(buffer.getByteBuffer(), false, buffer));
             }
@@ -2497,8 +2525,9 @@ public interface RetainableByteBuffer extends Retainable
             {
                 builder.append('@');
                 builder.append(Integer.toHexString(System.identityHashCode(buffer)));
-                if (buffer instanceof Abstract abstractBuffer)
+                if (buffer instanceof Abstract)
                 {
+                    Abstract abstractBuffer = (Abstract)buffer;
                     builder.append("/r=");
                     builder.append(abstractBuffer.getRetained());
                     abstractBuffer.addValueString(builder);

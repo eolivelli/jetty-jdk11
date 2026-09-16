@@ -36,25 +36,17 @@ public class DynamicDependTest extends AbstractUseCase
         FS.ensureDirExists(baseDir.resolve("modules/impl"));
         FS.ensureDirExists(baseDir.resolve("modules"));
         Files.writeString(baseDir.resolve("modules/dynamic.mod"),
-            """
-            [depend]
-            main
-            impl/dynamic-${java.version}
-            """, UTF_8);
+            "[depend]\n" +
+            "main\n" +
+            "impl/dynamic-${java.version}\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/impl/dynamic-1.7.0_31.mod"),
-            """
-            [ini]
-            dynamic=1.7.0_31-from-mod
-            """, UTF_8);
+            "[ini]\n" +
+            "dynamic=1.7.0_31-from-mod\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/impl/dynamic-1.8.0_05.mod"),
-            """
-            [ini]
-            dynamic=1.8.0_05_from_mod
-            """, UTF_8);
+            "[ini]\n" +
+            "dynamic=1.8.0_05_from_mod\n", UTF_8);
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            """, UTF_8);
+            "--modules=main\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = List.of(
@@ -96,25 +88,17 @@ public class DynamicDependTest extends AbstractUseCase
         FS.ensureDirExists(baseDir.resolve("modules/impl"));
         FS.ensureDirExists(baseDir.resolve("modules"));
         Files.writeString(baseDir.resolve("modules/dynamic.mod"),
-            """
-            [depend]
-            main
-            impl/dynamic-${java.version}
-            """, UTF_8);
+            "[depend]\n" +
+            "main\n" +
+            "impl/dynamic-${java.version}\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/impl/dynamic-1.7.0_31.mod"),
-            """
-            [ini]
-            dynamic=1.7.0_31-from-mod
-            """, UTF_8);
+            "[ini]\n" +
+            "dynamic=1.7.0_31-from-mod\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/impl/dynamic-1.8.0_05.mod"),
-            """
-            [ini]
-            dynamic=1.8.0_05_from_mod
-            """, UTF_8);
+            "[ini]\n" +
+            "dynamic=1.8.0_05_from_mod\n", UTF_8);
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            """, UTF_8);
+            "--modules=main\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = List.of(

@@ -224,7 +224,7 @@ public class DetectorConnectionFactory extends AbstractConnectionFactory impleme
 
                 // all Detecting instances want more bytes than this buffer can store
                 LOG.warn("Detector {} failed to detect upgrade target on {} for {}", getProtocol(), _detectingConnectionFactories, getEndPoint());
-                releaseAndClose(new IOException("Detector %s buffer overflow %d".formatted(getProtocol(), _buffer.capacity())));
+                releaseAndClose(new IOException(String.format("Detector %s buffer overflow %d", getProtocol(), _buffer.capacity())));
             }
             catch (Throwable x)
             {

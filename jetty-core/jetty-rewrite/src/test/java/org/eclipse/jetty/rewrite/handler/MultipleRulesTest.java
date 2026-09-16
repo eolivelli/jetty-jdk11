@@ -46,11 +46,9 @@ public class MultipleRulesTest extends AbstractRuleTest
             }
         });
 
-        String request = """
-            GET / HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(200, response.getStatus());
@@ -141,12 +139,10 @@ public class MultipleRulesTest extends AbstractRuleTest
             }
         });
 
-        String request = """
-            GET / HTTP/1.1
-            Host: localhost
-            %s: Request
-                        
-            """.formatted(requestHeaderName);
+        String request = String.format("GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "%s: Request\n" +
+            "\n", requestHeaderName);
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(200, response.getStatus());

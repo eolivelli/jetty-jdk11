@@ -59,8 +59,11 @@ public class DoSHandler extends ConditionalHandler.ElseNext
     public static final Function<Request, String> ID_FROM_REMOTE_ADDRESS_PORT = request ->
     {
         SocketAddress remoteSocketAddress = request.getConnectionMetaData().getRemoteSocketAddress();
-        if (remoteSocketAddress instanceof InetSocketAddress inetSocketAddress)
+        if (remoteSocketAddress instanceof InetSocketAddress)
+        {
+            InetSocketAddress inetSocketAddress = (InetSocketAddress)remoteSocketAddress;
             return inetSocketAddress.toString();
+        }
         return remoteSocketAddress.toString();
     };
 
@@ -70,8 +73,11 @@ public class DoSHandler extends ConditionalHandler.ElseNext
     public static final Function<Request, String> ID_FROM_REMOTE_ADDRESS = request ->
     {
         SocketAddress remoteSocketAddress = request.getConnectionMetaData().getRemoteSocketAddress();
-        if (remoteSocketAddress instanceof InetSocketAddress inetSocketAddress)
+        if (remoteSocketAddress instanceof InetSocketAddress)
+        {
+            InetSocketAddress inetSocketAddress = (InetSocketAddress)remoteSocketAddress;
             return inetSocketAddress.getAddress().toString();
+        }
         return remoteSocketAddress.toString();
     };
 
@@ -82,8 +88,11 @@ public class DoSHandler extends ConditionalHandler.ElseNext
     public static final Function<Request, String> ID_FROM_REMOTE_PORT = request ->
     {
         SocketAddress remoteSocketAddress = request.getConnectionMetaData().getRemoteSocketAddress();
-        if (remoteSocketAddress instanceof InetSocketAddress inetSocketAddress)
+        if (remoteSocketAddress instanceof InetSocketAddress)
+        {
+            InetSocketAddress inetSocketAddress = (InetSocketAddress)remoteSocketAddress;
             return Integer.toString(inetSocketAddress.getPort());
+        }
         return remoteSocketAddress.toString();
     };
 
@@ -175,8 +184,8 @@ public class DoSHandler extends ConditionalHandler.ElseNext
     public void setServer(Server server)
     {
         super.setServer(server);
-        if (_rejectHandler instanceof Handler handler)
-            handler.setServer(server);
+        if (_rejectHandler instanceof Handler)
+            ((Handler)_rejectHandler).setServer(server);
     }
 
     @Override
@@ -360,7 +369,7 @@ public class DoSHandler extends ConditionalHandler.ElseNext
             {
                 try (AutoLock ignored = _lock.lock())
                 {
-                    return "%s@%s{%d/%d}".formatted(TypeUtil.toShortName(getClass()), _id, _bucket, _maxRequestsPerSecond);
+                    return String.format("%s@%s{%d/%d}", TypeUtil.toShortName(getClass()), _id, _bucket, _maxRequestsPerSecond);
                 }
             }
         }
@@ -404,8 +413,56 @@ public class DoSHandler extends ConditionalHandler.ElseNext
      */
     public static class DelayedRejectHandler extends Handler.Abstract
     {
-        private record Exchange(Request request, Response response, Callback callback)
+        private static final class Exchange
         {
+            private final Request request;
+            private final Response response;
+            private final Callback callback;
+
+            private Exchange(Request request, Response response, Callback callback)
+            {
+                this.request = request;
+                this.response = response;
+                this.callback = callback;
+            }
+
+            public Request request()
+            {
+                return request;
+            }
+
+            public Response response()
+            {
+                return response;
+            }
+
+            public Callback callback()
+            {
+                return callback;
+            }
+
+            @Override
+            public boolean equals(Object obj)
+            {
+                if (this == obj)
+                    return true;
+                if (obj == null || getClass() != obj.getClass())
+                    return false;
+                Exchange that = (Exchange)obj;
+                return Objects.equals(request, that.request) && Objects.equals(response, that.response) && Objects.equals(callback, that.callback);
+            }
+
+            @Override
+            public int hashCode()
+            {
+                return Objects.hash(request, response, callback);
+            }
+
+            @Override
+            public String toString()
+            {
+                return "Exchange[request=" + request + ", response=" + response + ", callback=" + callback + "]";
+            }
         }
 
         private final AutoLock _lock = new AutoLock();

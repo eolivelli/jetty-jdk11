@@ -68,7 +68,7 @@ public class GzipRequest extends Request.Wrapper
 
             switch (header)
             {
-                case CONTENT_ENCODING ->
+                case CONTENT_ENCODING:
                 {
                     if (inflatable && !contentEncodingSeen)
                     {
@@ -86,8 +86,10 @@ public class GzipRequest extends Request.Wrapper
                             i.add(X_CE_GZIP);
                         }
                     }
+                    break;
                 }
-                case IF_MATCH, IF_NONE_MATCH ->
+                case IF_MATCH:
+                case IF_NONE_MATCH:
                 {
                     String etags = field.getValue();
                     String etagsNoSuffix = CompressedContentFormat.GZIP.stripSuffixes(etags);
@@ -96,11 +98,13 @@ public class GzipRequest extends Request.Wrapper
                         i.set(new HttpField(field.getHeader(), etagsNoSuffix));
                         request.setAttribute(GzipHandler.GZIP_HANDLER_ETAGS, etags);
                     }
+                    break;
                 }
-                case CONTENT_LENGTH ->
+                case CONTENT_LENGTH:
                 {
                     if (inflatable)
                         i.set(new HttpField("X-Content-Length", field.getValue()));
+                    break;
                 }
             }
         }

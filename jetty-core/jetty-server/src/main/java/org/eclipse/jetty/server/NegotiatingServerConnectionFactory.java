@@ -94,8 +94,11 @@ public abstract class NegotiatingServerConnectionFactory extends AbstractConnect
         EndPoint ep = endPoint;
         while (engine == null && ep != null)
         {
-            if (ep instanceof SslConnection.SslEndPoint ssl)
+            if (ep instanceof SslConnection.SslEndPoint)
+            {
+                SslConnection.SslEndPoint ssl = (SslConnection.SslEndPoint)ep;
                 engine = ssl.getSslConnection().getSSLEngine();
+            }
             else
                 ep = null;
         }

@@ -65,12 +65,13 @@ public class GzipDecoderSource extends DecoderSource
             {
                 switch (state)
                 {
-                    case INITIAL ->
+                    case INITIAL:
                     {
                         inflater.reset();
                         state = State.ID;
+                        break;
                     }
-                    case FLAGS ->
+                    case FLAGS:
                     {
                         if ((flags & 0x04) == 0x04)
                         {
@@ -97,8 +98,9 @@ public class GzipDecoderSource extends DecoderSource
                             state = State.DATA;
                             continue;
                         }
+                        break;
                     }
-                    case DATA ->
+                    case DATA:
                     {
                         while (true)
                         {
@@ -136,6 +138,7 @@ public class GzipDecoderSource extends DecoderSource
                                 break;
                             }
                         }
+                        break;
                     }
                 }
 
@@ -145,13 +148,14 @@ public class GzipDecoderSource extends DecoderSource
                 byte currByte = compressed.get();
                 switch (state)
                 {
-                    case ERROR, FINISHED ->
+                    case ERROR:
+                    case FINISHED:
                     {
                         // skip rest of content (nothing else possible to read safely)
                         compressed.position(compressed.limit());
                         return Content.Chunk.EOF;
                     }
-                    case ID ->
+                    case ID:
                     {
                         value += (long)(currByte & 0xFF) << 8 * size;
                         ++size;
@@ -161,37 +165,46 @@ public class GzipDecoderSource extends DecoderSource
                                 throw new ZipException("Invalid gzip bytes");
                             state = State.CM;
                         }
+                        break;
                     }
-                    case CM ->
+                    case CM:
                     {
                         if ((currByte & 0xFF) != 0x08)
                             throw new ZipException("Invalid gzip compression method");
                         state = State.FLG;
+                        break;
                     }
-                    case FLG ->
+                    case FLG:
                     {
                         flags = currByte;
                         state = State.MTIME;
                         size = 0;
                         value = 0;
+                        break;
                     }
-                    case MTIME ->
+                    case MTIME:
                     {
                         // Skip the 4 MTIME bytes
                         ++size;
                         if (size == 4)
                             state = State.XFL;
+                        break;
                     }
-                    case XFL -> state = State.OS; // Skip XFL
-                    case OS -> state = State.FLAGS; // Skip OS
-                    case EXTRA_LENGTH ->
+                    case XFL:
+                        state = State.OS; // Skip XFL
+                        break;
+                    case OS:
+                        state = State.FLAGS; // Skip OS
+                        break;
+                    case EXTRA_LENGTH:
                     {
                         value += (long)(currByte & 0xFF) << 8 * size;
                         ++size;
                         if (size == 2)
                             state = State.EXTRA;
+                        break;
                     }
-                    case EXTRA ->
+                    case EXTRA:
                     {
                         // Skip EXTRA bytes
                         --value;
@@ -201,8 +214,9 @@ public class GzipDecoderSource extends DecoderSource
                             flags &= ~0x04;
                             state = State.FLAGS;
                         }
+                        break;
                     }
-                    case NAME ->
+                    case NAME:
                     {
                         // Skip NAME bytes
                         if (currByte == 0)
@@ -211,8 +225,9 @@ public class GzipDecoderSource extends DecoderSource
                             flags &= ~0x08;
                             state = State.FLAGS;
                         }
+                        break;
                     }
-                    case COMMENT ->
+                    case COMMENT:
                     {
                         // Skip COMMENT bytes
                         if (currByte == 0)
@@ -221,8 +236,9 @@ public class GzipDecoderSource extends DecoderSource
                             flags &= ~0x10;
                             state = State.FLAGS;
                         }
+                        break;
                     }
-                    case HCRC ->
+                    case HCRC:
                     {
                         // Skip HCRC
                         ++size;
@@ -232,8 +248,9 @@ public class GzipDecoderSource extends DecoderSource
                             flags &= ~0x02;
                             state = State.FLAGS;
                         }
+                        break;
                     }
-                    case CRC ->
+                    case CRC:
                     {
                         value += (long)(currByte & 0xFF) << 8 * size;
                         ++size;
@@ -244,8 +261,9 @@ public class GzipDecoderSource extends DecoderSource
                             size = 0;
                             value = 0;
                         }
+                        break;
                     }
-                    case ISIZE ->
+                    case ISIZE:
                     {
                         value = value | ((currByte & 0xFFL) << (8 * size));
                         ++size;
@@ -259,8 +277,10 @@ public class GzipDecoderSource extends DecoderSource
                             value = 0;
                             return Content.Chunk.EOF;
                         }
+                        break;
                     }
-                    default -> throw new ZipException("Unknown state: " + state);
+                    default:
+                        throw new ZipException("Unknown state: " + state);
                 }
             }
         }

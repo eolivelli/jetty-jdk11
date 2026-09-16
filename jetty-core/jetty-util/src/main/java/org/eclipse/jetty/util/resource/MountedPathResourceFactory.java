@@ -19,6 +19,8 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.ProviderNotFoundException;
+import java.nio.file.spi.FileSystemProvider;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +44,8 @@ public class MountedPathResourceFactory implements ResourceFactory
         Map<String, String> env = new HashMap<>();
         // Key and Value documented at https://docs.oracle.com/en/java/javase/17/docs/api/jdk.zipfs/module-summary.html
         env.put("releaseVersion", "runtime");
+        // Java 11 and 12 use this older key for the same feature.
+        env.put("multi-release", "runtime");
         ENV_MULTIRELEASE_RUNTIME = env;
     }
 
@@ -131,7 +135,13 @@ public class MountedPathResourceFactory implements ResourceFactory
         try
         {
             //noinspection resource (handled by MountedPathResource)
-            return FileSystems.newFileSystem(containerPath, ENV_MULTIRELEASE_RUNTIME);
+            // FileSystems.newFileSystem(Path, Map) is only available since Java 13.
+            for (FileSystemProvider provider : FileSystemProvider.installedProviders())
+            {
+                if ("jar".equalsIgnoreCase(provider.getScheme()))
+                    return provider.newFileSystem(containerPath, ENV_MULTIRELEASE_RUNTIME);
+            }
+            throw new ProviderNotFoundException("Provider not found: jar");
         }
         catch (IOException e)
         {

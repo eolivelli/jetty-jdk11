@@ -276,21 +276,19 @@ public class QuickStartTest
 
         Path quickStartXml = target.resolve("WEB-INF/quickstart-web.xml");
         String quickStartContents = Files.readString(quickStartXml);
-        assertThat(quickStartContents, containsString("""
-              <filter>
-                <filter-name>CustomFilter</filter-name>
-                <filter-class>org.example.CustomFilter</filter-class>
-                <async-supported>false</async-supported>
-              </filter>
-              <filter-mapping>
-                <filter-name>CustomFilter</filter-name>
-                <url-pattern>/foo/*</url-pattern>
-                <dispatcher>REQUEST</dispatcher>
-                <dispatcher>ERROR</dispatcher>
-                <dispatcher>FORWARD</dispatcher>
-                <dispatcher>INCLUDE</dispatcher>
-              </filter-mapping>
-            """));
+        assertThat(quickStartContents, containsString("  <filter>\n" +
+            "    <filter-name>CustomFilter</filter-name>\n" +
+            "    <filter-class>org.example.CustomFilter</filter-class>\n" +
+            "    <async-supported>false</async-supported>\n" +
+            "  </filter>\n" +
+            "  <filter-mapping>\n" +
+            "    <filter-name>CustomFilter</filter-name>\n" +
+            "    <url-pattern>/foo/*</url-pattern>\n" +
+            "    <dispatcher>REQUEST</dispatcher>\n" +
+            "    <dispatcher>ERROR</dispatcher>\n" +
+            "    <dispatcher>FORWARD</dispatcher>\n" +
+            "    <dispatcher>INCLUDE</dispatcher>\n" +
+            "  </filter-mapping>\n"));
     }
 
     @Test
@@ -310,9 +308,7 @@ public class QuickStartTest
 
         Path quickStartXml = target.resolve("WEB-INF/quickstart-web.xml");
         String quickStartContents = Files.readString(quickStartXml);
-        assertThat(quickStartContents, containsString("""
-                <cookie-config>
-                  <comment>foo__SAME_SITE_NONE__</comment>
-            """));
+        assertThat(quickStartContents, containsString("    <cookie-config>\n" +
+            "      <comment>foo__SAME_SITE_NONE__</comment>\n"));
     }
 }

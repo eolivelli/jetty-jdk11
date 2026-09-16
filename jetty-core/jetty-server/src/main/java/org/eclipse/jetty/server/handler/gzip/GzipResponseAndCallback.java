@@ -113,16 +113,25 @@ public class GzipResponseAndCallback extends Response.Wrapper implements Callbac
         _last = last;
         switch (_state.get())
         {
-            case MIGHT_COMPRESS -> commit(last, callback, content);
-            case NOT_COMPRESSING -> super.write(last, content, callback);
-            case COMMITTING -> callback.failed(new WritePendingException());
-            case COMPRESSING -> gzip(last, callback, content);
-            default ->
+            case MIGHT_COMPRESS:
+                commit(last, callback, content);
+                break;
+            case NOT_COMPRESSING:
+                super.write(last, content, callback);
+                break;
+            case COMMITTING:
+                callback.failed(new WritePendingException());
+                break;
+            case COMPRESSING:
+                gzip(last, callback, content);
+                break;
+            default:
             {
                 if (BufferUtil.isEmpty(content))
                     callback.succeeded();
                 else
                     callback.failed(new IllegalStateException("state=" + _state.get()));
+                break;
             }
         }
     }
@@ -342,12 +351,15 @@ public class GzipResponseAndCallback extends Response.Wrapper implements Callbac
 
             Deflater deflater = _deflaterEntry.get();
 
-            return switch (gzstate)
+            switch (gzstate)
             {
-                case COMPRESSING -> compressing(deflater, _buffer.getByteBuffer());
-                case FINISHING -> finishing(deflater, _buffer.getByteBuffer());
-                default -> throw new IllegalStateException("Unexpected state [" + _state.get() + "]");
-            };
+                case COMPRESSING:
+                    return compressing(deflater, _buffer.getByteBuffer());
+                case FINISHING:
+                    return finishing(deflater, _buffer.getByteBuffer());
+                default:
+                    throw new IllegalStateException("Unexpected state [" + _state.get() + "]");
+            }
         }
 
         @Override

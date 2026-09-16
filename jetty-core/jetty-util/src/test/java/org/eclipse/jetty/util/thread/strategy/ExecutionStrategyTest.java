@@ -152,7 +152,7 @@ public class ExecutionStrategyTest
             {
                 // Dump state on failure
                 return String.format("Timed out waiting for latch: %s%ntasks=%d latch=%d%n%s",
-                    strategy, TASKS, latch.getCount(), threadPool instanceof Dumpable dumpable ? dumpable.dump() : "");
+                    strategy, TASKS, latch.getCount(), threadPool instanceof Dumpable ? ((Dumpable)threadPool).dump() : "");
             });
 
         LifeCycle.stop(threadPool);
@@ -218,7 +218,7 @@ public class ExecutionStrategyTest
 
         assertTrue(latch.await(30, TimeUnit.SECONDS),
             String.format("Timed out waiting for latch: %s%ntasks=%d latch=%d q=%d%n%s",
-                strategy, TASKS, latch.getCount(), q.size(), threadPool instanceof Dumpable dumpable ? dumpable.dump() : ""));
+                strategy, TASKS, latch.getCount(), q.size(), threadPool instanceof Dumpable ? ((Dumpable)threadPool).dump() : ""));
 
         LifeCycle.stop(threadPool);
     }
@@ -235,9 +235,9 @@ public class ExecutionStrategyTest
             CountDownLatch latch = new CountDownLatch(TASKS);
             AtomicReference<ExecutionStrategy> strategyRef = new AtomicReference<>();
             AtomicReference<Throwable> failureRef = new AtomicReference<>();
+            ThreadLocal<Thread> threadLocal = new ThreadLocal<>();
             Producer producer = new TestProducer()
             {
-                private static final ThreadLocal<Thread> THREAD = new ThreadLocal<>();
                 int tasks = TASKS;
 
                 @Override
@@ -248,10 +248,10 @@ public class ExecutionStrategyTest
                         // Return a BLOCKING task.
                         return () ->
                         {
-                            Thread thread = THREAD.get();
+                            Thread thread = threadLocal.get();
                             if (thread != null)
                                 failureRef.compareAndSet(null, new AssertionError("recursion detected"));
-                            THREAD.set(Thread.currentThread());
+                            threadLocal.set(Thread.currentThread());
                             try
                             {
                                 if (tasks > 0)
@@ -264,7 +264,7 @@ public class ExecutionStrategyTest
                             }
                             finally
                             {
-                                THREAD.set(null);
+                                threadLocal.set(null);
                             }
                         };
                     }
@@ -280,7 +280,7 @@ public class ExecutionStrategyTest
             {
                 // Dump state on failure.
                 return String.format("Timed out waiting for latch: %s%ntasks=%d latch=%d%n%s",
-                    strategy, TASKS, latch.getCount(), threadPool instanceof Dumpable dumpable ? dumpable.dump() : "");
+                    strategy, TASKS, latch.getCount(), threadPool instanceof Dumpable ? ((Dumpable)threadPool).dump() : "");
             });
 
             Throwable failure = failureRef.get();

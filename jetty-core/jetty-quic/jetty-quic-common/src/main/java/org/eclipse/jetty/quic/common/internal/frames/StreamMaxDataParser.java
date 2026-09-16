@@ -36,20 +36,23 @@ public class StreamMaxDataParser
         {
             switch (state)
             {
-                case FRAME_TYPE ->
+                case FRAME_TYPE:
                 {
                     byteBuffer.get();
                     state = State.STREAM_ID;
+                    break;
                 }
-                case STREAM_ID ->
+                case STREAM_ID:
                 {
                     if (varLenInt.tryDecode(byteBuffer, v -> streamId = v))
                         state = State.MAX_DATA;
+                    break;
                 }
-                case MAX_DATA ->
+                case MAX_DATA:
                 {
                     if (varLenInt.tryDecode(byteBuffer, v -> maxData = v))
                         return result();
+                    break;
                 }
             }
         }

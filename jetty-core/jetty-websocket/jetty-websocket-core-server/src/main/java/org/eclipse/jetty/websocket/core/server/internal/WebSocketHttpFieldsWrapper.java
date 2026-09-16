@@ -38,22 +38,23 @@ public class WebSocketHttpFieldsWrapper extends HttpFields.Mutable.Wrapper
     {
         if (field.getHeader() != null)
         {
-            return switch (field.getHeader())
+            switch (field.getHeader())
             {
-                case SEC_WEBSOCKET_SUBPROTOCOL ->
+                case SEC_WEBSOCKET_SUBPROTOCOL:
                 {
                     _response.setAcceptedSubProtocol(field.getValue());
-                    yield null;
+                    return null;
                 }
 
-                case SEC_WEBSOCKET_EXTENSIONS ->
+                case SEC_WEBSOCKET_EXTENSIONS:
                 {
                     _response.addExtensions(ExtensionConfig.parseList(field.getValue()));
-                    yield null;
+                    return null;
                 }
 
-                default -> super.onAddField(field);
-            };
+                default:
+                    return super.onAddField(field);
+            }
         }
         return super.onAddField(field);
     }
@@ -63,22 +64,23 @@ public class WebSocketHttpFieldsWrapper extends HttpFields.Mutable.Wrapper
     {
         if (field.getHeader() != null)
         {
-            return switch (field.getHeader())
+            switch (field.getHeader())
             {
-                case SEC_WEBSOCKET_SUBPROTOCOL ->
+                case SEC_WEBSOCKET_SUBPROTOCOL:
                 {
                     _response.setAcceptedSubProtocol(null);
-                    yield true;
+                    return true;
                 }
 
-                case SEC_WEBSOCKET_EXTENSIONS ->
+                case SEC_WEBSOCKET_EXTENSIONS:
                 {
                     _response.removeExtensions(ExtensionConfig.parseList(field.getValue()));
-                    yield true;
+                    return true;
                 }
 
-                default -> super.onRemoveField(field);
-            };
+                default:
+                    return super.onRemoveField(field);
+            }
         }
         return super.onRemoveField(field);
     }

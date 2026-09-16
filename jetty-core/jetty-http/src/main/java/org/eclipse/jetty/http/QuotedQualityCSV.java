@@ -14,6 +14,7 @@
 package org.eclipse.jetty.http;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -152,7 +153,7 @@ public class QuotedQualityCSV extends QuotedCSV implements Iterable<String>
     protected void parsedValueAndParams(StringBuilder buffer)
     {
         // No value? then this isn't a Quality based CSV. Skip.
-        if (buffer.isEmpty())
+        if (buffer.length() == 0)
             return;
 
         super.parsedValueAndParams(buffer);
@@ -175,7 +176,7 @@ public class QuotedQualityCSV extends QuotedCSV implements Iterable<String>
     protected void parsedValue(StringBuilder buffer)
     {
         // ignore empty values
-        if (buffer.isEmpty())
+        if (buffer.length() == 0)
             return;
 
         // We have to convert to String anyway for QualityValue below.
@@ -262,7 +263,7 @@ public class QuotedQualityCSV extends QuotedCSV implements Iterable<String>
 
     public List<QualityValue> getQualityValues()
     {
-        return _qualities.stream().sorted().toList();
+        return Collections.unmodifiableList(_qualities.stream().sorted().collect(Collectors.toList()));
     }
 
     @Override
@@ -334,8 +335,9 @@ public class QuotedQualityCSV extends QuotedCSV implements Iterable<String>
         @Override
         public boolean equals(Object obj)
         {
-            if (!(obj instanceof QualityValue that))
+            if (!(obj instanceof QualityValue))
                 return false;
+            QualityValue that = (QualityValue)obj;
             return _quality == that._quality && Objects.equals(_value, that._value) && _index == that._index;
         }
 

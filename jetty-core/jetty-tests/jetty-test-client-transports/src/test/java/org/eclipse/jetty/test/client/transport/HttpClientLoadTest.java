@@ -33,6 +33,7 @@ import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpHeaderValue;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.io.Content;
+import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.util.BufferUtil;
@@ -156,8 +157,9 @@ public class HttpClientLoadTest extends AbstractTest
         int contentLength = random.nextInt(maxContentLength) + 1;
 
         String uri = (ssl ? "https" : "http") + "://" + host;
-        if (connector instanceof NetworkConnector networkConnector)
-            uri += ":" + networkConnector.getLocalPort();
+        AbstractConnector serverConnector = connector;
+        if (serverConnector instanceof NetworkConnector)
+            uri += ":" + ((NetworkConnector)serverConnector).getLocalPort();
         test(uri, method.asString(), clientClose, serverClose, clientTimeout, contentLength, true, latch, failures);
     }
 
@@ -181,11 +183,14 @@ public class HttpClientLoadTest extends AbstractTest
 
         switch (method)
         {
-            case "GET" -> request.headers(headers -> headers.put("X-Download", String.valueOf(contentLength)));
-            case "POST" ->
+            case "GET":
+                request.headers(headers -> headers.put("X-Download", String.valueOf(contentLength)));
+                break;
+            case "POST":
             {
                 request.headers(headers -> headers.put("X-Upload", String.valueOf(contentLength)));
                 request.body(new BytesRequestContent(new byte[contentLength]));
+                break;
             }
         }
 
@@ -270,7 +275,7 @@ public class HttpClientLoadTest extends AbstractTest
             String method = request.getMethod().toUpperCase(Locale.ENGLISH);
             switch (method)
             {
-                case "GET" ->
+                case "GET":
                 {
                     ByteBuffer content = BufferUtil.EMPTY_BUFFER;
                     int contentLength = (int)request.getHeaders().getLongField("X-Download");
@@ -280,13 +285,16 @@ public class HttpClientLoadTest extends AbstractTest
                         content = ByteBuffer.allocate(contentLength);
                     }
                     response.write(true, content, callback);
+                    break;
                 }
-                case "POST" ->
+                case "POST":
                 {
                     response.getHeaders().put("X-Content", request.getHeaders().getLongField("X-Upload"));
                     Content.copy(request, response, callback);
+                    break;
                 }
-                default -> throw new UnsupportedOperationException();
+                default:
+                    throw new UnsupportedOperationException();
             }
             return true;
         }

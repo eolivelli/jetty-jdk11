@@ -678,8 +678,9 @@ public class ClassMatcher extends AbstractSet<String>
     @Override
     public boolean remove(Object o)
     {
-        if (!(o instanceof String pattern))
+        if (!(o instanceof String))
             return false;
+        String pattern = (String)o;
 
         Entry entry = _entries.remove(pattern);
         if (entry == null)

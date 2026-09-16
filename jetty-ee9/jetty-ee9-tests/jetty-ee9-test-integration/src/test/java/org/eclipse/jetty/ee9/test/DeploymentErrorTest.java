@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.client.ContentResponse;
 import org.eclipse.jetty.client.HttpClient;
@@ -283,11 +284,15 @@ public class DeploymentErrorTest
 
     private WebAppContext getWebAppContext(ContextHandler contextHandler)
     {
-        if (contextHandler instanceof org.eclipse.jetty.ee9.nested.ContextHandler.CoreContextHandler coreContextHandler)
+        if (contextHandler instanceof org.eclipse.jetty.ee9.nested.ContextHandler.CoreContextHandler)
         {
+            org.eclipse.jetty.ee9.nested.ContextHandler.CoreContextHandler coreContextHandler = (org.eclipse.jetty.ee9.nested.ContextHandler.CoreContextHandler)contextHandler;
             org.eclipse.jetty.ee9.nested.ContextHandler nestedContextHandler = coreContextHandler.getContextHandler();
-            if (nestedContextHandler instanceof WebAppContext webAppContext)
+            if (nestedContextHandler instanceof WebAppContext)
+            {
+                WebAppContext webAppContext = (WebAppContext)nestedContextHandler;
                 return webAppContext;
+            }
         }
         return null;
     }
@@ -308,7 +313,7 @@ public class DeploymentErrorTest
         return deployer.getContexts().getHandlers().stream()
             .filter(h -> (h instanceof ContextHandler))
             .map(ContextHandler.class::cast)
-            .toList();
+            .collect(Collectors.toList());
     }
 
     private ContextHandler findContext(String contextPath, List<ContextHandler> apps)

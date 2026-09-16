@@ -80,8 +80,12 @@ public class ResourceListing
             {
                 switch (paramO)
                 {
-                    case "A" -> sortOrderAscending = true;
-                    case "D" -> sortOrderAscending = false;
+                    case "A":
+                        sortOrderAscending = true;
+                        break;
+                    case "D":
+                        sortOrderAscending = false;
+                        break;
                 }
             }
             if (StringUtil.isNotBlank(paramC))
@@ -94,12 +98,19 @@ public class ResourceListing
         }
 
         // Perform sort
-        Comparator<? super Resource> sort = switch (sortColumn)
+        Comparator<? super Resource> sort;
+        switch (sortColumn)
         {
-            case "M" -> ResourceCollators.byLastModified(sortOrderAscending);
-            case "S" -> ResourceCollators.bySize(sortOrderAscending);
-            default -> ResourceCollators.byFileName(sortOrderAscending);
-        };
+            case "M":
+                sort = ResourceCollators.byLastModified(sortOrderAscending);
+                break;
+            case "S":
+                sort = ResourceCollators.bySize(sortOrderAscending);
+                break;
+            default:
+                sort = ResourceCollators.byFileName(sortOrderAscending);
+                break;
+        }
         listing.sort(sort);
 
         String decodedBase = URIUtil.decodePath(base);
@@ -109,11 +120,9 @@ public class ResourceListing
 
         // Doctype Declaration + XHTML. The spec says the encoding MUST be "utf-8" in all cases at it is ignored;
         // see: https://html.spec.whatwg.org/multipage/semantics.html#attr-meta-charset
-        buf.append("""
-            <?xml version="1.0" encoding="utf-8"?>
-            <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-            <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-            """);
+        buf.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+            "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n" +
+            "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\">\n");
 
         // HTML Header
         buf.append("<head>\n");
@@ -311,11 +320,21 @@ public class ResourceListing
             char c = raw.charAt(i);
             switch (c)
             {
-                case '"' -> buf.append("%22");
-                case '\'' -> buf.append("%27");
-                case '<' -> buf.append("%3C");
-                case '>' -> buf.append("%3E");
-                default -> buf.append(c);
+                case '"':
+                    buf.append("%22");
+                    break;
+                case '\'':
+                    buf.append("%27");
+                    break;
+                case '<':
+                    buf.append("%3C");
+                    break;
+                case '>':
+                    buf.append("%3E");
+                    break;
+                default:
+                    buf.append(c);
+                    break;
             }
         }
 

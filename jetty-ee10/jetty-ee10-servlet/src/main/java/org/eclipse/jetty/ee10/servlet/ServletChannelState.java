@@ -46,7 +46,7 @@ public class ServletChannelState
 {
     private static final Logger LOG = LoggerFactory.getLogger(ServletChannelState.class);
 
-    private static final long DEFAULT_TIMEOUT = Long.getLong("%s.DEFAULT_TIMEOUT".formatted(ServletChannelState.class.getName()), 30000L);
+    private static final long DEFAULT_TIMEOUT = Long.getLong(String.format("%s.DEFAULT_TIMEOUT", ServletChannelState.class.getName()), 30000L);
 
     /*
      * The state of the ServletChannel,used to control the overall lifecycle.
@@ -430,8 +430,10 @@ public class ServletChannelState
                     _state = State.HANDLING;
                     if (_servletChannel.getResponse().getStatus() != 0)
                     {
-                        if (_servletChannel.getRequest().getAttribute(ERROR_STATUS) instanceof Integer errorCode)
+                        Object errorStatus = _servletChannel.getRequest().getAttribute(ERROR_STATUS);
+                        if (errorStatus instanceof Integer)
                         {
+                            int errorCode = (Integer)errorStatus;
                             _servletChannel.getServletRequestState().sendError(errorCode, null);
                             _requestState = RequestState.BLOCKING;
                             _sendError = false;
@@ -1010,8 +1012,9 @@ public class ServletChannelState
             code = HttpStatus.INTERNAL_SERVER_ERROR_500;
             message = th.toString();
         }
-        else if (cause instanceof HttpException httpException)
+        else if (cause instanceof HttpException)
         {
+            HttpException httpException = (HttpException)cause;
             code = httpException.getCode();
             message = httpException.getReason();
         }

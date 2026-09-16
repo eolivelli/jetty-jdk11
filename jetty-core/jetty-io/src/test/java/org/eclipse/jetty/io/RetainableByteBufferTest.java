@@ -754,40 +754,65 @@ public class RetainableByteBufferTest
 
     public static Mutable mutable(int index)
     {
-        return switch (index)
+        switch (index)
         {
-            case  0 -> new RetainableByteBuffer.FixedCapacity(BufferUtil.allocate(MAX_CAPACITY));
-            case  1 -> new RetainableByteBuffer.FixedCapacity(BufferUtil.allocateDirect(MAX_CAPACITY));
-            case  2 -> new RetainableByteBuffer.FixedCapacity(BufferUtil.allocate(2 * MAX_CAPACITY).limit(MAX_CAPACITY + MAX_CAPACITY / 2).position(MAX_CAPACITY / 2).slice().limit(0));
-            case  3 -> new RetainableByteBuffer.FixedCapacity(BufferUtil.allocateDirect(2 * MAX_CAPACITY).limit(MAX_CAPACITY + MAX_CAPACITY / 2).position(MAX_CAPACITY / 2).slice().limit(0));
-            case  4 -> _pool.acquire(MAX_CAPACITY, true).asMutable();
-            case  5 -> _pool.acquire(MAX_CAPACITY, false).asMutable();
-            case  6 -> new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY);
-            case  7 -> new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY);
-            case  8 -> new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 0, -1);
-            case  9 -> new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY, 0, -1);
-            case 10 -> new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 32, -1);
-            case 11 -> new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY, 32, -1);
-            case 12 -> new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 0, 0);
-            case 13 -> new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY, 0, 0);
-            case 14 -> new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 32, 0);
-            case 15 -> new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY, 32, 0);
-            case 16 -> new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 0, 2);
-            case 17 -> new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY, 0, 2);
-            case 18 -> new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 32, 2);
-            case 19 -> new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY, 32, 2);
-            case 20 -> new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 0, Integer.MAX_VALUE);
-            case 21 -> new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY, 0, Integer.MAX_VALUE);
-            case 22 -> new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 32, Integer.MAX_VALUE);
-            case 23 -> new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY, 32, Integer.MAX_VALUE);
-            case 24 ->
+            case 0:
+                return new RetainableByteBuffer.FixedCapacity(BufferUtil.allocate(MAX_CAPACITY));
+            case 1:
+                return new RetainableByteBuffer.FixedCapacity(BufferUtil.allocateDirect(MAX_CAPACITY));
+            case 2:
+                return new RetainableByteBuffer.FixedCapacity(BufferUtil.allocate(2 * MAX_CAPACITY).limit(MAX_CAPACITY + MAX_CAPACITY / 2).position(MAX_CAPACITY / 2).slice().limit(0));
+            case 3:
+                return new RetainableByteBuffer.FixedCapacity(BufferUtil.allocateDirect(2 * MAX_CAPACITY).limit(MAX_CAPACITY + MAX_CAPACITY / 2).position(MAX_CAPACITY / 2).slice().limit(0));
+            case 4:
+                return _pool.acquire(MAX_CAPACITY, true).asMutable();
+            case 5:
+                return _pool.acquire(MAX_CAPACITY, false).asMutable();
+            case 6:
+                return new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY);
+            case 7:
+                return new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY);
+            case 8:
+                return new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 0, -1);
+            case 9:
+                return new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY, 0, -1);
+            case 10:
+                return new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 32, -1);
+            case 11:
+                return new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY, 32, -1);
+            case 12:
+                return new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 0, 0);
+            case 13:
+                return new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY, 0, 0);
+            case 14:
+                return new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 32, 0);
+            case 15:
+                return new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY, 32, 0);
+            case 16:
+                return new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 0, 2);
+            case 17:
+                return new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY, 0, 2);
+            case 18:
+                return new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 32, 2);
+            case 19:
+                return new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY, 32, 2);
+            case 20:
+                return new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 0, Integer.MAX_VALUE);
+            case 21:
+                return new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY, 0, Integer.MAX_VALUE);
+            case 22:
+                return new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 32, Integer.MAX_VALUE);
+            case 23:
+                return new Mutable.DynamicCapacity(_pool, false, MAX_CAPACITY, 32, Integer.MAX_VALUE);
+            case 24:
             {
                 Mutable withAggregatable = new Mutable.DynamicCapacity(_pool, true, MAX_CAPACITY, 0, 0);
                 withAggregatable.add(_pool.acquire(MAX_CAPACITY, false));
-                yield withAggregatable;
+                return withAggregatable;
             }
-            default -> null;
-        };
+            default:
+                return null;
+        }
     }
 
     public static Stream<Arguments> mutables()
@@ -1306,8 +1331,9 @@ public class RetainableByteBufferTest
     public void testTakeByteBuffer(Supplier<Mutable> supplier)
     {
         Mutable buffer = supplier.get();
-        if (buffer instanceof RetainableByteBuffer.DynamicCapacity dynamic)
+        if (buffer instanceof RetainableByteBuffer.DynamicCapacity)
         {
+            RetainableByteBuffer.DynamicCapacity dynamic = (RetainableByteBuffer.DynamicCapacity)buffer;
             dynamic.put("Hello".getBytes(StandardCharsets.UTF_8));
             dynamic.put((byte)' ');
             CountDownLatch released = new CountDownLatch(1);

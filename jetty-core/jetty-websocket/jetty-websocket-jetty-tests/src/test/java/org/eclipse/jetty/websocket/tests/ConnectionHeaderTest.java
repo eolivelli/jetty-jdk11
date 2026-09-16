@@ -75,8 +75,9 @@ public class ConnectionHeaderTest
             public void onHandshakeRequest(Request request)
             {
                 HttpFields fields = request.getHeaders();
-                if (!(fields instanceof HttpFields.Mutable headers))
+                if (!(fields instanceof HttpFields.Mutable))
                     throw new IllegalStateException(fields.getClass().getName());
+                HttpFields.Mutable headers = (HttpFields.Mutable)fields;
 
                 // Replace the default connection header value with a custom one.
                 headers.put(HttpHeader.CONNECTION, connectionHeaderValue);

@@ -51,6 +51,8 @@ import org.slf4j.LoggerFactory;
 public class HTTP2Connection extends AbstractConnection implements Parser.Listener, Connection.UpgradeTo
 {
     private static final Logger LOG = LoggerFactory.getLogger(HTTP2Connection.class);
+    private static final RetainableByteBuffer.Mutable STOPPED = new RetainableByteBuffer.NonRetainableByteBuffer(BufferUtil.EMPTY_BUFFER);
+    private static final RetainableByteBuffer.Mutable RELEASE_MARKER = new RetainableByteBuffer.NonRetainableByteBuffer(BufferUtil.EMPTY_BUFFER);
 
     private final AutoLock lock = new AutoLock();
     private final Queue<Runnable> tasks = new ArrayDeque<>();
@@ -330,13 +332,11 @@ public class HTTP2Connection extends AbstractConnection implements Parser.Listen
     @Override
     public String toConnectionString()
     {
-        return "%s@%x[%s]".formatted(TypeUtil.toShortName(getClass()), hashCode(), strategy);
+        return String.format("%s@%x[%s]", TypeUtil.toShortName(getClass()), hashCode(), strategy);
     }
 
     protected class HTTP2Producer implements ExecutionStrategy.Producer
     {
-        private static final RetainableByteBuffer.Mutable STOPPED = new RetainableByteBuffer.NonRetainableByteBuffer(BufferUtil.EMPTY_BUFFER);
-        private static final RetainableByteBuffer.Mutable RELEASE_MARKER = new RetainableByteBuffer.NonRetainableByteBuffer(BufferUtil.EMPTY_BUFFER);
         private final Callback fillableCallback = new FillableCallback();
         private final AutoLock lock = new AutoLock();
         private RetainableByteBuffer.Mutable heldBuffer;
@@ -501,7 +501,7 @@ public class HTTP2Connection extends AbstractConnection implements Parser.Listen
                     // If no buffer is held and the networkBuffer did not change since acquisition, it means
                     // the user thread won the race, so it must leave a marker to tell the producer thread to release
                     // instead of holding onto the buffer.
-                    heldBuffer = HTTP2Producer.RELEASE_MARKER;
+                    heldBuffer = RELEASE_MARKER;
                 }
                 else
                 {
@@ -580,7 +580,7 @@ public class HTTP2Connection extends AbstractConnection implements Parser.Listen
                 boolean held = l.isHeldByCurrentThread();
                 countState = held ? String.valueOf(tasks.size()) : "undefined";
             }
-            return "%s@%x[taskQueue=%s]".formatted(TypeUtil.toShortName(getClass()), hashCode(), countState);
+            return String.format("%s@%x[taskQueue=%s]", TypeUtil.toShortName(getClass()), hashCode(), countState);
         }
     }
 

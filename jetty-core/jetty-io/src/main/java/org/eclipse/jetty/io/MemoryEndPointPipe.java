@@ -18,7 +18,6 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HexFormat;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
@@ -36,6 +35,10 @@ import org.slf4j.LoggerFactory;
  */
 public class MemoryEndPointPipe implements EndPoint.Pipe
 {
+    // Keep the original logger category of the inner MemoryEndPoint class.
+    private static final Logger LOG = LoggerFactory.getLogger(MemoryEndPoint.class);
+    private static final RetainableByteBuffer EOF_SENTINEL = RetainableByteBuffer.wrap(BufferUtil.EMPTY_BUFFER);
+
     private final ByteBufferPool byteBufferPool;
     private final LocalEndPoint localEndPoint;
     private final RemoteEndPoint remoteEndPoint;
@@ -87,9 +90,6 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
      */
     private class MemoryEndPoint extends AbstractEndPoint
     {
-        private static final Logger LOG = LoggerFactory.getLogger(MemoryEndPoint.class);
-        private static final RetainableByteBuffer EOF = RetainableByteBuffer.wrap(BufferUtil.EMPTY_BUFFER);
-
         private final AutoLock lock = new AutoLock();
         private final Deque<RetainableByteBuffer> buffers = new ArrayDeque<>();
         private final SocketAddress localAddress;
@@ -188,7 +188,7 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
                     RetainableByteBuffer data = buffers.peek();
                     if (data == null)
                         return filled;
-                    if (data == EOF)
+                    if (data == EOF_SENTINEL)
                         return filled > 0 ? filled : -1;
 
                     int space = buffer.remaining();
@@ -327,7 +327,7 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
             if (length < remaining)
             {
                 // Partial copy.
-                copy.append(buffer.slice(buffer.position(), length));
+                copy.append(BufferUtil.absoluteSlice(buffer, buffer.position(), length));
                 buffer.position(buffer.position() + length);
             }
             else
@@ -343,7 +343,7 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
             super.doShutdownOutput();
             try (AutoLock ignored = lock.lock())
             {
-                buffers.offer(EOF);
+                buffers.offer(EOF_SENTINEL);
             }
             onFlushed();
         }
@@ -355,8 +355,8 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
             try (AutoLock ignored = lock.lock())
             {
                 RetainableByteBuffer last = buffers.peekLast();
-                if (last != EOF)
-                    buffers.offer(EOF);
+                if (last != EOF_SENTINEL)
+                    buffers.offer(EOF_SENTINEL);
             }
             onFlushed();
         }
@@ -385,8 +385,20 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
         }
     }
 
-    private record FillableTask(FillInterest fillInterest) implements Invocable.Task
+    private static final class FillableTask implements Invocable.Task
     {
+        private final FillInterest fillInterest;
+
+        private FillableTask(FillInterest fillInterest)
+        {
+            this.fillInterest = fillInterest;
+        }
+
+        public FillInterest fillInterest()
+        {
+            return fillInterest;
+        }
+
         @Override
         public void run()
         {
@@ -398,10 +410,45 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
         {
             return fillInterest.getCallbackInvocationType();
         }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            FillableTask that = (FillableTask)obj;
+            return Objects.equals(fillInterest, that.fillInterest);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(fillInterest);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "FillableTask[fillInterest=" + fillInterest + "]";
+        }
     }
 
-    private record CompleteWriteTask(WriteFlusher writeFlusher) implements Invocable.Task
+    private static final class CompleteWriteTask implements Invocable.Task
     {
+        private final WriteFlusher writeFlusher;
+
+        private CompleteWriteTask(WriteFlusher writeFlusher)
+        {
+            this.writeFlusher = writeFlusher;
+        }
+
+        public WriteFlusher writeFlusher()
+        {
+            return writeFlusher;
+        }
+
         @Override
         public void run()
         {
@@ -413,6 +460,29 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
         {
             return writeFlusher.getCallbackInvocationType();
         }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            CompleteWriteTask that = (CompleteWriteTask)obj;
+            return Objects.equals(writeFlusher, that.writeFlusher);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(writeFlusher);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "CompleteWriteTask[writeFlusher=" + writeFlusher + "]";
+        }
     }
 
     private static class MemorySocketAddress extends SocketAddress
@@ -420,15 +490,18 @@ public class MemoryEndPointPipe implements EndPoint.Pipe
         private static final AtomicLong ID = new AtomicLong();
 
         private final long id = ID.incrementAndGet();
-        private final String address = "[memory:/%s]".formatted(HexFormat.of().formatHex(ByteBuffer.allocate(8).putLong(id).array()));
+        private final String address = String.format("[memory:/%016x]", id);
 
         @Override
         public boolean equals(Object obj)
         {
             if (this == obj)
                 return true;
-            if (obj instanceof MemorySocketAddress that)
+            if (obj instanceof MemorySocketAddress)
+            {
+                MemorySocketAddress that = (MemorySocketAddress)obj;
                 return id == that.id;
+            }
             return false;
         }
 

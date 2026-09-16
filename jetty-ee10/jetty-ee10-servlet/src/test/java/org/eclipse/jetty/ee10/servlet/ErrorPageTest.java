@@ -87,6 +87,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ErrorPageTest
 {
     private static final Logger LOG = LoggerFactory.getLogger(ErrorPageTest.class);
+    private static final AtomicInteger NESTED_SEND_ERROR_COUNTER = new AtomicInteger();
 
     private Server _server;
     private LocalConnector _connector;
@@ -446,12 +447,10 @@ public class ErrorPageTest
 
         HttpServlet syncSendErrorServlet = new HttpServlet()
         {
-            public static final AtomicInteger COUNTER = new AtomicInteger();
-
             @Override
             protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
             {
-                int count = COUNTER.incrementAndGet();
+                int count = NESTED_SEND_ERROR_COUNTER.incrementAndGet();
 
                 PrintWriter writer = response.getWriter();
                 writer.println("this is the " + count + " time this error page is being accessed");
@@ -774,12 +773,10 @@ public class ErrorPageTest
 
         startServer(contextHandler);
 
-        String rawRequest = """
-            POST /fail/599?name=value HTTP/1.1\r
-            Host: test\r
-            Connection: close\r
-            \r
-            """;
+        String rawRequest = "POST /fail/599?name=value HTTP/1.1\r\n" +
+            "Host: test\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
 
         String rawResponse = _connector.getResponse(rawRequest);
 
@@ -869,11 +866,9 @@ public class ErrorPageTest
         {
             OutputStream output = socket.getOutputStream();
 
-            String request = """
-            GET /abort HTTP/1.1\r
-            Host: test\r
-            \r
-            """;
+            String request = "GET /abort HTTP/1.1\r\n" +
+                "Host: test\r\n" +
+                "\r\n";
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
 
@@ -911,11 +906,9 @@ public class ErrorPageTest
         {
             OutputStream output = socket.getOutputStream();
 
-            String request = """
-            GET /abort HTTP/1.1\r
-            Host: test\r
-            \r
-            """;
+            String request = "GET /abort HTTP/1.1\r\n" +
+                "Host: test\r\n" +
+                "\r\n";
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
 
@@ -971,11 +964,9 @@ public class ErrorPageTest
         {
             OutputStream output = socket.getOutputStream();
 
-            String request = """
-            GET /abort HTTP/1.1\r
-            Host: test\r
-            \r
-            """;
+            String request = "GET /abort HTTP/1.1\r\n" +
+                "Host: test\r\n" +
+                "\r\n";
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
 
@@ -1028,11 +1019,9 @@ public class ErrorPageTest
         {
             OutputStream output = socket.getOutputStream();
 
-            String request = """
-            GET /abort HTTP/1.1\r
-            Host: test\r
-            \r
-            """;
+            String request = "GET /abort HTTP/1.1\r\n" +
+                "Host: test\r\n" +
+                "\r\n";
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
 
@@ -1098,7 +1087,7 @@ public class ErrorPageTest
         String responseBody = response.getContent();
 
         assertThat(responseBody, Matchers.containsString("<h2>HTTP ERROR 599</h2>"));
-        assertThat(responseBody, Matchers.containsString("<th>SERVLET:</th><td>%s".formatted(failServlet.getClass().getName())));
+        assertThat(responseBody, Matchers.containsString(String.format("<th>SERVLET:</th><td>%s", failServlet.getClass().getName())));
     }
 
     @Test
@@ -1514,7 +1503,7 @@ public class ErrorPageTest
         try (StacklessLogging ignore = new StacklessLogging(Dispatcher.class))
         {
             StringBuilder rawRequest = new StringBuilder();
-            rawRequest.append("GET /async/info?mode=%s HTTP/1.1\r\n".formatted(mode));
+            rawRequest.append(String.format("GET /async/info?mode=%s HTTP/1.1\r\n", mode));
             rawRequest.append("Host: test\r\n");
             rawRequest.append("Connection: close\r\n");
             rawRequest.append("\r\n");
@@ -1945,11 +1934,9 @@ public class ErrorPageTest
 
         startServer(context);
 
-        String request = """
-            GET /async/ HTTP/1.1
-            Host: localhost
-            
-            """;
+        String request = "GET /async/ HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
 
         assertThat(response.getStatus(), is(599));
@@ -1999,11 +1986,9 @@ public class ErrorPageTest
 
         startServer(context);
 
-        String request = """
-            GET /async/ HTTP/1.1
-            Host: localhost
-            
-            """;
+        String request = "GET /async/ HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
 
         assertThat(response.getStatus(), is(598));
@@ -2023,14 +2008,12 @@ public class ErrorPageTest
 
         startServer(contextHandler);
 
-        String rawRequest = """
-            GET /ctx/WEB-INF/anything HTTP/1.1\r
-            Host: test\r
-            Connection: close\r
-            Accept: */*\r
-            Accept-Charset: *\r
-            \r
-            """;
+        String rawRequest = "GET /ctx/WEB-INF/anything HTTP/1.1\r\n" +
+            "Host: test\r\n" +
+            "Connection: close\r\n" +
+            "Accept: */*\r\n" +
+            "Accept-Charset: *\r\n" +
+            "\r\n";
 
         String rawResponse = _connector.getResponse(rawRequest);
         assertThat(rawResponse, startsWith("HTTP/1.1 404 Not Found"));
@@ -2054,14 +2037,12 @@ public class ErrorPageTest
 
         startServer(contextHandler);
 
-        String rawRequest = """
-            GET /ctx/WEB-INF/anything HTTP/1.1\r
-            Host: test\r
-            Connection: close\r
-            Accept: */*\r
-            Accept-Charset: *\r
-            \r
-            """;
+        String rawRequest = "GET /ctx/WEB-INF/anything HTTP/1.1\r\n" +
+            "Host: test\r\n" +
+            "Connection: close\r\n" +
+            "Accept: */*\r\n" +
+            "Accept-Charset: *\r\n" +
+            "\r\n";
 
         String rawResponse = _connector.getResponse(rawRequest);
         assertThat(rawResponse, startsWith("HTTP/1.1 404 Not Found"));
@@ -2090,14 +2071,12 @@ public class ErrorPageTest
 
         startServer(contextHandler);
 
-        String rawRequest = """
-            GET /ctx/WEB-INF/anything HTTP/1.1\r
-            Host: test\r
-            Connection: close\r
-            Accept: */*\r
-            Accept-Charset: *\r
-            \r
-            """;
+        String rawRequest = "GET /ctx/WEB-INF/anything HTTP/1.1\r\n" +
+            "Host: test\r\n" +
+            "Connection: close\r\n" +
+            "Accept: */*\r\n" +
+            "Accept-Charset: *\r\n" +
+            "\r\n";
 
         String rawResponse = _connector.getResponse(rawRequest);
         assertThat(rawResponse, startsWith("HTTP/1.1 403 Forbidden"));

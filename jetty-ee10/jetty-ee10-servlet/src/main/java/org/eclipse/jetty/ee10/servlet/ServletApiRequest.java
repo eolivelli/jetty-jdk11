@@ -275,8 +275,9 @@ public class ServletApiRequest implements HttpServletRequest
     private AuthenticationState getUndeferredAuthenticationState()
     {
         AuthenticationState authenticationState = getAuthenticationState();
-        if (authenticationState instanceof AuthenticationState.Deferred deferred)
+        if (authenticationState instanceof AuthenticationState.Deferred)
         {
+            AuthenticationState.Deferred deferred = (AuthenticationState.Deferred)authenticationState;
             HttpServletRequest httpServletRequest = getWrappedRequest();
             Request wrappedCoreRequest = ServletCoreRequest.wrap(httpServletRequest);
             AuthenticationState undeferred = deferred.authenticate(wrappedCoreRequest);
@@ -289,8 +290,9 @@ public class ServletApiRequest implements HttpServletRequest
     private AuthenticationState getUndeferredAuthenticationState(HttpServletResponse response) throws IOException
     {
         AuthenticationState authenticationState = getAuthenticationState();
-        if (authenticationState instanceof AuthenticationState.Deferred deferred)
+        if (authenticationState instanceof AuthenticationState.Deferred)
         {
+            AuthenticationState.Deferred deferred = (AuthenticationState.Deferred)authenticationState;
             AuthenticationState undeferred;
             try (Blocker.Callback callback = Blocker.callback())
             {
@@ -321,8 +323,9 @@ public class ServletApiRequest implements HttpServletRequest
         }
         else
         {
-            if (_async.getRequest() instanceof HttpServletRequest asyncHttpServletRequest)
-                httpServletRequest = asyncHttpServletRequest;
+            ServletRequest asyncRequest = _async.getRequest();
+            if (asyncRequest instanceof HttpServletRequest)
+                httpServletRequest = (HttpServletRequest)asyncRequest;
             else
                 httpServletRequest = _servletContextRequest.getHttpServletRequest();
         }
@@ -373,11 +376,14 @@ public class ServletApiRequest implements HttpServletRequest
     @Override
     public String getProtocolRequestId()
     {
-        return switch (getRequest().getConnectionMetaData().getHttpVersion())
+        switch (getRequest().getConnectionMetaData().getHttpVersion())
         {
-            case HTTP_2, HTTP_3 -> getRequest().getId();
-            default -> "";
-        };
+            case HTTP_2:
+            case HTTP_3:
+                return getRequest().getId();
+            default:
+                return "";
+        }
     }
 
     @Override
@@ -420,8 +426,11 @@ public class ServletApiRequest implements HttpServletRequest
     public String getAuthType()
     {
         AuthenticationState authenticationState = getUndeferredAuthenticationState();
-        if (authenticationState instanceof AuthenticationState.Succeeded succeededAuthentication)
+        if (authenticationState instanceof AuthenticationState.Succeeded)
+        {
+            AuthenticationState.Succeeded succeededAuthentication = (AuthenticationState.Succeeded)authenticationState;
             return succeededAuthentication.getAuthenticationType();
+        }
         return null;
     }
 
@@ -527,8 +536,11 @@ public class ServletApiRequest implements HttpServletRequest
         String linkedRole = getServletRequestInfo().getMatchedResource().getResource().getServletHolder().getUserRoleLink(role);
         AuthenticationState authenticationState = getUndeferredAuthenticationState();
 
-        if (authenticationState instanceof AuthenticationState.Succeeded succeededAuthentication)
+        if (authenticationState instanceof AuthenticationState.Succeeded)
+        {
+            AuthenticationState.Succeeded succeededAuthentication = (AuthenticationState.Succeeded)authenticationState;
             return succeededAuthentication.isUserInRole(linkedRole);
+        }
         return false;
     }
 
@@ -537,8 +549,9 @@ public class ServletApiRequest implements HttpServletRequest
     {
         AuthenticationState authenticationState = getUndeferredAuthenticationState();
 
-        if (authenticationState instanceof AuthenticationState.Succeeded succeededAuthentication)
+        if (authenticationState instanceof AuthenticationState.Succeeded)
         {
+            AuthenticationState.Succeeded succeededAuthentication = (AuthenticationState.Succeeded)authenticationState;
             UserIdentity user = succeededAuthentication.getUserIdentity();
             return user.getUserPrincipal();
         }
@@ -641,8 +654,9 @@ public class ServletApiRequest implements HttpServletRequest
             return true;
         if (authenticationState instanceof AuthenticationState.ResponseSent)
             return false;
-        if (authenticationState instanceof AuthenticationState.ServeAs serveAs)
+        if (authenticationState instanceof AuthenticationState.ServeAs)
         {
+            AuthenticationState.ServeAs serveAs = (AuthenticationState.ServeAs)authenticationState;
             getRequestDispatcher(serveAs.getHttpURI().getPathQuery()).forward(this, response);
             return false;
         }
@@ -759,15 +773,24 @@ public class ServletApiRequest implements HttpServletRequest
                     LOG.debug("getParts", t);
 
                 Throwable cause;
-                if (t instanceof ExecutionException ee)
+                if (t instanceof ExecutionException)
+                {
+                    ExecutionException ee = (ExecutionException)t;
                     cause = ee.getCause();
-                else if (t instanceof ServletException se)
+                }
+                else if (t instanceof ServletException)
+                {
+                    ServletException se = (ServletException)t;
                     cause = se.getCause();
+                }
                 else
                     cause = t;
 
-                if (cause instanceof IOException ioException)
+                if (cause instanceof IOException)
+                {
+                    IOException ioException = (IOException)cause;
                     throw ioException;
+                }
 
                 throw new ServletException(new BadMessageException("bad multipart", cause));
             }
@@ -849,8 +872,8 @@ public class ServletApiRequest implements HttpServletRequest
             HttpHeader header = field.getHeader();
             if (header == HttpHeader.SET_COOKIE || header == HttpHeader.SET_COOKIE2)
             {
-                HttpCookie httpCookie = (field instanceof HttpCookieUtils.SetCookieHttpField set)
-                    ? set.getHttpCookie()
+                HttpCookie httpCookie = (field instanceof HttpCookieUtils.SetCookieHttpField)
+                    ? ((HttpCookieUtils.SetCookieHttpField)field).getHttpCookie()
                     : SET_COOKIE_PARSER.parse(field.getValue());
 
                 if (httpCookie == null)
@@ -861,9 +884,9 @@ public class ServletApiRequest implements HttpServletRequest
                     for (Iterator<Object> i = cookies.iterator(); i.hasNext();)
                     {
                         Object o = i.next();
-                        if (o instanceof Cookie cookie && cookie.getName().equals(httpCookie.getName()))
+                        if (o instanceof Cookie && ((Cookie)o).getName().equals(httpCookie.getName()))
                             i.remove();
-                        else if (o instanceof HttpCookie cookie && cookie.getName().equals(httpCookie.getName()))
+                        else if (o instanceof HttpCookie && ((HttpCookie)o).getName().equals(httpCookie.getName()))
                             i.remove();
                     }
                     continue;
@@ -877,12 +900,18 @@ public class ServletApiRequest implements HttpServletRequest
             StringBuilder cookieBuilder = new StringBuilder();
             for (Object o : cookies)
             {
-                if (!cookieBuilder.isEmpty())
+                if (cookieBuilder.length() > 0)
                     cookieBuilder.append("; ");
-                if (o instanceof Cookie cookie)
+                if (o instanceof Cookie)
+                {
+                    Cookie cookie = (Cookie)o;
                     cookieBuilder.append(cookie.getName()).append("=").append(cookie.getValue());
-                else if (o instanceof HttpCookie httpCookie)
+                }
+                else if (o instanceof HttpCookie)
+                {
+                    HttpCookie httpCookie = (HttpCookie)o;
                     cookieBuilder.append(httpCookie.getName()).append("=").append(httpCookie.getValue());
+                }
             }
             pushHeaders.put(HttpHeader.COOKIE, cookieBuilder.toString());
         }
@@ -919,16 +948,23 @@ public class ServletApiRequest implements HttpServletRequest
         {
             // This switch works by allowing the attribute to get underneath any dispatch wrapper.
             // Note that there are further servlet specific attributes in ServletContextRequest
-            return switch (name)
+            switch (name)
             {
-                case AsyncContext.ASYNC_REQUEST_URI -> getRequestURI();
-                case AsyncContext.ASYNC_CONTEXT_PATH -> getContextPath();
-                case AsyncContext.ASYNC_SERVLET_PATH -> getServletPath();
-                case AsyncContext.ASYNC_PATH_INFO -> getPathInfo();
-                case AsyncContext.ASYNC_QUERY_STRING -> getQueryString();
-                case AsyncContext.ASYNC_MAPPING -> getHttpServletMapping();
-                default -> getRequest().getAttribute(name);
-            };
+                case AsyncContext.ASYNC_REQUEST_URI:
+                    return getRequestURI();
+                case AsyncContext.ASYNC_CONTEXT_PATH:
+                    return getContextPath();
+                case AsyncContext.ASYNC_SERVLET_PATH:
+                    return getServletPath();
+                case AsyncContext.ASYNC_PATH_INFO:
+                    return getPathInfo();
+                case AsyncContext.ASYNC_QUERY_STRING:
+                    return getQueryString();
+                case AsyncContext.ASYNC_MAPPING:
+                    return getHttpServletMapping();
+                default:
+                    return getRequest().getAttribute(name);
+            }
         }
 
         return getRequest().getAttribute(name);
@@ -1137,15 +1173,21 @@ public class ServletApiRequest implements HttpServletRequest
                         catch (ServletException e)
                         {
                             Throwable cause = e.getCause();
-                            if (cause instanceof HttpException httpException)
+                            if (cause instanceof HttpException)
+                            {
+                                HttpException httpException = (HttpException)cause;
                                 HttpException.throwAsUnchecked(httpException);
+                            }
 
                             String msg = "Unable to extract content parameters";
                             if (LOG.isDebugEnabled())
                                 LOG.debug(msg, e);
 
-                            if (cause instanceof IOException ioe)
+                            if (cause instanceof IOException)
+                            {
+                                IOException ioe = (IOException)cause;
                                 throw new UncheckedIOException(msg, ioe);
+                            }
                             throw new RuntimeException(msg, e);
                         }
                     }
@@ -1319,7 +1361,7 @@ public class ServletApiRequest implements HttpServletRequest
                 @Override
                 public String toString()
                 {
-                    return "%s@%x:%s".formatted(UnsupportedEncodingException.class.getName(), hashCode(), getMessage());
+                    return String.format("%s@%x:%s", UnsupportedEncodingException.class.getName(), hashCode(), getMessage());
                 }
             };
         }
@@ -1574,7 +1616,7 @@ public class ServletApiRequest implements HttpServletRequest
     @Override
     public String toString()
     {
-        return "%s@%x{%s}".formatted(TypeUtil.toShortName(getClass()), hashCode(), _servletContextRequest);
+        return String.format("%s@%x{%s}", TypeUtil.toShortName(getClass()), hashCode(), _servletContextRequest);
     }
 
     static class AmbiguousURI extends ServletApiRequest

@@ -664,13 +664,11 @@ public class AsyncServletTest
     @Test
     public void testAsyncRead() throws Exception
     {
-        String header = """
-            GET /ctx/path/info?start=10000&dispatch=1500 HTTP/1.1\r
-            Host: localhost\r
-            Content-Length: 10\r
-            Connection: close\r
-            \r
-            """;
+        String header = "GET /ctx/path/info?start=10000&dispatch=1500 HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Length: 10\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         String body = "12345678\r\n";
 
         try (Socket socket = new Socket("localhost", _port))
@@ -788,11 +786,9 @@ public class AsyncServletTest
 
         if (query != null)
             request += "?" + query;
-        request += """
-             HTTP/1.1\r
-            Host: localhost\r
-            Connection: close\r
-            """;
+        request += " HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Connection: close\r\n";
         if (content == null)
             request += "\r\n";
         else
@@ -1117,13 +1113,17 @@ public class AsyncServletTest
 
                 switch (action)
                 {
-                    case "dispatch" -> event.getAsyncContext().dispatch();
-                    case "complete" ->
+                    case "dispatch":
+                        event.getAsyncContext().dispatch();
+                        break;
+                    case "complete":
                     {
                         event.getSuppliedResponse().getOutputStream().println("COMPLETED\n");
                         event.getAsyncContext().complete();
+                        break;
                     }
-                    case "error" -> throw new RuntimeException("error in onTimeout");
+                    case "error":
+                        throw new RuntimeException("error in onTimeout");
                 }
             }
         }
@@ -1145,11 +1145,14 @@ public class AsyncServletTest
 
                 switch (action)
                 {
-                    case "dispatch" -> event.getAsyncContext().dispatch();
-                    case "complete" ->
+                    case "dispatch":
+                        event.getAsyncContext().dispatch();
+                        break;
+                    case "complete":
                     {
                         event.getSuppliedResponse().getOutputStream().println("COMPLETED\n");
                         event.getAsyncContext().complete();
+                        break;
                     }
                 }
             }

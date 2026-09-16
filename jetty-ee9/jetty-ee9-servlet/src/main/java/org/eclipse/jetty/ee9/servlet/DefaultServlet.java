@@ -237,8 +237,8 @@ public class DefaultServlet extends HttpServlet implements WelcomeFactory
             boolean addAliasCheck = true;
             for (AliasCheck aliasCheck : _contextHandler.getAliasChecks())
             {
-                if (aliasCheck instanceof AllowedResourceAliasChecker allowedResourceAliasChecker &&
-                    Objects.equals(_baseResource, allowedResourceAliasChecker.getBaseResource()))
+                if (aliasCheck instanceof AllowedResourceAliasChecker &&
+                    Objects.equals(_baseResource, ((AllowedResourceAliasChecker)aliasCheck).getBaseResource()))
                 {
                     addAliasCheck = false;
                     break;
@@ -254,8 +254,8 @@ public class DefaultServlet extends HttpServlet implements WelcomeFactory
             boolean addAliasCheck = true;
             for (AliasCheck aliasCheck : _contextHandler.getAliasChecks())
             {
-                if (aliasCheck instanceof SymlinkAllowedResourceAliasChecker aliasChecker &&
-                    Objects.equals(_baseResource, aliasChecker.getBaseResource()))
+                if (aliasCheck instanceof SymlinkAllowedResourceAliasChecker &&
+                    Objects.equals(_baseResource, ((SymlinkAllowedResourceAliasChecker)aliasCheck).getBaseResource()))
                 {
                     addAliasCheck = false;
                     break;

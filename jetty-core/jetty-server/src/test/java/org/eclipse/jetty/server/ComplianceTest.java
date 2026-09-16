@@ -129,19 +129,17 @@ public class ComplianceTest
             });
         });
 
-        String rawRequest = """
-            GET /test?%s HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """.formatted(rawQuery);
+        String rawRequest = String.format("GET /test?%s HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n", rawQuery);
 
         String rawResponse = localConnector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertEquals(200, response.getStatus());
         String responseBody = response.getContent();
         assertThat(responseBody, containsString(rawQuery));
-        expectedMap.forEach((key, value) -> assertThat(responseBody, containsString("field[%s]=[%s]".formatted(key, value))));
+        expectedMap.forEach((key, value) -> assertThat(responseBody, containsString(String.format("field[%s]=[%s]", key, value))));
 
         // Shouldn't see any compliance violation events
         assertEquals(0, events.size(), () ->

@@ -13,13 +13,34 @@
 
 package org.eclipse.jetty.ee10.servlet.internal;
 
+import java.util.Objects;
+
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.WebConnection;
 import org.eclipse.jetty.util.IO;
 
-public record JettyWebConnection(ServletInputStream inputStream, ServletOutputStream outputStream) implements WebConnection
+public final class JettyWebConnection implements WebConnection
 {
+    private final ServletInputStream inputStream;
+    private final ServletOutputStream outputStream;
+
+    public JettyWebConnection(ServletInputStream inputStream, ServletOutputStream outputStream)
+    {
+        this.inputStream = inputStream;
+        this.outputStream = outputStream;
+    }
+
+    public ServletInputStream inputStream()
+    {
+        return inputStream;
+    }
+
+    public ServletOutputStream outputStream()
+    {
+        return outputStream;
+    }
+
     @Override
     public void close()
     {
@@ -37,5 +58,29 @@ public record JettyWebConnection(ServletInputStream inputStream, ServletOutputSt
     public ServletOutputStream getOutputStream()
     {
         return outputStream;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        JettyWebConnection that = (JettyWebConnection)obj;
+        return Objects.equals(inputStream, that.inputStream) &&
+            Objects.equals(outputStream, that.outputStream);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(inputStream, outputStream);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "JettyWebConnection[inputStream=" + inputStream + ", outputStream=" + outputStream + "]";
     }
 }

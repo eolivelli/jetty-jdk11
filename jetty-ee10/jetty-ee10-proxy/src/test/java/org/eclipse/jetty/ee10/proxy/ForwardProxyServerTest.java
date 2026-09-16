@@ -184,11 +184,9 @@ public class ForwardProxyServerTest
                             else
                                 assertFalse(request.contains("https://"));
 
-                            String response = """
-                                HTTP/1.1 200 OK
-                                Content-Length: 0
-                                
-                                """;
+                            String response = "HTTP/1.1 200 OK\n" +
+                                "Content-Length: 0\n" +
+                                "\n";
                             getEndPoint().write(Callback.NOOP, ByteBuffer.wrap(response.getBytes(StandardCharsets.UTF_8)));
                         }
                         catch (Throwable x)

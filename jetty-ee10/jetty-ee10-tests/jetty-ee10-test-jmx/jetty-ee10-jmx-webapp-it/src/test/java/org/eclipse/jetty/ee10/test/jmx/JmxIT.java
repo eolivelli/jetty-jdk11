@@ -187,7 +187,7 @@ public class JmxIT
     {
         Optional<ObjectName> objNameOpt = _mbsc.queryNames(objName, null).stream().findFirst();
         if (objNameOpt.isEmpty())
-            throw new InstanceNotFoundException("%s not found among %s".formatted(objName, new TreeSet<>(_mbsc.queryNames(null, null))));
+            throw new InstanceNotFoundException(String.format("%s not found among %s", objName, new TreeSet<>(_mbsc.queryNames(null, null))));
         Object val = _mbsc.getAttribute(objNameOpt.get(), attrName);
         assertThat(attrName, val, notNullValue());
         return (T)val;
@@ -197,7 +197,7 @@ public class JmxIT
     {
         Optional<ObjectName> objNameOpt = _mbsc.queryNames(objName, null).stream().findFirst();
         if (objNameOpt.isEmpty())
-            throw new InstanceNotFoundException("%s not found among %s".formatted(objName, new TreeSet<>(_mbsc.queryNames(null, null))));
+            throw new InstanceNotFoundException(String.format("%s not found among %s", objName, new TreeSet<>(_mbsc.queryNames(null, null))));
         return _mbsc.invoke(objNameOpt.get(), operation, args, params);
     }
 }

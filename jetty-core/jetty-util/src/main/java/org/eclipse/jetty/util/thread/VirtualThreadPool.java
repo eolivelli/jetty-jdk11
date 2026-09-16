@@ -151,8 +151,9 @@ public class VirtualThreadPool extends ContainerLifeCycle implements ThreadPool,
     public void setDetailedDump(boolean detailedDump)
     {
         _detailedDump = detailedDump;
-        if (_virtualExecutor instanceof TrackingExecutor trackingExecutor)
-            trackingExecutor.setDetailedDump(detailedDump);
+        Executor executor = _virtualExecutor;
+        if (executor instanceof TrackingExecutor)
+            ((TrackingExecutor)executor).setDetailedDump(detailedDump);
     }
 
     @Override
@@ -249,7 +250,8 @@ public class VirtualThreadPool extends ContainerLifeCycle implements ThreadPool,
     @Override
     public int getThreads()
     {
-        return _virtualExecutor instanceof TrackingExecutor tracking ? tracking.size() : -1;
+        Executor executor = _virtualExecutor;
+        return executor instanceof TrackingExecutor ? ((TrackingExecutor)executor).size() : -1;
     }
 
     @Override

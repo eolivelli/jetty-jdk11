@@ -58,8 +58,11 @@ public class ErrorCode
     {
         if (this == obj)
             return true;
-        if (obj instanceof ErrorCode errorCode)
+        if (obj instanceof ErrorCode)
+        {
+            ErrorCode errorCode = (ErrorCode)obj;
             return code == errorCode.code;
+        }
         return false;
     }
 
@@ -72,7 +75,7 @@ public class ErrorCode
     @Override
     public String toString()
     {
-        return "%s[0x%x]".formatted(getClass().getSimpleName(), code);
+        return String.format("%s[0x%x]", getClass().getSimpleName(), code);
     }
 
     private static boolean isCrypto(long code)

@@ -32,7 +32,7 @@ import org.eclipse.jetty.session.ManagedSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.eclipse.jetty.ee9.nested.SessionHandler.ServletSessionApi.getOrCreateSession;
+import static org.eclipse.jetty.ee9.nested.SessionHandler.getOrCreateSession;
 
 public abstract class LoginAuthenticator implements Authenticator
 {
@@ -215,8 +215,9 @@ public abstract class LoginAuthenticator implements Authenticator
                     //(indicated by SESSION_SECURED not being set on the session) then we should change id
                     if (httpSession.getAttribute(ManagedSession.SESSION_CREATED_SECURE) != Boolean.TRUE)
                     {
-                        if (httpSession instanceof Session.API api)
+                        if (httpSession instanceof Session.API)
                         {
+                            Session.API api = (Session.API)httpSession;
                             Request baseRequest = Request.getBaseRequest(request);
                             if (baseRequest != null)
                             {

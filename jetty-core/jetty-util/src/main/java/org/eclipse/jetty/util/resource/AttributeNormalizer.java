@@ -409,11 +409,12 @@ public class AttributeNormalizer
 
         switch (property)
         {
-            case "WAR", "WAR.path" ->
+            case "WAR":
+            case "WAR.path":
             {
                 return prefix + baseResource.resolve(suffix).getPath();
             }
-            case "WAR.uri" ->
+            case "WAR.uri":
             {
                 return prefix + baseResource.resolve(suffix).getURI();
             }

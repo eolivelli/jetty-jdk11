@@ -44,38 +44,34 @@ public class EnvironmentsTest extends AbstractUseCase
         FS.touch(baseDir.resolve("lib/envA.jar"));
         FS.touch(baseDir.resolve("etc/envA.xml"));
         Files.writeString(baseDir.resolve("modules/feature-envA.mod"),
-            """
-            [provides]
-            feature-envA
-            [environment]
-            envA
-            [depends]
-            main
-            [xml]
-            etc/envA.xml
-            [lib]
-            lib/envA.jar
-            [ini]
-            feature.option=envA
-            """, UTF_8);
+            "[provides]\n" +
+            "feature-envA\n" +
+            "[environment]\n" +
+            "envA\n" +
+            "[depends]\n" +
+            "main\n" +
+            "[xml]\n" +
+            "etc/envA.xml\n" +
+            "[lib]\n" +
+            "lib/envA.jar\n" +
+            "[ini]\n" +
+            "feature.option=envA\n", UTF_8);
 
         FS.touch(baseDir.resolve("lib/envB.jar"));
         FS.touch(baseDir.resolve("etc/envB.xml"));
         Files.writeString(baseDir.resolve("modules/feature-envB.mod"),
-            """
-            [provides]
-            feature-envB
-            [environment]
-            envB
-            [depends]
-            main
-            [xml]
-            etc/envB.xml
-            [lib]
-            lib/envB.jar
-            [ini]
-            feature.option=envB
-            """, UTF_8);
+            "[provides]\n" +
+            "feature-envB\n" +
+            "[environment]\n" +
+            "envB\n" +
+            "[depends]\n" +
+            "main\n" +
+            "[xml]\n" +
+            "etc/envB.xml\n" +
+            "[lib]\n" +
+            "lib/envB.jar\n" +
+            "[ini]\n" +
+            "feature.option=envB\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = List.of(
@@ -113,8 +109,8 @@ public class EnvironmentsTest extends AbstractUseCase
             StartEnvironment environment = results.getEnvironment(e);
             assertThat(environment, notNullValue());
             assertThat(environment.getName(), is(e));
-            assertThat(environment.getClasspath().getElements(), contains(baseDir.resolve("lib/%s.jar".formatted(e))));
-            assertThat(environment.getXmlFiles(), contains(baseDir.resolve("etc/%s.xml".formatted(e))));
+            assertThat(environment.getClasspath().getElements(), contains(baseDir.resolve(String.format("lib/%s.jar", e))));
+            assertThat(environment.getXmlFiles(), contains(baseDir.resolve(String.format("etc/%s.xml", e))));
             assertThat(environment.getProperties().getProp("feature.option").value, is(e));
         }
     }

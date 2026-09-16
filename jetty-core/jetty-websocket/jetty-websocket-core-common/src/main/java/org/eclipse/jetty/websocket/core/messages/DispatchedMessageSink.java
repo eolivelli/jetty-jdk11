@@ -59,7 +59,7 @@ public abstract class DispatchedMessageSink extends AbstractMessageSink
     {
         super(session, methodHolder, autoDemand);
         if (!autoDemand)
-            throw new IllegalArgumentException("%s must be auto-demanding".formatted(getClass().getSimpleName()));
+            throw new IllegalArgumentException(String.format("%s must be auto-demanding", getClass().getSimpleName()));
         executor = session.getWebSocketComponents().getExecutor();
     }
 
@@ -67,7 +67,7 @@ public abstract class DispatchedMessageSink extends AbstractMessageSink
     {
         super(session, methodHolder, autoDemand);
         if (!autoDemand)
-            throw new IllegalArgumentException("%s must be auto-demanding".formatted(getClass().getSimpleName()));
+            throw new IllegalArgumentException(String.format("%s must be auto-demanding", getClass().getSimpleName()));
         this.executor = session.getWebSocketComponents().getExecutor();
         this.onError = onError;
     }
@@ -88,8 +88,9 @@ public abstract class DispatchedMessageSink extends AbstractMessageSink
                 try
                 {
                     getMethodHolder().invoke(typeSink);
-                    if (typeSink instanceof Closeable closeable)
-                        IO.close(closeable);
+                    MessageSink sink = typeSink;
+                    if (sink instanceof Closeable)
+                        IO.close((Closeable)sink);
                     dispatchComplete.complete(null);
                 }
                 catch (Throwable throwable)
@@ -121,8 +122,11 @@ public abstract class DispatchedMessageSink extends AbstractMessageSink
                 // We only need to handle the error here if none of the callbacks were ever failed.
                 else if (!wasCallbackFailed.get())
                 {
-                    if (failure instanceof CompletionException completionException)
+                    if (failure instanceof CompletionException)
+                    {
+                        CompletionException completionException = (CompletionException)failure;
                         failure = completionException.getCause();
+                    }
 
                     if (onError == null)
                     {

@@ -13,7 +13,6 @@
 
 package org.eclipse.jetty.util.security;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -21,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.util.StringUtil;
 import org.eclipse.jetty.util.thread.AutoLock;
@@ -42,13 +42,12 @@ import org.eclipse.jetty.util.thread.AutoLock;
 public abstract class Credential implements Serializable
 {
     // NOTE: DO NOT INTRODUCE LOGGING TO THIS CLASS
-    @Serial
     private static final long serialVersionUID = -7760551052768181572L;
     // Intentionally NOT using TypeUtil.serviceProviderStream
     // as that introduces a Logger requirement that command line Password cannot use.
     private static final List<CredentialProvider> CREDENTIAL_PROVIDERS = ServiceLoader.load(CredentialProvider.class).stream()
         .map(ServiceLoader.Provider::get)
-        .toList();
+        .collect(Collectors.toList());
 
     /**
      * <p>Checks the given credential against this credential instance.</p>
@@ -148,7 +147,6 @@ public abstract class Credential implements Serializable
      */
     public static class Crypt extends Credential
     {
-        @Serial
         private static final long serialVersionUID = -2027792997664744210L;
         private static final String TYPE = "CRYPT:";
 
@@ -177,8 +175,11 @@ public abstract class Credential implements Serializable
         @Override
         public boolean equals(Object credential)
         {
-            if (credential instanceof Crypt c)
+            if (credential instanceof Crypt)
+            {
+                Crypt c = (Crypt)credential;
                 return stringEquals(_cooked, c._cooked);
+            }
             return false;
         }
 
@@ -194,7 +195,6 @@ public abstract class Credential implements Serializable
      */
     public static class MD5 extends Credential
     {
-        @Serial
         private static final long serialVersionUID = 5533846540822684240L;
         private static final String TYPE = "MD5:";
         private static final AutoLock __md5Lock = new AutoLock();
@@ -219,18 +219,30 @@ public abstract class Credential implements Serializable
             try
             {
                 // Normalize to String, if possible.
-                if (credentials instanceof char[] chars)
+                if (credentials instanceof char[])
+                {
+                    char[] chars = (char[])credentials;
                     credentials = new String(chars);
-                else if (credentials instanceof Password password)
+                }
+                else if (credentials instanceof Password)
+                {
+                    Password password = (Password)credentials;
                     credentials = password.toString();
+                }
 
-                if (credentials instanceof String password)
+                if (credentials instanceof String)
+                {
+                    String password = (String)credentials;
                     return byteEquals(_digest, md5(password));
+                }
                 if (credentials instanceof MD5)
                     return equals(credentials);
-                if (credentials instanceof Credential other)
+                if (credentials instanceof Credential)
+                {
                     // Allow the other Credential to check.
+                    Credential other = (Credential)credentials;
                     return other.check(this);
+                }
                 return false;
             }
             catch (Throwable x)
@@ -265,7 +277,7 @@ public abstract class Credential implements Serializable
             }
             catch (Throwable x)
             {
-                return "<MD5 algorithm failure: %s>".formatted(x);
+                return String.format("<MD5 algorithm failure: %s>", x);
             }
         }
 
@@ -288,7 +300,6 @@ public abstract class Credential implements Serializable
      */
     public static class MD extends Credential
     {
-        @Serial
         private static final long serialVersionUID = -4794312910062793449L;
         private static final String TYPE = "MD:";
 
@@ -313,20 +324,35 @@ public abstract class Credential implements Serializable
             try
             {
                 // Normalize to String, if possible.
-                if (credentials instanceof char[] chars)
+                if (credentials instanceof char[])
+                {
+                    char[] chars = (char[])credentials;
                     credentials = new String(chars);
-                else if (credentials instanceof byte[] bytes)
+                }
+                else if (credentials instanceof byte[])
+                {
+                    byte[] bytes = (byte[])credentials;
                     credentials = new String(bytes, StandardCharsets.UTF_8);
-                else if (credentials instanceof Password password)
+                }
+                else if (credentials instanceof Password)
+                {
+                    Password password = (Password)credentials;
                     credentials = password.toString();
+                }
 
-                if (credentials instanceof String password)
+                if (credentials instanceof String)
+                {
+                    String password = (String)credentials;
                     return byteEquals(_digest, digest(_algorithm, password));
+                }
                 if (credentials instanceof MD)
                     return equals(credentials);
-                if (credentials instanceof Credential other)
+                if (credentials instanceof Credential)
+                {
                     // Allow the other Credential to check.
+                    Credential other = (Credential)credentials;
                     return other.check(this);
+                }
                 return false;
             }
             catch (Throwable x)
@@ -344,8 +370,11 @@ public abstract class Credential implements Serializable
         @Override
         public boolean equals(Object obj)
         {
-            if (obj instanceof MD other)
+            if (obj instanceof MD)
+            {
+                MD other = (MD)obj;
                 return byteEquals(_digest, other._digest);
+            }
             return false;
         }
 
@@ -358,7 +387,7 @@ public abstract class Credential implements Serializable
             }
             catch (Throwable x)
             {
-                return "<%s algorithm failure: %s>".formatted(algorithm, x);
+                return String.format("<%s algorithm failure: %s>", algorithm, x);
             }
         }
 

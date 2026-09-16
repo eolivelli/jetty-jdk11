@@ -260,5 +260,48 @@ public class MultiPartExpectations
         return defaultCharset;
     }
 
-    record NameValue(String name, String value) {}
+    static final class NameValue
+    {
+        private final String name;
+        private final String value;
+
+        NameValue(String name, String value)
+        {
+            this.name = name;
+            this.value = value;
+        }
+
+        public String name()
+        {
+            return name;
+        }
+
+        public String value()
+        {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            NameValue that = (NameValue)obj;
+            return Objects.equals(name, that.name) && Objects.equals(value, that.value);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(name, value);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "NameValue[name=" + name + ", value=" + value + "]";
+        }
+    }
 }

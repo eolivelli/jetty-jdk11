@@ -116,7 +116,7 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
     public static ContextHandler getCurrentContextHandler()
     {
         Context context = getCurrentContext();
-        return (context instanceof ScopedContext scopedContext) ? scopedContext.getContextHandler() : null;
+        return (context instanceof ScopedContext) ? ((ScopedContext)context).getContextHandler() : null;
     }
 
     public static ContextHandler getContextHandler(Request request)
@@ -124,7 +124,8 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
         ContextRequest contextRequest = Request.asInContext(request, ContextRequest.class);
         if (contextRequest == null)
             return null;
-        return contextRequest.getContext() instanceof ScopedContext scoped ? scoped.getContextHandler() : null;
+        Context context = contextRequest.getContext();
+        return context instanceof ScopedContext ? ((ScopedContext)context).getContextHandler() : null;
     }
 
     /*
@@ -538,8 +539,10 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
     public String getClassPath()
     {
         // TODO may need to handle one level of parent classloader for API ?
-        if (_classLoader == null || !(_classLoader instanceof URLClassLoader loader))
+        ClassLoader classLoader = _classLoader;
+        if (!(classLoader instanceof URLClassLoader))
             return null;
+        URLClassLoader loader = (URLClassLoader)classLoader;
 
         String classpath = URIUtil.streamOf(loader)
             .map(URI::toASCIIString)
@@ -661,8 +664,9 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
     {
         if (super.addEventListener(listener))
         {
-            if (listener instanceof ContextScopeListener contextScopeListener)
+            if (listener instanceof ContextScopeListener)
             {
+                ContextScopeListener contextScopeListener = (ContextScopeListener)listener;
                 _contextListeners.add(contextScopeListener);
                 if (CURRENT_CONTEXT.get() != null)
                     contextScopeListener.enterScope(CURRENT_CONTEXT.get(), null);
@@ -677,8 +681,9 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
     {
         if (super.removeEventListener(listener))
         {
-            if (listener instanceof ContextScopeListener contextScopeListener)
+            if (listener instanceof ContextScopeListener)
             {
+                ContextScopeListener contextScopeListener = (ContextScopeListener)listener;
                 _contextListeners.remove(contextScopeListener);
                 if (CURRENT_CONTEXT.get() != null)
                     contextScopeListener.exitScope(CURRENT_CONTEXT.get(), null);
@@ -699,10 +704,16 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
 
             switch (keyName)
             {
-                case Deployable.TEMP_DIR -> setTempDirectory(IO.asFile(value));
-                case Deployable.CONTEXT_PATH -> setContextPath((String)value);
-                case Deployable.DEFAULT_CONTEXT_PATH -> setDefaultContextPath((String)value);
-                case Deployable.BASE_RESOURCE ->
+                case Deployable.TEMP_DIR:
+                    setTempDirectory(IO.asFile(value));
+                    break;
+                case Deployable.CONTEXT_PATH:
+                    setContextPath((String)value);
+                    break;
+                case Deployable.DEFAULT_CONTEXT_PATH:
+                    setDefaultContextPath((String)value);
+                    break;
+                case Deployable.BASE_RESOURCE:
                 {
                     if (value == null)
                         continue; // skip
@@ -710,8 +721,11 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
                     ResourceFactory resourceFactory = ResourceFactory.of(this);
                     Resource resource = resourceFactory.asResource(value);
                     setBaseResource(resource);
+                    break;
                 }
-                default -> initializeDefault(keyName, value);
+                default:
+                    initializeDefault(keyName, value);
+                    break;
             }
         }
         initializeDefaultsComplete();
@@ -867,12 +881,14 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
                 Availability availability = _availability.get();
                 switch (availability)
                 {
-                    case STARTING, AVAILABLE ->
+                    case STARTING:
+                    case AVAILABLE:
                     {
                         if (_availability.compareAndSet(availability, Availability.UNAVAILABLE))
                             return;
+                        break;
                     }
-                    default ->
+                    default:
                     {
                         return;
                     }
@@ -894,8 +910,9 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
                 throw new IllegalArgumentException("Base Resource is not valid: " + baseResource);
             if (baseResource.isAlias())
             {
-                if (baseResource instanceof CombinedResource combinedResource)
+                if (baseResource instanceof CombinedResource)
                 {
+                    CombinedResource combinedResource = (CombinedResource)baseResource;
                     ResourceFactory resourceFactory = ResourceFactory.of(this);
                     List<Resource> resources = combinedResource.getResources().stream()
                         .map(r ->
@@ -907,7 +924,7 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
                                     return resourceFactory.newResource(realUri);
                             }
                             return r;
-                        }).toList();
+                        }).collect(Collectors.toList());
                     // Remember the original base resource so it can be restored in doStop().
                     _originalBaseResource = _baseResource;
                     _baseResource = ResourceFactory.combine(resources);
@@ -1082,8 +1099,9 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
                 //Get the host
                 String host = null;
                 int port = 0;
-                if (connectors[0] instanceof NetworkConnector connector)
+                if (connectors[0] instanceof NetworkConnector)
                 {
+                    NetworkConnector connector = (NetworkConnector)connectors[0];
                     host = connector.getHost();
                     port = connector.getLocalPort();
                     if (port < 0)
@@ -1622,7 +1640,7 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
         @Override
         public String toString()
         {
-            return "%s@%x".formatted(TypeUtil.toShortName(getClass()), ContextHandler.this.hashCode());
+            return String.format("%s@%x", TypeUtil.toShortName(getClass()), ContextHandler.this.hashCode());
         }
 
         @Override
@@ -1890,8 +1908,10 @@ public class ContextHandler extends Handler.Wrapper implements Attributes, Alias
         @Override
         public boolean equals(Object o)
         {
-            return o instanceof VHost vhost &&
-                Objects.equals(_vHost, vhost._vHost) &&
+            if (!(o instanceof VHost))
+                return false;
+            VHost vhost = (VHost)o;
+            return Objects.equals(_vHost, vhost._vHost) &&
                 Objects.equals(_wild, vhost._wild) &&
                 Objects.equals(_vConnector, vhost._vConnector);
         }

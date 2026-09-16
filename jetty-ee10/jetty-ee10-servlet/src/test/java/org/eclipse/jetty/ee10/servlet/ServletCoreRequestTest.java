@@ -121,12 +121,10 @@ public class ServletCoreRequestTest
             }
         });
 
-        String rawRequest = """
-            GET / HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """;
+        String rawRequest = "GET / HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
 
         // Using RFC7230 should allow this whitespace violation and return a 200 response.
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(rawRequest));

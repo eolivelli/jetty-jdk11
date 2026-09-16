@@ -13,7 +13,6 @@
 
 package org.eclipse.jetty.security;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.security.Principal;
 import javax.security.auth.Subject;
@@ -27,7 +26,6 @@ import javax.security.auth.Subject;
  */
 public class RolePrincipal implements Principal, Serializable
 {
-    @Serial
     private static final long serialVersionUID = 2998397924051854402L;
     private final String _roleName;
 

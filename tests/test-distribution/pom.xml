@@ -17,7 +17,7 @@
 
   <properties>
     <distribution.debug.port>-1</distribution.debug.port>
-    <environmentsToTest>ee8,ee9,ee10,ee11</environmentsToTest>
+    <environmentsToTest>ee8,ee9,ee10</environmentsToTest>
     <sessionLogLevel>INFO</sessionLogLevel>
   </properties>
 

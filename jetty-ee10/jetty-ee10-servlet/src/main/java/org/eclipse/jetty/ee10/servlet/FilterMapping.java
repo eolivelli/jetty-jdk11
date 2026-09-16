@@ -69,14 +69,21 @@ public class FilterMapping implements Dumpable
      */
     public static int dispatch(DispatcherType type)
     {
-        return switch (type)
+        switch (type)
         {
-            case REQUEST -> REQUEST;
-            case ASYNC -> ASYNC;
-            case FORWARD -> FORWARD;
-            case INCLUDE -> INCLUDE;
-            case ERROR -> ERROR;
-        };
+            case REQUEST:
+                return REQUEST;
+            case ASYNC:
+                return ASYNC;
+            case FORWARD:
+                return FORWARD;
+            case INCLUDE:
+                return INCLUDE;
+            case ERROR:
+                return ERROR;
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     /**
@@ -87,15 +94,21 @@ public class FilterMapping implements Dumpable
      */
     public static DispatcherType dispatch(int type)
     {
-        return switch (type)
+        switch (type)
         {
-            case REQUEST -> DispatcherType.REQUEST;
-            case ASYNC -> DispatcherType.ASYNC;
-            case FORWARD -> DispatcherType.FORWARD;
-            case INCLUDE -> DispatcherType.INCLUDE;
-            case ERROR -> DispatcherType.ERROR;
-            default -> throw new IllegalArgumentException(Integer.toString(type));
-        };
+            case REQUEST:
+                return DispatcherType.REQUEST;
+            case ASYNC:
+                return DispatcherType.ASYNC;
+            case FORWARD:
+                return DispatcherType.FORWARD;
+            case INCLUDE:
+                return DispatcherType.INCLUDE;
+            case ERROR:
+                return DispatcherType.ERROR;
+            default:
+                throw new IllegalArgumentException(Integer.toString(type));
+        }
     }
 
     private int _dispatches = DEFAULT;

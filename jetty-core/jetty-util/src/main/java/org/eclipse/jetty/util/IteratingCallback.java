@@ -336,15 +336,20 @@ public abstract class IteratingCallback implements Callback
         {
             switch (_state)
             {
-                case IDLE ->
+                case IDLE:
                 {
                     _state = State.PROCESSING;
                     process = true;
+                    break;
                 }
-                case PROCESSING, PROCESSING_CALLED -> _reprocess = true;
-                case PENDING, COMPLETE, CLOSED ->
-                {
-                }
+                case PROCESSING:
+                case PROCESSING_CALLED:
+                    _reprocess = true;
+                    break;
+                case PENDING:
+                case COMPLETE:
+                case CLOSED:
+                    break;
             }
         }
         if (process)
@@ -390,7 +395,7 @@ public abstract class IteratingCallback implements Callback
 
                 switch (_state)
                 {
-                    case PROCESSING ->
+                    case PROCESSING:
                     {
                         if (action == null)
                         {
@@ -408,7 +413,7 @@ public abstract class IteratingCallback implements Callback
 
                         switch (action)
                         {
-                            case IDLE ->
+                            case IDLE:
                             {
                                 if (_aborted)
                                 {
@@ -429,7 +434,7 @@ public abstract class IteratingCallback implements Callback
                                 _state = State.IDLE;
                                 break processing;
                             }
-                            case SCHEDULED ->
+                            case SCHEDULED:
                             {
                                 // we won the race against the callback, so the callback has to process and we can break processing
                                 _state = State.PENDING;
@@ -441,7 +446,7 @@ public abstract class IteratingCallback implements Callback
                                 }
                                 break processing;
                             }
-                            case SUCCEEDED ->
+                            case SUCCEEDED:
                             {
                                 // we lost the race against the callback,
                                 _reprocess = false;
@@ -458,8 +463,9 @@ public abstract class IteratingCallback implements Callback
                                 break processing;
                             }
                         }
+                        break;
                     }
-                    case PROCESSING_CALLED ->
+                    case PROCESSING_CALLED:
                     {
                         if (action == Action.SCHEDULED)
                         {
@@ -495,8 +501,13 @@ public abstract class IteratingCallback implements Callback
                             _failure = onFailureOnCompleted = ExceptionUtil.combine(_failure, new IllegalStateException("Action != SCHEDULED"));
                             break processing;
                         }
+                        break;
                     }
-                    case IDLE, PENDING, COMPLETE, CLOSED -> throw new IllegalStateException(String.format("%s[action=%s]", this, action));
+                    case IDLE:
+                    case PENDING:
+                    case COMPLETE:
+                    case CLOSED:
+                        throw new IllegalStateException(String.format("%s[action=%s]", this, action));
                 }
             }
             finally
@@ -546,12 +557,13 @@ public abstract class IteratingCallback implements Callback
                 LOG.debug("succeeded {}", this);
             switch (_state)
             {
-                case PROCESSING ->
+                case PROCESSING:
                 {
                     // Another thread is processing, so we just tell it the state
                     _state = State.PROCESSING_CALLED;
+                    break;
                 }
-                case PENDING ->
+                case PENDING:
                 {
                     if (_aborted)
                     {
@@ -573,13 +585,17 @@ public abstract class IteratingCallback implements Callback
                         _state = State.PROCESSING;
                         onSuccessProcessing = true;
                     }
+                    break;
                 }
-                case COMPLETE, CLOSED ->
+                case COMPLETE:
+                case CLOSED:
                 {
                     // Too late
                     return;
                 }
-                case IDLE, PROCESSING_CALLED -> throw new IllegalStateException(toString());
+                case IDLE:
+                case PROCESSING_CALLED:
+                    throw new IllegalStateException(toString());
             }
         }
         if (onSuccessProcessing)
@@ -618,13 +634,15 @@ public abstract class IteratingCallback implements Callback
                 LOG.debug("failed {}", this, cause);
             switch (_state)
             {
-                case PROCESSING, PROCESSING_CALLED ->
+                case PROCESSING:
+                case PROCESSING_CALLED:
                 {
                     // Another thread is processing, so we just tell it the state
                     _state = State.PROCESSING_CALLED;
                     _failure = ExceptionUtil.combine(_failure, cause);
+                    break;
                 }
-                case PENDING ->
+                case PENDING:
                 {
                     if (_aborted)
                     {
@@ -649,14 +667,17 @@ public abstract class IteratingCallback implements Callback
                         _failure = cause;
                         onFailureOnCompleted = _failure;
                     }
+                    break;
                 }
-                case COMPLETE, CLOSED ->
+                case COMPLETE:
+                case CLOSED:
                 {
                     // Too late
                     ExceptionUtil.addSuppressedIfNotAssociated(_failure, cause);
                     return;
                 }
-                case IDLE -> throw new IllegalStateException(toString());
+                case IDLE:
+                    throw new IllegalStateException(toString());
             }
         }
         if (onFailureOnCompleted != null)
@@ -685,14 +706,16 @@ public abstract class IteratingCallback implements Callback
                 LOG.debug("close {}", this);
             switch (_state)
             {
-                case IDLE ->
+                case IDLE:
                 {
                     // Nothing happening so we can abort and complete
                     _state = State.CLOSED;
                     _failure = new ClosedException();
                     onAbortedOnFailureOnCompleted = _failure;
+                    break;
                 }
-                case PROCESSING, PROCESSING_CALLED ->
+                case PROCESSING:
+                case PROCESSING_CALLED:
                 {
                     // Another thread is processing, so we just tell it the state and let it handle it
                     if (_aborted)
@@ -704,16 +727,20 @@ public abstract class IteratingCallback implements Callback
                         _aborted = true;
                         _failure = new ClosedException();
                     }
+                    break;
                 }
-                case PENDING ->
+                case PENDING:
                 {
                     // We are waiting for the callback, so we can only call onAbort and then keep waiting
                     onAbortedOnFailureIfNotPendingDoCompleted = new ClosedException();
                     _failure = new AbortingException(onAbortedOnFailureIfNotPendingDoCompleted);
                     _aborted = true;
+                    break;
                 }
-                case COMPLETE -> _state = State.CLOSED;
-                case CLOSED ->
+                case COMPLETE:
+                    _state = State.CLOSED;
+                    break;
+                case CLOSED:
                 {
                     // too late
                     return;
@@ -757,34 +784,39 @@ public abstract class IteratingCallback implements Callback
 
             switch (_state)
             {
-                case IDLE ->
+                case IDLE:
                 {
                     // Nothing happening so we can abort and complete
                     _state = State.COMPLETE;
                     _failure = cause;
                     _aborted = true;
                     onAbortedOnFailureOnCompleted = true;
+                    break;
                 }
-                case PROCESSING ->
+                case PROCESSING:
                 {
                     // Another thread is processing, so we just tell it the state and let it handle everything
                     _failure = cause;
                     _aborted = true;
+                    break;
                 }
-                case PROCESSING_CALLED ->
+                case PROCESSING_CALLED:
                 {
                     // Another thread is processing, but we have already succeeded or failed.
                     _failure = ExceptionUtil.combine(_failure, cause);
                     _aborted = true;
+                    break;
                 }
-                case PENDING ->
+                case PENDING:
                 {
                     // We are waiting for the callback, so we can only call onAbort and then keep waiting
                     onAbort = true;
                     _failure = new AbortingException(cause);
                     _aborted = true;
+                    break;
                 }
-                case COMPLETE, CLOSED ->
+                case COMPLETE:
+                case CLOSED:
                 {
                     // too late
                     ExceptionUtil.addSuppressedIfNotAssociated(_failure, cause);
@@ -890,18 +922,25 @@ public abstract class IteratingCallback implements Callback
     {
         try (AutoLock ignored = _lock.lock())
         {
-            return switch (_state)
+            switch (_state)
             {
-                case IDLE -> true;
-                case COMPLETE ->
+                case IDLE:
+                    return true;
+                case COMPLETE:
                 {
                     _state = State.IDLE;
                     _failure = null;
                     _reprocess = false;
-                    yield true;
+                    return true;
                 }
-                case PROCESSING, PROCESSING_CALLED, PENDING, CLOSED -> false;
-            };
+                case PROCESSING:
+                case PROCESSING_CALLED:
+                case PENDING:
+                case CLOSED:
+                    return false;
+                default:
+                    throw new IllegalStateException();
+            }
         }
     }
 

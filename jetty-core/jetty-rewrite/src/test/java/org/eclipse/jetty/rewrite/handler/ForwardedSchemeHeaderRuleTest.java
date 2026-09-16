@@ -47,12 +47,10 @@ public class ForwardedSchemeHeaderRuleTest extends AbstractRuleTest
         rule.setHeaderValue("https");
         start(rule);
 
-        String request = """
-            GET / HTTP/1.1
-            Host: local
-            X-Forwarded-Scheme: https
-            
-            """;
+        String request = "GET / HTTP/1.1\n" +
+            "Host: local\n" +
+            "X-Forwarded-Scheme: https\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(200, response.getStatus());
@@ -68,12 +66,10 @@ public class ForwardedSchemeHeaderRuleTest extends AbstractRuleTest
         rule.setScheme("wss");
         start(rule);
 
-        String request = """
-            GET / HTTP/1.1
-            Host: local
-            X-Forwarded-Scheme: https
-            
-            """;
+        String request = "GET / HTTP/1.1\n" +
+            "Host: local\n" +
+            "X-Forwarded-Scheme: https\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(200, response.getStatus());
@@ -89,12 +85,10 @@ public class ForwardedSchemeHeaderRuleTest extends AbstractRuleTest
         rule.setScheme("http");
         start(rule);
 
-        String request = """
-            GET / HTTP/1.1
-            Host: local
-            Front-End-Https: on
-            
-            """;
+        String request = "GET / HTTP/1.1\n" +
+            "Host: local\n" +
+            "Front-End-Https: on\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(200, response.getStatus());
@@ -102,12 +96,10 @@ public class ForwardedSchemeHeaderRuleTest extends AbstractRuleTest
 
         // Value does not match, scheme is retained.
         rule.setScheme("other");
-        request = """
-            GET other://local/ HTTP/1.1
-            Host: local
-            Front-End-Https: off
-            
-            """;
+        request = "GET other://local/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Front-End-Https: off\n" +
+            "\n";
 
         response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(200, response.getStatus());
@@ -116,12 +108,10 @@ public class ForwardedSchemeHeaderRuleTest extends AbstractRuleTest
         rule.setScheme("ws");
         // Null value should match.
         rule.setHeaderValue(null);
-        request = """
-            GET / HTTP/1.1
-            Host: local
-            Front-End-Https: any
-            
-            """;
+        request = "GET / HTTP/1.1\n" +
+            "Host: local\n" +
+            "Front-End-Https: any\n" +
+            "\n";
 
         response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(200, response.getStatus());

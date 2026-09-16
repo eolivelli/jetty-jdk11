@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.codehaus.plexus.util.StringUtils;
@@ -288,7 +289,7 @@ public class JettyHomeTester
                 // ensure proper unpack order (eg: directories before files)
                 List<Path> sorted = entriesStream
                     .sorted()
-                    .toList();
+                    .collect(Collectors.toList());
 
                 for (Path path : sorted)
                 {

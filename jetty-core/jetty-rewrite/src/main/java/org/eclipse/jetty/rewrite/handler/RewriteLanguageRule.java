@@ -58,6 +58,7 @@ public class RewriteLanguageRule extends Rule
     }
 
     private static final HttpField VARY_ACCEPT_LANGUAGE = new PreEncodedHttpField(HttpHeader.VARY, HttpHeader.ACCEPT_LANGUAGE.asString());
+    private static final EnumSet<HttpHeader> IF_MATCHES = EnumSet.of(HttpHeader.IF_MATCH, HttpHeader.IF_NONE_MATCH);
     private final BiFunction<String, String, String> _localizePath;
     private final BiFunction<Context, String, Resource> _getResource;
     private final List<String> _wildCardLanguages;
@@ -127,7 +128,7 @@ public class RewriteLanguageRule extends Rule
     @Override
     public String toString()
     {
-        return "%s@%x".formatted(TypeUtil.toShortName(this.getClass()), hashCode());
+        return String.format("%s@%x", TypeUtil.toShortName(this.getClass()), hashCode());
     }
 
     protected List<String> getWildCardLanguages()
@@ -159,7 +160,7 @@ public class RewriteLanguageRule extends Rule
                         acceptLanguage = true;
                         break loop;
                     }
-                    if (!vary.isEmpty())
+                    if (vary.length() != 0)
                         vary.append(", ");
                     vary.append(value);
                 }
@@ -190,7 +191,6 @@ public class RewriteLanguageRule extends Rule
 
     protected class LanguageHandler extends Handler
     {
-        private static final EnumSet<HttpHeader> IF_MATCHES = EnumSet.of(HttpHeader.IF_MATCH, HttpHeader.IF_NONE_MATCH);
         private final String _dashLanguage;
         private final HttpURI _languageURI;
         private final HttpField _languageField;

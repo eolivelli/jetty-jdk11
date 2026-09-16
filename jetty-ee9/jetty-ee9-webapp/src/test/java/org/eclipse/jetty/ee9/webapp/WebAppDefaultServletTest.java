@@ -113,12 +113,10 @@ public class WebAppDefaultServletTest
     @MethodSource("argumentsStream")
     public void testResourceService(String uri, String[] contains) throws Exception
     {
-        String request = """
-            GET %s HTTP/1.1
-            Host: localhost
-            Connection: close
-            
-            """.formatted(uri);
+        String request = String.format("GET %s HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Connection: close\n" +
+            "\n", uri);
         String response = connector.getResponse(request);
         for (String s : contains)
         {

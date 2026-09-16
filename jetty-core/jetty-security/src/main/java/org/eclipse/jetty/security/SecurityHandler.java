@@ -398,8 +398,10 @@ public abstract class SecurityHandler extends Handler.Wrapper implements Configu
             throw new IllegalStateException("No Authenticator");
         }
 
-        if (_authenticator instanceof LoginAuthenticator loginAuthenticator)
+        Authenticator authenticator = _authenticator;
+        if (authenticator instanceof LoginAuthenticator)
         {
+            LoginAuthenticator loginAuthenticator = (LoginAuthenticator)authenticator;
             _deferred = AuthenticationState.defer(loginAuthenticator);
             addBean(_deferred);
         }
@@ -520,8 +522,9 @@ public abstract class SecurityHandler extends Handler.Wrapper implements Configu
             if (authenticationState instanceof AuthenticationState.ResponseSent)
                 return true;
 
-            if (authenticationState instanceof AuthenticationState.ServeAs serveAs)
+            if (authenticationState instanceof AuthenticationState.ServeAs)
             {
+                AuthenticationState.ServeAs serveAs = (AuthenticationState.ServeAs)authenticationState;
                 response = serveAsWrap(request, response, serveAs);
                 request = response.getRequest();
                 authenticationState = _deferred;
@@ -539,8 +542,8 @@ public abstract class SecurityHandler extends Handler.Wrapper implements Configu
 
             AuthenticationState.setAuthenticationState(request, authenticationState);
             IdentityService.Association association =
-                (authenticationState instanceof AuthenticationState.Succeeded user)
-                ? _identityService.associate(user.getUserIdentity(), null) : null;
+                (authenticationState instanceof AuthenticationState.Succeeded)
+                ? _identityService.associate(((AuthenticationState.Succeeded)authenticationState).getUserIdentity(), null) : null;
 
             try
             {
@@ -549,8 +552,11 @@ public abstract class SecurityHandler extends Handler.Wrapper implements Configu
             }
             finally
             {
-                if (association == null && authenticationState instanceof AuthenticationState.Deferred deferred)
+                if (association == null && authenticationState instanceof AuthenticationState.Deferred)
+                {
+                    AuthenticationState.Deferred deferred = (AuthenticationState.Deferred)authenticationState;
                     association = deferred.getAssociation();
+                }
                 if (association != null)
                     association.close();
             }
@@ -565,16 +571,17 @@ public abstract class SecurityHandler extends Handler.Wrapper implements Configu
     private boolean doWriteError(Request request, Response response, Callback callback, int status)
     {
         AuthenticationState authenticationState = AuthenticationState.writeError(request, response, callback, status);
-        if (authenticationState instanceof AuthenticationState.ServeAs serveAs)
+        if (authenticationState instanceof AuthenticationState.ServeAs)
         {
+            AuthenticationState.ServeAs serveAs = (AuthenticationState.ServeAs)authenticationState;
             response = serveAsWrap(request, response, serveAs);
             request = response.getRequest();
             authenticationState = _deferred;
 
             AuthenticationState.setAuthenticationState(request, authenticationState);
             IdentityService.Association association =
-                (authenticationState instanceof AuthenticationState.Succeeded user)
-                    ? _identityService.associate(user.getUserIdentity(), null) : null;
+                (authenticationState instanceof AuthenticationState.Succeeded)
+                    ? _identityService.associate(((AuthenticationState.Succeeded)authenticationState).getUserIdentity(), null) : null;
 
             try
             {
@@ -587,8 +594,11 @@ public abstract class SecurityHandler extends Handler.Wrapper implements Configu
             }
             finally
             {
-                if (association == null && authenticationState instanceof AuthenticationState.Deferred deferred)
+                if (association == null && authenticationState instanceof AuthenticationState.Deferred)
+                {
+                    AuthenticationState.Deferred deferred = (AuthenticationState.Deferred)authenticationState;
                     association = deferred.getAssociation();
+                }
                 if (association != null)
                     association.close();
             }
@@ -613,11 +623,18 @@ public abstract class SecurityHandler extends Handler.Wrapper implements Configu
                 {
                     if (field.getHeader() == null)
                         return field;
-                    return switch (field.getHeader())
+                    switch (field.getHeader())
                     {
-                        case CACHE_CONTROL, PRAGMA, ETAG, EXPIRES, LAST_MODIFIED, AGE -> null;
-                        default -> field;
-                    };
+                        case CACHE_CONTROL:
+                        case PRAGMA:
+                        case ETAG:
+                        case EXPIRES:
+                        case LAST_MODIFIED:
+                        case AGE:
+                            return null;
+                        default:
+                            return field;
+                    }
                 }
             };
         }
@@ -671,29 +688,35 @@ public abstract class SecurityHandler extends Handler.Wrapper implements Configu
 
     protected boolean isAuthorized(Constraint constraint, AuthenticationState authenticationState)
     {
-        UserIdentity userIdentity = authenticationState instanceof AuthenticationState.Succeeded user ? user.getUserIdentity() : null;
-        return switch (constraint.getAuthorization())
+        UserIdentity userIdentity = authenticationState instanceof AuthenticationState.Succeeded ? ((AuthenticationState.Succeeded)authenticationState).getUserIdentity() : null;
+        switch (constraint.getAuthorization())
         {
-            case FORBIDDEN, ALLOWED, INHERIT -> true;
-            case ANY_USER -> userIdentity != null && userIdentity.getUserPrincipal() != null;
-            case KNOWN_ROLE ->
+            case FORBIDDEN:
+            case ALLOWED:
+            case INHERIT:
+                return true;
+            case ANY_USER:
+                return userIdentity != null && userIdentity.getUserPrincipal() != null;
+            case KNOWN_ROLE:
             {
                 if (userIdentity != null && userIdentity.getUserPrincipal() != null)
                     for (String role : getKnownRoles())
                         if (userIdentity.isUserInRole(role))
-                            yield true;
-                yield false;
+                            return true;
+                return false;
             }
 
-            case SPECIFIC_ROLE ->
+            case SPECIFIC_ROLE:
             {
                 if (userIdentity != null && userIdentity.getUserPrincipal() != null)
                     for (String role : constraint.getRoles())
                         if (userIdentity.isUserInRole(role))
-                            yield true;
-                yield false;
+                            return true;
+                return false;
             }
-        };
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     protected Set<String> getKnownRoles()
@@ -727,15 +750,23 @@ public abstract class SecurityHandler extends Handler.Wrapper implements Configu
 
     private static int pathSpecGroupOrder(PathSpecGroup group)
     {
-        return switch (group)
+        switch (group)
         {
-            case EXACT -> 5;
-            case ROOT -> 4;
-            case SUFFIX_GLOB -> 3;
-            case MIDDLE_GLOB -> 2;
-            case PREFIX_GLOB -> 1;
-            case DEFAULT -> 0;
-        };
+            case EXACT:
+                return 5;
+            case ROOT:
+                return 4;
+            case SUFFIX_GLOB:
+                return 3;
+            case MIDDLE_GLOB:
+                return 2;
+            case PREFIX_GLOB:
+                return 1;
+            case DEFAULT:
+                return 0;
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     public class NotChecked implements Principal

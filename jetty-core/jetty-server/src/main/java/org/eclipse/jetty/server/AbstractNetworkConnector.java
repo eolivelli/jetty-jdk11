@@ -88,8 +88,9 @@ public abstract class AbstractNetworkConnector extends AbstractConnector impleme
     {
         for (EventListener l : getEventListeners())
         {
-            if (l instanceof NetworkConnector.Listener listener)
+            if (l instanceof NetworkConnector.Listener)
             {
+                NetworkConnector.Listener listener = (NetworkConnector.Listener)l;
                 try
                 {
                     listener.onOpen(this);
@@ -108,8 +109,9 @@ public abstract class AbstractNetworkConnector extends AbstractConnector impleme
     {
         for (EventListener l : getEventListeners())
         {
-            if (l instanceof NetworkConnector.Listener listener)
+            if (l instanceof NetworkConnector.Listener)
             {
+                NetworkConnector.Listener listener = (NetworkConnector.Listener)l;
                 try
                 {
                     listener.onClose(this);

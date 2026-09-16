@@ -64,11 +64,11 @@ public class GzipEncoderSinkTest extends AbstractGzipTest
         }
 
         Path outputPath = MavenPaths.targetTestDir("testEncodeText");
-        Path outputTestFile = outputPath.resolve("%s.test.%s".formatted(textResourceName, gzip.getFileExtensionNames().get(0)));
+        Path outputTestFile = outputPath.resolve(String.format("%s.test.%s", textResourceName, gzip.getFileExtensionNames().get(0)));
         FS.ensureDirExists(outputTestFile.getParent());
         Files.write(outputTestFile, compressed, CREATE, WRITE);
         // System.out.println("Saved: " + outputTestFile);
-        Path outputDefaultFile = outputPath.resolve("%s.default.%s".formatted(textResourceName, gzip.getFileExtensionNames().get(0)));
+        Path outputDefaultFile = outputPath.resolve(String.format("%s.default.%s", textResourceName, gzip.getFileExtensionNames().get(0)));
         FS.ensureDirExists(outputDefaultFile.getParent());
         byte[] defcompressed = compress(Files.readString(uncompressed));
         Files.write(outputDefaultFile, defcompressed, CREATE, WRITE);

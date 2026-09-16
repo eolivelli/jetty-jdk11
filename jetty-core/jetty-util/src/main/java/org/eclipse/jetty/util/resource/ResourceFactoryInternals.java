@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
@@ -205,7 +206,7 @@ class ResourceFactoryInternals
         {
             List<URI> referencedUris = _compositeResourceFactory.mounted.stream()
                 .map(PathResource::getURI)
-                .toList();
+                .collect(Collectors.toList());
             Dumpable.dumpObjects(out, indent, this, new DumpableCollection("newResourceReferences", referencedUris));
         }
 
@@ -225,13 +226,15 @@ class ResourceFactoryInternals
         {
             Objects.requireNonNull(name, "Attribute Name");
 
-            return switch (name)
+            switch (name)
             {
-                case "trackedCount" -> getTrackingCount();
-                case "trackedResources" -> getTrackedResources();
-                default ->
+                case "trackedCount":
+                    return getTrackingCount();
+                case "trackedResources":
+                    return getTrackedResources();
+                default:
                     throw new AttributeNotFoundException("Cannot find " + name + " attribute in " + this.getClass().getName());
-            };
+            }
         }
 
         @Override
@@ -345,8 +348,9 @@ class ResourceFactoryInternals
                 if (resourceFactory == null)
                     throw new IllegalArgumentException("URI scheme not registered: " + uri.getScheme());
                 Resource resource = resourceFactory.newResource(uri);
-                if (resource instanceof MountedPathResource mountedPathResource)
+                if (resource instanceof MountedPathResource)
                 {
+                    MountedPathResource mountedPathResource = (MountedPathResource)resource;
                     if (mountedPathResource.getFileSystem() != null)
                     {
                         mounted.add(mountedPathResource);

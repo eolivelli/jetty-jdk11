@@ -35,9 +35,7 @@ public class BarebonesTest extends AbstractUseCase
         setupStandardHomeDir();
 
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            """, UTF_8);
+            "--modules=main\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = Collections.emptyList();

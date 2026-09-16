@@ -14,10 +14,12 @@
 package org.eclipse.jetty.server.handler;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.http.pathmap.MappedResource;
 import org.eclipse.jetty.http.pathmap.MatchedPath;
@@ -74,7 +76,7 @@ public class PathMappingsHandler extends Handler.AbstractContainer
     @Override
     public List<Handler> getHandlers()
     {
-        return mappings.streamResources().map(MappedResource::getResource).toList();
+        return Collections.unmodifiableList(mappings.streamResources().map(MappedResource::getResource).collect(Collectors.toList()));
     }
 
     /**
@@ -96,7 +98,7 @@ public class PathMappingsHandler extends Handler.AbstractContainer
             throw new IllegalStateException("Unable to addHandler of self: " + handler);
 
         // Check for loops.
-        if (handler instanceof Handler.Container container && container.getDescendants().contains(this))
+        if (handler instanceof Handler.Container && ((Handler.Container)handler).getDescendants().contains(this))
             throw new IllegalStateException("loop detected: " + handler);
 
         Server server = getServer();
@@ -197,9 +199,9 @@ public class PathMappingsHandler extends Handler.AbstractContainer
                     // Start with wrapper context path, and add onto it.
                     String contextPath = getWrapped().getContext().getContextPath();
 
-                    if (pathSpec instanceof ServletPathSpec servletPathSpec)
+                    if (pathSpec instanceof ServletPathSpec)
                     {
-                        return appendContextPath(contextPath, servletPathSpec.getPrefix());
+                        return appendContextPath(contextPath, ((ServletPathSpec)pathSpec).getPrefix());
                     }
                     else
                     {

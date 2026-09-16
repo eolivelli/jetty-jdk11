@@ -49,11 +49,9 @@ public class HeaderRegexRuleTest extends AbstractRuleTest
         HeaderRegexRule rule = new HeaderRegexRule("/", name, value);
         start(rule);
 
-        String request = """
-            GET / HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(200, response.getStatus());
@@ -71,11 +69,9 @@ public class HeaderRegexRuleTest extends AbstractRuleTest
             HeaderRegexRule rule = new HeaderRegexRule("/", name, value);
             start(rule);
 
-            String request = """
-                GET / HTTP/1.1
-                Host: localhost
-                            
-                """;
+            String request = "GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "\n";
 
             HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
             assertEquals(200, response.getStatus());
@@ -94,11 +90,9 @@ public class HeaderRegexRuleTest extends AbstractRuleTest
         HeaderRegexRule rule = new HeaderRegexRule("/my/dir/([^/]+)", name, "$1");
         start(rule);
 
-        String request = """
-            GET /my/dir/$V HTTP/1.1
-            Host: localhost
-                        
-            """.replace("$V", value);
+        String request = ("GET /my/dir/$V HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n").replace("$V", value);
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(200, response.getStatus());
@@ -113,11 +107,9 @@ public class HeaderRegexRuleTest extends AbstractRuleTest
         HeaderRegexRule rule = new HeaderRegexRule("/my/dir/([^/]+)", name, "$1");
         start(rule);
 
-        String request = """
-            GET /my/no/match HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /my/no/match HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(200, response.getStatus());

@@ -88,10 +88,16 @@ public class ExceptionUtil
     {
         if (throwable == null)
             return;
-        if (throwable instanceof Error error)
+        if (throwable instanceof Error)
+        {
+            Error error = (Error)throwable;
             throw error;
-        if (throwable instanceof Exception exception)
+        }
+        if (throwable instanceof Exception)
+        {
+            Exception exception = (Exception)throwable;
             throw exception;
+        }
         throw new RuntimeException(throwable);
     }
 
@@ -106,12 +112,21 @@ public class ExceptionUtil
     {
         if (throwable == null)
             return;
-        if (throwable instanceof RuntimeException runtimeException)
+        if (throwable instanceof RuntimeException)
+        {
+            RuntimeException runtimeException = (RuntimeException)throwable;
             throw runtimeException;
-        if (throwable instanceof Error error)
+        }
+        if (throwable instanceof Error)
+        {
+            Error error = (Error)throwable;
             throw error;
-        if (throwable instanceof IOException ioException)
+        }
+        if (throwable instanceof IOException)
+        {
+            IOException ioException = (IOException)throwable;
             throw new UncheckedIOException(ioException);
+        }
         throw new RuntimeException(throwable);
     }
 
@@ -124,12 +139,21 @@ public class ExceptionUtil
     public static RuntimeException asRuntimeException(Throwable cause) throws Error
     {
         Objects.requireNonNull(cause);
-        if (cause instanceof RuntimeException runtimeException)
+        if (cause instanceof RuntimeException)
+        {
+            RuntimeException runtimeException = (RuntimeException)cause;
             return runtimeException;
-        if (cause instanceof Error error)
+        }
+        if (cause instanceof Error)
+        {
+            Error error = (Error)cause;
             throw error;
-        if (cause instanceof IOException ioException)
+        }
+        if (cause instanceof IOException)
+        {
+            IOException ioException = (IOException)cause;
             return new UncheckedIOException(ioException);
+        }
         return new RuntimeException(cause);
     }
 
@@ -151,11 +175,17 @@ public class ExceptionUtil
         if (throwable == null)
             return;
 
-        if (throwable instanceof Error error)
+        if (throwable instanceof Error)
+        {
+            Error error = (Error)throwable;
             throw error;
+        }
 
-        if (throwable instanceof RuntimeException runtimeException)
+        if (throwable instanceof RuntimeException)
+        {
+            RuntimeException runtimeException = (RuntimeException)throwable;
             throw runtimeException;
+        }
 
         throw as(type, throwable);
     }
@@ -333,7 +363,7 @@ public class ExceptionUtil
         @Override
         public String toString()
         {
-            return "%s@%x%s".formatted(TypeUtil.toShortName(MultiException.class), hashCode(), _multiException);
+            return String.format("%s@%x%s", TypeUtil.toShortName(MultiException.class), hashCode(), _multiException);
         }
     }
 

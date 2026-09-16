@@ -163,6 +163,6 @@ public class ResponseCookieValueRegexRule extends Rule
     @Override
     public String toString()
     {
-        return "%s[%scookie:%s=%s][response:%d>%s]".formatted(super.toString(), isNegate() ? "!" : "", getCookieName(), getCookieValueRegex(), getCode(), getMessage());
+        return String.format("%s[%scookie:%s=%s][response:%d>%s]", super.toString(), isNegate() ? "!" : "", getCookieName(), getCookieValueRegex(), getCode(), getMessage());
     }
 }

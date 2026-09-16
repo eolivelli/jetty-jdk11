@@ -117,12 +117,11 @@ public class ThreadStarvationTest
                 {
                     client.setSoTimeout(10000);
 
-                    String request = """
-                        PUT / HTTP/1.0\r
-                        host: localhost\r
-                        content-length: 10\r
-                        \r
-                        1""";
+                    String request = "PUT / HTTP/1.0\r\n" +
+                        "host: localhost\r\n" +
+                        "content-length: 10\r\n" +
+                        "\r\n" +
+                        "1";
 
                     // Write partial request
                     out.write(request.getBytes(StandardCharsets.UTF_8));

@@ -113,7 +113,7 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
             .jettyVersion(jettyVersion)
             .build();
 
-        try (JettyHomeTester.Run run1 = distribution.start("--add-modules=resources,test-keystore,http,http2c,ee11-deploy,ee11-annotations,eager-content"))
+        try (JettyHomeTester.Run run1 = distribution.start("--add-modules=resources,test-keystore,http,http2c,ee10-deploy,ee10-annotations,eager-content"))
         {
             assertTrue(run1.awaitFor(START_TIMEOUT, TimeUnit.SECONDS));
             assertEquals(0, run1.getExitValue());
@@ -173,7 +173,7 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
             .jettyVersion(jettyVersion)
             .build();
 
-        try (JettyHomeTester.Run run1 = distribution.start("--add-modules=resources,test-keystore,http,http2c,ee11-deploy,ee11-annotations,eager-content"))
+        try (JettyHomeTester.Run run1 = distribution.start("--add-modules=resources,test-keystore,http,http2c,ee10-deploy,ee10-annotations,eager-content"))
         {
             assertTrue(run1.awaitFor(START_TIMEOUT, TimeUnit.SECONDS));
             assertEquals(0, run1.getExitValue());
@@ -227,15 +227,13 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
             .jettyVersion(jettyVersion)
             .build();
 
-        try (JettyHomeTester.Run run1 = distribution.start("--add-modules=resources,test-keystore,http,http2c,ee11-deploy,ee11-annotations,eager-content"))
+        try (JettyHomeTester.Run run1 = distribution.start("--add-modules=resources,test-keystore,http,http2c,ee10-deploy,ee10-annotations,eager-content"))
         {
             assertTrue(run1.awaitFor(START_TIMEOUT, TimeUnit.SECONDS));
             assertEquals(0, run1.getExitValue());
 
             Path jettyLogging = distribution.getJettyBase().resolve("resources/jetty-logging.properties");
-            String loggingConfig = """
-                org.eclipse.jetty.LEVEL=DEBUG
-                """;
+            String loggingConfig = "org.eclipse.jetty.LEVEL=DEBUG\n";
             Files.writeString(jettyLogging, loggingConfig, StandardOpenOption.TRUNCATE_EXISTING);
             long fileLength = Files.size(jettyLogging);
 
@@ -287,7 +285,7 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ee8", "ee9", "ee10", "ee11"})
+    @ValueSource(strings = {"ee8", "ee9", "ee10"})
     public void testLimitHandlers(String env) throws Exception
     {
         String jettyVersion = System.getProperty("jettyVersion");
@@ -311,15 +309,12 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
             assertEquals(0, run1.getExitValue());
 
             Path jettyLogging = distribution.getJettyBase().resolve("resources/jetty-logging.properties");
-            String loggingConfig = """
-                org.eclipse.jetty.LEVEL=DEBUG
-                """;
+            String loggingConfig = "org.eclipse.jetty.LEVEL=DEBUG\n";
             Files.writeString(jettyLogging, loggingConfig, StandardOpenOption.TRUNCATE_EXISTING);
 
-            String coordinates = "org.eclipse.jetty.demos:jetty-%s-demo-simple-webapp:war:%s".formatted(
+            String coordinates = String.format("org.eclipse.jetty.demos:jetty-%s-demo-simple-webapp:war:%s",
                 "ee8".equals(env) ? "servlet4" : "servlet5",
-                jettyVersion
-            );
+                jettyVersion);
             distribution.installWar(distribution.resolveArtifact(coordinates), "test");
 
             int port = Tester.freePort();
@@ -346,30 +341,50 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
             .jettyVersion(jettyVersion)
             .build();
 
-        String encoding = switch (compressionName)
+        String encoding;
+        switch (compressionName)
         {
-            case "brotli" -> "br";
-            case "gzip" -> "gzip";
-            case "zstandard" -> "zstd";
-            case "all" -> "br;q=0.5, gzip;q=1, zstd;q=0.1";
-            default -> throw new IllegalArgumentException();
-        };
+            case "brotli":
+                encoding = "br";
+                break;
+            case "gzip":
+                encoding = "gzip";
+                break;
+            case "zstandard":
+                encoding = "zstd";
+                break;
+            case "all":
+                encoding = "br;q=0.5, gzip;q=1, zstd;q=0.1";
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
 
-        String expected = switch (compressionName)
+        String expected;
+        switch (compressionName)
         {
-            case "brotli" -> "br";
-            case "gzip" -> "gzip";
-            case "zstandard" -> "zstd";
-            case "all" -> "gzip";
-            default -> throw new IllegalArgumentException();
-        };
+            case "brotli":
+                expected = "br";
+                break;
+            case "gzip":
+                expected = "gzip";
+                break;
+            case "zstandard":
+                expected = "zstd";
+                break;
+            case "all":
+                expected = "gzip";
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
 
         String[] modules = {
             "resources",
             "http",
             "compression-" + compressionName,
-            "ee11-webapp",
-            "ee11-deploy"
+            "ee10-webapp",
+            "ee10-deploy"
         };
         try (JettyHomeTester.Run run1 = distribution.start("--approve-all-licenses", "--add-modules=" + String.join(",", modules)))
         {
@@ -377,9 +392,7 @@ public class DistributionCoreHandlerTests extends AbstractJettyHomeTest
             assertEquals(0, run1.getExitValue(), run1.logs());
 
             Path jettyLogging = distribution.getJettyBase().resolve("resources/jetty-logging.properties");
-            String loggingConfig = """
-                org.eclipse.jetty.LEVEL=DEBUG
-                """;
+            String loggingConfig = "org.eclipse.jetty.LEVEL=DEBUG\n";
             Files.writeString(jettyLogging, loggingConfig, StandardOpenOption.TRUNCATE_EXISTING);
 
             String coordinates = "org.eclipse.jetty.demos:jetty-servlet5-demo-simple-webapp:war:" + jettyVersion;

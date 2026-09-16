@@ -88,8 +88,11 @@ public class HandlerWrapper extends AbstractHandlerContainer
     public HandlerWrapper getTail()
     {
         HandlerWrapper tail = this;
-        while (tail.getHandler() instanceof HandlerWrapper handlerWrapper)
-            tail = handlerWrapper;
+        Handler next;
+        while ((next = tail.getHandler()) instanceof HandlerWrapper)
+        {
+            tail = (HandlerWrapper)next;
+        }
         return tail;
     }
 
@@ -151,10 +154,16 @@ public class HandlerWrapper extends AbstractHandlerContainer
      */
     public static void setAsParent(org.eclipse.jetty.server.Handler.Container parent, org.eclipse.jetty.server.Handler handler)
     {
-        if (parent instanceof org.eclipse.jetty.server.Handler.Collection collection)
+        if (parent instanceof org.eclipse.jetty.server.Handler.Collection)
+        {
+            org.eclipse.jetty.server.Handler.Collection collection = (org.eclipse.jetty.server.Handler.Collection)parent;
             collection.addHandler(handler);
-        else if (parent instanceof org.eclipse.jetty.server.Handler.Singleton wrapper)
+        }
+        else if (parent instanceof org.eclipse.jetty.server.Handler.Singleton)
+        {
+            org.eclipse.jetty.server.Handler.Singleton wrapper = (org.eclipse.jetty.server.Handler.Singleton)parent;
             wrapper.setHandler(handler);
+        }
         else if (parent != null)
             throw new IllegalArgumentException("Unknown parent type: " + parent);
     }

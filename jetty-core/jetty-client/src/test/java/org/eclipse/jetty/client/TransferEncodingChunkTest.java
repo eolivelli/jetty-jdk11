@@ -136,14 +136,14 @@ public class TransferEncodingChunkTest
             int index = -1;
             for (int i = 0; i < count; ++i)
             {
-                index = requestString.indexOf("\r\n%x\r\n".formatted(chunkMaxLength), index + 1);
+                index = requestString.indexOf(String.format("\r\n%x\r\n", chunkMaxLength), index + 1);
                 assertThat(index, greaterThan(0));
             }
             // Check that there are no extra bytes after the request end.
             try
             {
                 int read = input.read(b);
-                fail("unexpected read of %d bytes ".formatted(read));
+                fail(String.format("unexpected read of %d bytes ", read));
             }
             catch (SocketTimeoutException ignored)
             {
@@ -155,11 +155,9 @@ public class TransferEncodingChunkTest
             assertArrayEquals(content, decodedContent);
 
             OutputStream output = socket.getOutputStream();
-            output.write("""
-                HTTP/1.1 200 OK
-                Content-Length: 0
-                
-                """.getBytes(StandardCharsets.UTF_8));
+            output.write(("HTTP/1.1 200 OK\n" +
+                "Content-Length: 0\n" +
+                "\n").getBytes(StandardCharsets.UTF_8));
             output.flush();
 
             assertTrue(responseLatch.await(5, TimeUnit.SECONDS));
@@ -233,14 +231,14 @@ public class TransferEncodingChunkTest
             int index = -1;
             for (int i = 0; i < count; ++i)
             {
-                index = requestString.indexOf("\r\n%x\r\n".formatted(chunkMaxLength), index + 1);
+                index = requestString.indexOf(String.format("\r\n%x\r\n", chunkMaxLength), index + 1);
                 assertThat(index, greaterThan(0));
             }
             // Check that there are no extra bytes after the request end.
             try
             {
                 int read = input.read(b);
-                fail("unexpected read of %d bytes ".formatted(read));
+                fail(String.format("unexpected read of %d bytes ", read));
             }
             catch (SocketTimeoutException ignored)
             {
@@ -252,11 +250,9 @@ public class TransferEncodingChunkTest
             assertArrayEquals(content, decodedContent);
 
             OutputStream output = socket.getOutputStream();
-            output.write("""
-                HTTP/1.1 200 OK
-                Content-Length: 0
-                
-                """.getBytes(StandardCharsets.UTF_8));
+            output.write(("HTTP/1.1 200 OK\n" +
+                "Content-Length: 0\n" +
+                "\n").getBytes(StandardCharsets.UTF_8));
             output.flush();
 
             assertTrue(responseLatch.await(5, TimeUnit.SECONDS));

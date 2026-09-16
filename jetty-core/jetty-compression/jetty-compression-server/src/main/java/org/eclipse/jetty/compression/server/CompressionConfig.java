@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.jetty.http.HttpException;
@@ -246,7 +247,7 @@ public class CompressionConfig extends AbstractLifeCycle
             // The only option left is identity, if acceptable.
             if (identity != null && !identity.isAcceptable())
             {
-                List<String> accepted = supportedEncodings.stream().filter(compressEncodings).toList();
+                List<String> accepted = supportedEncodings.stream().filter(compressEncodings).collect(Collectors.toList());
                 throw new HttpException.RuntimeException(HttpStatus.UNSUPPORTED_MEDIA_TYPE_415, String.join(", ", accepted));
             }
 

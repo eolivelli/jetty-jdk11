@@ -235,12 +235,10 @@ public class ContextHandlerTest
         });
         _server.start();
 
-        String rawRequest = """
-            GET /ctx/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /ctx/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = connector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -301,12 +299,10 @@ public class ContextHandlerTest
         });
         _server.start();
 
-        String rawRequest = """
-            GET /ctx/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /ctx/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = connector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -1234,7 +1230,7 @@ public class ContextHandlerTest
                 requests.countDown();
                 switch (request.getContext().getPathInContext(request.getHttpURI().getCanonicalPath()))
                 {
-                    case "/ignore0" ->
+                    case "/ignore0":
                     {
                         try
                         {
@@ -1247,7 +1243,7 @@ public class ContextHandlerTest
                         return false;
                     }
 
-                    case "/ignore1" ->
+                    case "/ignore1":
                     {
                         try
                         {
@@ -1260,7 +1256,7 @@ public class ContextHandlerTest
                         return false;
                     }
 
-                    case "/ok0" ->
+                    case "/ok0":
                     {
                         try
                         {
@@ -1270,9 +1266,10 @@ public class ContextHandlerTest
                         {
                             throw new RuntimeException(e);
                         }
+                        break;
                     }
 
-                    case "/ok1" ->
+                    case "/ok1":
                     {
                         try
                         {
@@ -1282,9 +1279,10 @@ public class ContextHandlerTest
                         {
                             throw new RuntimeException(e);
                         }
+                        break;
                     }
 
-                    case "/fail0" ->
+                    case "/fail0":
                     {
                         try
                         {
@@ -1297,7 +1295,7 @@ public class ContextHandlerTest
                         throw new QuietException.Exception("expected0");
                     }
 
-                    case "/fail1" ->
+                    case "/fail1":
                     {
                         try
                         {
@@ -1308,11 +1306,11 @@ public class ContextHandlerTest
                             throw new RuntimeException(e);
                         }
                         callback.failed(new QuietException.Exception("expected1"));
+                        break;
                     }
 
-                    default ->
-                    {
-                    }
+                    default:
+                        break;
                 }
 
                 response.setStatus(HttpStatus.OK_200);
@@ -1335,7 +1333,7 @@ public class ContextHandlerTest
         {
             for (int batch = 0; batch <= 1; batch++)
             {
-                LocalConnector.LocalEndPoint endPoint = connector.executeRequest("GET /ctx%s%d HTTP/1.0\r\n\r\n".formatted(target, batch));
+                LocalConnector.LocalEndPoint endPoint = connector.executeRequest(String.format("GET /ctx%s%d HTTP/1.0\r\n\r\n", target, batch));
                 endPoints.add(endPoint);
             }
         }
@@ -1411,19 +1409,17 @@ public class ContextHandlerTest
 
         String dump = contextHandler.dump().replaceAll("\\r?\\n", "\n");
         assertThat(dump, containsString("oejsh.ContextHandler@"));
-        String expected = """
-            +> No ClassLoader
-            +> handler attributes size=3
-            |  +> name: hidden
-            |  +> persistent1: value1
-            |  +> persistent2: named: value2
-            +> attributes size=5
-               +> name: override
-               +> persistent1: value1
-               +> persistent2: named: value2
-               +> transient1: value1
-               +> transient2: named: value2
-            """;
+        String expected = "+> No ClassLoader\n" +
+            "+> handler attributes size=3\n" +
+            "|  +> name: hidden\n" +
+            "|  +> persistent1: value1\n" +
+            "|  +> persistent2: named: value2\n" +
+            "+> attributes size=5\n" +
+            "   +> name: override\n" +
+            "   +> persistent1: value1\n" +
+            "   +> persistent2: named: value2\n" +
+            "   +> transient1: value1\n" +
+            "   +> transient2: named: value2\n";
         assertThat(dump, containsString(expected));
     }
 }

@@ -200,8 +200,11 @@ public class ContextHandler extends ScopedHandler implements Attributes, Supplie
 
     public static ServletContext getServletContext(Context context)
     {
-        if (context instanceof CoreContextHandler.CoreContext coreContext)
+        if (context instanceof CoreContextHandler.CoreContext)
+        {
+            CoreContextHandler.CoreContext coreContext = (CoreContextHandler.CoreContext)context;
             return coreContext.getAPIContext();
+        }
         return null;
     }
 
@@ -519,15 +522,17 @@ public class ContextHandler extends ScopedHandler implements Attributes, Supplie
     {
         if (super.addEventListener(listener))
         {
-            if (listener instanceof ContextScopeListener contextScopeListener)
+            if (listener instanceof ContextScopeListener)
             {
+                ContextScopeListener contextScopeListener = (ContextScopeListener)listener;
                 _contextListeners.add(contextScopeListener);
                 if (__context.get() != null)
                     contextScopeListener.enterScope(__context.get(), null, "Listener registered");
             }
 
-            if (listener instanceof ServletContextListener servletContextListener)
+            if (listener instanceof ServletContextListener)
             {
+                ServletContextListener servletContextListener = (ServletContextListener)listener;
                 if (_contextStatus == ContextStatus.INITIALIZED)
                 {
                     _destroyServletContextListeners.add(servletContextListener);
@@ -545,14 +550,23 @@ public class ContextHandler extends ScopedHandler implements Attributes, Supplie
                 _servletContextListeners.add((ServletContextListener)listener);
             }
 
-            if (listener instanceof ServletContextAttributeListener servletContextAttributeListener)
+            if (listener instanceof ServletContextAttributeListener)
+            {
+                ServletContextAttributeListener servletContextAttributeListener = (ServletContextAttributeListener)listener;
                 _servletContextAttributeListeners.add(servletContextAttributeListener);
+            }
 
-            if (listener instanceof ServletRequestListener servletRequestListener)
+            if (listener instanceof ServletRequestListener)
+            {
+                ServletRequestListener servletRequestListener = (ServletRequestListener)listener;
                 _servletRequestListeners.add(servletRequestListener);
+            }
 
-            if (listener instanceof ServletRequestAttributeListener servletRequestAttributeListener)
+            if (listener instanceof ServletRequestAttributeListener)
+            {
+                ServletRequestAttributeListener servletRequestAttributeListener = (ServletRequestAttributeListener)listener;
                 _servletRequestAttributeListeners.add(servletRequestAttributeListener);
+            }
 
             return true;
         }
@@ -1464,7 +1478,7 @@ public class ContextHandler extends ScopedHandler implements Attributes, Supplie
     public String toString()
     {
         if (_coreContextHandler == null)
-            return "%s@%x.<init>".formatted(TypeUtil.toShortName(ContextHandler.class), hashCode());
+            return String.format("%s@%x.<init>", TypeUtil.toShortName(ContextHandler.class), hashCode());
 
         final String[] vhosts = getVirtualHosts();
 
@@ -3005,8 +3019,8 @@ public class ContextHandler extends ScopedHandler implements Attributes, Supplie
         {
             __context.set(_apiContext);
             super.notifyEnterScope(coreRequest);
-            Request request = (coreRequest instanceof CoreContextRequest coreContextRequest)
-                    ? coreContextRequest.getHttpChannel().getRequest()
+            Request request = (coreRequest instanceof CoreContextRequest)
+                    ? ((CoreContextRequest)coreRequest).getHttpChannel().getRequest()
                     : null;
             ContextHandler.this.enterScope(request, "Entered core context");
         }
@@ -3016,8 +3030,8 @@ public class ContextHandler extends ScopedHandler implements Attributes, Supplie
         {
             try
             {
-                Request request = (coreRequest instanceof CoreContextRequest coreContextRequest)
-                        ? coreContextRequest.getHttpChannel().getRequest()
+                Request request = (coreRequest instanceof CoreContextRequest)
+                        ? ((CoreContextRequest)coreRequest).getHttpChannel().getRequest()
                         : null;
                 ContextHandler.this.exitScope(request);
                 super.notifyExitScope(coreRequest);
@@ -3043,39 +3057,43 @@ public class ContextHandler extends ScopedHandler implements Attributes, Supplie
             @Override
             public Object getAttribute(String name)
             {
-                return switch (name)
+                switch (name)
                 {
-                    case FormFields.MAX_FIELDS_ATTRIBUTE -> getMaxFormKeys();
-                    case FormFields.MAX_LENGTH_ATTRIBUTE -> getMaxFormContentSize();
-                    default -> super.getAttribute(name);
-                };
+                    case FormFields.MAX_FIELDS_ATTRIBUTE:
+                        return getMaxFormKeys();
+                    case FormFields.MAX_LENGTH_ATTRIBUTE:
+                        return getMaxFormContentSize();
+                    default:
+                        return super.getAttribute(name);
+                }
             }
 
             @Override
             public Object setAttribute(String name, Object attribute)
             {
-                return switch (name)
+                switch (name)
                 {
-                    case FormFields.MAX_FIELDS_ATTRIBUTE ->
+                    case FormFields.MAX_FIELDS_ATTRIBUTE:
                     {
                         int oldValue = getMaxFormKeys();
                         if (attribute == null)
                             setMaxFormKeys(DEFAULT_MAX_FORM_KEYS);
                         else
                             setMaxFormKeys(Integer.parseInt(attribute.toString()));
-                        yield oldValue;
+                        return oldValue;
                     }
-                    case FormFields.MAX_LENGTH_ATTRIBUTE ->
+                    case FormFields.MAX_LENGTH_ATTRIBUTE:
                     {
                         int oldValue = getMaxFormContentSize();
                         if (attribute == null)
                             setMaxFormContentSize(DEFAULT_MAX_FORM_CONTENT_SIZE);
                         else
                             setMaxFormContentSize(Integer.parseInt(attribute.toString()));
-                        yield oldValue;
+                        return oldValue;
                     }
-                    default -> super.setAttribute(name, attribute);
-                };
+                    default:
+                        return super.setAttribute(name, attribute);
+                }
             }
         }
 

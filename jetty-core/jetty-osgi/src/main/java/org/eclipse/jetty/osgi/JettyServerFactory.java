@@ -134,8 +134,11 @@ public class JettyServerFactory
 
                             Object o = config.configure();
                             // Remember the Server if it was configured.
-                            if (o instanceof Server configuredServer && server == null)
+                            if (o instanceof Server && server == null)
+                            {
+                                Server configuredServer = (Server)o;
                                 server = configuredServer;
+                            }
                             idMap = config.getIdMap();
                         }
                         catch (Exception e)

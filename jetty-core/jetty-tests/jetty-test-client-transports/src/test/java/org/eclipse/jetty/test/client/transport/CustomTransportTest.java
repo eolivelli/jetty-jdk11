@@ -219,8 +219,11 @@ public class CustomTransportTest
         {
             if (this == obj)
                 return true;
-            if (obj instanceof GatewayTransport that)
+            if (obj instanceof GatewayTransport)
+            {
+                GatewayTransport that = (GatewayTransport)obj;
                 return Objects.equals(gateway, that.gateway);
+            }
             return false;
         }
     }
@@ -246,11 +249,9 @@ public class CustomTransportTest
         {
             Channel channel = channels.get(id);
             // Simulate the data to read.
-            channel.data = StandardCharsets.UTF_8.encode("""
-                HTTP/1.1 200 OK
-                Content-Length: %d
-                                    
-                """.formatted(CONTENT.length()) + CONTENT);
+            channel.data = StandardCharsets.UTF_8.encode(String.format("HTTP/1.1 200 OK\n" +
+                "Content-Length: %d\n" +
+                "\n", CONTENT.length()) + CONTENT);
             new ChannelToEndPointCallback(channel).iterate();
         }
 

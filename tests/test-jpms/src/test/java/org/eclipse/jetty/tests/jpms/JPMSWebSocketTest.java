@@ -49,13 +49,11 @@ public class JPMSWebSocketTest
         try (JPMSTester server = new JPMSTester.Builder(workDir.getPath())
 //            .jvmArgs("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005")
             .classesDirectory(MavenPaths.targetDir().resolve("test-classes"))
-            .moduleInfo("""
-                module app.server
-                {
-                  requires org.eclipse.jetty.websocket.server;
-                  exports org.eclipse.jetty.tests.jpms;
-                }
-                """)
+            .moduleInfo("module app.server\n" +
+                "{\n" +
+                "  requires org.eclipse.jetty.websocket.server;\n" +
+                "  exports org.eclipse.jetty.tests.jpms;\n" +
+                "}\n")
             .addToModulePath("org.eclipse.jetty.websocket:jetty-websocket-jetty-server:" + jettyVersion)
             .addToModulePath("org.eclipse.jetty.websocket:jetty-websocket-jetty-api:" + jettyVersion)
             .addToModulePath("org.eclipse.jetty:jetty-server:" + jettyVersion)
@@ -75,13 +73,11 @@ public class JPMSWebSocketTest
 
             try (JPMSTester client = new JPMSTester.Builder(workDir.getPath())
                 .classesDirectory(MavenPaths.targetDir().resolve("test-classes"))
-                .moduleInfo("""
-                    module app.client
-                    {
-                      requires org.eclipse.jetty.websocket.client;
-                      exports org.eclipse.jetty.tests.jpms;
-                    }
-                    """)
+                .moduleInfo("module app.client\n" +
+                    "{\n" +
+                    "  requires org.eclipse.jetty.websocket.client;\n" +
+                    "  exports org.eclipse.jetty.tests.jpms;\n" +
+                    "}\n")
                 .addToModulePath("org.eclipse.jetty.websocket:jetty-websocket-jetty-client:" + jettyVersion)
                 .addToModulePath("org.eclipse.jetty.websocket:jetty-websocket-jetty-api:" + jettyVersion)
                 .addToModulePath("org.eclipse.jetty:jetty-client:" + jettyVersion)

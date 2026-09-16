@@ -108,8 +108,7 @@ public class BaseClassCatalog implements Catalog, EntityResolver
                     {
                         URL url = baseClass.getResource(ref);
                         if (url == null)
-                            throw new FileNotFoundException("Unable to find ref [%s/%s] in same archive as %s: %s"
-                                .formatted(baseClass.getPackageName().replace('.', '/'),
+                            throw new FileNotFoundException(String.format("Unable to find ref [%s/%s] in same archive as %s: %s", baseClass.getPackageName().replace('.', '/'),
                                     ref, baseClass.getName(),
                                     TypeUtil.getLocationOfClass(baseClass)));
                         mapping.put(id, url.toExternalForm());
@@ -117,7 +116,7 @@ public class BaseClassCatalog implements Catalog, EntityResolver
                 }
                 catch (URISyntaxException e)
                 {
-                    throw new IOException("Unable to parse %s - bad URI in: %s".formatted(catalogUri, elem), e);
+                    throw new IOException(String.format("Unable to parse %s - bad URI in: %s", catalogUri, elem), e);
                 }
             }
             return mapping;

@@ -47,11 +47,9 @@ public class RedirectPatternRuleTest extends AbstractRuleTest
         RedirectPatternRule rule = new RedirectPatternRule("*", location);
         start(rule);
 
-        String request = """
-            GET / HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.FOUND_302, response.getStatus());
@@ -66,11 +64,9 @@ public class RedirectPatternRuleTest extends AbstractRuleTest
         rule.setStatusCode(HttpStatus.MOVED_PERMANENTLY_301);
         start(rule);
 
-        String request = """
-            GET /api/rest?foo=1 HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /api/rest?foo=1 HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.MOVED_PERMANENTLY_301, response.getStatus());

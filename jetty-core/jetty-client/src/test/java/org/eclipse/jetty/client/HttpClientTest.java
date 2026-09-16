@@ -471,7 +471,7 @@ public class HttpClientTest extends AbstractHttpClientServerTest
                     }
                     else
                     {
-                        org.eclipse.jetty.server.Response.sendRedirect(request, response, callback, "%s://127.0.0.1:%s/redirected".formatted(request.getHttpURI().getScheme(), request.getHttpURI().getPort()));
+                        org.eclipse.jetty.server.Response.sendRedirect(request, response, callback, String.format("%s://127.0.0.1:%s/redirected", request.getHttpURI().getScheme(), request.getHttpURI().getPort()));
                     }
                     return true;
                 }
@@ -1663,10 +1663,8 @@ public class HttpClientTest extends AbstractHttpClientServerTest
                 consume(input, false);
 
                 // HTTP/1.0 response, the client must not close the connection.
-                String httpResponse = """
-                    HTTP/1.0 200 OK
-                    
-                    """;
+                String httpResponse = "HTTP/1.0 200 OK\n" +
+                    "\n";
                 OutputStream output = socket.getOutputStream();
                 output.write(httpResponse.getBytes(UTF_8));
                 output.flush();
@@ -1690,11 +1688,9 @@ public class HttpClientTest extends AbstractHttpClientServerTest
 
                 consume(input, false);
 
-                httpResponse = """
-                    HTTP/1.1 200 OK
-                    Content-Length: 0
-                    
-                    """;
+                httpResponse = "HTTP/1.1 200 OK\n" +
+                    "Content-Length: 0\n" +
+                    "\n";
                 output.write(httpResponse.getBytes(UTF_8));
                 output.flush();
 
@@ -1835,10 +1831,9 @@ public class HttpClientTest extends AbstractHttpClientServerTest
                 consume(input, false);
 
                 // Send a bad response.
-                String httpResponse = """
-                    HTTP/1.1 204 No Content
-                    
-                    No Content""";
+                String httpResponse = "HTTP/1.1 204 No Content\n" +
+                    "\n" +
+                    "No Content";
                 OutputStream output = socket.getOutputStream();
                 output.write(httpResponse.getBytes(UTF_8));
                 output.flush();
@@ -1858,11 +1853,9 @@ public class HttpClientTest extends AbstractHttpClientServerTest
 
                 consume(input, false);
 
-                httpResponse = """
-                    HTTP/1.1 200 OK
-                    Content-Length: 0
-                    
-                    """;
+                httpResponse = "HTTP/1.1 200 OK\n" +
+                    "Content-Length: 0\n" +
+                    "\n";
                 output.write(httpResponse.getBytes(UTF_8));
                 output.flush();
 
@@ -1926,12 +1919,10 @@ public class HttpClientTest extends AbstractHttpClientServerTest
     @ArgumentsSource(ScenarioProvider.class)
     public void testUnsolicitedResponseBytesFromServer(Scenario scenario) throws Exception
     {
-        String response = """
-            HTTP/1.1 408 Request Timeout
-            Content-Length: 0
-            Connection: close
-            
-            """;
+        String response = "HTTP/1.1 408 Request Timeout\n" +
+            "Content-Length: 0\n" +
+            "Connection: close\n" +
+            "\n";
         testUnsolicitedBytesFromServer(scenario, response);
     }
 

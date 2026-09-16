@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -82,7 +83,7 @@ public class DefaultServletInitTest
         @Override
         public String toString()
         {
-            return "ContextInit[%s=%s]".formatted(key, value);
+            return String.format("ContextInit[%s=%s]", key, value);
         }
     }
 
@@ -106,13 +107,55 @@ public class DefaultServletInitTest
         @Override
         public String toString()
         {
-            return "HolderInit[%s=%s]".formatted(key, value);
+            return String.format("HolderInit[%s=%s]", key, value);
         }
     }
 
-    public record Config(ContextInit contextInit,
-                         HolderInit holderInit)
-    {}
+    public static final class Config
+    {
+        private final ContextInit contextInit;
+        private final HolderInit holderInit;
+
+        public Config(ContextInit contextInit, HolderInit holderInit)
+        {
+            this.contextInit = contextInit;
+            this.holderInit = holderInit;
+        }
+
+        public ContextInit contextInit()
+        {
+            return contextInit;
+        }
+
+        public HolderInit holderInit()
+        {
+            return holderInit;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Config that = (Config)obj;
+            return Objects.equals(contextInit, that.contextInit) &&
+                Objects.equals(holderInit, that.holderInit);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(contextInit, holderInit);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Config[contextInit=" + contextInit + ", holderInit=" + holderInit + "]";
+        }
+    }
 
     public static Stream<Config> welcomeServletsInitSource()
     {
@@ -164,12 +207,10 @@ public class DefaultServletInitTest
 
         startServer(contextHandler);
 
-        String rawRequest = """
-            GET / HTTP/1.1
-            Host: test
-            Connection: close
-                        
-            """;
+        String rawRequest = "GET / HTTP/1.1\n" +
+            "Host: test\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(localConnector.getResponse(rawRequest));
         assertThat(response.getStatus(), is(200));

@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.awaitility.Awaitility;
 import org.eclipse.jetty.toolchain.test.FS;
@@ -69,8 +70,49 @@ public class ScannerTest
         LifeCycle.stop(_scanner);
     }
 
-    record Event(String filename, Scanner.Notification notification)
+    static final class Event
     {
+        private final String filename;
+        private final Scanner.Notification notification;
+
+        Event(String filename, Scanner.Notification notification)
+        {
+            this.filename = filename;
+            this.notification = notification;
+        }
+
+        public String filename()
+        {
+            return filename;
+        }
+
+        public Scanner.Notification notification()
+        {
+            return notification;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Event that = (Event)obj;
+            return Objects.equals(filename, that.filename) && notification == that.notification;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(filename, notification);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Event[filename=" + filename + ", notification=" + notification + "]";
+        }
     }
 
     @Test
@@ -850,7 +892,7 @@ public class ScannerTest
             return pathsChanged.entrySet().stream()
                 .map(e -> String.format("%s|%s", e.getValue(), e.getKey()))
                 .sorted()
-                .toList();
+                .collect(Collectors.toList());
         }
     }
 }

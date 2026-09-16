@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.jetty.util.annotation.ManagedAttribute;
@@ -230,13 +231,19 @@ public class ConcurrentPool<P> implements Pool<P>, Dumpable
 
     private int startIndex(int size)
     {
-        return switch (strategyType)
+        switch (strategyType)
         {
-            case FIRST -> 0;
-            case RANDOM -> ThreadLocalRandom.current().nextInt(size);
-            case ROUND_ROBIN -> nextIndex.getAndUpdate(c -> Math.max(0, c + 1)) % size;
-            case THREAD_ID -> (int)(Thread.currentThread().getId() % size);
-        };
+            case FIRST:
+                return 0;
+            case RANDOM:
+                return ThreadLocalRandom.current().nextInt(size);
+            case ROUND_ROBIN:
+                return nextIndex.getAndUpdate(c -> Math.max(0, c + 1)) % size;
+            case THREAD_ID:
+                return (int)(Thread.currentThread().getId() % size);
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     private boolean release(Entry<P> entry)
@@ -282,7 +289,7 @@ public class ConcurrentPool<P> implements Pool<P>, Dumpable
             // Field this.terminated must be modified with the lock held
             // because the list of entries is modified, see reserve().
             terminated = true;
-            copy = stream().toList();
+            copy = stream().collect(Collectors.toList());
             entries.clear();
         }
 
@@ -715,7 +722,7 @@ public class ConcurrentPool<P> implements Pool<P>, Dumpable
         @Override
         public String toString()
         {
-            return "%s@%x{%s,%s}".formatted(TypeUtil.toShortName(this.getClass()), hashCode(), _strong == null ? "acquired" : "released", _weak.get());
+            return String.format("%s@%x{%s,%s}", TypeUtil.toShortName(this.getClass()), hashCode(), _strong == null ? "acquired" : "released", _weak.get());
         }
     }
 }

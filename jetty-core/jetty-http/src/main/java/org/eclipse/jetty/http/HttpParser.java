@@ -527,12 +527,15 @@ public class HttpParser
                     ch = buffer.get();
                     addAndCheckHeadersSize(1);
                     t = HttpTokens.TOKENS[0xff & ch];
-                    return switch (t.getType())
+                    switch (t.getType())
                     {
-                        case CNTL -> throw new IllegalCharacterException(_state, t, buffer);
-                        case LF -> EOL_CRLF;
-                        default -> throw new HttpException.RuntimeException(HttpStatus.BAD_REQUEST_400, "Bad EOL");
-                    };
+                        case CNTL:
+                            throw new IllegalCharacterException(_state, t, buffer);
+                        case LF:
+                            return EOL_CRLF;
+                        default:
+                            throw new HttpException.RuntimeException(HttpStatus.BAD_REQUEST_400, "Bad EOL");
+                    }
                 }
                 _cr = true;
                 return null;
@@ -713,17 +716,22 @@ public class HttpParser
 
             switch (t.getType())
             {
-                case ALPHA, DIGIT, TCHAR, VCHAR ->
+                case ALPHA:
+                case DIGIT:
+                case TCHAR:
+                case VCHAR:
                 {
                     _string.setLength(0);
                     _string.append(t.getChar());
                     setState(_requestParser ? State.METHOD : State.RESPONSE_VERSION);
                     return;
                 }
-                case OTEXT, SPACE, HTAB -> throw new IllegalCharacterException(_state, t, buffer);
-                default ->
-                {
-                }
+                case OTEXT:
+                case SPACE:
+                case HTAB:
+                    throw new IllegalCharacterException(_state, t, buffer);
+                default:
+                    break;
             }
         }
     }
@@ -1055,7 +1063,7 @@ public class HttpParser
                         case TCHAR:
                         case VCHAR:
                         case COLON:
-                            if (_string.isEmpty())
+                            if (_string.length() == 0)
                             {
                                 // This is the first char of the version, so try a quick lookup
                                 HttpVersion version = HttpVersion.CACHE.getBest(buffer);
@@ -1087,7 +1095,12 @@ public class HttpParser
                                                 _requestHandler.startRequest(_methodString, _uri.toCompleteString(), _version);
                                                 break;
 
-                                            case SPACE, ALPHA, DIGIT, TCHAR, VCHAR, COLON:
+                                            case SPACE:
+                                            case ALPHA:
+                                            case DIGIT:
+                                            case TCHAR:
+                                            case VCHAR:
+                                            case COLON:
                                                 // This version was just a prefix to the full version, so append it and the next char and continue
                                                 _string.append(versionString);
                                                 _string.append(next.getChar());
@@ -1428,9 +1441,15 @@ public class HttpParser
                             _headerComplete = true;
                             switch (_endOfContent)
                             {
-                                case EOF_CONTENT -> setState(State.EOF_CONTENT);
-                                case CHUNKED_CONTENT -> setState(State.CHUNKED_CONTENT);
-                                default -> setState(State.CONTENT);
+                                case EOF_CONTENT:
+                                    setState(State.EOF_CONTENT);
+                                    break;
+                                case CHUNKED_CONTENT:
+                                    setState(State.CHUNKED_CONTENT);
+                                    break;
+                                default:
+                                    setState(State.CONTENT);
+                                    break;
                             }
                             return handle;
                         }
@@ -1837,8 +1856,9 @@ public class HttpParser
         {
             BufferUtil.clear(buffer);
             HttpException bad;
-            if (x instanceof HttpException http)
+            if (x instanceof HttpException)
             {
+                HttpException http = (HttpException)x;
                 bad = http;
             }
             else
@@ -1918,7 +1938,7 @@ public class HttpParser
                             // The cast to int is safe, since remaining is an int.
                             length = (int)content;
                         }
-                        _contentChunk = buffer.slice(buffer.position(), length);
+                        _contentChunk = BufferUtil.absoluteSlice(buffer, buffer.position(), length);
 
                         _contentPosition += length;
                         buffer.position(buffer.position() + length);
@@ -1981,7 +2001,7 @@ public class HttpParser
                     else
                     {
                         int length = (int)Math.min(remaining, chunkLength);
-                        _contentChunk = buffer.slice(buffer.position(), length);
+                        _contentChunk = BufferUtil.absoluteSlice(buffer, buffer.position(), length);
 
                         _contentPosition += length;
                         _chunkOffset += length;
@@ -2032,7 +2052,7 @@ public class HttpParser
 
             switch (_chunkSizeState)
             {
-                case SIZE ->
+                case SIZE:
                 {
                     if (t.getType() == HttpTokens.Type.EOL)
                     {
@@ -2055,22 +2075,25 @@ public class HttpParser
                         setChunkSizeState(ChunkSizeState.EXT_NAME_BWS_BEFORE);
                     else
                         throw new IllegalCharacterException(_state, t, buffer);
+                    break;
                 }
-                case EXT_BWS ->
+                case EXT_BWS:
                 {
                     if (t.getChar() == ';')
                         setChunkSizeState(ChunkSizeState.EXT_NAME_BWS_BEFORE);
                     else if (!isBWS(t))
                         throw new IllegalCharacterException(_state, t, buffer);
+                    break;
                 }
-                case EXT_NAME_BWS_BEFORE ->
+                case EXT_NAME_BWS_BEFORE:
                 {
                     if (isTchar(t))
                         setChunkSizeState(ChunkSizeState.EXT_NAME);
                     else if (!isBWS(t))
                         throw new IllegalCharacterException(_state, t, buffer);
+                    break;
                 }
-                case EXT_NAME ->
+                case EXT_NAME:
                 {
                     if (t.getType() == HttpTokens.Type.EOL)
                     {
@@ -2085,8 +2108,9 @@ public class HttpParser
                         setChunkSizeState(ChunkSizeState.EXT_VALUE_BWS_BEFORE);
                     else if (!isTchar(t))
                         throw new IllegalCharacterException(_state, t, buffer);
+                    break;
                 }
-                case EXT_NAME_BWS_AFTER ->
+                case EXT_NAME_BWS_AFTER:
                 {
                     if (t.getChar() == ';')
                         setChunkSizeState(ChunkSizeState.EXT_NAME_BWS_BEFORE);
@@ -2094,8 +2118,9 @@ public class HttpParser
                         setChunkSizeState(ChunkSizeState.EXT_VALUE_BWS_BEFORE);
                     else if (!isBWS(t))
                         throw new IllegalCharacterException(_state, t, buffer);
+                    break;
                 }
-                case EXT_VALUE_BWS_BEFORE ->
+                case EXT_VALUE_BWS_BEFORE:
                 {
                     if (t.getChar() == '"')
                         setChunkSizeState(ChunkSizeState.EXT_VALUE_OPEN_QUOTE);
@@ -2103,8 +2128,9 @@ public class HttpParser
                         setChunkSizeState(ChunkSizeState.EXT_VALUE);
                     else if (!isBWS(t))
                         throw new IllegalCharacterException(_state, t, buffer);
+                    break;
                 }
-                case EXT_VALUE_OPEN_QUOTE ->
+                case EXT_VALUE_OPEN_QUOTE:
                 {
                     if (_chunkQuotedEscape)
                     {
@@ -2118,8 +2144,9 @@ public class HttpParser
                         setChunkSizeState(ChunkSizeState.EXT_VALUE_CLOSE_QUOTE);
                     else if (!isQdText(t))
                         throw new IllegalCharacterException(_state, t, buffer);
+                    break;
                 }
-                case EXT_VALUE ->
+                case EXT_VALUE:
                 {
                     if (t.getType() == HttpTokens.Type.EOL)
                     {
@@ -2132,8 +2159,9 @@ public class HttpParser
                         setChunkSizeState(ChunkSizeState.EXT_NAME_BWS_BEFORE);
                     else if (!isTchar(t))
                         throw new IllegalCharacterException(_state, t, buffer);
+                    break;
                 }
-                case EXT_VALUE_CLOSE_QUOTE ->
+                case EXT_VALUE_CLOSE_QUOTE:
                 {
                     if (t.getType() == HttpTokens.Type.EOL)
                     {
@@ -2146,6 +2174,7 @@ public class HttpParser
                         setChunkSizeState(ChunkSizeState.EXT_NAME_BWS_BEFORE);
                     else
                         throw new IllegalCharacterException(_state, t, buffer);
+                    break;
                 }
             }
         }
@@ -2189,11 +2218,15 @@ public class HttpParser
      */
     private boolean isTchar(HttpTokens.Token t)
     {
-        return switch (t.getType())
+        switch (t.getType())
         {
-            case TCHAR, DIGIT, ALPHA -> true;
-            default -> false;
-        };
+            case TCHAR:
+            case DIGIT:
+            case ALPHA:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -2204,15 +2237,18 @@ public class HttpParser
      */
     private boolean isQdText(HttpTokens.Token t)
     {
-        return switch (t.getType())
+        switch (t.getType())
         {
-            case HTAB, SPACE, OTEXT -> true;
-            default ->
+            case HTAB:
+            case SPACE:
+            case OTEXT:
+                return true;
+            default:
             {
                 char c = t.getChar();
-                yield c == 0x21 || (c >= 0x23 && c <= 0x5B) || (c >= 0x5D && c <= 0x7E);
+                return c == 0x21 || (c >= 0x23 && c <= 0x5B) || (c >= 0x5D && c <= 0x7E);
             }
-        };
+        }
     }
 
     /**
@@ -2223,11 +2259,20 @@ public class HttpParser
      */
     private boolean isQuotedPair(HttpTokens.Token t)
     {
-        return switch (t.getType())
+        switch (t.getType())
         {
-            case HTAB, SPACE, COLON, TCHAR, VCHAR, DIGIT, ALPHA, OTEXT -> true;
-            default -> false;
-        };
+            case HTAB:
+            case SPACE:
+            case COLON:
+            case TCHAR:
+            case VCHAR:
+            case DIGIT:
+            case ALPHA:
+            case OTEXT:
+                return true;
+            default:
+                return false;
+        }
     }
 
     public boolean isAtEOF()
@@ -2313,13 +2358,23 @@ public class HttpParser
     {
         if (debugEnabled)
         {
-            String info = switch (state)
+            String info;
+            switch (state)
             {
-                case SPACE1 -> _requestHandler == null ? _version.asString() : _methodString;
-                case SPACE2 -> _requestHandler == null ? Integer.toString(_responseStatus) : _uri.toCompleteString();
-                case CONTENT_END, TRAILER -> Long.toString(_contentPosition);
-                default -> null;
-            };
+                case SPACE1:
+                    info = _requestHandler == null ? _version.asString() : _methodString;
+                    break;
+                case SPACE2:
+                    info = _requestHandler == null ? Integer.toString(_responseStatus) : _uri.toCompleteString();
+                    break;
+                case CONTENT_END:
+                case TRAILER:
+                    info = Long.toString(_contentPosition);
+                    break;
+                default:
+                    info = null;
+                    break;
+            }
             if (info == null)
                 LOG.debug("{} --> {}", _state, state);
             else

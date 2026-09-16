@@ -185,11 +185,14 @@ public class ThreadStarvationTest extends AbstractTest
             Thread thread = handlerThreadRef.get();
             if (thread == null)
                 return false;
-            return switch (thread.getState())
+            switch (thread.getState())
             {
-                case WAITING, TIMED_WAITING -> true;
-                default -> false;
-            };
+                case WAITING:
+                case TIMED_WAITING:
+                    return true;
+                default:
+                    return false;
+            }
         });
 
         // The idle timeout should wake up the blocked read.

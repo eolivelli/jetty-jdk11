@@ -214,8 +214,9 @@ public class SerializedInvoker
         public void dump(Appendable out, String indent) throws IOException
         {
             Runnable task = getTask();
-            if (task instanceof NamedRunnable nr)
+            if (task instanceof NamedRunnable)
             {
+                NamedRunnable nr = (NamedRunnable)task;
                 StringWriter sw = new StringWriter();
                 nr.stack.printStackTrace(new PrintWriter(sw));
                 Dumpable.dumpObjects(out, indent, nr.toString(), sw.toString());
@@ -299,7 +300,7 @@ public class SerializedInvoker
         }
     }
 
-    private class NamedRunnable extends Invocable.ReadyTask
+    private static class NamedRunnable extends Invocable.ReadyTask
     {
         private static final Logger LOG = LoggerFactory.getLogger(NamedRunnable.class);
 

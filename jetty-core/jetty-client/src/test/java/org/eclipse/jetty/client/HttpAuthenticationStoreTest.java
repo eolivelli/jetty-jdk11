@@ -49,40 +49,38 @@ public class HttpAuthenticationStoreTest
     }
 
     @ParameterizedTest
-    @CsvSource(useHeadersInDisplayName = true, textBlock = """
-        registered,            requested,                matches
-        http://host,           http://host/any,          true
-        http://host/,          http://host/any,          true
-        http://host/,          http://HOST/any,          true
-        http://host/,          http://host:80/any,       true
-        http://host/ctx/,      http://host/ctx/,         true
-        http://host/ctx/,      http://host/ctx,          true
-        http://host/ctx,       http://host/ctx,          true
-        http://host/ctx,       http://host/ctx/,         true
-        http://host/ctx,       http://host/ctx/;j=1,     true
-        http://host/ctx,       http://host/ctx?q=1,      true
-        http://host/ctx,       http://host/ctx/?q=1,     true
-        http://host/ctx,       http://host/ctx/path,     true
-        http://host/ctx,       http://host/ctx//path,    true
-        http://host/ctx,       http://host/c/../ctx/p,   true
-        http://host/ctx,       http://host/ctx/p/../s,   true
-        http://host/ctx,       http://host/ctx/./path,   true
-        http://host/ctx/~user, http://host/ctx/~user,    true
-        http://host/ctx/~user, http://host/ctx/%7Euser,  true
-        http://host/ctx%2Fp,   http://host/ctx%2fp,      true
-        http://host/ctx%2Fp,   http://host/ctx/p,        false
-        http://host/ctx,       http://host/ctx2,         false
-        http://host/ctx/,      http://host/ctx2,         false
-        http://host/ctx,       http://host/ctx2/path,    false
-        http://host/ctx,       http://host/c,            false
-        http://host/ctx,       http://host/CTX,          false
-        http://host/ctx,       http://host/ctx%2Fpath,   false
-        http://host/ctx,       http://host/ctx/..,       false
-        http://host/ctx,       http://host/ctx/../path,  false
-        http://host/ctx,       http://host/ctx/..;/path, false
-        http://host/ctx/path,  http://host/ctx,          false
-        http://host/ctx/path,  http://host/ctx/,         false
-        """)
+    @CsvSource(useHeadersInDisplayName = true, textBlock = "registered,            requested,                matches\n" +
+        "http://host,           http://host/any,          true\n" +
+        "http://host/,          http://host/any,          true\n" +
+        "http://host/,          http://HOST/any,          true\n" +
+        "http://host/,          http://host:80/any,       true\n" +
+        "http://host/ctx/,      http://host/ctx/,         true\n" +
+        "http://host/ctx/,      http://host/ctx,          true\n" +
+        "http://host/ctx,       http://host/ctx,          true\n" +
+        "http://host/ctx,       http://host/ctx/,         true\n" +
+        "http://host/ctx,       http://host/ctx/;j=1,     true\n" +
+        "http://host/ctx,       http://host/ctx?q=1,      true\n" +
+        "http://host/ctx,       http://host/ctx/?q=1,     true\n" +
+        "http://host/ctx,       http://host/ctx/path,     true\n" +
+        "http://host/ctx,       http://host/ctx//path,    true\n" +
+        "http://host/ctx,       http://host/c/../ctx/p,   true\n" +
+        "http://host/ctx,       http://host/ctx/p/../s,   true\n" +
+        "http://host/ctx,       http://host/ctx/./path,   true\n" +
+        "http://host/ctx/~user, http://host/ctx/~user,    true\n" +
+        "http://host/ctx/~user, http://host/ctx/%7Euser,  true\n" +
+        "http://host/ctx%2Fp,   http://host/ctx%2fp,      true\n" +
+        "http://host/ctx%2Fp,   http://host/ctx/p,        false\n" +
+        "http://host/ctx,       http://host/ctx2,         false\n" +
+        "http://host/ctx/,      http://host/ctx2,         false\n" +
+        "http://host/ctx,       http://host/ctx2/path,    false\n" +
+        "http://host/ctx,       http://host/c,            false\n" +
+        "http://host/ctx,       http://host/CTX,          false\n" +
+        "http://host/ctx,       http://host/ctx%2Fpath,   false\n" +
+        "http://host/ctx,       http://host/ctx/..,       false\n" +
+        "http://host/ctx,       http://host/ctx/../path,  false\n" +
+        "http://host/ctx,       http://host/ctx/..;/path, false\n" +
+        "http://host/ctx/path,  http://host/ctx,          false\n" +
+        "http://host/ctx/path,  http://host/ctx/,         false\n")
     public void testFindAuthenticationWithURI(String registered, String requested, boolean matches)
     {
         AuthenticationStore store = new HttpAuthenticationStore();

@@ -393,13 +393,19 @@ public class AdaptiveExecutionStrategy extends ContainerLifeCycle implements Exe
         // Consume and/or execute task according to the selected mode.
         if (LOG.isDebugEnabled())
             LOG.debug("consumeTask ss={}/{}/{} t={} {}", subStrategy, Invocable.isNonBlockingInvocation(), Invocable.getInvocationType(task), task, this);
-        return switch (subStrategy)
+        switch (subStrategy)
         {
-            case PRODUCE_CONSUME -> pcRunTask(task);
-            case PRODUCE_INVOKE_CONSUME -> picRunTask(task);
-            case PRODUCE_EXECUTE_CONSUME -> pecRunTask(task);
-            case EXECUTE_PRODUCE_CONSUME -> epcRunTask(task);
-        };
+            case PRODUCE_CONSUME:
+                return pcRunTask(task);
+            case PRODUCE_INVOKE_CONSUME:
+                return picRunTask(task);
+            case PRODUCE_EXECUTE_CONSUME:
+                return pecRunTask(task);
+            case EXECUTE_PRODUCE_CONSUME:
+                return epcRunTask(task);
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     /**

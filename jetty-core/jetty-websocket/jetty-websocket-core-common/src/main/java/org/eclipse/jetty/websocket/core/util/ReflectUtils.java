@@ -84,8 +84,9 @@ public class ReflectUtils
 
     private static StringBuilder appendTypeName(StringBuilder sb, Type type, boolean ellipses)
     {
-        if (type instanceof Class<?> ctype)
+        if (type instanceof Class<?>)
         {
+            Class<?> ctype = (Class<?>)type;
             if (ctype.isArray())
             {
                 try
@@ -179,8 +180,11 @@ public class ReflectUtils
         @Override
         public boolean equals(Object o)
         {
-            if (o instanceof MethodSignature that)
+            if (o instanceof MethodSignature)
+            {
+                MethodSignature that = (MethodSignature)o;
                 return Objects.equals(name, that.name) && Arrays.equals(parameterTypes, that.parameterTypes);
+            }
             return false;
         }
 
@@ -268,8 +272,9 @@ public class ReflectUtils
             }
         }
 
-        if (type instanceof ParameterizedType ptype)
+        if (type instanceof ParameterizedType)
         {
+            ParameterizedType ptype = (ParameterizedType)type;
             Type rawType = ptype.getRawType();
             if (rawType == ref.ifaceClass)
             {
@@ -291,8 +296,9 @@ public class ReflectUtils
         if ((type == null) || (type == Object.class))
             return false;
 
-        if (type instanceof Class<?> clazz)
+        if (type instanceof Class<?>)
         {
+            Class<?> clazz = (Class<?>)type;
             // Prevent spinning off into Serialization and other parts of the standard tree that we couldn't care less about.
             if (JAKARTA_CLASSNAME_PATTERN.matcher(clazz.getName()).matches() || JAVAX_CLASSNAME_PATTERN.matcher(clazz.getName()).matches())
                 return false;
@@ -330,8 +336,9 @@ public class ReflectUtils
             return resolveGenericRef(ref, type);
         }
 
-        if (type instanceof ParameterizedType ptype)
+        if (type instanceof ParameterizedType)
         {
+            ParameterizedType ptype = (ParameterizedType)type;
             Class<?> rawClass = (Class<?>)ptype.getRawType();
             if (resolveGenericRef(ref, rawClass))
             {
@@ -423,11 +430,17 @@ public class ReflectUtils
      */
     public static boolean isAssignableFrom(Type superType, Type subType)
     {
-        if (superType instanceof Class<?> superClass && subType instanceof Class<?> subClass)
-            return superClass.isAssignableFrom(subClass);
-
-        if (superType instanceof ParameterizedType pSuperType && subType instanceof ParameterizedType pSubType)
+        if (superType instanceof Class<?> && subType instanceof Class<?>)
         {
+            Class<?> superClass = (Class<?>)superType;
+            Class<?> subClass = (Class<?>)subType;
+            return superClass.isAssignableFrom(subClass);
+        }
+
+        if (superType instanceof ParameterizedType && subType instanceof ParameterizedType)
+        {
+            ParameterizedType pSuperType = (ParameterizedType)superType;
+            ParameterizedType pSubType = (ParameterizedType)subType;
             if (!((Class<?>)pSubType.getRawType()).isAssignableFrom((Class<?>)pSuperType.getRawType()))
                 return false;
 
@@ -444,11 +457,19 @@ public class ReflectUtils
             return true;
         }
 
-        if (superType instanceof ParameterizedType pSuperType && subType instanceof Class<?> subClass)
+        if (superType instanceof ParameterizedType && subType instanceof Class<?>)
+        {
+            ParameterizedType pSuperType = (ParameterizedType)superType;
+            Class<?> subClass = (Class<?>)subType;
             return ((Class<?>)pSuperType.getRawType()).isAssignableFrom(subClass);
+        }
 
-        if (superType instanceof GenericArrayType superTypeArray && subType instanceof GenericArrayType subTypeArray)
+        if (superType instanceof GenericArrayType && subType instanceof GenericArrayType)
+        {
+            GenericArrayType superTypeArray = (GenericArrayType)superType;
+            GenericArrayType subTypeArray = (GenericArrayType)subType;
             return isAssignableFrom(superTypeArray.getGenericComponentType(), subTypeArray.getGenericComponentType());
+        }
 
         return false;
     }
@@ -461,8 +482,9 @@ public class ReflectUtils
         if (type instanceof ParameterizedType)
             return (Class<?>)((ParameterizedType)type).getRawType();
 
-        if (type instanceof GenericArrayType gType)
+        if (type instanceof GenericArrayType)
         {
+            GenericArrayType gType = (GenericArrayType)type;
             Class<?> componentClass = getClassFromType(gType.getGenericComponentType());
             return componentClass != null ? Array.newInstance(componentClass, 0).getClass() : null;
         }

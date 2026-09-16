@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.util.ClassMatcher;
 
@@ -62,7 +63,7 @@ public class AbstractConfiguration implements Configuration
         @SafeVarargs
         public final Builder addDependencies(Class<? extends Configuration>... classes)
         {
-            addDependencies(Arrays.stream(classes).map(Class::getName).toList().toArray(new String[classes.length]));
+            addDependencies(Arrays.stream(classes).map(Class::getName).collect(Collectors.toList()).toArray(new String[classes.length]));
             return this;
         }
 
@@ -84,7 +85,7 @@ public class AbstractConfiguration implements Configuration
          */
         public Builder addDependents(Class<?>... classes)
         {
-            addDependents(Arrays.stream(classes).map(Class::getName).toList().toArray(new String[classes.length]));
+            addDependents(Arrays.stream(classes).map(Class::getName).collect(Collectors.toList()).toArray(new String[classes.length]));
             return this;
         }
 

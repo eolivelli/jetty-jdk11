@@ -178,10 +178,18 @@ public abstract class AbstractCompressionTest
     {
         switch (compressionType)
         {
-            case "br" -> newCompression(BrotliCompression.class);
-            case "zstandard" -> newCompression(ZstandardCompression.class);
-            case "gzip" -> newCompression(GzipCompression.class);
-            default -> fail("Unrecognized compressionType: " + compressionType);
+            case "br":
+                newCompression(BrotliCompression.class);
+                break;
+            case "zstandard":
+                newCompression(ZstandardCompression.class);
+                break;
+            case "gzip":
+                newCompression(GzipCompression.class);
+                break;
+            default:
+                fail("Unrecognized compressionType: " + compressionType);
+                break;
         }
     }
 

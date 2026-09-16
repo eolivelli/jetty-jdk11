@@ -77,6 +77,6 @@ class NamedEnvironment extends Attributes.Mapped implements Environment, Dumpabl
     @Override
     public String toString()
     {
-        return "%s@%x{%s}".formatted(TypeUtil.toShortName(this.getClass()), hashCode(), _name);
+        return String.format("%s@%x{%s}", TypeUtil.toShortName(this.getClass()), hashCode(), _name);
     }
 }

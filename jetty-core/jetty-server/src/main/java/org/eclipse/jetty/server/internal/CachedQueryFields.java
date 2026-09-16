@@ -27,8 +27,11 @@ public class CachedQueryFields extends Fields
     public static CachedQueryFields getCached(Request request, Charset charset)
     {
         String query = request.getHttpURI().getQuery();
-        return request.getAttribute(CachedQueryFields.class.getName()) instanceof CachedQueryFields cached &&
-            Objects.equals(query, cached._query) && Objects.equals(charset, cached._charset) ? cached : null;
+        Object attribute = request.getAttribute(CachedQueryFields.class.getName());
+        if (!(attribute instanceof CachedQueryFields))
+            return null;
+        CachedQueryFields cached = (CachedQueryFields)attribute;
+        return Objects.equals(query, cached._query) && Objects.equals(charset, cached._charset) ? cached : null;
     }
 
     public static void setCached(Request request, CachedQueryFields fields)

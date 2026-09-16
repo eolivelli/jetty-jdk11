@@ -141,13 +141,22 @@ public class HttpTokens
         @Override
         public String toString()
         {
-            return switch (_type)
+            switch (_type)
             {
-                case SPACE, COLON, ALPHA, DIGIT, TCHAR, VCHAR -> _type + "='" + _c + "'";
-                case CR -> "CR=\\r";
-                case LF -> "LF=\\n";
-                default -> String.format("%s=0x%x", _type, _b);
-            };
+                case SPACE:
+                case COLON:
+                case ALPHA:
+                case DIGIT:
+                case TCHAR:
+                case VCHAR:
+                    return _type + "='" + _c + "'";
+                case CR:
+                    return "CR=\\r";
+                case LF:
+                    return "LF=\\n";
+                default:
+                    return String.format("%s=0x%x", _type, _b);
+            }
         }
     }
 

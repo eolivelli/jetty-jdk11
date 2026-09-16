@@ -225,13 +225,27 @@ public class JettyWebSocketFrameHandler implements FrameHandler
 
         switch (frame.getOpCode())
         {
-            case OpCode.CLOSE -> onCloseFrame(frame, callback);
-            case OpCode.PING -> onPingFrame(frame, callback);
-            case OpCode.PONG -> onPongFrame(frame, callback);
-            case OpCode.TEXT -> onTextFrame(frame, callback);
-            case OpCode.BINARY -> onBinaryFrame(frame, callback);
-            case OpCode.CONTINUATION -> onContinuationFrame(frame, callback);
-            default -> callback.failed(new IllegalStateException());
+            case OpCode.CLOSE:
+                onCloseFrame(frame, callback);
+                break;
+            case OpCode.PING:
+                onPingFrame(frame, callback);
+                break;
+            case OpCode.PONG:
+                onPongFrame(frame, callback);
+                break;
+            case OpCode.TEXT:
+                onTextFrame(frame, callback);
+                break;
+            case OpCode.BINARY:
+                onBinaryFrame(frame, callback);
+                break;
+            case OpCode.CONTINUATION:
+                onContinuationFrame(frame, callback);
+                break;
+            default:
+                callback.failed(new IllegalStateException());
+                break;
         }
     }
 
@@ -513,8 +527,11 @@ public class JettyWebSocketFrameHandler implements FrameHandler
         if (cause instanceof BadPayloadException)
             return new org.eclipse.jetty.ee9.websocket.api.exceptions.BadPayloadException(cause.getMessage(), cause);
 
-        if (cause instanceof CloseException ce)
+        if (cause instanceof CloseException)
+        {
+            CloseException ce = (CloseException)cause;
             return new org.eclipse.jetty.ee9.websocket.api.exceptions.CloseException(ce.getStatusCode(), cause.getMessage(), cause);
+        }
 
         if (cause instanceof WebSocketTimeoutException)
             return new org.eclipse.jetty.ee9.websocket.api.exceptions.WebSocketTimeoutException(cause.getMessage(), cause);
@@ -522,8 +539,11 @@ public class JettyWebSocketFrameHandler implements FrameHandler
         if (cause instanceof InvalidSignatureException)
             return new org.eclipse.jetty.ee9.websocket.api.exceptions.InvalidWebSocketException(cause.getMessage(), cause);
 
-        if (cause instanceof UpgradeException ue)
+        if (cause instanceof UpgradeException)
+        {
+            UpgradeException ue = (UpgradeException)cause;
             return new org.eclipse.jetty.ee9.websocket.api.exceptions.UpgradeException(ue.getRequestURI(), ue.getResponseStatusCode(), cause);
+        }
 
         return cause;
     }

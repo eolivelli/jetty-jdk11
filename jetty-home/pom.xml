@@ -240,34 +240,10 @@
       <type>jar</type>
       <optional>true</optional>
     </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty.demos</groupId>
-      <artifactId>jetty-servlet6-demo-jspc-6-1-webapp</artifactId>
-      <version>${project.version}</version>
-      <classifier>config</classifier>
-      <type>jar</type>
-      <optional>true</optional>
-    </dependency>
     <!-- Demo Servlet 6 Apps -->
     <dependency>
       <groupId>org.eclipse.jetty.demos</groupId>
       <artifactId>jetty-servlet6-demo-jspc-webapp</artifactId>
-      <version>${project.version}</version>
-      <classifier>config</classifier>
-      <type>jar</type>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty.demos</groupId>
-      <artifactId>jetty-servlet6-demo-simple-webapp</artifactId>
-      <version>${project.version}</version>
-      <classifier>config</classifier>
-      <type>jar</type>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty.demos</groupId>
-      <artifactId>jetty-servlet6-demo-spec-6-1-webapp</artifactId>
       <version>${project.version}</version>
       <classifier>config</classifier>
       <type>jar</type>
@@ -281,12 +257,6 @@
 
     <!-- ignore sort pom so we know which eeXX will be build first -->
     <?SORTPOM IGNORE?>
-    <dependency>
-      <groupId>org.eclipse.jetty.ee11</groupId>
-      <artifactId>jetty-ee11-home</artifactId>
-      <version>${project.version}</version>
-      <type>zip</type>
-    </dependency>
     <dependency>
       <groupId>org.eclipse.jetty.ee10</groupId>
       <artifactId>jetty-ee10-home</artifactId>
@@ -601,8 +571,8 @@
             <phase>generate-resources</phase>
             <configuration>
               <includeGroupIds>org.eclipse.jetty</includeGroupIds>
-              <excludeGroupIds>org.eclipse.jetty.orbit,org.eclipse.jetty.compression,org.eclipse.jetty.http2,org.eclipse.jetty.http3,org.eclipse.jetty.quic,org.eclipse.jetty.websocket,org.eclipse.jetty.ee8.websocket,org.eclipse.jetty.ee9.websocket,org.eclipse.jetty.ee11.websocket,org.eclipse.jetty.fcgi,org.eclipse.jetty.toolchain,org.apache.taglibs</excludeGroupIds>
-              <excludeArtifactIds>jetty-ee8-apache-jsp,jetty-ee9-apache-jsp,jetty-ee10-apache-jsp,jetty-ee11-apache-jsp,jetty-ee8-glassfish-jstl,jetty-ee9-glassfish-jstl,jetty-ee10-glassfish-jstl,jetty-ee11-glassfish-jstl,jetty-start,jetty-slf4j-impl,javadoc</excludeArtifactIds>
+              <excludeGroupIds>org.eclipse.jetty.orbit,org.eclipse.jetty.compression,org.eclipse.jetty.http2,org.eclipse.jetty.http3,org.eclipse.jetty.quic,org.eclipse.jetty.websocket,org.eclipse.jetty.ee8.websocket,org.eclipse.jetty.ee9.websocket,org.eclipse.jetty.fcgi,org.eclipse.jetty.toolchain,org.apache.taglibs</excludeGroupIds>
+              <excludeArtifactIds>jetty-ee8-apache-jsp,jetty-ee9-apache-jsp,jetty-ee10-apache-jsp,jetty-ee8-glassfish-jstl,jetty-ee9-glassfish-jstl,jetty-ee10-glassfish-jstl,jetty-start,jetty-slf4j-impl,javadoc</excludeArtifactIds>
               <includeTypes>jar</includeTypes>
               <excludeClassifiers>config</excludeClassifiers>
               <outputDirectory>${assembly-directory}/lib</outputDirectory>
@@ -617,7 +587,7 @@
             <configuration>
               <includeGroupIds>org.eclipse.jetty</includeGroupIds>
               <excludeGroupIds>org.eclipse.jetty.orbit,org.eclipse.jetty.compression,org.eclipse.jetty.http2,org.eclipse.jetty.http3,org.eclipse.jetty.quic,org.eclipse.jetty.websocket,org.eclipse.jetty.fcgi,org.eclipse.jetty.toolchain,org.apache.taglibs</excludeGroupIds>
-              <excludeArtifactIds>jetty-ee8-apache-jsp,jetty-ee9-apache-jsp,jetty-ee10-apache-jsp,jetty-ee11-apache-jsp,jetty-ee8-glassfish-jstl,jetty-ee9-glassfish-jstl,jetty-ee10-glassfish-jstl,jetty-ee11-glassfish-jstl,jetty-start</excludeArtifactIds>
+              <excludeArtifactIds>jetty-ee8-apache-jsp,jetty-ee9-apache-jsp,jetty-ee10-apache-jsp,jetty-ee8-glassfish-jstl,jetty-ee9-glassfish-jstl,jetty-ee10-glassfish-jstl,jetty-start</excludeArtifactIds>
               <includeTypes>jar</includeTypes>
               <classifier>sources</classifier>
               <outputDirectory>${source-assembly-directory}/lib</outputDirectory>
@@ -794,12 +764,6 @@
             <phase>generate-resources</phase>
             <configuration>
               <artifactItems>
-                <artifactItem>
-                  <groupId>org.eclipse.jetty.ee11</groupId>
-                  <artifactId>jetty-ee11-home</artifactId>
-                  <version>${project.version}</version>
-                  <type>zip</type>
-                </artifactItem>
                 <artifactItem>
                   <groupId>org.eclipse.jetty.ee10</groupId>
                   <artifactId>jetty-ee10-home</artifactId>

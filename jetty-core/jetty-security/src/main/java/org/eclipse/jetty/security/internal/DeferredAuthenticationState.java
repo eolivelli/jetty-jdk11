@@ -51,8 +51,9 @@ public class DeferredAuthenticationState implements AuthenticationState.Deferred
         {
             // Any writes or modifications to the deferred response are ignored.
             AuthenticationState authenticationState = _authenticator.validateRequest(request, __deferredResponse, Callback.NOOP);
-            if (authenticationState instanceof Succeeded succeeded)
+            if (authenticationState instanceof Succeeded)
             {
+                Succeeded succeeded = (Succeeded)authenticationState;
                 // Only cache the AuthenticationState for successful authentication, as no response can be sent.
                 AuthenticationState.setAuthenticationState(request, authenticationState);
 

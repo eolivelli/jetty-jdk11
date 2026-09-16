@@ -67,6 +67,8 @@ import org.slf4j.LoggerFactory;
 public abstract class HttpReceiver implements Invocable
 {
     private static final Logger LOG = LoggerFactory.getLogger(HttpReceiver.class);
+    private static final Logger DECODED_CONTENT_SOURCE_LOG = LoggerFactory.getLogger(DecodedContentSource.class);
+    private static final Logger CONTENT_SOURCE_LOG = LoggerFactory.getLogger(ContentSource.class);
 
     private final HttpChannel channel;
     private final SerializedInvoker invoker;
@@ -215,11 +217,13 @@ public abstract class HttpReceiver implements Invocable
                 {
                     switch (fieldHeader)
                     {
-                        case SET_COOKIE, SET_COOKIE2 ->
+                        case SET_COOKIE:
+                        case SET_COOKIE2:
                         {
                             URI uri = exchange.getRequest().getURI();
                             if (uri != null)
                                 storeCookie(uri, field);
+                            break;
                         }
                     }
                 }
@@ -622,8 +626,6 @@ public abstract class HttpReceiver implements Invocable
 
     private class DecodedContentSource implements Content.Source, Invocable
     {
-        private static final Logger LOG = LoggerFactory.getLogger(DecodedContentSource.class);
-
         private final Content.Source source;
         private final Response response;
         private long decodedLength;
@@ -654,8 +656,8 @@ public abstract class HttpReceiver implements Invocable
             {
                 Content.Chunk chunk = source.read();
 
-                if (LOG.isDebugEnabled())
-                    LOG.debug("Decoded chunk {}", chunk);
+                if (DECODED_CONTENT_SOURCE_LOG.isDebugEnabled())
+                    DECODED_CONTENT_SOURCE_LOG.debug("Decoded chunk {}", chunk);
 
                 if (chunk == null)
                     return null;
@@ -712,8 +714,6 @@ public abstract class HttpReceiver implements Invocable
 
     private class ContentSource implements Content.Source, Invocable
     {
-        private static final Logger LOG = LoggerFactory.getLogger(ContentSource.class);
-
         private final AtomicReference<Runnable> demandCallbackRef = new AtomicReference<>();
         private final AutoLock lock = new AutoLock();
         private final Runnable processDemand = this::processDemand;
@@ -722,8 +722,8 @@ public abstract class HttpReceiver implements Invocable
         @Override
         public Content.Chunk read()
         {
-            if (LOG.isDebugEnabled())
-                LOG.debug("Reading from {}", this);
+            if (CONTENT_SOURCE_LOG.isDebugEnabled())
+                CONTENT_SOURCE_LOG.debug("Reading from {}", this);
 
             Content.Chunk current;
             try (AutoLock ignored = lock.lock())
@@ -736,8 +736,8 @@ public abstract class HttpReceiver implements Invocable
 
             current = HttpReceiver.this.read(false);
 
-            if (LOG.isDebugEnabled())
-                LOG.debug("Read {} from {}", current, this);
+            if (CONTENT_SOURCE_LOG.isDebugEnabled())
+                CONTENT_SOURCE_LOG.debug("Read {} from {}", current, this);
 
             try (AutoLock ignored = lock.lock())
             {
@@ -755,8 +755,8 @@ public abstract class HttpReceiver implements Invocable
 
         private void onDataAvailable()
         {
-            if (LOG.isDebugEnabled())
-                LOG.debug("onDataAvailable on {}", this);
+            if (CONTENT_SOURCE_LOG.isDebugEnabled())
+                CONTENT_SOURCE_LOG.debug("onDataAvailable on {}", this);
             invoker.assertCurrentThreadInvoking();
             // The onDataAvailable() method is only ever called
             // by the invoker so avoid using the invoker again.
@@ -775,8 +775,8 @@ public abstract class HttpReceiver implements Invocable
         @Override
         public void demand(Runnable demandCallback)
         {
-            if (LOG.isDebugEnabled())
-                LOG.debug("Registering demand on {}", this);
+            if (CONTENT_SOURCE_LOG.isDebugEnabled())
+                CONTENT_SOURCE_LOG.debug("Registering demand on {}", this);
             if (demandCallback == null)
                 throw new IllegalArgumentException();
             if (!demandCallbackRef.compareAndSet(null, demandCallback))
@@ -786,8 +786,8 @@ public abstract class HttpReceiver implements Invocable
 
         private void processDemand()
         {
-            if (LOG.isDebugEnabled())
-                LOG.debug("Processing demand on {}", this);
+            if (CONTENT_SOURCE_LOG.isDebugEnabled())
+                CONTENT_SOURCE_LOG.debug("Processing demand on {}", this);
 
             invoker.assertCurrentThreadInvoking();
 
@@ -823,8 +823,8 @@ public abstract class HttpReceiver implements Invocable
         private void invokeDemandCallback(boolean invoke)
         {
             Runnable demandCallback = demandCallbackRef.getAndSet(null);
-            if (LOG.isDebugEnabled())
-                LOG.debug("Invoking demand callback {} on {}", demandCallback, this);
+            if (CONTENT_SOURCE_LOG.isDebugEnabled())
+                CONTENT_SOURCE_LOG.debug("Invoking demand callback {} on {}", demandCallback, this);
             if (demandCallback == null)
                 return;
             try
@@ -848,8 +848,8 @@ public abstract class HttpReceiver implements Invocable
         @Override
         public void fail(Throwable failure)
         {
-            if (LOG.isDebugEnabled())
-                LOG.debug("Failing {}", this);
+            if (CONTENT_SOURCE_LOG.isDebugEnabled())
+                CONTENT_SOURCE_LOG.debug("Failing {}", this);
             boolean failed = error(failure);
             if (failed)
                 HttpReceiver.this.failAndClose(failure);
@@ -858,8 +858,8 @@ public abstract class HttpReceiver implements Invocable
 
         private boolean error(Throwable failure)
         {
-            if (LOG.isDebugEnabled())
-                LOG.debug("Erroring {}", this);
+            if (CONTENT_SOURCE_LOG.isDebugEnabled())
+                CONTENT_SOURCE_LOG.debug("Erroring {}", this);
             try (AutoLock ignored = lock.lock())
             {
                 if (Content.Chunk.isFailure(currentChunk))

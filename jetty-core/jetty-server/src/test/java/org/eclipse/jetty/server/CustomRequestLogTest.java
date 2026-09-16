@@ -162,12 +162,10 @@ public class CustomRequestLogTest
     }
 
     @ParameterizedTest
-    @CsvSource(textBlock = """
-        /foo/a/,true
-        /zed/b/,false
-        /zef/c/,true
-        /zee/d/,false
-        """)
+    @CsvSource(textBlock = "/foo/a/,true\n" +
+        "/zed/b/,false\n" +
+        "/zef/c/,true\n" +
+        "/zee/d/,false\n")
     public void testIgnorePaths(String testPath, boolean existsInLog) throws Exception
     {
         start("RequestPath: %U",
@@ -203,32 +201,26 @@ public class CustomRequestLogTest
             }
         });
 
-        HttpTester.Response response = getResponse("""
-            GET /path HTTP/1.0
-            Status: 404
-            Referer: testReferer
-
-            """);
+        HttpTester.Response response = getResponse("GET /path HTTP/1.0\n" +
+            "Status: 404\n" +
+            "Referer: testReferer\n" +
+            "\n");
         assertEquals(HttpStatus.NOT_FOUND_404, response.getStatus());
         String log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("404: -"));
 
-        response = getResponse("""
-            GET /path HTTP/1.0
-            Status: 301
-            Referer: testReferer
-
-            """);
+        response = getResponse("GET /path HTTP/1.0\n" +
+            "Status: 301\n" +
+            "Referer: testReferer\n" +
+            "\n");
         assertEquals(HttpStatus.MOVED_PERMANENTLY_301, response.getStatus());
         log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("301: -"));
 
-        response = getResponse("""
-            GET /success HTTP/1.0
-            Status: 200
-            Referer: testReferer
-
-            """);
+        response = getResponse("GET /success HTTP/1.0\n" +
+            "Status: 200\n" +
+            "Referer: testReferer\n" +
+            "\n");
         assertEquals(HttpStatus.OK_200, response.getStatus());
         log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("200: testReferer"));
@@ -267,12 +259,10 @@ public class CustomRequestLogTest
                     try (Socket client = new Socket(i.getHostAddress(), _serverConnector.getLocalPort()))
                     {
                         OutputStream output = client.getOutputStream();
-                        String request = """
-                            GET / HTTP/1.1
-                            Host: webtide.com:1234
-                            Forwarded: For=10.1.2.3:1337
-
-                            """;
+                        String request = "GET / HTTP/1.1\n" +
+                            "Host: webtide.com:1234\n" +
+                            "Forwarded: For=10.1.2.3:1337\n" +
+                            "\n";
                         output.write(request.getBytes(StandardCharsets.UTF_8));
                         output.flush();
 
@@ -336,11 +326,10 @@ public class CustomRequestLogTest
             }
         });
 
-        HttpTester.Response response = getResponse("""
-            GET / HTTP/1.0
-            Content-Length: %d
-            
-            %s""".formatted(content.length(), content));
+        HttpTester.Response response = getResponse(String.format("GET / HTTP/1.0\n" +
+            "Content-Length: %d\n" +
+            "\n" +
+            "%s", content.length(), content));
         assertEquals(HttpStatus.OK_200, response.getStatus());
         String log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("BytesReceived: " + content.length()));
@@ -361,11 +350,10 @@ public class CustomRequestLogTest
             }
         });
 
-        HttpTester.Response response = getResponse("""
-            GET / HTTP/1.0
-            Content-Length: %d
-
-            %s""".formatted(content.length(), content));
+        HttpTester.Response response = getResponse(String.format("GET / HTTP/1.0\n" +
+            "Content-Length: %d\n" +
+            "\n" +
+            "%s", content.length(), content));
         assertEquals(HttpStatus.OK_200, response.getStatus());
         String log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("BytesTransferred: " + (2 * content.length())));
@@ -391,8 +379,11 @@ public class CustomRequestLogTest
                 {
                     // Expect the idle timeout exception.
                     Throwable cause = x.getCause();
-                    if (cause instanceof TimeoutException t)
+                    if (cause instanceof TimeoutException)
+                    {
+                        TimeoutException t = (TimeoutException)cause;
                         throw t;
+                    }
                     // Otherwise, fail the test.
                     response.setStatus(HttpStatus.BAD_REQUEST_400);
                     callback.succeeded();
@@ -406,15 +397,14 @@ public class CustomRequestLogTest
         // Send partial request content.
         String content = "hello";
         int contentLength = 3 * content.length();
-        HttpTester.Response response = getResponse("""
-            GET / HTTP/1.0
-            Content-Length: %d
-
-            %s""".formatted(contentLength, content));
+        HttpTester.Response response = getResponse(String.format("GET / HTTP/1.0\n" +
+            "Content-Length: %d\n" +
+            "\n" +
+            "%s", contentLength, content));
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, response.getStatus());
         String log = _logs.poll(5, TimeUnit.SECONDS);
-        assertThat(log, containsString("%d/%d".formatted(content.length(), contentLength)));
+        assertThat(log, containsString(String.format("%d/%d", content.length(), contentLength)));
     }
 
     @Test
@@ -422,11 +412,9 @@ public class CustomRequestLogTest
     {
         start("RequestCookies: %{cookieName}C, %{cookie2}C, %{cookie3}C");
 
-        HttpTester.Response response = getResponse("""
-            GET / HTTP/1.0
-            Cookie: cookieName=cookieValue; cookie2=value2
-
-            """);
+        HttpTester.Response response = getResponse("GET / HTTP/1.0\n" +
+            "Cookie: cookieName=cookieValue; cookie2=value2\n" +
+            "\n");
         assertEquals(HttpStatus.OK_200, response.getStatus());
         String log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("RequestCookies: cookieValue, value2, -"));
@@ -437,11 +425,9 @@ public class CustomRequestLogTest
     {
         start("RequestCookies: %C");
 
-        HttpTester.Response response = getResponse("""
-            GET / HTTP/1.0
-            Cookie: cookieName=cookieValue; cookie2=value2
-
-            """);
+        HttpTester.Response response = getResponse("GET / HTTP/1.0\n" +
+            "Cookie: cookieName=cookieValue; cookie2=value2\n" +
+            "\n");
         assertEquals(HttpStatus.OK_200, response.getStatus());
         String log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("RequestCookies: cookieName=cookieValue;cookie2=value2"));
@@ -476,12 +462,10 @@ public class CustomRequestLogTest
     {
         start("RequestHeader: %{Header1}i, %{Header2}i, %{Header3}i");
 
-        HttpTester.Response response = getResponse("""
-            GET / HTTP/1.0
-            Header1: value1
-            Header2: value2
-
-            """);
+        HttpTester.Response response = getResponse("GET / HTTP/1.0\n" +
+            "Header1: value1\n" +
+            "Header2: value2\n" +
+            "\n");
         assertEquals(HttpStatus.OK_200, response.getStatus());
         String log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("RequestHeader: value1, value2, -"));
@@ -492,16 +476,14 @@ public class CustomRequestLogTest
     {
         start("KeepAliveRequests: %k");
 
-        getResponses("""
-            GET /a HTTP/1.0
-            Connection: keep-alive
-
-            GET /a HTTP/1.1
-            Host: localhost
-            
-            GET /a HTTP/1.0
-            
-            """, 3);
+        getResponses("GET /a HTTP/1.0\n" +
+            "Connection: keep-alive\n" +
+            "\n" +
+            "GET /a HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n" +
+            "GET /a HTTP/1.0\n" +
+            "\n", 3);
 
         assertThat(_logs.poll(5, TimeUnit.SECONDS), is("KeepAliveRequests: 1"));
         assertThat(_logs.poll(5, TimeUnit.SECONDS), is("KeepAliveRequests: 2"));
@@ -567,11 +549,9 @@ public class CustomRequestLogTest
     {
         start("RequestFirstLine: %r");
 
-        HttpTester.Response response = getResponse("""
-            GET /path?query HTTP/1.0
-            Header: null
-
-            """);
+        HttpTester.Response response = getResponse("GET /path?query HTTP/1.0\n" +
+            "Header: null\n" +
+            "\n");
         assertEquals(HttpStatus.OK_200, response.getStatus());
         String log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("RequestFirstLine: GET /path?query HTTP/1.0"));
@@ -592,29 +572,23 @@ public class CustomRequestLogTest
             }
         });
 
-        HttpTester.Response response = getResponse("""
-            GET /path HTTP/1.0
-            Status: 404
-
-            """);
+        HttpTester.Response response = getResponse("GET /path HTTP/1.0\n" +
+            "Status: 404\n" +
+            "\n");
         assertEquals(HttpStatus.NOT_FOUND_404, response.getStatus());
         String log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("LogResponseStatus: 404"));
 
-        response = getResponse("""
-            GET /path HTTP/1.0
-            Status: 301
-
-            """);
+        response = getResponse("GET /path HTTP/1.0\n" +
+            "Status: 301\n" +
+            "\n");
         assertEquals(HttpStatus.MOVED_PERMANENTLY_301, response.getStatus());
         log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("LogResponseStatus: 301"));
 
-        response = getResponse("""
-            GET /path HTTP/1.0
-            Status: 200
-
-            """);
+        response = getResponse("GET /path HTTP/1.0\n" +
+            "Status: 200\n" +
+            "\n");
         assertEquals(HttpStatus.OK_200, response.getStatus());
         log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("LogResponseStatus: 200"));
@@ -692,13 +666,21 @@ public class CustomRequestLogTest
             }
         });
 
-        TimeUnit timeUnit = switch (unit)
+        TimeUnit timeUnit;
+        switch (unit)
         {
-            case "us" -> TimeUnit.MICROSECONDS;
-            case "ms" -> TimeUnit.MILLISECONDS;
-            case "s" -> TimeUnit.SECONDS;
-            default -> throw new IllegalArgumentException("invalid latency unit: " + unit);
-        };
+            case "us":
+                timeUnit = TimeUnit.MICROSECONDS;
+                break;
+            case "ms":
+                timeUnit = TimeUnit.MILLISECONDS;
+                break;
+            case "s":
+                timeUnit = TimeUnit.SECONDS;
+                break;
+            default:
+                throw new IllegalArgumentException("invalid latency unit: " + unit);
+        }
 
         HttpTester.Response response = getResponse("GET /delay HTTP/1.0\n\n");
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -745,37 +727,31 @@ public class CustomRequestLogTest
         String log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("/one ConnectionStatus: 200 -"));
 
-        response = getResponse("""
-            GET /two HTTP/1.1
-            Host: localhost
-            Connection: close
-
-            """);
+        response = getResponse("GET /two HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Connection: close\n" +
+            "\n");
         assertEquals(HttpStatus.OK_200, response.getStatus());
         log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("/two ConnectionStatus: 200 -"));
 
-        getResponses("""
-            GET /three HTTP/1.0
-            Connection: keep-alive
-
-            GET /four HTTP/1.1
-            Host: localhost
-
-            GET /five HTTP/1.1
-            Host: localhost
-            Connection: close
-
-            """, 3);
+        getResponses("GET /three HTTP/1.0\n" +
+            "Connection: keep-alive\n" +
+            "\n" +
+            "GET /four HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n" +
+            "GET /five HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Connection: close\n" +
+            "\n", 3);
 
         assertThat(_logs.poll(5, TimeUnit.SECONDS), is("/three ConnectionStatus: 200 +"));
         assertThat(_logs.poll(5, TimeUnit.SECONDS), is("/four ConnectionStatus: 200 +"));
         assertThat(_logs.poll(5, TimeUnit.SECONDS), is("/five ConnectionStatus: 200 -"));
 
-        response = getResponse("""
-            GET /no/host HTTP/1.1
-
-            """);
+        response = getResponse("GET /no/host HTTP/1.1\n" +
+            "\n");
         assertEquals(HttpStatus.BAD_REQUEST_400, response.getStatus());
         log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("/no/host ConnectionStatus: 400 X"));
@@ -801,11 +777,9 @@ public class CustomRequestLogTest
             socket.setTcpNoDelay(true);
 
             OutputStream output = socket.getOutputStream();
-            output.write("""
-                GET /abort HTTP/1.1
-                Host: localhost
-                
-                """.getBytes(StandardCharsets.ISO_8859_1));
+            output.write(("GET /abort HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "\n").getBytes(StandardCharsets.ISO_8859_1));
             output.flush();
 
             // Not using HttpTester here because we want to check that last chunk is not received.
@@ -841,15 +815,13 @@ public class CustomRequestLogTest
             }
         });
 
-        HttpTester.Response response = getResponse("""
-            GET / HTTP/1.1\r
-            Host: localhost\r
-            Transfer-Encoding: chunked\r
-            \r
-            0\r
-            trailerName: 42\r
-            \r
-            """);
+        HttpTester.Response response = getResponse("GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Transfer-Encoding: chunked\r\n" +
+            "\r\n" +
+            "0\r\n" +
+            "trailerName: 42\r\n" +
+            "\r\n");
         assertEquals(HttpStatus.OK_200, response.getStatus());
         String log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("42"));
@@ -1084,11 +1056,9 @@ public class CustomRequestLogTest
     {
         start("User-Agent: %{User-Agent}i, \"%{User-Agent}i\"");
 
-        HttpTester.Response response = getResponse("""
-            GET / HTTP/1.0
-            User-Agent: bad"value
-
-            """);
+        HttpTester.Response response = getResponse("GET / HTTP/1.0\n" +
+            "User-Agent: bad\"value\n" +
+            "\n");
         assertEquals(HttpStatus.OK_200, response.getStatus());
         String log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("User-Agent: \"bad\\\"value\", \"bad\\\"value\""));
@@ -1099,11 +1069,9 @@ public class CustomRequestLogTest
     {
         start("User-Agent: %{User-Agent}i, \"%{User-Agent}i\"");
 
-        HttpTester.Response response = getResponse("""
-            GET / HTTP/1.0
-            User-Agent: bad\\"value
-            
-            """);
+        HttpTester.Response response = getResponse("GET / HTTP/1.0\n" +
+            "User-Agent: bad\\\"value\n" +
+            "\n");
         assertEquals(HttpStatus.OK_200, response.getStatus());
         String log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("User-Agent: \"bad\\\\\\\"value\", \"bad\\\\\\\"value\""));
@@ -1114,11 +1082,9 @@ public class CustomRequestLogTest
     {
         start("User-Agent: %{User-Agent}i\\\"%m\"");
 
-        HttpTester.Response response = getResponse("""
-            GET / HTTP/1.0
-            User-Agent: jetty
-            
-            """);
+        HttpTester.Response response = getResponse("GET / HTTP/1.0\n" +
+            "User-Agent: jetty\n" +
+            "\n");
         assertEquals(HttpStatus.OK_200, response.getStatus());
         String log = _logs.poll(5, TimeUnit.SECONDS);
         assertThat(log, is("User-Agent: jetty\\\"GET\""));

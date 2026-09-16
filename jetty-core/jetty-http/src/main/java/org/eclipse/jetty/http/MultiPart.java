@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.io.Content;
@@ -519,13 +520,12 @@ public class MultiPart
         @Override
         public String toString()
         {
-            return "%s@%x[name=%s,fileName=%s,length=%d]".formatted(
+            return String.format("%s@%x[name=%s,fileName=%s,length=%d]",
                 TypeUtil.toShortName(getClass()),
                 hashCode(),
                 getName(),
                 getFileName(),
-                getLength()
-            );
+                getLength());
         }
     }
 
@@ -575,7 +575,7 @@ public class MultiPart
                             return chunk;
                         return Content.Chunk.from(chunk.getByteBuffer().slice(), chunk.isLast());
                     })
-                    .toList();
+                    .collect(Collectors.toList());
                 ChunksContentSource newContentSource = new ChunksContentSource(chunks);
                 chunks.forEach(Content.Chunk::release);
                 contentSources.add(newContentSource);
@@ -602,13 +602,12 @@ public class MultiPart
         @Override
         public String toString()
         {
-            return "%s@%x[name=%s,fileName=%s,length=%d]".formatted(
+            return String.format("%s@%x[name=%s,fileName=%s,length=%d]",
                 TypeUtil.toShortName(getClass()),
                 hashCode(),
                 getName(),
                 getFileName(),
-                getLength()
-            );
+                getLength());
         }
     }
 
@@ -650,13 +649,12 @@ public class MultiPart
         @Override
         public String toString()
         {
-            return "%s@%x[name=%s,fileName=%s,path=%s]".formatted(
+            return String.format("%s@%x[name=%s,fileName=%s,path=%s]",
                 TypeUtil.toShortName(getClass()),
                 hashCode(),
                 getName(),
                 getFileName(),
-                getPath()
-            );
+                getPath());
         }
     }
 
@@ -691,13 +689,12 @@ public class MultiPart
         @Override
         public String toString()
         {
-            return "%s@%x[name=%s,fileName=%s,length=%d]".formatted(
+            return String.format("%s@%x[name=%s,fileName=%s,length=%d]",
                 TypeUtil.toShortName(getClass()),
                 hashCode(),
                 getName(),
                 getFileName(),
-                getLength()
-            );
+                getLength());
         }
     }
 
@@ -865,9 +862,9 @@ public class MultiPart
                 }
             }
 
-            return switch (state)
+            switch (state)
             {
-                case FIRST ->
+                case FIRST:
                 {
                     try (AutoLock ignored = lock.lock())
                     {
@@ -876,22 +873,22 @@ public class MultiPart
                             if (closed)
                             {
                                 state = State.COMPLETE;
-                                yield Content.Chunk.from(onlyBoundary.slice(), true);
+                                return Content.Chunk.from(onlyBoundary.slice(), true);
                             }
                             else
                             {
-                                yield null;
+                                return null;
                             }
                         }
                         else
                         {
                             part = parts.poll();
                             state = State.HEADERS;
-                            yield Content.Chunk.from(firstBoundary.slice(), false);
+                            return Content.Chunk.from(firstBoundary.slice(), false);
                         }
                     }
                 }
-                case MIDDLE ->
+                case MIDDLE:
                 {
                     part = null;
                     try (AutoLock ignored = lock.lock())
@@ -901,22 +898,22 @@ public class MultiPart
                             if (closed)
                             {
                                 state = State.COMPLETE;
-                                yield Content.Chunk.from(lastBoundary.slice(), true);
+                                return Content.Chunk.from(lastBoundary.slice(), true);
                             }
                             else
                             {
-                                yield null;
+                                return null;
                             }
                         }
                         else
                         {
                             part = parts.poll();
                             state = State.HEADERS;
-                            yield Content.Chunk.from(middleBoundary.slice(), false);
+                            return Content.Chunk.from(middleBoundary.slice(), false);
                         }
                     }
                 }
-                case HEADERS ->
+                case HEADERS:
                 {
                     HttpFields headers = customizePartHeaders(part);
                     Utf8StringBuilder builder = new Utf8StringBuilder(4096);
@@ -946,31 +943,34 @@ public class MultiPart
                     // TODO: use a ByteBuffer pool and direct ByteBuffers?
                     ByteBuffer byteBuffer = ByteBuffer.wrap(builder.toCompleteString().getBytes(UTF_8));
                     state = State.CONTENT;
-                    yield Content.Chunk.from(byteBuffer, false);
+                    return Content.Chunk.from(byteBuffer, false);
                 }
-                case CONTENT ->
+                case CONTENT:
                 {
                     Content.Chunk chunk = part.getContentSource().read();
                     if (chunk == null)
-                        yield null;
+                        return null;
                     if (Content.Chunk.isFailure(chunk, true))
                     {
                         try (AutoLock ignored = lock.lock())
                         {
                             errorChunk = chunk;
                         }
-                        yield chunk;
+                        return chunk;
                     }
                     if (!chunk.isLast())
-                        yield chunk;
+                        return chunk;
                     state = State.MIDDLE;
                     if (chunk.hasRemaining())
-                        yield Content.Chunk.asChunk(chunk.getByteBuffer(), false, chunk);
+                        return Content.Chunk.asChunk(chunk.getByteBuffer(), false, chunk);
                     chunk.release();
-                    yield Content.Chunk.EMPTY;
+                    return Content.Chunk.EMPTY;
                 }
-                case COMPLETE -> Content.Chunk.EOF;
-            };
+                case COMPLETE:
+                    return Content.Chunk.EOF;
+                default:
+                    throw new IllegalStateException();
+            }
         }
 
         protected HttpFields customizePartHeaders(Part part)
@@ -982,7 +982,7 @@ public class MultiPart
         {
             int max = getPartHeadersMaxLength();
             if (max > 0 && builder.length() > max)
-                throw new IllegalStateException("headers max length exceeded: %d".formatted(max));
+                throw new IllegalStateException(String.format("headers max length exceeded: %d", max));
         }
 
         @Override
@@ -1237,12 +1237,13 @@ public class MultiPart
 
                     switch (state)
                     {
-                        case PREAMBLE ->
+                        case PREAMBLE:
                         {
                             if (parsePreamble(buffer))
                                 state = State.BOUNDARY;
+                            break;
                         }
-                        case BOUNDARY ->
+                        case BOUNDARY:
                         {
                             HttpTokens.Token token = next(buffer);
                             HttpTokens.Type type = token.getType();
@@ -1271,45 +1272,53 @@ public class MultiPart
                             {
                                 throw new HttpException.RuntimeException(HttpStatus.BAD_REQUEST_400, "bad last boundary");
                             }
+                            break;
                         }
-                        case BOUNDARY_CLOSE ->
+                        case BOUNDARY_CLOSE:
                         {
                             HttpTokens.Token token = next(buffer);
                             if (token.getByte() != '-')
                                 throw new HttpException.RuntimeException(HttpStatus.BAD_REQUEST_400, "bad last boundary");
                             notifyEndOfLineViolations();
                             state = State.EPILOGUE;
+                            break;
                         }
-                        case HEADER_START ->
+                        case HEADER_START:
                         {
                             state = parseHeaderStart(buffer);
+                            break;
                         }
-                        case HEADER_NAME ->
+                        case HEADER_NAME:
                         {
                             if (parseHeaderName(buffer))
                                 state = State.HEADER_VALUE;
+                            break;
                         }
-                        case HEADER_VALUE ->
+                        case HEADER_VALUE:
                         {
                             if (parseHeaderValue(buffer))
                                 state = State.HEADER_START;
+                            break;
                         }
-                        case CONTENT_START ->
+                        case CONTENT_START:
                         {
                             if (parseContent(chunk))
                                 state = State.BOUNDARY;
                             else
                                 state = State.CONTENT;
+                            break;
                         }
-                        case CONTENT ->
+                        case CONTENT:
                         {
                             if (parseContent(chunk))
                                 state = State.BOUNDARY;
+                            break;
                         }
-                        case EPILOGUE ->
+                        case EPILOGUE:
                         {
                             // Just discard the epilogue.
                             buffer.position(buffer.limit());
+                            break;
                         }
                     }
                 }
@@ -1346,11 +1355,11 @@ public class MultiPart
             HttpTokens.Token t = HttpTokens.TOKENS[b & 0xFF];
             switch (t.getType())
             {
-                case CNTL ->
+                case CNTL:
                 {
                     throw new HttpException.RuntimeException(HttpStatus.BAD_REQUEST_400, "invalid byte " + Integer.toHexString(t.getChar()));
                 }
-                case LF ->
+                case LF:
                 {
                     if (!crFlag)
                     {
@@ -1360,8 +1369,9 @@ public class MultiPart
                             throw new HttpException.RuntimeException(HttpStatus.BAD_REQUEST_400, "invalid LF-only EOL");
                     }
                     crFlag = false;
+                    break;
                 }
-                case CR ->
+                case CR:
                 {
                     if (crFlag)
                     {
@@ -1371,8 +1381,9 @@ public class MultiPart
                             throw new HttpException.RuntimeException(HttpStatus.BAD_REQUEST_400, "invalid CR-only EOL");
                     }
                     crFlag = true;
+                    break;
                 }
-                default ->
+                default:
                 {
                     if (crFlag)
                     {
@@ -1381,6 +1392,7 @@ public class MultiPart
                         if (!compliance.allows(violation))
                             throw new HttpException.RuntimeException(HttpStatus.BAD_REQUEST_400, "invalid CR-only EOL");
                     }
+                    break;
                 }
             }
             return t;
@@ -1437,11 +1449,10 @@ public class MultiPart
                 HttpTokens.Token token = next(buffer);
                 switch (token.getType())
                 {
-                    case CR ->
-                    {
+                    case CR:
                         // Ignore CR and loop around;
-                    }
-                    case LF ->
+                        break;
+                    case LF:
                     {
                         // End of fields.
                         notifyPartHeaders();
@@ -1449,11 +1460,11 @@ public class MultiPart
                         partialBoundaryMatch = 1;
                         return State.CONTENT_START;
                     }
-                    case COLON ->
+                    case COLON:
                     {
                         throw new HttpException.RuntimeException(HttpStatus.BAD_REQUEST_400, "invalid empty header name");
                     }
-                    default ->
+                    default:
                     {
                         if (Character.isWhitespace(token.getByte()))
                         {
@@ -1467,6 +1478,7 @@ public class MultiPart
                             text.append(token.getByte());
                             return State.HEADER_NAME;
                         }
+                        break;
                     }
                 }
             }
@@ -1480,7 +1492,7 @@ public class MultiPart
                 HttpTokens.Token token = next(buffer);
                 switch (token.getType())
                 {
-                    case COLON ->
+                    case COLON:
                     {
                         // End of field name.
                         incrementAndCheckPartHeadersLength();
@@ -1488,15 +1500,18 @@ public class MultiPart
                         trailingWhiteSpaces = 0;
                         return true;
                     }
-                    case ALPHA, DIGIT, TCHAR ->
+                    case ALPHA:
+                    case DIGIT:
+                    case TCHAR:
                     {
                         byte current = token.getByte();
                         if (trailingWhiteSpaces > 0)
                             throw new HttpException.RuntimeException(HttpStatus.BAD_REQUEST_400, "invalid header name");
                         incrementAndCheckPartHeadersLength();
                         text.append(current);
+                        break;
                     }
-                    default ->
+                    default:
                     {
                         byte current = token.getByte();
                         if (Character.isWhitespace(current))
@@ -1508,6 +1523,7 @@ public class MultiPart
                         {
                             throw new HttpException.RuntimeException(HttpStatus.BAD_REQUEST_400, "invalid header name");
                         }
+                        break;
                     }
                 }
             }
@@ -1521,11 +1537,10 @@ public class MultiPart
                 HttpTokens.Token token = next(buffer);
                 switch (token.getType())
                 {
-                    case CR ->
-                    {
+                    case CR:
                         // Ignore CR and loop around;
-                    }
-                    case LF ->
+                        break;
+                    case LF:
                     {
                         // End of header value.
                         // Ignore trailing whitespace.
@@ -1536,7 +1551,7 @@ public class MultiPart
                         fieldValue = null;
                         return true;
                     }
-                    default ->
+                    default:
                     {
                         byte current = token.getByte();
                         incrementAndCheckPartHeadersLength();
@@ -1550,6 +1565,7 @@ public class MultiPart
                         {
                             text.append(current);
                         }
+                        break;
                     }
                 }
             }
@@ -1561,7 +1577,7 @@ public class MultiPart
             ++partHeadersLength;
             int max = getPartHeadersMaxLength();
             if (max > 0 && partHeadersLength > max)
-                throw new IllegalStateException("headers max length exceeded: %d".formatted(max));
+                throw new IllegalStateException(String.format("headers max length exceeded: %d", max));
         }
 
         private boolean parseContent(Content.Chunk chunk)
@@ -1713,7 +1729,7 @@ public class MultiPart
                 return chunk;
             if (length == 0)
                 return last ? Content.Chunk.EOF : Content.Chunk.EMPTY;
-            return Content.Chunk.asChunk(chunk.getByteBuffer().slice(position, length), last, chunk);
+            return Content.Chunk.asChunk(BufferUtil.absoluteSlice(chunk.getByteBuffer(), position, length), last, chunk);
         }
 
         private void notifyPartBegin()

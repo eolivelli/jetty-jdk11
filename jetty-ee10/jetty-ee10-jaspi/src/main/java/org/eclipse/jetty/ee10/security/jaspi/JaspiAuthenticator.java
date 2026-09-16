@@ -281,8 +281,11 @@ public class JaspiAuthenticator extends LoginAuthenticator
 
             String authContextId = authConfig.getAuthContextID(messageInfo);
             ServerAuthContext authContext = authConfig.getAuthContext(authContextId, _serviceSubject, _authProperties);
-            if (validatedUser instanceof AuthenticationState.Succeeded userAuthenticated)
+            if (validatedUser instanceof AuthenticationState.Succeeded)
+            {
+                AuthenticationState.Succeeded userAuthenticated = (AuthenticationState.Succeeded)validatedUser;
                 authContext.cleanSubject(messageInfo, userAuthenticated.getUserIdentity().getSubject());
+            }
             AuthStatus status = authContext.secureResponse(messageInfo, _serviceSubject);
             return (AuthStatus.SEND_SUCCESS.equals(status));
         }

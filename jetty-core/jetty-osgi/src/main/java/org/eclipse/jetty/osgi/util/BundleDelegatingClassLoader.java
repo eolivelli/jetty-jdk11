@@ -83,7 +83,7 @@ public class BundleDelegatingClassLoader extends ClassLoader implements BundleRe
         // Try to acquire the real bundle classloader from the loaded class
         ClassLoader classLoader = clazz.getClassLoader();
         // Verify the classloader is for our bundle (implements BundleReference for same bundle)
-        if (classLoader instanceof BundleReference bundleRef && _bundle.equals(bundleRef.getBundle()))
+        if (classLoader instanceof BundleReference && _bundle.equals(((BundleReference)classLoader).getBundle()))
         {
             _bundleClassLoader = classLoader;
         }

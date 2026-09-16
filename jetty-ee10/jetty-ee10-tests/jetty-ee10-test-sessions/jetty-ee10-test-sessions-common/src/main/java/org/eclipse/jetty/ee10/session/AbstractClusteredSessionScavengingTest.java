@@ -15,7 +15,6 @@ package org.eclipse.jetty.ee10.session;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -223,7 +222,6 @@ public abstract class AbstractClusteredSessionScavengingTest extends AbstractSes
 
     public static class TestServlet extends HttpServlet
     {
-        @Serial
         @Override
         protected void doGet(HttpServletRequest request, HttpServletResponse httpServletResponse) throws ServletException, IOException
         {

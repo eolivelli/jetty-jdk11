@@ -81,19 +81,21 @@ public abstract class Parser
             {
                 switch (state)
                 {
-                    case INITIAL ->
+                    case INITIAL:
                     {
                         if (!buffer.hasRemaining())
                             return false;
                         state = State.HEADER;
+                        break;
                     }
-                    case HEADER ->
+                    case HEADER:
                     {
                         if (!headerParser.parse(buffer))
                             return false;
                         state = State.CONTENT;
+                        break;
                     }
-                    case CONTENT ->
+                    case CONTENT:
                     {
                         ContentParser contentParser = findContentParser(headerParser.getFrameType());
                         if (headerParser.getContentLength() == 0)
@@ -123,8 +125,9 @@ public abstract class Parser
                             padding = headerParser.getPaddingLength();
                             state = State.PADDING;
                         }
+                        break;
                     }
-                    case PADDING ->
+                    case PADDING:
                     {
                         if (buffer.remaining() >= padding)
                         {
@@ -139,8 +142,10 @@ public abstract class Parser
                             buffer.position(buffer.limit());
                             return false;
                         }
+                        break;
                     }
-                    default -> throw new IllegalStateException();
+                    default:
+                        throw new IllegalStateException();
                 }
             }
         }

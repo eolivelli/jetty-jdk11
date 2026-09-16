@@ -59,23 +59,31 @@ public class DefaultAuthenticatorFactory implements Authenticator.Factory
         if (auth == null)
             return null;
 
-        return switch (auth)
+        switch (auth)
         {
-            case Authenticator.BASIC_AUTH -> new BasicAuthenticator();
-            case Authenticator.DIGEST_AUTH -> new DigestAuthenticator();
-            case Authenticator.FORM_AUTH -> new FormAuthenticator();
-            case Authenticator.SPNEGO_AUTH -> new SPNEGOAuthenticator();
-            case Authenticator.NEGOTIATE_AUTH -> new SPNEGOAuthenticator(Authenticator.NEGOTIATE_AUTH);  // see Bug #377076
-            case Authenticator.MULTI_AUTH -> getMultiAuthenticator(server, context, configuration);
-            case Authenticator.CERT_AUTH, Authenticator.CERT_AUTH2 ->
+            case Authenticator.BASIC_AUTH:
+                return new BasicAuthenticator();
+            case Authenticator.DIGEST_AUTH:
+                return new DigestAuthenticator();
+            case Authenticator.FORM_AUTH:
+                return new FormAuthenticator();
+            case Authenticator.SPNEGO_AUTH:
+                return new SPNEGOAuthenticator();
+            case Authenticator.NEGOTIATE_AUTH:
+                return new SPNEGOAuthenticator(Authenticator.NEGOTIATE_AUTH);  // see Bug #377076
+            case Authenticator.MULTI_AUTH:
+                return getMultiAuthenticator(server, context, configuration);
+            case Authenticator.CERT_AUTH:
+            case Authenticator.CERT_AUTH2:
             {
                 Collection<SslContextFactory> sslContextFactories = server.getBeans(SslContextFactory.class);
                 if (sslContextFactories.size() != 1)
                     throw new IllegalStateException("SslClientCertAuthenticator requires a single SslContextFactory instances.");
-                yield new SslClientCertAuthenticator(sslContextFactories.iterator().next());
+                return new SslClientCertAuthenticator(sslContextFactories.iterator().next());
             }
-            default -> null;
-        };
+            default:
+                return null;
+        }
     }
 
     private Authenticator getMultiAuthenticator(Server server, Context context, Authenticator.Configuration configuration)

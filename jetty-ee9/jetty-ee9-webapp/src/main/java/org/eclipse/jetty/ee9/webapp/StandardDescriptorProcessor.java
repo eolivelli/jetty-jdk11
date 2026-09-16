@@ -1258,7 +1258,7 @@ public class StandardDescriptorProcessor extends IterativeDescriptorProcessor
                     //Same path mapped to different servlet
                     switch (originalMapping.getSource().getOrigin())
                     {
-                        case EMBEDDED ->
+                        case EMBEDDED:
                         {
                             if (descriptor instanceof DefaultsDescriptor)
                                 return false;  //webdefault.xml cannot override a path mapping
@@ -1270,7 +1270,7 @@ public class StandardDescriptorProcessor extends IterativeDescriptorProcessor
                                 listItor.remove();
                             return true;
                         }
-                        case DESCRIPTOR ->
+                        case DESCRIPTOR:
                         {
                             //if the original mapping came from the defaults descriptor it can be overridden by any other descriptor
                             if (originalMapping.isFromDefaultDescriptor())
@@ -1282,6 +1282,7 @@ public class StandardDescriptorProcessor extends IterativeDescriptorProcessor
                                     listItor.remove();
                                 return true;
                             }
+                            break;
                         }
                     }
                 }

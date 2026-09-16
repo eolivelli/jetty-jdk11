@@ -535,7 +535,7 @@ public class CreationTest
             String action = request.getParameter("action");
             switch (action.toLowerCase())
             {
-                case "forward" ->
+                case "forward":
                 {
                     HttpSession session = createAndSaveSessionId(request);
                     assertTrue(session.isNew());
@@ -548,8 +548,9 @@ public class CreationTest
                     assertEquals(_id, session.getId());
                     assertNotNull(session.getAttribute("value"));
                     assertNull(session.getAttribute("B")); //check we don't see stuff from other context
+                    break;
                 }
-                case "forwardc" ->
+                case "forwardc":
                 {
                     HttpSession session = createAndSaveSessionId(request);
                     assertTrue(session.isNew());
@@ -557,8 +558,9 @@ public class CreationTest
                     ServletContext contextC = getServletContext().getContext("/contextC");
                     RequestDispatcher dispatcherC = contextC.getRequestDispatcher(request.getServletPath());
                     dispatcherC.forward(request, httpServletResponse);
+                    break;
                 }
-                case "forwardinv" ->
+                case "forwardinv":
                 {
                     HttpSession session = createAndSaveSessionId(request);
                     assertNotNull(session);
@@ -567,8 +569,9 @@ public class CreationTest
                     RequestDispatcher dispatcherB = contextB.getRequestDispatcher(request.getServletPath());
                     dispatcherB.forward(request, httpServletResponse);
                     session.invalidate();
+                    break;
                 }
-                case "test" ->
+                case "test":
                 {
                     assertNotNull(_id);
                     HttpSession session = request.getSession(false);
@@ -578,8 +581,9 @@ public class CreationTest
                     assertNotNull(session.getAttribute("value")); //check we see our previous session
                     assertNull(session.getAttribute("B")); //check we don't see stuff from other contexts
                     assertNull(session.getAttribute("C"));
+                    break;
                 }
-                case "invalidate" ->
+                case "invalidate":
                 {
                     HttpSession session = request.getSession(false);
                     assertNotNull(session);
@@ -587,8 +591,11 @@ public class CreationTest
                     assertFalse(session.isNew());
                     session.invalidate();
                     assertNull(request.getSession(false));
+                    break;
                 }
-                case "create", "createinv", "createinvcreate" ->
+                case "create":
+                case "createinv":
+                case "createinvcreate":
                 {
                     currentRequest.set(request);
                     HttpSession session = createAndSaveSessionId(request);
@@ -609,8 +616,12 @@ public class CreationTest
 
                         switch (check.toLowerCase())
                         {
-                            case "true" -> assertTrue(exists);
-                            case "false" -> assertFalse(exists);
+                            case "true":
+                                assertTrue(exists);
+                                break;
+                            case "false":
+                                assertFalse(exists);
+                                break;
                         }
                     }
 
@@ -629,6 +640,7 @@ public class CreationTest
                         session = request.getSession(true);
                         _id = session.getId();
                     }
+                    break;
                 }
             }
         }

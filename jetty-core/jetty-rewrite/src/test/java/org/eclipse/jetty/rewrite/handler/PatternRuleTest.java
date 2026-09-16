@@ -119,11 +119,9 @@ public class PatternRuleTest extends AbstractRuleTest
         TestPatternRule rule = new TestPatternRule(pattern);
         start(rule);
 
-        String request = """
-            GET $U HTTP/1.1
-            Host: localhost
-                        
-            """.replace("$U", uri);
+        String request = ("GET $U HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n").replace("$U", uri);
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -137,11 +135,9 @@ public class PatternRuleTest extends AbstractRuleTest
         TestPatternRule rule = new TestPatternRule(pattern);
         start(rule);
 
-        String request = """
-            GET $U HTTP/1.1
-            Host: localhost
-                        
-            """.replace("$U", uri);
+        String request = ("GET $U HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n").replace("$U", uri);
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());

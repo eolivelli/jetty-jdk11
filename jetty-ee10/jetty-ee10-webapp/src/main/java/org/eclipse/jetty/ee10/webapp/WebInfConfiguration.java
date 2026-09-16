@@ -69,8 +69,10 @@ public class WebInfConfiguration extends AbstractConfiguration
         Resource webInf = context.getWebInf();
 
         // Add WEB-INF classes and lib classpaths
-        if (webInf != null && webInf.isDirectory() && context.getClassLoader() instanceof WebAppClassLoader webAppClassLoader)
+        ClassLoader classLoader = context.getClassLoader();
+        if (webInf != null && webInf.isDirectory() && classLoader instanceof WebAppClassLoader)
         {
+            WebAppClassLoader webAppClassLoader = (WebAppClassLoader)classLoader;
             // Look for classes directory
             Resource classes = webInf.resolve("classes/");
             if (Resources.isReadableDirectory(classes))

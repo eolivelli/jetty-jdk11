@@ -133,14 +133,30 @@ public class SessionHandler extends AbstractSessionManager implements Handler.Si
 
             switch (lcase)
             {
-                case "name" -> setName(value);
-                case "max-age" -> setMaxAge(value == null ? -1 : Integer.parseInt(value));
-                case "comment" -> setComment(value);
-                case "domain" -> setDomain(value);
-                case "httponly" -> setHttpOnly(Boolean.parseBoolean(value));
-                case "secure" -> setSecure(Boolean.parseBoolean(value));
-                case "path" -> setPath(value);
-                default -> setSessionCookieAttribute(name, value);
+                case "name":
+                    setName(value);
+                    break;
+                case "max-age":
+                    setMaxAge(value == null ? -1 : Integer.parseInt(value));
+                    break;
+                case "comment":
+                    setComment(value);
+                    break;
+                case "domain":
+                    setDomain(value);
+                    break;
+                case "httponly":
+                    setHttpOnly(Boolean.parseBoolean(value));
+                    break;
+                case "secure":
+                    setSecure(Boolean.parseBoolean(value));
+                    break;
+                case "path":
+                    setPath(value);
+                    break;
+                default:
+                    setSessionCookieAttribute(name, value);
+                    break;
             }
         }
 
@@ -148,17 +164,25 @@ public class SessionHandler extends AbstractSessionManager implements Handler.Si
         public String getAttribute(String name)
         {
             String lcase = name.toLowerCase(Locale.ENGLISH);
-            return switch (lcase)
+            switch (lcase)
             {
-                case "name" -> getName();
-                case "max-age" -> Integer.toString(getMaxAge());
-                case "comment" -> getComment();
-                case "domain" -> getDomain();
-                case "httponly" -> String.valueOf(isHttpOnly());
-                case "secure" -> String.valueOf(isSecure());
-                case "path" -> getPath();
-                default -> getSessionCookieAttribute(name);
-            };
+                case "name":
+                    return getName();
+                case "max-age":
+                    return Integer.toString(getMaxAge());
+                case "comment":
+                    return getComment();
+                case "domain":
+                    return getDomain();
+                case "httponly":
+                    return String.valueOf(isHttpOnly());
+                case "secure":
+                    return String.valueOf(isSecure());
+                case "path":
+                    return getPath();
+                default:
+                    return getSessionCookieAttribute(name);
+            }
         }
 
         /**
@@ -284,8 +308,11 @@ public class SessionHandler extends AbstractSessionManager implements Handler.Si
         
         public static ManagedSession getSession(HttpSession httpSession)
         {
-            if (httpSession instanceof ServletSessionApi apiSession)
+            if (httpSession instanceof ServletSessionApi)
+            {
+                ServletSessionApi apiSession = (ServletSessionApi)httpSession;
                 return apiSession.getSession();
+            }
             return null;
         }
         
@@ -410,8 +437,9 @@ public class SessionHandler extends AbstractSessionManager implements Handler.Si
         if (nonServletSessionRequest != null)
             return nonServletSessionRequest.getManagedSession();
 
-        if (request.getSession(false) instanceof ManagedSession managedSession)
-            return managedSession;
+        Session session = request.getSession(false);
+        if (session instanceof ManagedSession)
+            return (ManagedSession)session;
         return null;
     }
 
@@ -613,8 +641,9 @@ public class SessionHandler extends AbstractSessionManager implements Handler.Si
         for (String name : session.getAttributeNameSet())
         {
             Object value = session.getAttribute(name);
-            if (value instanceof HttpSessionActivationListener listener)
+            if (value instanceof HttpSessionActivationListener)
             {
+                HttpSessionActivationListener listener = (HttpSessionActivationListener)value;
                 HttpSessionEvent event = new HttpSessionEvent(session.getApi());
                 listener.sessionDidActivate(event);
             }
@@ -627,8 +656,9 @@ public class SessionHandler extends AbstractSessionManager implements Handler.Si
         for (String name : session.getAttributeNameSet())
         {
             Object value = session.getAttribute(name);
-            if (value instanceof HttpSessionActivationListener listener)
+            if (value instanceof HttpSessionActivationListener)
             {
+                HttpSessionActivationListener listener = (HttpSessionActivationListener)value;
                 HttpSessionEvent event = new HttpSessionEvent(session.getApi());
                 listener.sessionWillPassivate(event);
             }

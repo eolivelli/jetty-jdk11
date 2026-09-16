@@ -16,7 +16,6 @@ package org.eclipse.jetty.io;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.RecordComponent;
 import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.Arrays;
@@ -487,7 +486,7 @@ public class ArrayByteBufferPool implements ByteBufferPool, Dumpable
     private List<Map<String, Object>> getBucketsStatistics(boolean direct)
     {
         RetainedBucket[] buckets = direct ? _direct : _indirect;
-        return Arrays.stream(buckets).map(b -> b.getStatistics().toMap()).toList();
+        return Arrays.stream(buckets).map(b -> b.getStatistics().toMap()).collect(Collectors.toList());
     }
 
     @ManagedAttribute("The acquires for direct non-pooled bucket capacities")
@@ -650,8 +649,8 @@ public class ArrayByteBufferPool implements ByteBufferPool, Dumpable
         private int evict()
         {
             Pool.Entry<RetainableByteBuffer.Pooled> entry;
-            if (_pool instanceof BucketCompoundPool compound)
-                entry = compound.evict();
+            if (_pool instanceof BucketCompoundPool)
+                entry = ((BucketCompoundPool)_pool).evict();
             else
                 entry = _pool.acquire();
 
@@ -697,61 +696,6 @@ public class ArrayByteBufferPool implements ByteBufferPool, Dumpable
         {
             return String.format("%s@%x[%s]", TypeUtil.toShortName(this.getClass()), hashCode(), getStatistics());
         }
-
-        private record Statistics(int capacity, int inUseEntries, int totalEntries, long pooled, long acquires,
-                                  long releases, float hitRatio, int averageSize, long nonPooled, long evicts, long removes)
-        {
-            private Map<String, Object> toMap()
-            {
-                try
-                {
-                    Map<String, Object> statistics = new HashMap<>();
-                    for (RecordComponent c : getClass().getRecordComponents())
-                    {
-                        statistics.put(c.getName(), c.getAccessor().invoke(this));
-                    }
-                    return statistics;
-                }
-                catch (Throwable x)
-                {
-                    return Map.of();
-                }
-            }
-
-            @Override
-            public String toString()
-            {
-                return String.format(Locale.ROOT, "capacity=%d,in-use=%d/%d,pooled/acquires/releases=%d/%d/%d(%.3f%%),avgSize=%d,non-pooled/evicts/removes=%d/%d/%d",
-                    capacity,
-                    inUseEntries,
-                    totalEntries,
-                    pooled,
-                    acquires,
-                    releases,
-                    hitRatio,
-                    averageSize,
-                    nonPooled,
-                    evicts,
-                    removes
-                );
-            }
-        }
-
-        private static class BucketCompoundPool extends CompoundPool<RetainableByteBuffer.Pooled>
-        {
-            private BucketCompoundPool(ConcurrentPool<RetainableByteBuffer.Pooled> concurrentBucket, QueuedPool<RetainableByteBuffer.Pooled> queuedBucket)
-            {
-                super(concurrentBucket, queuedBucket);
-            }
-
-            private Pool.Entry<RetainableByteBuffer.Pooled> evict()
-            {
-                Entry<RetainableByteBuffer.Pooled> entry = getSecondaryPool().acquire();
-                if (entry == null)
-                    entry = getPrimaryPool().acquire();
-                return entry;
-            }
-        }
     }
 
     private class ReservedBuffer extends RetainableByteBuffer.Pooled
@@ -791,8 +735,8 @@ public class ArrayByteBufferPool implements ByteBufferPool, Dumpable
         private PooledBuffer(ByteBuffer buffer, RetainedBucket bucket, Pool.Entry<RetainableByteBuffer.Pooled> entry)
         {
             super(ArrayByteBufferPool.this, buffer, new ReferenceCounter(0));
-            if (getWrapped() instanceof  ReferenceCounter referenceCounter)
-                _referenceCounter = referenceCounter;
+            if (getWrapped() instanceof ReferenceCounter)
+                _referenceCounter = (ReferenceCounter)getWrapped();
             else
                 throw new IllegalArgumentException();
             _bucket = Objects.requireNonNull(bucket);
@@ -1047,7 +991,7 @@ public class ArrayByteBufferPool implements ByteBufferPool, Dumpable
                 new DumpableMap("direct non-pooled acquisitions", ((ArrayByteBufferPool)this)._noBucketDirectAcquires),
                 DumpableCollection.fromArray("indirect", ((ArrayByteBufferPool)this)._indirect),
                 new DumpableMap("heap non-pooled acquisitions", ((ArrayByteBufferPool)this)._noBucketIndirectAcquires),
-                DumpableCollection.from("leaks", getLeaks().stream().map(TrackedBuffer::dump).toList())
+                DumpableCollection.from("leaks", getLeaks().stream().map(TrackedBuffer::dump).collect(Collectors.toList()))
             );
         }
 
@@ -1171,13 +1115,177 @@ public class ArrayByteBufferPool implements ByteBufferPool, Dumpable
                     overReleaseStack.printStackTrace(pw);
                 }
                 String stacks = w.toString();
-                return ("%s@%x of %d bytes on %s wrapping %s%n" +
+                return String.format("%s@%x of %d bytes on %s wrapping %s%n" +
                     " %s%n" +
-                    " acquired at %s")
-                    .formatted(TypeUtil.toShortName(getClass()), hashCode(), getSize(), getAcquireInstant(), getRetained(),
-                        BufferUtil.toDetailString(getByteBuffer()),
-                        stacks);
+                    " acquired at %s",
+                    TypeUtil.toShortName(getClass()), hashCode(), getSize(), getAcquireInstant(), getRetained(),
+                    BufferUtil.toDetailString(getByteBuffer()),
+                    stacks);
             }
+        }
+    }
+
+    private static final class Statistics
+    {
+        private final int capacity;
+        private final int inUseEntries;
+        private final int totalEntries;
+        private final long pooled;
+        private final long acquires;
+        private final long releases;
+        private final float hitRatio;
+        private final int averageSize;
+        private final long nonPooled;
+        private final long evicts;
+        private final long removes;
+
+        private Statistics(int capacity, int inUseEntries, int totalEntries, long pooled, long acquires,
+                           long releases, float hitRatio, int averageSize, long nonPooled, long evicts, long removes)
+        {
+            this.capacity = capacity;
+            this.inUseEntries = inUseEntries;
+            this.totalEntries = totalEntries;
+            this.pooled = pooled;
+            this.acquires = acquires;
+            this.releases = releases;
+            this.hitRatio = hitRatio;
+            this.averageSize = averageSize;
+            this.nonPooled = nonPooled;
+            this.evicts = evicts;
+            this.removes = removes;
+        }
+
+        public int capacity()
+        {
+            return capacity;
+        }
+
+        public int inUseEntries()
+        {
+            return inUseEntries;
+        }
+
+        public int totalEntries()
+        {
+            return totalEntries;
+        }
+
+        public long pooled()
+        {
+            return pooled;
+        }
+
+        public long acquires()
+        {
+            return acquires;
+        }
+
+        public long releases()
+        {
+            return releases;
+        }
+
+        public float hitRatio()
+        {
+            return hitRatio;
+        }
+
+        public int averageSize()
+        {
+            return averageSize;
+        }
+
+        public long nonPooled()
+        {
+            return nonPooled;
+        }
+
+        public long evicts()
+        {
+            return evicts;
+        }
+
+        public long removes()
+        {
+            return removes;
+        }
+
+        private Map<String, Object> toMap()
+        {
+            Map<String, Object> statistics = new HashMap<>();
+            statistics.put("capacity", capacity);
+            statistics.put("inUseEntries", inUseEntries);
+            statistics.put("totalEntries", totalEntries);
+            statistics.put("pooled", pooled);
+            statistics.put("acquires", acquires);
+            statistics.put("releases", releases);
+            statistics.put("hitRatio", hitRatio);
+            statistics.put("averageSize", averageSize);
+            statistics.put("nonPooled", nonPooled);
+            statistics.put("evicts", evicts);
+            statistics.put("removes", removes);
+            return statistics;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Statistics that = (Statistics)obj;
+            return capacity == that.capacity &&
+                inUseEntries == that.inUseEntries &&
+                totalEntries == that.totalEntries &&
+                pooled == that.pooled &&
+                acquires == that.acquires &&
+                releases == that.releases &&
+                Float.compare(hitRatio, that.hitRatio) == 0 &&
+                averageSize == that.averageSize &&
+                nonPooled == that.nonPooled &&
+                evicts == that.evicts &&
+                removes == that.removes;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(capacity, inUseEntries, totalEntries, pooled, acquires, releases, hitRatio, averageSize, nonPooled, evicts, removes);
+        }
+
+        @Override
+        public String toString()
+        {
+            return String.format(Locale.ROOT, "capacity=%d,in-use=%d/%d,pooled/acquires/releases=%d/%d/%d(%.3f%%),avgSize=%d,non-pooled/evicts/removes=%d/%d/%d",
+                capacity,
+                inUseEntries,
+                totalEntries,
+                pooled,
+                acquires,
+                releases,
+                hitRatio,
+                averageSize,
+                nonPooled,
+                evicts,
+                removes
+            );
+        }
+    }
+
+    private static class BucketCompoundPool extends CompoundPool<RetainableByteBuffer.Pooled>
+    {
+        private BucketCompoundPool(ConcurrentPool<RetainableByteBuffer.Pooled> concurrentBucket, QueuedPool<RetainableByteBuffer.Pooled> queuedBucket)
+        {
+            super(concurrentBucket, queuedBucket);
+        }
+
+        private Pool.Entry<RetainableByteBuffer.Pooled> evict()
+        {
+            Entry<RetainableByteBuffer.Pooled> entry = getSecondaryPool().acquire();
+            if (entry == null)
+                entry = getPrimaryPool().acquire();
+            return entry;
         }
     }
 }

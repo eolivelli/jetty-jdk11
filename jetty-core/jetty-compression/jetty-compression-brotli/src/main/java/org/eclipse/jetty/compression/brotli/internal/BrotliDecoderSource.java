@@ -56,12 +56,14 @@ public class BrotliDecoderSource extends DecoderSource
         {
             switch (decoder.getStatus())
             {
-                case DONE ->
+                case DONE:
                 {
                     return last ? Content.Chunk.EOF : Content.Chunk.EMPTY;
                 }
-                case OK -> decoder.push(0);
-                case NEEDS_MORE_INPUT ->
+                case OK:
+                    decoder.push(0);
+                    break;
+                case NEEDS_MORE_INPUT:
                 {
                     ByteBuffer input = decoder.getInputBuffer();
                     BufferUtil.clearToFill(input);
@@ -73,8 +75,9 @@ public class BrotliDecoderSource extends DecoderSource
                         // rely on status.OK to go to EOF.
                         return Content.Chunk.EMPTY;
                     }
+                    break;
                 }
-                case NEEDS_MORE_OUTPUT ->
+                case NEEDS_MORE_OUTPUT:
                 {
                     ByteBuffer output = decoder.pull();
                     // Rely on status.OK to go to EOF.
@@ -85,7 +88,7 @@ public class BrotliDecoderSource extends DecoderSource
                     copy.append(output);
                     return Content.Chunk.asChunk(copy.getByteBuffer(), false, copy);
                 }
-                default ->
+                default:
                 {
                     return Content.Chunk.from(new IOException("Decoder failure: Corrupted input buffer"));
                 }

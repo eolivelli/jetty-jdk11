@@ -321,54 +321,67 @@ public class AbstractTest
 
     public AbstractConnector newConnector(TransportType transportType, Server server)
     {
-        return switch (transportType)
+        switch (transportType)
         {
             case HTTP:
             case HTTPS:
             case H2C:
             case H2:
             case FCGI:
-                yield new ServerConnector(server, 1, 1, newServerConnectionFactory(transportType));
+                return new ServerConnector(server, 1, 1, newServerConnectionFactory(transportType));
             case H3_QUICHE:
                 QuicheServerQuicConfiguration serverQuicConfig = HTTP3ServerQuicConfiguration.configure(new QuicheServerQuicConfiguration(workDir.getEmptyPathDir()));
-                yield new QuicheServerConnector(server, sslContextFactoryServer, serverQuicConfig, newServerConnectionFactory(transportType));
-        };
+                return new QuicheServerConnector(server, sslContextFactoryServer, serverQuicConfig, newServerConnectionFactory(transportType));
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     protected ConnectionFactory[] newServerConnectionFactory(TransportType transportType)
     {
-        List<ConnectionFactory> list = switch (transportType)
+        List<ConnectionFactory> list;
+        switch (transportType)
         {
-            case HTTP -> List.of(new HttpConnectionFactory(httpConfig));
-            case HTTPS ->
+            case HTTP:
+                list = List.of(new HttpConnectionFactory(httpConfig));
+                break;
+            case HTTPS:
             {
                 httpConfig.addCustomizer(new SecureRequestCustomizer());
                 HttpConnectionFactory http = new HttpConnectionFactory(httpConfig);
                 SslConnectionFactory ssl = new SslConnectionFactory(sslContextFactoryServer, http.getProtocol());
-                yield List.of(ssl, http);
+                list = List.of(ssl, http);
+                break;
             }
-            case H2C ->
+            case H2C:
             {
                 httpConfig.addCustomizer(new HostHeaderCustomizer());
-                yield List.of(new HTTP2CServerConnectionFactory(httpConfig));
+                list = List.of(new HTTP2CServerConnectionFactory(httpConfig));
+                break;
             }
-            case H2 ->
+            case H2:
             {
                 httpConfig.addCustomizer(new SecureRequestCustomizer());
                 httpConfig.addCustomizer(new HostHeaderCustomizer());
                 HTTP2ServerConnectionFactory h2 = new HTTP2ServerConnectionFactory(httpConfig);
                 ALPNServerConnectionFactory alpn = new ALPNServerConnectionFactory("h2");
                 SslConnectionFactory ssl = new SslConnectionFactory(sslContextFactoryServer, alpn.getProtocol());
-                yield List.of(ssl, alpn, h2);
+                list = List.of(ssl, alpn, h2);
+                break;
             }
-            case H3_QUICHE ->
+            case H3_QUICHE:
             {
                 httpConfig.addCustomizer(new SecureRequestCustomizer());
                 httpConfig.addCustomizer(new HostHeaderCustomizer());
-                yield List.of(new HTTP3ServerConnectionFactory(httpConfig));
+                list = List.of(new HTTP3ServerConnectionFactory(httpConfig));
+                break;
             }
-            case FCGI -> List.of(new ServerFCGIConnectionFactory(httpConfig));
-        };
+            case FCGI:
+                list = List.of(new ServerFCGIConnectionFactory(httpConfig));
+                break;
+            default:
+                throw new IllegalStateException();
+        }
         return list.toArray(ConnectionFactory[]::new);
     }
 
@@ -379,22 +392,28 @@ public class AbstractTest
 
     protected HttpClientTransport newHttpClientTransport(TransportType transportType)
     {
-        return switch (transportType)
+        switch (transportType)
         {
-            case HTTP, HTTPS -> new HttpClientTransportOverHTTP(clientConnector);
-            case H2C, H2 ->
+            case HTTP:
+            case HTTPS:
+                return new HttpClientTransportOverHTTP(clientConnector);
+            case H2C:
+            case H2:
             {
                 HTTP2Client http2Client = new HTTP2Client(clientConnector);
-                yield new HttpClientTransportOverHTTP2(http2Client);
+                return new HttpClientTransportOverHTTP2(http2Client);
             }
-            case H3_QUICHE ->
+            case H3_QUICHE:
             {
                 QuicheClientQuicConfiguration clientQuicConfig = HTTP3ClientQuicConfiguration.configure(new QuicheClientQuicConfiguration());
                 HTTP3Client http3Client = new HTTP3Client(clientQuicConfig, clientConnector);
-                yield new HttpClientTransportOverHTTP3(http3Client, new QuicheTransport(clientQuicConfig));
+                return new HttpClientTransportOverHTTP3(http3Client, new QuicheTransport(clientQuicConfig));
             }
-            case FCGI -> new HttpClientTransportOverFCGI(clientConnector, "");
-        };
+            case FCGI:
+                return new HttpClientTransportOverFCGI(clientConnector, "");
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     protected URI newURI(TransportType transportType)
@@ -406,8 +425,9 @@ public class AbstractTest
     {
         String scheme = transportType.isSecure() ? "https" : "http";
         String uri = scheme + "://localhost";
-        if (connector instanceof NetworkConnector networkConnector)
-            uri += ":" + networkConnector.getLocalPort();
+        AbstractConnector serverConnector = connector;
+        if (serverConnector instanceof NetworkConnector)
+            uri += ":" + ((NetworkConnector)serverConnector).getLocalPort();
         if (path != null)
             uri += path;
         return URI.create(uri);
@@ -446,20 +466,36 @@ public class AbstractTest
 
         public boolean isSecure()
         {
-            return switch (this)
+            switch (this)
             {
-                case HTTP, H2C, FCGI -> false;
-                case HTTPS, H2, H3_QUICHE -> true;
-            };
+                case HTTP:
+                case H2C:
+                case FCGI:
+                    return false;
+                case HTTPS:
+                case H2:
+                case H3_QUICHE:
+                    return true;
+                default:
+                    throw new IllegalStateException();
+            }
         }
 
         public boolean isMultiplexed()
         {
-            return switch (this)
+            switch (this)
             {
-                case HTTP, HTTPS, FCGI -> false;
-                case H2C, H2, H3_QUICHE -> true;
-            };
+                case HTTP:
+                case HTTPS:
+                case FCGI:
+                    return false;
+                case H2C:
+                case H2:
+                case H3_QUICHE:
+                    return true;
+                default:
+                    throw new IllegalStateException();
+            }
         }
     }
 }

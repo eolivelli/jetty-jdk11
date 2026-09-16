@@ -52,7 +52,7 @@ public class FormRequestContent extends StringRequestContent
         {
             for (String value : field.getValues())
             {
-                if (!builder.isEmpty())
+                if (builder.length() > 0)
                     builder.append("&");
                 builder.append(encode(field.getName(), charset)).append("=").append(encode(value, charset));
             }

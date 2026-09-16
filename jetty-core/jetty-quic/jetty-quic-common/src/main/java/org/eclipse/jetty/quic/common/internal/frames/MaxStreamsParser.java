@@ -39,12 +39,13 @@ public class MaxStreamsParser
         {
             switch (state)
             {
-                case FRAME_TYPE ->
+                case FRAME_TYPE:
                 {
                     frameType = byteBuffer.get() & 0xFF;
                     state = State.MAX_STREAMS;
+                    break;
                 }
-                case MAX_STREAMS ->
+                case MAX_STREAMS:
                 {
                     if (varLenInt.tryDecode(byteBuffer, v -> maxStreams = v))
                     {
@@ -52,6 +53,7 @@ public class MaxStreamsParser
                             throw new QuicException(ErrorCode.FRAME_ENCODING_ERROR, "invalid_max_streams_value", frameType);
                         return result();
                     }
+                    break;
                 }
             }
         }

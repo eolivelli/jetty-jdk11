@@ -215,24 +215,41 @@ public class WebAppContext extends ServletContextHandler implements WebAppClassL
     {
         switch (keyName)
         {
-            case Deployable.WAR ->
+            case Deployable.WAR:
             {
                 if (getWar() == null)
                     setWar((String)value);
+                break;
             }
-            case Deployable.CONFIGURATION_CLASSES -> setConfigurationClasses((String[])value);
-            case Deployable.CONTAINER_SCAN_JARS -> setAttribute(MetaInfConfiguration.CONTAINER_JAR_PATTERN, value);
-            case Deployable.EXTRACT_WARS -> setExtractWAR((Boolean)value);
-            case Deployable.PARENT_LOADER_PRIORITY -> setParentLoaderPriority((Boolean)value);
-            case Deployable.WEBINF_SCAN_JARS -> setAttribute(MetaInfConfiguration.WEBINF_JAR_PATTERN, value);
-            case Deployable.DEFAULTS_DESCRIPTOR -> setDefaultsDescriptor((String)value);
-            case Deployable.SCI_EXCLUSION_PATTERN ->
+            case Deployable.CONFIGURATION_CLASSES:
+                setConfigurationClasses((String[])value);
+                break;
+            case Deployable.CONTAINER_SCAN_JARS:
+                setAttribute(MetaInfConfiguration.CONTAINER_JAR_PATTERN, value);
+                break;
+            case Deployable.EXTRACT_WARS:
+                setExtractWAR((Boolean)value);
+                break;
+            case Deployable.PARENT_LOADER_PRIORITY:
+                setParentLoaderPriority((Boolean)value);
+                break;
+            case Deployable.WEBINF_SCAN_JARS:
+                setAttribute(MetaInfConfiguration.WEBINF_JAR_PATTERN, value);
+                break;
+            case Deployable.DEFAULTS_DESCRIPTOR:
+                setDefaultsDescriptor((String)value);
+                break;
+            case Deployable.SCI_EXCLUSION_PATTERN:
                 setAttribute("org.eclipse.jetty.containerInitializerExclusionPattern", value);
-            case Deployable.SCI_ORDER -> setAttribute("org.eclipse.jetty.containerInitializerOrder", value);
-            default ->
+                break;
+            case Deployable.SCI_ORDER:
+                setAttribute("org.eclipse.jetty.containerInitializerOrder", value);
+                break;
+            default:
             {
                 if (LOG.isDebugEnabled())
                     LOG.debug("skipped init property {}={}", keyName, value);
+                break;
             }
         }
     }
@@ -276,8 +293,11 @@ public class WebAppContext extends ServletContextHandler implements WebAppClassL
     {
         super.setDisplayName(servletContextName);
         ClassLoader cl = getClassLoader();
-        if (servletContextName != null && cl instanceof WebAppClassLoader webAppClassLoader)
+        if (servletContextName != null && cl instanceof WebAppClassLoader)
+        {
+            WebAppClassLoader webAppClassLoader = (WebAppClassLoader)cl;
             webAppClassLoader.setName(servletContextName);
+        }
     }
 
     /**
@@ -353,8 +373,11 @@ public class WebAppContext extends ServletContextHandler implements WebAppClassL
         if (name == null)
             name = getContextPath();
 
-        if (classLoader instanceof WebAppClassLoader webAppClassLoader && getDisplayName() != null)
+        if (classLoader instanceof WebAppClassLoader && getDisplayName() != null)
+        {
+            WebAppClassLoader webAppClassLoader = (WebAppClassLoader)classLoader;
             webAppClassLoader.setName(name);
+        }
     }
 
     public ResourceFactory getResourceFactory()
@@ -1415,8 +1438,11 @@ public class WebAppContext extends ServletContextHandler implements WebAppClassL
             ClassLoader loader = getClassLoader();
             if (loader != _initialClassLoader)
             {
-                if (loader instanceof URLClassLoader urlClassLoader)
+                if (loader instanceof URLClassLoader)
+                {
+                    URLClassLoader urlClassLoader = (URLClassLoader)loader;
                     urlClassLoader.close();
+                }
                 setClassLoader(_initialClassLoader);
             }
 
@@ -1475,8 +1501,10 @@ public class WebAppContext extends ServletContextHandler implements WebAppClassL
          */
 
         java.util.Collection<String> pathMappings = registration.getMappings();
-        if (pathMappings != null && getSecurityHandler() instanceof ConstraintAware constraintAware)
+        SecurityHandler securityHandler = getSecurityHandler();
+        if (pathMappings != null && securityHandler instanceof ConstraintAware)
         {
+            ConstraintAware constraintAware = (ConstraintAware)securityHandler;
             ConstraintSecurityHandler.createConstraint(registration.getName(), servletSecurityElement);
 
             for (String pathSpec : pathMappings)

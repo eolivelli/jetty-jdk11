@@ -183,8 +183,9 @@ public class ResponseListeners
         }
         else
         {
-            if (existing instanceof ContentSourceDemultiplexer demultiplexer)
+            if (existing instanceof ContentSourceDemultiplexer)
             {
+                ContentSourceDemultiplexer demultiplexer = (ContentSourceDemultiplexer)existing;
                 demultiplexer.addContentSourceListener(listener);
             }
             else
@@ -207,10 +208,10 @@ public class ResponseListeners
     {
         if (hasContentSourceListeners())
         {
-            if (contentSourceListener instanceof ContentSourceDemultiplexer demultiplexer)
+            if (contentSourceListener instanceof ContentSourceDemultiplexer)
             {
                 // More than 1 ContentSourceListeners -> notify the demultiplexer.
-                notifyContentSource(demultiplexer, response, contentSource);
+                notifyContentSource((ContentSourceDemultiplexer)contentSourceListener, response, contentSource);
             }
             else
             {
@@ -319,18 +320,36 @@ public class ResponseListeners
             return false;
         if (includeOtherEvents)
         {
-            if (listener instanceof Response.BeginListener l)
+            if (listener instanceof Response.BeginListener)
+            {
+                Response.BeginListener l = (Response.BeginListener)listener;
                 addBeginListener(l);
-            if (listener instanceof Response.HeaderListener l)
+            }
+            if (listener instanceof Response.HeaderListener)
+            {
+                Response.HeaderListener l = (Response.HeaderListener)listener;
                 addHeaderListener(l);
-            if (listener instanceof Response.HeadersListener l)
+            }
+            if (listener instanceof Response.HeadersListener)
+            {
+                Response.HeadersListener l = (Response.HeadersListener)listener;
                 addHeadersListener(l);
-            if (listener instanceof Response.ContentSourceListener l)
+            }
+            if (listener instanceof Response.ContentSourceListener)
+            {
+                Response.ContentSourceListener l = (Response.ContentSourceListener)listener;
                 addContentSourceListener(l);
-            if (listener instanceof Response.SuccessListener l)
+            }
+            if (listener instanceof Response.SuccessListener)
+            {
+                Response.SuccessListener l = (Response.SuccessListener)listener;
                 addSuccessListener(l);
-            if (listener instanceof Response.FailureListener l)
+            }
+            if (listener instanceof Response.FailureListener)
+            {
+                Response.FailureListener l = (Response.FailureListener)listener;
                 addFailureListener(l);
+            }
         }
         Response.CompleteListener existing = completeListener;
         completeListener = existing == null ? listener : result ->
@@ -395,8 +414,9 @@ public class ResponseListeners
         }
         notifyHeaders(headersListener, response);
         ByteBuffer content = BufferUtil.EMPTY_BUFFER;
-        if (response instanceof ContentResponse contentResponse)
+        if (response instanceof ContentResponse)
         {
+            ContentResponse contentResponse = (ContentResponse)response;
             byte[] bytes = contentResponse.getContent();
             if (bytes != null && bytes.length > 0)
                 content = ByteBuffer.wrap(bytes);
@@ -431,6 +451,44 @@ public class ResponseListeners
     private static class ContentSourceDemultiplexer implements Response.ContentSourceListener
     {
         private static final Logger LOG = LoggerFactory.getLogger(ContentSourceDemultiplexer.class);
+        private static final Content.Chunk ALREADY_READ_CHUNK = new Content.Chunk.Empty()
+        {
+            @Override
+            public ByteBuffer getByteBuffer()
+            {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean isLast()
+            {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean canRetain()
+            {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void retain()
+            {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean release()
+            {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public String toString()
+            {
+                return "AlreadyReadChunk";
+            }
+        };
 
         private final AutoLock lock = new AutoLock();
         private final List<Response.ContentSourceListener> listeners = new ArrayList<>(2);
@@ -464,8 +522,12 @@ public class ResponseListeners
             {
                 switch (contentSource.state)
                 {
-                    case DEMANDED -> demands++;
-                    case FAILED -> failures++;
+                    case DEMANDED:
+                        demands++;
+                        break;
+                    case FAILED:
+                        failures++;
+                        break;
                 }
             }
             return new Counters(demands, failures);
@@ -568,44 +630,6 @@ public class ResponseListeners
 
         private class ContentSource implements Content.Source, Invocable
         {
-            private static final Content.Chunk ALREADY_READ_CHUNK = new Content.Chunk.Empty()
-            {
-                @Override
-                public ByteBuffer getByteBuffer()
-                {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public boolean isLast()
-                {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public boolean canRetain()
-                {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public void retain()
-                {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public boolean release()
-                {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public String toString()
-                {
-                    return "AlreadyReadChunk";
-                }
-            };
             private final int index;
             private final AtomicReference<Runnable> demandCallbackRef = new AtomicReference<>();
             private volatile Content.Chunk chunk;
@@ -719,7 +743,7 @@ public class ResponseListeners
             @Override
             public String toString()
             {
-                return "%s@%x[i=%d,d=%s,c=%s,s=%s]".formatted(TypeUtil.toShortName(getClass()), hashCode(), index, demandCallbackRef, chunk, state);
+                return String.format("%s@%x[i=%d,d=%s,c=%s,s=%s]", TypeUtil.toShortName(getClass()), hashCode(), index, demandCallbackRef, chunk, state);
             }
         }
 
@@ -728,11 +752,53 @@ public class ResponseListeners
             IDLE, DEMANDED, FAILED
         }
 
-        private record Counters(int demands, int failures)
+        private static final class Counters
         {
+            private final int demands;
+            private final int failures;
+
+            private Counters(int demands, int failures)
+            {
+                this.demands = demands;
+                this.failures = failures;
+            }
+
+            public int demands()
+            {
+                return demands;
+            }
+
+            public int failures()
+            {
+                return failures;
+            }
+
             public int total()
             {
                 return demands + failures;
+            }
+
+            @Override
+            public boolean equals(Object obj)
+            {
+                if (this == obj)
+                    return true;
+                if (obj == null || getClass() != obj.getClass())
+                    return false;
+                Counters that = (Counters)obj;
+                return demands == that.demands && failures == that.failures;
+            }
+
+            @Override
+            public int hashCode()
+            {
+                return Objects.hash(demands, failures);
+            }
+
+            @Override
+            public String toString()
+            {
+                return "Counters[demands=" + demands + ", failures=" + failures + "]";
             }
         }
     }

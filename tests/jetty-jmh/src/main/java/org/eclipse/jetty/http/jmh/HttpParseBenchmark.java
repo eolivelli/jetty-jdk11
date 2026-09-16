@@ -14,6 +14,7 @@
 package org.eclipse.jetty.http.jmh;
 
 import java.nio.ByteBuffer;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -59,12 +60,57 @@ public class HttpParseBenchmark
     private static final ByteBuffer GET = BufferUtil.toBuffer("GET / HTTP/1.1\r\n\r\n");
     private static final ByteBuffer POST = BufferUtil.toBuffer("POST / HTTP/1.1\r\n\r\n");
 
-    record RequestLine(String method, String uri, HttpVersion version)
+    static final class RequestLine
     {
+        private final String method;
+        private final String uri;
+        private final HttpVersion version;
+
+        RequestLine(String method, String uri, HttpVersion version)
+        {
+            this.method = method;
+            this.uri = uri;
+            this.version = version;
+        }
+
+        public String method()
+        {
+            return method;
+        }
+
+        public String uri()
+        {
+            return uri;
+        }
+
+        public HttpVersion version()
+        {
+            return version;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            RequestLine that = (RequestLine)obj;
+            return Objects.equals(method, that.method) &&
+                Objects.equals(uri, that.uri) &&
+                version == that.version;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(method, uri, version);
+        }
+
         @Override
         public String toString()
         {
-            return "%s %s %s".formatted(method, uri, version);
+            return String.format("%s %s %s", method, uri, version);
         }
     }
 

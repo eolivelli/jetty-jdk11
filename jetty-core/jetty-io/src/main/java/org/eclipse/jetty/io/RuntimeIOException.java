@@ -41,6 +41,6 @@ public class RuntimeIOException extends UncheckedIOException
 
     public RuntimeIOException(String message, Throwable cause)
     {
-        super(message, cause instanceof IOException ioe ? ioe : new IOException(cause));
+        super(message, cause instanceof IOException ? (IOException)cause : new IOException(cause));
     }
 }

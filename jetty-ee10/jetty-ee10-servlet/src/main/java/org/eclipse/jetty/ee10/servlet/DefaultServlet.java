@@ -105,22 +105,26 @@ public class DefaultServlet extends ResourceServlet
         if (request.getHttpServletMapping().getMappingMatch() != MappingMatch.DEFAULT)
         {
             if (warned.compareAndSet(false, true))
-                LOG.warn("Incorrect mapping for DefaultServlet at %s. Use ResourceServlet".formatted(request.getHttpServletMapping().getPattern()));
+                LOG.warn(String.format("Incorrect mapping for DefaultServlet at %s. Use ResourceServlet", request.getHttpServletMapping().getPattern()));
             return super.getEncodedPathInContext(request, included);
         }
 
         if (included)
         {
-            if (request.getAttribute(Dispatcher.INCLUDE_SERVLET_PATH) instanceof String servletPath)
-                return URIUtil.encodePath(servletPath);
+            Object servletPath = request.getAttribute(Dispatcher.INCLUDE_SERVLET_PATH);
+            if (servletPath instanceof String)
+                return URIUtil.encodePath((String)servletPath);
 
             // must be an include of a named dispatcher.  Just use the whole URI
             return URIUtil.encodePath(request.getServletPath());
         }
 
-        if (request instanceof ServletApiRequest apiRequest)
+        if (request instanceof ServletApiRequest)
+        {
+            ServletApiRequest apiRequest = (ServletApiRequest)request;
             // Strip the context path from the canonically encoded path, so no need to re-encode (and mess up %2F etc.)
             return Context.getPathInContext(request.getContextPath(), apiRequest.getRequest().getHttpURI().getCanonicalPath());
+        }
 
         return URIUtil.encodePath(request.getServletPath());
     }

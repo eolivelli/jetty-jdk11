@@ -793,16 +793,22 @@ public class HttpConnection extends AbstractMetaDataConnection implements Runnab
         protected void onAborted(Throwable cause)
         {
             // If the cause is a CSE, then take the callback and give it to the CSE to be called once cancellation is complete.
-            if (cause instanceof CancelSendException cancelSend)
+            if (cause instanceof CancelSendException)
+            {
+                CancelSendException cancelSend = (CancelSendException)cause;
                 cancelSend.setCallback(takeCallbackAndReset());
+            }
         }
 
         @Override
         protected void onCompleted(Throwable causeOrNull)
         {
             // If the cause is a CSE, then signal to it that the ICB is complete and any join call can return.
-            if (causeOrNull instanceof CancelSendException cancelSendException)
+            if (causeOrNull instanceof CancelSendException)
+            {
+                CancelSendException cancelSendException = (CancelSendException)causeOrNull;
                 cancelSendException.complete();
+            }
             super.onCompleted(causeOrNull);
         }
 
@@ -933,7 +939,7 @@ public class HttpConnection extends AbstractMetaDataConnection implements Runnab
                             gatherWrite += 1;
                             if (_generator.isChunking() && contentByteBuffer.remaining() > chunkMaxLength)
                             {
-                                ByteBuffer slice = contentByteBuffer.slice(contentByteBuffer.position(), chunkMaxLength);
+                                ByteBuffer slice = BufferUtil.absoluteSlice(contentByteBuffer, contentByteBuffer.position(), chunkMaxLength);
                                 contentByteBuffer.position(contentByteBuffer.position() + chunkMaxLength);
                                 contentByteBuffer = slice;
                             }
@@ -942,14 +948,30 @@ public class HttpConnection extends AbstractMetaDataConnection implements Runnab
                         _bytesOut.addAndGet(bytes);
                         switch (gatherWrite)
                         {
-                            case 7 -> getEndPoint().write(this, headerByteBuffer, chunkByteBuffer, contentByteBuffer);
-                            case 6 -> getEndPoint().write(this, headerByteBuffer, chunkByteBuffer);
-                            case 5 -> getEndPoint().write(this, headerByteBuffer, contentByteBuffer);
-                            case 4 -> getEndPoint().write(this, headerByteBuffer);
-                            case 3 -> getEndPoint().write(this, chunkByteBuffer, contentByteBuffer);
-                            case 2 -> getEndPoint().write(this, chunkByteBuffer);
-                            case 1 -> getEndPoint().write(this, contentByteBuffer);
-                            default -> succeeded();
+                            case 7:
+                                getEndPoint().write(this, headerByteBuffer, chunkByteBuffer, contentByteBuffer);
+                                break;
+                            case 6:
+                                getEndPoint().write(this, headerByteBuffer, chunkByteBuffer);
+                                break;
+                            case 5:
+                                getEndPoint().write(this, headerByteBuffer, contentByteBuffer);
+                                break;
+                            case 4:
+                                getEndPoint().write(this, headerByteBuffer);
+                                break;
+                            case 3:
+                                getEndPoint().write(this, chunkByteBuffer, contentByteBuffer);
+                                break;
+                            case 2:
+                                getEndPoint().write(this, chunkByteBuffer);
+                                break;
+                            case 1:
+                                getEndPoint().write(this, contentByteBuffer);
+                                break;
+                            default:
+                                succeeded();
+                                break;
                         }
 
                         return Action.SCHEDULED;
@@ -1043,46 +1065,6 @@ public class HttpConnection extends AbstractMetaDataConnection implements Runnab
         public String toString()
         {
             return String.format("%s[i=%s,cb=%s]", super.toString(), _info, _callback);
-        }
-
-        private static class CancelSendException extends IOException
-        {
-            private final CountDownLatch _complete = new CountDownLatch(2);
-            private Callback _callback;
-
-            public CancelSendException(Throwable cause)
-            {
-                super(cause);
-            }
-
-            public void complete()
-            {
-                _complete.countDown();
-            }
-
-            public Callback join()
-            {
-                try
-                {
-                    _complete.await();
-                }
-                catch (InterruptedException x)
-                {
-                    Throwable cause = getCause();
-                    if (cause == null)
-                        throw new RuntimeException(x);
-                    ExceptionUtil.addSuppressedIfNotAssociated(cause, x);
-                    throw ExceptionUtil.asRuntimeException(cause);
-                }
-
-                return _callback;
-            }
-
-            public void setCallback(Callback callback)
-            {
-                _callback = callback;
-                _complete.countDown();
-            }
         }
     }
 
@@ -1656,9 +1638,10 @@ public class HttpConnection extends AbstractMetaDataConnection implements Runnab
                 return;
             }
 
-            if (_httpChannel.getRequest().getAttribute(HttpStream.UPGRADE_CONNECTION_ATTRIBUTE) instanceof Connection upgradeConnection)
+            Object upgradeConnection = _httpChannel.getRequest().getAttribute(HttpStream.UPGRADE_CONNECTION_ATTRIBUTE);
+            if (upgradeConnection instanceof Connection)
             {
-                getEndPoint().upgrade(upgradeConnection);
+                getEndPoint().upgrade((Connection)upgradeConnection);
                 _httpChannel.recycle();
                 _parser.close();
                 _generator.reset();
@@ -1753,6 +1736,46 @@ public class HttpConnection extends AbstractMetaDataConnection implements Runnab
         public EndPoint getEndPoint()
         {
             return HttpConnection.this.getEndPoint();
+        }
+    }
+
+    private static class CancelSendException extends IOException
+    {
+        private final CountDownLatch _complete = new CountDownLatch(2);
+        private Callback _callback;
+
+        public CancelSendException(Throwable cause)
+        {
+            super(cause);
+        }
+
+        public void complete()
+        {
+            _complete.countDown();
+        }
+
+        public Callback join()
+        {
+            try
+            {
+                _complete.await();
+            }
+            catch (InterruptedException x)
+            {
+                Throwable cause = getCause();
+                if (cause == null)
+                    throw new RuntimeException(x);
+                ExceptionUtil.addSuppressedIfNotAssociated(cause, x);
+                throw ExceptionUtil.asRuntimeException(cause);
+            }
+
+            return _callback;
+        }
+
+        public void setCallback(Callback callback)
+        {
+            _callback = callback;
+            _complete.countDown();
         }
     }
 

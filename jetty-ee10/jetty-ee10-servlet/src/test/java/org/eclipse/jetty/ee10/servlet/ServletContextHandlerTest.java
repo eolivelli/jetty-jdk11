@@ -1818,8 +1818,9 @@ public class ServletContextHandlerTest
             @Override
             public boolean handle(Request request, Response response, Callback callback) throws Exception
             {
-                if (request instanceof ServletContextRequest servletContextRequest)
+                if (request instanceof ServletContextRequest)
                 {
+                    ServletContextRequest servletContextRequest = (ServletContextRequest)request;
                     ServletApiRequest httpServletRequest = servletContextRequest.getServletApiRequest();
                     Request.addCompletionListener(request, x -> onStreamCompleting(httpServletRequest));
                     return super.handle(request, response, Callback.from(() -> onCallbackCompleting(httpServletRequest), callback));
@@ -1860,12 +1861,10 @@ public class ServletContextHandlerTest
         _server.setHandler(context);
         _server.start();
 
-        String request = """
-            GET /test?param=query HTTP/1.0
-            Host: localhost
-            Test: header
-
-            """;
+        String request = "GET /test?param=query HTTP/1.0\n" +
+            "Host: localhost\n" +
+            "Test: header\n" +
+            "\n";
 
         String response = _connector.getResponse(request);
         assertThat("Response", response, containsString("Test"));
@@ -2611,12 +2610,10 @@ public class ServletContextHandlerTest
         _server.setHandler(context);
         _server.start();
 
-        String rawRequest = """
-            GET /cookies/ HTTP/1.1\r
-            Host: localhost\r
-            Connection: close\r
-            \r
-            """;
+        String rawRequest = "GET /cookies/ HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
 
         String rawResponse = _connector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -2643,12 +2640,10 @@ public class ServletContextHandlerTest
 
         _server.setHandler(context);
         _server.start();
-        String rawRequest = """
-            GET /c1 HTTP/1.1\r
-            Host: localhost\r
-            Connection: close\r
-            \r
-            """;
+        String rawRequest = "GET /c1 HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
 
         String rawResponse = _connector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -2745,12 +2740,10 @@ public class ServletContextHandlerTest
         _server.addBean(mbeanContainer);
         _server.start();
 
-        String rawRequest = """
-            GET /context/servlet/ HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /context/servlet/ HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
         String rawResponse = _connector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         assertThat(response.getStatus(), is(200));
@@ -2769,8 +2762,9 @@ public class ServletContextHandlerTest
         Object trackedResources = mbeanServer.getAttribute(objectName, "trackedResources");
         assertNotNull(trackedResources);
         assertThat(trackedResources, instanceOf(List.class));
-        if (trackedResources instanceof List<?> trackedList)
+        if (trackedResources instanceof List<?>)
         {
+            List<?> trackedList = (List<?>)trackedResources;
             assertThat(trackedList.size(), is(1));
             Resource tracked = (Resource)trackedList.get(0);
             FileSystem originalJarFileSystem = jarResource.getPath().getFileSystem();

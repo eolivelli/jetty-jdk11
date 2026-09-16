@@ -80,7 +80,50 @@ public class LoggerDebugTest
         assertThat(captureDebugLogging.capture.toString(), not(containsString("SLF4J: Failed toString()")));
     }
 
-    record OriginalLogger(JettyLogger logger, JettyLevel level) {}
+    static final class OriginalLogger
+    {
+        private final JettyLogger logger;
+        private final JettyLevel level;
+
+        OriginalLogger(JettyLogger logger, JettyLevel level)
+        {
+            this.logger = logger;
+            this.level = level;
+        }
+
+        public JettyLogger logger()
+        {
+            return logger;
+        }
+
+        public JettyLevel level()
+        {
+            return level;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            OriginalLogger that = (OriginalLogger)obj;
+            return Objects.equals(logger, that.logger) && level == that.level;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(logger, level);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "OriginalLogger[logger=" + logger + ", level=" + level + "]";
+        }
+    }
 
     public static class CaptureDebugLogging extends PrintStream
     {
@@ -95,8 +138,9 @@ public class LoggerDebugTest
             this.out = out;
             ILoggerFactory loggerFactory = LoggerFactory.getILoggerFactory();
             JettyLoggerFactory jettyFactory = null;
-            if (loggerFactory instanceof JettyLoggerFactory factory)
+            if (loggerFactory instanceof JettyLoggerFactory)
             {
+                JettyLoggerFactory factory = (JettyLoggerFactory)loggerFactory;
                 jettyFactory = factory;
             }
             Assumptions.assumeTrue(jettyFactory != null, "Not using jetty-slf4j-impl");

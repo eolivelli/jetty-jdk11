@@ -555,8 +555,9 @@ public abstract class AbstractWebAppMojo extends AbstractMojo
     {
         Toolchain toolchain = getToolchain();
         String javaPath = null;
-        if (toolchain instanceof JavaToolchainImpl javaToolChain)
+        if (toolchain instanceof JavaToolchainImpl)
         {
+            JavaToolchainImpl javaToolChain = (JavaToolchainImpl)toolchain;
             javaPath = javaToolChain.getJavaHome();
         }
         JettyForker jetty = new JettyForker(javaPath);
@@ -585,8 +586,9 @@ public abstract class AbstractWebAppMojo extends AbstractMojo
     {
         Toolchain toolchain = getToolchain();
         String javaPath = null;
-        if (toolchain instanceof JavaToolchainImpl javaToolChain)
+        if (toolchain instanceof JavaToolchainImpl)
         {
+            JavaToolchainImpl javaToolChain = (JavaToolchainImpl)toolchain;
             javaPath = javaToolChain.getJavaHome();
         }
         JettyHomeForker jetty = new JettyHomeForker(javaPath);

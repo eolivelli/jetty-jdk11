@@ -90,7 +90,7 @@ if [ ! -d "$ALT_DEPLOY_DIR" ] ; then
 fi
 
 # DEPLOY_OPTS="-Dmaven.test.failure.ignore=true"
-DEPLOY_OPTS="-DskipTests -Dasciidoctor.skip=false -Dmaven.build.cache.enabled=false"
+DEPLOY_OPTS="-DskipTests -Dasciidoctor.skip=false"
 # DEPLOY_OPTS="$DEPLOY_OPTS -DaltDeploymentRepository=intarget::default::file://$ALT_DEPLOY_DIR/"
 
 rm -rf .release-repository/
@@ -135,10 +135,10 @@ reportMavenTestFailures() {
 
 echo ""
 if proceedyn "Are you sure you want to release using above? (y/N)" n; then
-    mvn clean install -pl build/build-resources/ -Peclipse-release -Dmaven.build.cache.enabled=false
+    mvn clean install -pl build/build-resources/ -Peclipse-release
     echo ""
     if proceedyn "Update VERSION.txt for $VER_RELEASE? (Y/n)" y; then
-        mvn -N -Pupdate-version generate-resources -Dmaven.build.cache.enabled=false -Dwebtide.release.tools.releaseVersion=$VER_RELEASE \
+        mvn -N -Pupdate-version generate-resources -Dwebtide.release.tools.releaseVersion=$VER_RELEASE \
             -Dwebtide.release.tools.tagVersionPrior=$PREV_TAG
         echo "VERIFY the following files (in a different console window) before continuing."
         echo "   VERSION.txt - top section"
@@ -148,7 +148,6 @@ if proceedyn "Are you sure you want to release using above? (y/N)" n; then
     # This is equivalent to 'mvn release:prepare'
     if proceedyn "Update project.versions for $VER_RELEASE? (Y/n)" y; then
         mvn org.codehaus.mojo:versions-maven-plugin:2.18.0:set \
-            -Dmaven.build.cache.enabled=false \
             -Peclipse-release \
             -DgenerateBackupPoms=false \
             -DoldVersion="$VER_CURRENT" \
@@ -167,7 +166,6 @@ if proceedyn "Are you sure you want to release using above? (y/N)" n; then
     # This is equivalent to 'mvn release:perform'
     if proceedyn "Build/Deploy from tag $TAG_NAME? (Y/n)" y; then
         mvn clean deploy -Dbuilt-by="Eclipse Jetty Team" -Peclipse-release $DEPLOY_OPTS
-        mvn njord:publish -Ddrop=false $DEPLOY_OPTS
     fi
     if proceedyn "Update working directory for $VER_NEXT? (Y/n)" y; then
         echo "Update VERSION.txt for $VER_NEXT"
@@ -177,7 +175,6 @@ if proceedyn "Are you sure you want to release using above? (y/N)" n; then
         cat VERSION.txt.backup >> VERSION.txt
         echo "Update project.versions for $VER_NEXT"
         mvn org.codehaus.mojo:versions-maven-plugin:2.18.0:set \
-            -Dmaven.build.cache.enabled=false \
             -Peclipse-release \
             -DgenerateBackupPoms=false \
             -DoldVersion="$VER_RELEASE" \
@@ -199,14 +196,9 @@ if proceedyn "Are you sure you want to release using above? (y/N)" n; then
 
     if proceedyn "Do you want to build changelog.md in target/changelog.md? (Y/n)" y; then
         mvn -N net.webtide.tools:webtide-release-tools-plugin:gh-release \
-            -Dmaven.build.cache.enabled=false \
             -Dwebtide.release.tools.refVersionCurrent=$TAG_NAME \
             -Dwebtide.release.tools.tagVersionPrior=$PREV_TAG -e
     fi
-
-    # here we need to add something to publish to our staging repo
-    # mvn njord:publish -Dnjord.drop=false -Dnjord.publisher=deploy -DaltDeploymentRepository=jetty-staging::https://repository.webtide.net/repository/release-staging/
-    # need an entry in settings.xml for id jetty-staging
 
 else
     echo "Not performing release"

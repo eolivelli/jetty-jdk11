@@ -904,7 +904,7 @@ public class URIUtilTest
         {
             assertTrue(c > 0x20 && c < 0x7f);
             assertFalse(Character.isWhitespace(c));
-            assertFalse(Character.isISOControl(c), "isISOControl(0x%2x)".formatted((byte)c));
+            assertFalse(Character.isISOControl(c), String.format("isISOControl(0x%2x)", (byte)c));
         }
         // check decode to original
         String decoded = URIUtil.decodePath(encoded);
@@ -1079,14 +1079,14 @@ public class URIUtilTest
             // Windows format (absolute and relative)
             args.add(Arguments.of("C:\\path\\to\\foo.jar", "file:///C:/path/to/foo.jar"));
             args.add(Arguments.of("D:\\path\\to\\bogus.txt", "file:///D:/path/to/bogus.txt"));
-            args.add(Arguments.of("\\path\\to\\foo.jar", "file:///%s/path/to/foo.jar".formatted(root)));
-            args.add(Arguments.of("\\path\\to\\bogus.txt", "file:///%s/path/to/bogus.txt".formatted(root)));
+            args.add(Arguments.of("\\path\\to\\foo.jar", String.format("file:///%s/path/to/foo.jar", root)));
+            args.add(Arguments.of("\\path\\to\\bogus.txt", String.format("file:///%s/path/to/bogus.txt", root)));
             // java path format (absolute)
             args.add(Arguments.of("C:/path/to/foo.jar", "file:///C:/path/to/foo.jar"));
             args.add(Arguments.of("D:/path/to/bogus.txt", "file:///D:/path/to/bogus.txt"));
             // java path format (relative)
-            args.add(Arguments.of("/path/to/foo.jar", "file:///%s/path/to/foo.jar".formatted(root)));
-            args.add(Arguments.of("/path/to/bogus.txt", "file:///%s/path/to/bogus.txt".formatted(root)));
+            args.add(Arguments.of("/path/to/foo.jar", String.format("file:///%s/path/to/foo.jar", root)));
+            args.add(Arguments.of("/path/to/bogus.txt", String.format("file:///%s/path/to/bogus.txt", root)));
             // URI format (absolute)
             args.add(Arguments.of("file:///D:/path/to/zed.jar", "file:///D:/path/to/zed.jar"));
             args.add(Arguments.of("file:/e:/zed/yotta.txt", "file:///e:/zed/yotta.txt"));

@@ -172,7 +172,7 @@ public final class ComplianceUtils
 
             switch (httpField.getHeader())
             {
-                case CONTENT_LENGTH ->
+                case CONTENT_LENGTH:
                 {
                     if (seenContentLength && !allows(httpCompliance, HttpCompliance.Violation.MULTIPLE_CONTENT_LENGTHS, listener))
                     {
@@ -188,16 +188,18 @@ public final class ComplianceUtils
                         throw new HttpException.RuntimeException(HttpStatus.BAD_REQUEST_400, HttpCompliance.Violation.TRANSFER_ENCODING_WITH_CONTENT_LENGTH.getDescription());
                     }
                     seenContentLength = true;
+                    break;
                 }
-                case TRANSFER_ENCODING ->
+                case TRANSFER_ENCODING:
                 {
                     if (seenContentLength && !allows(httpCompliance, HttpCompliance.Violation.TRANSFER_ENCODING_WITH_CONTENT_LENGTH, listener))
                     {
                         throw new HttpException.RuntimeException(HttpStatus.BAD_REQUEST_400, HttpCompliance.Violation.TRANSFER_ENCODING_WITH_CONTENT_LENGTH.getDescription());
                     }
                     seenTransferEncoding = true;
+                    break;
                 }
-                case HOST ->
+                case HOST:
                 {
                     if (seenHostHeader && !allows(httpCompliance, HttpCompliance.Violation.DUPLICATE_HOST_HEADERS, listener))
                     {
@@ -216,6 +218,7 @@ public final class ComplianceUtils
                         }
                     }
                     seenHostHeader = true;
+                    break;
                 }
             }
 

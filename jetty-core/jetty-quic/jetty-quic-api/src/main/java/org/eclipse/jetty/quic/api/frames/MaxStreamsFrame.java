@@ -36,6 +36,6 @@ public class MaxStreamsFrame extends Frame
     @Override
     public String toString()
     {
-        return "%s[%s,maxStreams=%d]".formatted(super.toString(), isBidirectional() ? "bi" : "uni", getMaxStreams());
+        return String.format("%s[%s,maxStreams=%d]", super.toString(), isBidirectional() ? "bi" : "uni", getMaxStreams());
     }
 }

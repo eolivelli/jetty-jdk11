@@ -14,6 +14,7 @@
 package org.eclipse.jetty.server.handler;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritePendingException;
 import java.util.ArrayDeque;
@@ -218,8 +219,10 @@ public class ThreadLimitHandler extends ConditionalHandler.Abstract
         // If no remote IP from a header, determine it directly from the channel
         // Do not use the request methods, as they may have been lied to by the
         // RequestCustomizer!
-        if (baseRequest.getConnectionMetaData().getRemoteSocketAddress() instanceof InetSocketAddress inetAddr)
+        SocketAddress remoteSocketAddress = baseRequest.getConnectionMetaData().getRemoteSocketAddress();
+        if (remoteSocketAddress instanceof InetSocketAddress)
         {
+            InetSocketAddress inetAddr = (InetSocketAddress)remoteSocketAddress;
             // TODO ????
             if (inetAddr.getAddress() != null)
                 return inetAddr.getAddress().getHostAddress();
@@ -350,25 +353,29 @@ public class ThreadLimitHandler extends ConditionalHandler.Abstract
         {
             switch (invocationType)
             {
-                case NON_BLOCKING ->
+                case NON_BLOCKING:
                 {
                     Runnable onContent = _onContent.getAndSet(null);
                     onContent.run();
+                    break;
                 }
-                case EITHER ->
+                case EITHER:
                 {
                     Runnable onContent = _onContent.getAndSet(null);
                     Invocable.invokeNonBlocking(onContent);
+                    break;
                 }
-                case BLOCKING ->
+                case BLOCKING:
                 {
                     Permit permit = _remote.acquire();
                     if (permit.isAllocated())
                         onPermittedContent(permit);
                     else
                         permit.whenAllocated(this::onPermittedContent);
+                    break;
                 }
-                default -> throw new IllegalStateException(invocationType.name());
+                default:
+                    throw new IllegalStateException(invocationType.name());
             }
         }
 
@@ -425,25 +432,29 @@ public class ThreadLimitHandler extends ConditionalHandler.Abstract
             Callback callback = _writeCallback.get();
             switch (callback.getInvocationType())
             {
-                case NON_BLOCKING ->
+                case NON_BLOCKING:
                 {
                     _writeCallback.set(null);
                     callback.succeeded();
+                    break;
                 }
-                case EITHER ->
+                case EITHER:
                 {
                     _writeCallback.set(null);
                     Invocable.invokeNonBlocking(callback::succeeded);
+                    break;
                 }
-                case BLOCKING ->
+                case BLOCKING:
                 {
                     Permit permit = _remote.acquire();
                     if (permit.isAllocated())
                         permittedSuccess(permit);
                     else
                         permit.whenAllocated(this::permittedSuccess);
+                    break;
                 }
-                default -> throw new IllegalStateException(callback.getInvocationType().name());
+                default:
+                    throw new IllegalStateException(callback.getInvocationType().name());
             }
         }
 
@@ -465,25 +476,29 @@ public class ThreadLimitHandler extends ConditionalHandler.Abstract
             Callback callback = _writeCallback.get();
             switch (callback.getInvocationType())
             {
-                case NON_BLOCKING ->
+                case NON_BLOCKING:
                 {
                     _writeCallback.set(null);
                     callback.failed(x);
+                    break;
                 }
-                case EITHER ->
+                case EITHER:
                 {
                     _writeCallback.set(null);
                     Invocable.invokeNonBlocking(() -> callback.failed(x));
+                    break;
                 }
-                case BLOCKING ->
+                case BLOCKING:
                 {
                     Permit permit = _remote.acquire();
                     if (permit.isAllocated())
                         permittedFailure(permit, x);
                     else
                         permit.whenAllocated(p -> permittedFailure(p, x));
+                    break;
                 }
-                default -> throw new IllegalStateException(callback.getInvocationType().name());
+                default:
+                    throw new IllegalStateException(callback.getInvocationType().name());
             }
         }
 

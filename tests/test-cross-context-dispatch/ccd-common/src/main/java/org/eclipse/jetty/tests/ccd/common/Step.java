@@ -20,7 +20,7 @@ public interface Step
         String[] parts = line.split("\\|");
         switch (parts[1])
         {
-            case "CONTEXT_FORWARD" ->
+            case "CONTEXT_FORWARD":
             {
                 ContextRedispatch step = new ContextRedispatch();
                 step.setDispatchType(DispatchType.FORWARD);
@@ -28,7 +28,7 @@ public interface Step
                 step.setDispatchPath(parts[3]);
                 return step;
             }
-            case "CONTEXT_INCLUDE" ->
+            case "CONTEXT_INCLUDE":
             {
                 ContextRedispatch step = new ContextRedispatch();
                 step.setDispatchType(DispatchType.INCLUDE);
@@ -36,27 +36,27 @@ public interface Step
                 step.setDispatchPath(parts[3]);
                 return step;
             }
-            case "REQUEST_FORWARD" ->
+            case "REQUEST_FORWARD":
             {
                 RequestDispatch step = new RequestDispatch();
                 step.setDispatchType(DispatchType.FORWARD);
                 step.setDispatchPath(parts[2]);
                 return step;
             }
-            case "REQUEST_INCLUDE" ->
+            case "REQUEST_INCLUDE":
             {
                 RequestDispatch step = new RequestDispatch();
                 step.setDispatchType(DispatchType.INCLUDE);
                 step.setDispatchPath(parts[2]);
                 return step;
             }
-            case "GET_HTTP_SESSION_ATTRIBUTE" ->
+            case "GET_HTTP_SESSION_ATTRIBUTE":
             {
                 GetHttpSession step = new GetHttpSession();
                 step.setName(parts[2]);
                 return step;
             }
-            case "SET_HTTP_SESSION_ATTRIBUTE" ->
+            case "SET_HTTP_SESSION_ATTRIBUTE":
             {
                 String name = parts[2];
                 String value = parts[3];

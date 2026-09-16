@@ -60,31 +60,31 @@ public class LegacyQuotedStringTokenizer implements QuotedStringTokenizer
     @Override
     public boolean needsQuoting(char c)
     {
-        return LegacyTokenizer.needsQuoting(c, _delim);
+        return Legacy.needsQuoting(c, _delim);
     }
 
     @Override
     public String quoteIfNeeded(String s)
     {
-        return LegacyTokenizer.quoteIfNeeded(s, _delim);
+        return Legacy.quoteIfNeeded(s, _delim);
     }
 
     @Override
     public void quoteIfNeeded(StringBuilder buf, String str)
     {
-        LegacyTokenizer.quoteIfNeeded(buf, str, _delim);
+        Legacy.quoteIfNeeded(buf, str, _delim);
     }
 
     @Override
     public void quote(Appendable buffer, String input)
     {
-        LegacyTokenizer.quote(buffer, input);
+        Legacy.quote(buffer, input);
     }
 
     @Override
     public String unquote(String s)
     {
-        return LegacyTokenizer.unquote(s);
+        return Legacy.unquote(s);
     }
 
     private class LegacyTokenizer extends StringTokenizer
@@ -261,7 +261,10 @@ public class LegacyQuotedStringTokenizer implements QuotedStringTokenizer
         {
             return -1;
         }
+    }
 
+    private static final class Legacy
+    {
         public static boolean needsQuoting(char c, String delim)
         {
             return c == '\\' || c == '"' || c == '\'' || Character.isWhitespace(c) || delim.indexOf(c) >= 0;

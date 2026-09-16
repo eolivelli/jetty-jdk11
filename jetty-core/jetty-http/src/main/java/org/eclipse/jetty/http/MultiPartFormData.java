@@ -22,12 +22,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.io.Content;
@@ -128,10 +130,16 @@ public class MultiPartFormData
     public static Parts getParts(Attributes attributes)
     {
         Object attribute = attributes.getAttribute(MultiPartFormData.class.getName());
-        if (attribute instanceof Parts parts)
+        if (attribute instanceof Parts)
+        {
+            Parts parts = (Parts)attribute;
             return parts;
-        if (attribute instanceof CompletableFuture<?> futureParts && futureParts.isDone())
+        }
+        if (attribute instanceof CompletableFuture<?> && ((CompletableFuture<?>)attribute).isDone())
+        {
+            CompletableFuture<?> futureParts = (CompletableFuture<?>)attribute;
             return (Parts)futureParts.join();
+        }
         return null;
     }
 
@@ -271,10 +279,16 @@ public class MultiPartFormData
     public static CompletableFuture<Parts> get(Attributes attributes)
     {
         Object value = attributes.getAttribute(MultiPartFormData.class.getName());
-        if (value instanceof CompletableFuture<?> cfp)
+        if (value instanceof CompletableFuture<?>)
+        {
+            CompletableFuture<?> cfp = (CompletableFuture<?>)value;
             return (CompletableFuture<Parts>)cfp;
-        if (value instanceof Parts parts)
+        }
+        if (value instanceof Parts)
+        {
+            Parts parts = (Parts)value;
             return CompletableFuture.completedFuture(parts);
+        }
         return null;
     }
 
@@ -327,9 +341,9 @@ public class MultiPartFormData
          */
         public List<MultiPart.Part> getAll(String name)
         {
-            return parts.stream()
+            return Collections.unmodifiableList(parts.stream()
                 .filter(part -> part.getName().equals(name))
-                .toList();
+                .collect(Collectors.toList()));
         }
 
         /**
@@ -502,7 +516,7 @@ public class MultiPartFormData
                     length += chunk.getByteBuffer().remaining();
                     long max = getMaxLength();
                     if (max >= 0 && length > max)
-                        throw new IllegalStateException("max length exceeded: %d".formatted(max));
+                        throw new IllegalStateException(String.format("max length exceeded: %d", max));
                     parser.parse(chunk);
                     listener.rethrowIfFailed();
                     return listener.getParts();
@@ -720,7 +734,7 @@ public class MultiPartFormData
                 size += buffer.remaining();
                 if (maxPartSize >= 0 && size > maxPartSize)
                 {
-                    onFailure(new IllegalStateException("max file size exceeded: %d".formatted(maxPartSize)));
+                    onFailure(new IllegalStateException(String.format("max file size exceeded: %d", maxPartSize)));
                     return;
                 }
 
@@ -772,7 +786,7 @@ public class MultiPartFormData
                     {
                         if (size > maxMemoryPartSize)
                         {
-                            onFailure(new IllegalStateException("max memory file size exceeded: %d".formatted(maxMemoryPartSize)));
+                            onFailure(new IllegalStateException(String.format("max memory file size exceeded: %d", maxMemoryPartSize)));
                             return;
                         }
                     }
@@ -827,16 +841,19 @@ public class MultiPartFormData
                     {
                         switch (StringUtil.asciiToLowerCase(value))
                         {
-                            case "base64" ->
+                            case "base64":
                                 onViolation(MultiPartCompliance.Violation.BASE64_TRANSFER_ENCODING);
-                            case "quoted-printable" ->
+                                break;
+                            case "quoted-printable":
                                 onViolation(MultiPartCompliance.Violation.QUOTED_PRINTABLE_TRANSFER_ENCODING);
-                            case "8bit", "binary" ->
-                            {
+                                break;
+                            case "8bit":
+                            case "binary":
                                 // ignore
-                            }
-                            default ->
+                                break;
+                            default:
                                 onViolation(MultiPartCompliance.Violation.CONTENT_TRANSFER_ENCODING);
+                                break;
                         }
                     }
 

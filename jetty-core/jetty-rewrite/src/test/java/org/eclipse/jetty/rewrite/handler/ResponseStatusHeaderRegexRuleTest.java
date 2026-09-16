@@ -47,11 +47,9 @@ public class ResponseStatusHeaderRegexRuleTest extends AbstractRuleTest
         rule.setHeaderName("Regex-Test");
         start(rule);
 
-        String request = """
-            GET /test HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /test HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(200, response.getStatus());
@@ -65,12 +63,10 @@ public class ResponseStatusHeaderRegexRuleTest extends AbstractRuleTest
         rule.setCode(403);
         start(rule);
 
-        String request = """
-            GET /test HTTP/1.1
-            Host: localhost
-            Regex-Test: random stuff
-                        
-            """;
+        String request = "GET /test HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Regex-Test: random stuff\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(403, response.getStatus());
@@ -85,12 +81,10 @@ public class ResponseStatusHeaderRegexRuleTest extends AbstractRuleTest
         rule.setCode(403);
         start(rule);
 
-        String request = """
-            GET /test HTTP/1.1
-            Host: localhost
-            Regex-Test: value
-                        
-            """;
+        String request = "GET /test HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Regex-Test: value\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(403, response.getStatus());
@@ -105,12 +99,10 @@ public class ResponseStatusHeaderRegexRuleTest extends AbstractRuleTest
         rule.setCode(403);
         start(rule);
 
-        String request = """
-            GET /test HTTP/1.1
-            Host: localhost
-            Regex-Test: this is the value found
-                        
-            """;
+        String request = "GET /test HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Regex-Test: this is the value found\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(403, response.getStatus());
@@ -125,12 +117,10 @@ public class ResponseStatusHeaderRegexRuleTest extends AbstractRuleTest
         rule.setMessage("Matched");
         start(rule);
 
-        String request = """
-            GET /test HTTP/1.1
-            Host: localhost
-            Regex-Test: random stuff
-                        
-            """;
+        String request = "GET /test HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Regex-Test: random stuff\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(403, response.getStatus());

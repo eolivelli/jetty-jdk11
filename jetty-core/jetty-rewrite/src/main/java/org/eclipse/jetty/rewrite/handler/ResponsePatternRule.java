@@ -104,6 +104,6 @@ public class ResponsePatternRule extends PatternRule
     @Override
     public String toString()
     {
-        return "%s[response:%d>%s]".formatted(super.toString(), getCode(), getMessage());
+        return String.format("%s[response:%d>%s]", super.toString(), getCode(), getMessage());
     }
 }

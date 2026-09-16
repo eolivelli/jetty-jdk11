@@ -44,7 +44,6 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ContextHandlerCollectionTest
 {
@@ -134,19 +133,23 @@ public class ContextHandlerCollectionTest
         {
             server.start();
 
-            LocalConnector connector = switch (useConnectorNum)
-                {
-                    case 0 -> connector0;
-                    case 1 -> connector1;
-                    default -> fail("Unsupported connector number: " + useConnectorNum);
-                };
+            LocalConnector connector;
+            switch (useConnectorNum)
+            {
+                case 0:
+                    connector = connector0;
+                    break;
+                case 1:
+                    connector = connector1;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported connector number: " + useConnectorNum);
+            }
 
-            String rawRequest = ("""
-                GET %s HTTP/1.1\r
-                Host: %s\r
-                Connection: close\r
-                \r
-                """).formatted(uri, host);
+            String rawRequest = String.format(("GET %s HTTP/1.1\r\n" +
+                "Host: %s\r\n" +
+                "Connection: close\r\n" +
+                "\r\n"), uri, host);
 
             String rawResponse = connector.getResponse(rawRequest);
             HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -213,12 +216,10 @@ public class ContextHandlerCollectionTest
         {
             server.start();
 
-            String rawRequest = """
-                GET / HTTP/1.1\r
-                Host: %s\r
-                Connection:close\r
-                \r
-                """.formatted(requestHost);
+            String rawRequest = String.format("GET / HTTP/1.1\r\n" +
+                "Host: %s\r\n" +
+                "Connection:close\r\n" +
+                "\r\n", requestHost);
 
             String rawResponse = connector.getResponse(rawRequest);
             HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -287,12 +288,10 @@ public class ContextHandlerCollectionTest
         {
             server.start();
 
-            String rawRequest = """
-                GET / HTTP/1.1\r
-                Host: %s\r
-                Connection:close\r
-                \r
-                """.formatted(requestHost);
+            String rawRequest = String.format("GET / HTTP/1.1\r\n" +
+                "Host: %s\r\n" +
+                "Connection:close\r\n" +
+                "\r\n", requestHost);
 
             String rawResponse = connector.getResponse(rawRequest);
             HttpTester.Response response = HttpTester.parseResponse(rawResponse);

@@ -510,8 +510,11 @@ public class ManagedSession implements Session
         {
             // if session is not valid, don't accept the set
             checkValidForWrite();
-            if (value instanceof Session.ValueListener valueListener)
+            if (value instanceof Session.ValueListener)
+            {
+                Session.ValueListener valueListener = (Session.ValueListener)value;
                 _valueListenerList.add(valueListener);
+            }
             old = _sessionData.setAttribute(name, value);
         }
         if (value == null && old == null)
@@ -525,8 +528,11 @@ public class ManagedSession implements Session
     public Object removeAttribute(String name)
     {
         Object value = setAttribute(name, null);
-        if (value instanceof Session.ValueListener valueListener)
+        if (value instanceof Session.ValueListener)
+        {
+            Session.ValueListener valueListener = (Session.ValueListener)value;
             _valueListenerList.remove(valueListener);
+        }
         return value;
     }
 

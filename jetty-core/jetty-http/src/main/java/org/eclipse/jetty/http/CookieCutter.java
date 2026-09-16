@@ -198,10 +198,18 @@ public class CookieCutter implements CookieParser
                                             String lowercaseName = name.toLowerCase(Locale.ENGLISH);
                                             switch (lowercaseName)
                                             {
-                                                case "$path" -> cookiePath = value;
-                                                case "$domain" -> cookieDomain = value;
-                                                case "$port" -> cookieComment = "$port=" + value;
-                                                case "$version" -> cookieVersion = Integer.parseInt(value);
+                                                case "$path":
+                                                    cookiePath = value;
+                                                    break;
+                                                case "$domain":
+                                                    cookieDomain = value;
+                                                    break;
+                                                case "$port":
+                                                    cookieComment = "$port=" + value;
+                                                    break;
+                                                case "$version":
+                                                    cookieVersion = Integer.parseInt(value);
+                                                    break;
                                             }
                                         }
                                     }

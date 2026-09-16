@@ -37,25 +37,29 @@ public class ResetStreamParser
         {
             switch (state)
             {
-                case FRAME_TYPE ->
+                case FRAME_TYPE:
                 {
                     byteBuffer.get();
                     state = State.STREAM_ID;
+                    break;
                 }
-                case STREAM_ID ->
+                case STREAM_ID:
                 {
                     if (varLenInt.tryDecode(byteBuffer, v -> streamId = v))
                         state = State.ERROR_CODE;
+                    break;
                 }
-                case ERROR_CODE ->
+                case ERROR_CODE:
                 {
                     if (varLenInt.tryDecode(byteBuffer, v -> errorCode = v))
                         state = State.FINAL_SIZE;
+                    break;
                 }
-                case FINAL_SIZE ->
+                case FINAL_SIZE:
                 {
                     if (varLenInt.tryDecode(byteBuffer, v -> finalSize = v))
                         return result();
+                    break;
                 }
             }
         }

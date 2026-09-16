@@ -35,16 +35,14 @@ public class WebDescriptorTest
     public void testXmlWithXsd(WorkDir workDir) throws Exception
     {
         Path xml = workDir.getEmptyPathDir().resolve("test.xml");
-        Files.writeString(xml, """
-            <?xml version="1.0" encoding="UTF-8"?>
-            <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
-                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                     metadata-complete="false"
-                     xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
-                     version="6.0">
-              <display-name>Empty WebApp Descriptor</display-name>
-            </web-app>
-            """, StandardCharsets.UTF_8);
+        Files.writeString(xml, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\"\n" +
+            "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+            "         metadata-complete=\"false\"\n" +
+            "         xsi:schemaLocation=\"https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd\"\n" +
+            "         version=\"6.0\">\n" +
+            "  <display-name>Empty WebApp Descriptor</display-name>\n" +
+            "</web-app>\n", StandardCharsets.UTF_8);
 
         WebDescriptor webDescriptor = new WebDescriptor(ResourceFactory.root().newResource(xml));
         XmlParser xmlParser = new XmlParser(true);

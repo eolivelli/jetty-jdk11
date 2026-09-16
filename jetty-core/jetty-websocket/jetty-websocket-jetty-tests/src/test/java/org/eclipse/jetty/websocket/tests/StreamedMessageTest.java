@@ -15,6 +15,7 @@ package org.eclipse.jetty.websocket.tests;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -72,12 +73,47 @@ public class StreamedMessageTest
     }
 
     @WebSocket()
-    public record TestSocket(BinaryOnMessage onMessage)
+    public static final class TestSocket
     {
+        private final BinaryOnMessage onMessage;
+
+        public TestSocket(BinaryOnMessage onMessage)
+        {
+            this.onMessage = onMessage;
+        }
+
+        public BinaryOnMessage onMessage()
+        {
+            return onMessage;
+        }
+
         @OnWebSocketMessage
         public void onMessage(Session session, InputStream inputStream) throws Exception
         {
             onMessage.accept(session, inputStream);
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            TestSocket that = (TestSocket)obj;
+            return Objects.equals(onMessage, that.onMessage);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(onMessage);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "TestSocket[onMessage=" + onMessage + "]";
         }
     }
 

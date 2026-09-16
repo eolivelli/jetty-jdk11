@@ -36,8 +36,11 @@ public class MultiplexConnectionPool extends AbstractConnectionPool
         return connection ->
         {
             int maxMultiplex = defaultMaxMultiplex;
-            if (connection instanceof MaxMultiplexable maxMultiplexable)
+            if (connection instanceof MaxMultiplexable)
+            {
+                MaxMultiplexable maxMultiplexable = (MaxMultiplexable)connection;
                 maxMultiplex = maxMultiplexable.getMaxMultiplex();
+            }
             return maxMultiplex;
         };
     }

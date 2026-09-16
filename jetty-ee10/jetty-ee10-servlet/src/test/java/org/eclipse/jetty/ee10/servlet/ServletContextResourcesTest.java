@@ -110,12 +110,10 @@ public class ServletContextResourcesTest
             server.setHandler(context);
         });
 
-        String req1 = """
-            GET /context/ HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """;
+        String req1 = "GET /context/ HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
 
         String response = connector.getResponse(req1);
         assertThat("Response", response, containsString("Resource '/': <null>"));
@@ -134,12 +132,10 @@ public class ServletContextResourcesTest
             server.setHandler(context);
         });
 
-        String req1 = """
-            GET /context/content.txt HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """;
+        String req1 = "GET /context/content.txt HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
 
         String response = connector.getResponse(req1);
         assertThat("Response", response, containsString("Resource '/content.txt': content goes here"));
@@ -204,32 +200,31 @@ public class ServletContextResourcesTest
             server.setHandler(context);
         });
 
-        String req1 = """
-            GET /context/malformed/ HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """;
+        String req1 = "GET /context/malformed/ HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
 
         String rawResponse = connector.getResponse(req1);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         switch (response.getStatus())
         {
-            case STATUS_EXPECTED ->
+            case STATUS_EXPECTED:
             {
                 // Expected path for malformed input
                 assertThat("response.status", response.getStatus(), is(STATUS_EXPECTED));
                 String body = response.getContent();
                 assertThat("response.body", body, containsString(
                     String.format("%s:%s", MalformedURLException.class.getName(), resourceName)));
+                break;
             }
-            case 200 ->
-            {
+            case 200:
                 // Not malformed enough, but the API is behaving properly and returns null.
-            }
-            default ->
+                break;
+            default:
             {
                 fail("Test failed: Unexpected behavior: Status Code: " + response.getStatus());
+                break;
             }
         }
     }

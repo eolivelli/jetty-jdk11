@@ -103,10 +103,8 @@ public class ContextHandlerTest
         _contextHandler.setHandler(new HelloHandler());
         _server.start();
 
-        String rawResponse = _connector.getResponse("""
-            GET / HTTP/1.0
-            
-            """);
+        String rawResponse = _connector.getResponse("GET / HTTP/1.0\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -121,10 +119,8 @@ public class ContextHandlerTest
         _contextHandler.setHandler(new HelloHandler());
         _server.start();
 
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET / HTTP/1.0
-            
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET / HTTP/1.0\n" +
+            "\n"));
 
         assertThat(response.getStatus(), is(200));
         assertThat(response.getField(HttpHeader.CONTENT_LENGTH).getIntValue(), greaterThan(0));
@@ -134,10 +130,8 @@ public class ContextHandlerTest
         _contextHandler.setContextPath("/ctx");
         _contextHandler.start();
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/ HTTP/1.0
-            
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx/ HTTP/1.0\n" +
+            "\n"));
 
         assertThat(response.getStatus(), is(200));
         assertThat(response.getField(HttpHeader.CONTENT_LENGTH).getIntValue(), greaterThan(0));
@@ -150,10 +144,8 @@ public class ContextHandlerTest
         _contextHandler.setHandler(new HelloHandler());
         _server.start();
 
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET http://localhost:8080 HTTP/1.0
-            
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("GET http://localhost:8080 HTTP/1.0\n" +
+            "\n"));
 
         assertThat(response.getStatus(), is(200));
         assertThat(response.getField(HttpHeader.CONTENT_LENGTH).getIntValue(), greaterThan(0));
@@ -163,19 +155,15 @@ public class ContextHandlerTest
         _contextHandler.setContextPath("/ctx");
         _contextHandler.start();
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx HTTP/1.0
-            
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx HTTP/1.0\n" +
+            "\n"));
         assertThat(response.getStatus(), is(HttpStatus.MOVED_PERMANENTLY_301));
         assertThat(response.getField(HttpHeader.LOCATION).getValue(), is("/ctx/"));
 
         _contextHandler.setAllowNullPathInfo(true);
 
-        response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx HTTP/1.0
-            
-            """));
+        response = HttpTester.parseResponse(_connector.getResponse("GET /ctx HTTP/1.0\n" +
+            "\n"));
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
         assertThat(response.getField(HttpHeader.CONTENT_LENGTH).getIntValue(), greaterThan(0));
         assertThat(response.getContent(), containsString("Hello"));
@@ -188,10 +176,8 @@ public class ContextHandlerTest
         _contextHandler.setHandler(new DumpHandler());
         _server.start();
 
-        String rawResponse = _connector.getResponse("""
-            GET /context/path/info HTTP/1.0
-            
-            """);
+        String rawResponse = _connector.getResponse("GET /context/path/info HTTP/1.0\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -236,10 +222,8 @@ public class ContextHandlerTest
         });
         _server.start();
 
-        String rawResponse = _connector.getResponse("""
-            GET /context/test HTTP/1.0
-            
-            """);
+        String rawResponse = _connector.getResponse("GET /context/test HTTP/1.0\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -256,15 +240,13 @@ public class ContextHandlerTest
         _contextHandler.setHandler(new DumpHandler());
         _server.start();
 
-        String rawResponse = _connector.getResponse("""
-            POST /context/path/info?A=1&B=2 HTTP/1.0
-            Host: localhost
-            HeaderName: headerValue
-            Content-Type: %s
-            Content-Length: 7
-            
-            C=3&D=4
-            """.formatted(MimeTypes.Type.FORM_ENCODED.asString()));
+        String rawResponse = _connector.getResponse(String.format("POST /context/path/info?A=1&B=2 HTTP/1.0\n" +
+            "Host: localhost\n" +
+            "HeaderName: headerValue\n" +
+            "Content-Type: %s\n" +
+            "Content-Length: 7\n" +
+            "\n" +
+            "C=3&D=4\n", MimeTypes.Type.FORM_ENCODED.asString()));
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -274,12 +256,10 @@ public class ContextHandlerTest
         assertThat(response.getContent(), containsString("contextPath=/context"));
         assertThat(response.getContent(), containsString("pathInfo=/path/info"));
         assertThat(response.getContent(), containsString("contentType=application/x-www-form-urlencoded"));
-        assertThat(response.getContent(), containsString("""
-            A=1
-            B=2
-            C=3
-            D=4
-            """));
+        assertThat(response.getContent(), containsString("A=1\n" +
+            "B=2\n" +
+            "C=3\n" +
+            "D=4\n"));
     }
 
     @Test
@@ -295,34 +275,29 @@ public class ContextHandlerTest
                 baseRequest.setHandled(true);
                 response.setStatus(200);
                 response.setContentType("text/plain");
-                response.getOutputStream().print("""
-                    pathInContext=%s
-                    baseRequest.hashCode=%x
-                    coreRequest.id=%s
-                    coreRequest.connectionMetaData.id=%s
-                    coreRequest.connectionMetaData.persistent=%b
-                    
-                    """.formatted(
-                        org.eclipse.jetty.server.Request.getPathInContext(coreRequest),
-                        baseRequest.hashCode(),
-                        coreRequest.getId(),
-                        coreRequest.getConnectionMetaData().getId(),
-                        coreRequest.getConnectionMetaData().isPersistent()
-                ));
+                response.getOutputStream().print(String.format("pathInContext=%s\n" +
+                    "baseRequest.hashCode=%x\n" +
+                    "coreRequest.id=%s\n" +
+                    "coreRequest.connectionMetaData.id=%s\n" +
+                    "coreRequest.connectionMetaData.persistent=%b\n" +
+                    "\n",
+                    org.eclipse.jetty.server.Request.getPathInContext(coreRequest),
+                    baseRequest.hashCode(),
+                    coreRequest.getId(),
+                    coreRequest.getConnectionMetaData().getId(),
+                    coreRequest.getConnectionMetaData().isPersistent()));
             }
         });
         _server.start();
 
         try (LocalConnector.LocalEndPoint endPoint = _connector.connect())
         {
-            endPoint.addInput("""
-                GET /one HTTP/1.1
-                Host: localhost
-                            
-                GET /two HTTP/1.1
-                Host: localhost
-                            
-                """);
+            endPoint.addInput("GET /one HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "\n" +
+                "GET /two HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "\n");
 
             String rawResponse = endPoint.getResponse();
             HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -361,28 +336,29 @@ public class ContextHandlerTest
 
                 switch (request.getDispatcherType())
                 {
-                    case REQUEST ->
+                    case REQUEST:
                     {
                         AsyncContext async = request.startAsync();
                         async.dispatch();
+                        break;
                     }
-                    case ASYNC ->
+                    case ASYNC:
                     {
                         response.setStatus(200);
                         response.setContentType("text/plain");
                         response.getOutputStream().print("Async\n");
+                        break;
                     }
 
-                    default -> throw new IllegalStateException();
+                    default:
+                        throw new IllegalStateException();
                 }
             }
         });
         _server.start();
 
-        String rawResponse = _connector.getResponse("""
-            GET / HTTP/1.0
-            
-            """);
+        String rawResponse = _connector.getResponse("GET / HTTP/1.0\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -403,7 +379,7 @@ public class ContextHandlerTest
 
                 switch (request.getDispatcherType())
                 {
-                    case REQUEST ->
+                    case REQUEST:
                     {
                         AsyncContext async = request.startAsync();
                         async.start(() ->
@@ -418,24 +394,25 @@ public class ContextHandlerTest
                                 e.printStackTrace();
                             }
                         });
+                        break;
                     }
-                    case ASYNC ->
+                    case ASYNC:
                     {
                         response.setStatus(200);
                         response.setContentType("text/plain");
                         response.getOutputStream().print("Async\n");
+                        break;
                     }
 
-                    default -> throw new IllegalStateException();
+                    default:
+                        throw new IllegalStateException();
                 }
             }
         });
         _server.start();
 
-        String rawResponse = _connector.getResponse("""
-            GET / HTTP/1.0
-            
-            """);
+        String rawResponse = _connector.getResponse("GET / HTTP/1.0\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -456,28 +433,29 @@ public class ContextHandlerTest
 
                 switch (request.getDispatcherType())
                 {
-                    case REQUEST ->
+                    case REQUEST:
                     {
                         AsyncContext async = request.startAsync();
                         async.dispatch("/async");
+                        break;
                     }
-                    case ASYNC ->
+                    case ASYNC:
                     {
                         response.setStatus(200);
                         response.setContentType("text/plain");
-                        response.getOutputStream().print("Async %s\n".formatted(baseRequest.getPathInContext()));
+                        response.getOutputStream().print(String.format("Async %s\n", baseRequest.getPathInContext()));
+                        break;
                     }
 
-                    default -> throw new IllegalStateException();
+                    default:
+                        throw new IllegalStateException();
                 }
             }
         });
         _server.start();
 
-        String rawResponse = _connector.getResponse("""
-            GET / HTTP/1.0
-            
-            """);
+        String rawResponse = _connector.getResponse("GET / HTTP/1.0\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -498,7 +476,7 @@ public class ContextHandlerTest
 
                 switch (request.getDispatcherType())
                 {
-                    case REQUEST ->
+                    case REQUEST:
                     {
                         AsyncContext async = request.startAsync(
                             new HttpServletRequestWrapper(request)
@@ -519,24 +497,25 @@ public class ContextHandlerTest
                             }
                         );
                         async.dispatch();
+                        break;
                     }
-                    case ASYNC ->
+                    case ASYNC:
                     {
                         response.setStatus(Integer.MAX_VALUE);
                         response.setContentType("text/plain");
-                        response.getOutputStream().print("Async %s\n".formatted(request.getRemoteUser()));
+                        response.getOutputStream().print(String.format("Async %s\n", request.getRemoteUser()));
+                        break;
                     }
 
-                    default -> throw new IllegalStateException();
+                    default:
+                        throw new IllegalStateException();
                 }
             }
         });
         _server.start();
 
-        String rawResponse = _connector.getResponse("""
-            GET / HTTP/1.0
-            
-            """);
+        String rawResponse = _connector.getResponse("GET / HTTP/1.0\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -571,10 +550,8 @@ public class ContextHandlerTest
         });
         _server.start();
 
-        String rawResponse = _connector.getResponse("""
-            GET / HTTP/1.0
-            
-            """);
+        String rawResponse = _connector.getResponse("GET / HTTP/1.0\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -620,10 +597,8 @@ public class ContextHandlerTest
         });
         _server.start();
 
-        String rawResponse = _connector.getResponse("""
-            GET / HTTP/1.0
-            
-            """);
+        String rawResponse = _connector.getResponse("GET / HTTP/1.0\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -645,7 +620,7 @@ public class ContextHandlerTest
                 if (request.getDispatcherType() == DispatcherType.ERROR)
                 {
                     response.setContentType("text/plain");
-                    response.getOutputStream().print("ERROR %s\n".formatted(baseRequest.getPathInContext()));
+                    response.getOutputStream().print(String.format("ERROR %s\n", baseRequest.getPathInContext()));
                     return;
                 }
 
@@ -656,10 +631,8 @@ public class ContextHandlerTest
 
         try (StacklessLogging ignored = new StacklessLogging(HttpChannel.class))
         {
-            String rawResponse = _connector.getResponse("""
-                GET / HTTP/1.0
-                            
-                """);
+            String rawResponse = _connector.getResponse("GET / HTTP/1.0\n" +
+                "\n");
 
             HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -682,7 +655,7 @@ public class ContextHandlerTest
                 if (request.getDispatcherType() == DispatcherType.ERROR)
                 {
                     response.setContentType("text/plain");
-                    response.getOutputStream().print("ERROR %s\n".formatted(baseRequest.getPathInContext()));
+                    response.getOutputStream().print(String.format("ERROR %s\n", baseRequest.getPathInContext()));
                     return;
                 }
 
@@ -691,10 +664,8 @@ public class ContextHandlerTest
         });
         _server.start();
 
-        String rawResponse = _connector.getResponse("""
-            GET / HTTP/1.0
-            
-            """);
+        String rawResponse = _connector.getResponse("GET / HTTP/1.0\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -715,7 +686,7 @@ public class ContextHandlerTest
                 baseRequest.setHandled(true);
                 response.setStatus(200);
                 response.setContentType("text/plain");
-                response.getOutputStream().print("Hello %s\n".formatted(baseRequest.getContext().getContextPath()));
+                response.getOutputStream().print(String.format("Hello %s\n", baseRequest.getContext().getContextPath()));
             }
         });
 
@@ -729,7 +700,7 @@ public class ContextHandlerTest
                 baseRequest.setHandled(true);
                 response.setStatus(200);
                 response.setContentType("text/plain");
-                response.getOutputStream().print("Buongiorno %s\n".formatted(baseRequest.getContext().getContextPath()));
+                response.getOutputStream().print(String.format("Buongiorno %s\n", baseRequest.getContext().getContextPath()));
             }
         });
 
@@ -741,22 +712,18 @@ public class ContextHandlerTest
 
         try (LocalConnector.LocalEndPoint endp = _connector.connect())
         {
-            endp.addInput("""
-                GET /ctxA/ HTTP/1.1
-                Host: localhost
-                            
-                """);
+            endp.addInput("GET /ctxA/ HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "\n");
             String raw = endp.getResponse();
             HttpTester.Response response = HttpTester.parseResponse(raw);
             assertThat(response.getStatus(), is(200));
             assertThat(response.getField(HttpHeader.CONTENT_LENGTH).getIntValue(), greaterThan(0));
             assertThat(response.getContent(), containsString("Hello /ctxA"));
 
-            endp.addInput("""
-                GET /ctxB/ HTTP/1.1
-                Host: localhost
-                            
-                """);
+            endp.addInput("GET /ctxB/ HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "\n");
             raw = endp.getResponse();
             response = HttpTester.parseResponse(raw);
             assertThat(response.getStatus(), is(200));
@@ -816,10 +783,8 @@ public class ContextHandlerTest
         });
         _server.start();
 
-        String rawResponse = _connector.getResponse("""
-            GET / HTTP/1.0
-            
-            """);
+        String rawResponse = _connector.getResponse("GET / HTTP/1.0\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 
@@ -870,10 +835,8 @@ public class ContextHandlerTest
 
         _server.start();
 
-        String rawResponse = _connector.getResponse("""
-            GET / HTTP/1.0
-            
-            """);
+        String rawResponse = _connector.getResponse("GET / HTTP/1.0\n" +
+            "\n");
 
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
 

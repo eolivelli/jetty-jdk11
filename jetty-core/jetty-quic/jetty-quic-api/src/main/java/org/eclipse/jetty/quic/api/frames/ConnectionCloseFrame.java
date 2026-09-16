@@ -75,7 +75,7 @@ public class ConnectionCloseFrame extends Frame
     {
         boolean appError = getFrameType() == 0x1D;
         if (appError)
-            return "%s[appError=0x%x,reason=%s]".formatted(super.toString(), getErrorCode(), getReason());
-        return "%s[quicError0x=%x,reason=%s,frame=%d]".formatted(super.toString(), getErrorCode(), getReason(), getCauseFrameType());
+            return String.format("%s[appError=0x%x,reason=%s]", super.toString(), getErrorCode(), getReason());
+        return String.format("%s[quicError0x=%x,reason=%s,frame=%d]", super.toString(), getErrorCode(), getReason(), getCauseFrameType());
     }
 }

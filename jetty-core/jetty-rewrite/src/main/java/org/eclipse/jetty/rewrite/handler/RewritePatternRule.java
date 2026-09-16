@@ -77,6 +77,6 @@ public class RewritePatternRule extends PatternRule
     @Override
     public String toString()
     {
-        return "%s[rewrite:%s%s]".formatted(super.toString(), _path, _query == null ? "" : "?" + _query);
+        return String.format("%s[rewrite:%s%s]", super.toString(), _path, _query == null ? "" : "?" + _query);
     }
 }

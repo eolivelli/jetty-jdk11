@@ -14,7 +14,9 @@
 package org.eclipse.jetty.fcgi.parser;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.Objects;
 
 import org.eclipse.jetty.fcgi.FCGI;
 import org.eclipse.jetty.http.HttpField;
@@ -49,8 +51,27 @@ public class ClientParser extends Parser
         }
     }
 
-    private record EndRequestListener(Listener listener, StreamContentParser... streamParsers) implements Listener
+    private static final class EndRequestListener implements Listener
     {
+        private final Listener listener;
+        private final StreamContentParser[] streamParsers;
+
+        private EndRequestListener(Listener listener, StreamContentParser... streamParsers)
+        {
+            this.listener = listener;
+            this.streamParsers = streamParsers;
+        }
+
+        public Listener listener()
+        {
+            return listener;
+        }
+
+        public StreamContentParser[] streamParsers()
+        {
+            return streamParsers;
+        }
+
         @Override
         public void onBegin(int request, int code, String reason)
         {
@@ -94,6 +115,29 @@ public class ClientParser extends Parser
             {
                 streamParser.end(request);
             }
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            EndRequestListener that = (EndRequestListener)obj;
+            return Objects.equals(listener, that.listener) && Arrays.equals(streamParsers, that.streamParsers);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return 31 * Objects.hash(listener) + Arrays.hashCode(streamParsers);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "EndRequestListener[listener=" + listener + ", streamParsers=" + Arrays.toString(streamParsers) + "]";
         }
     }
 }

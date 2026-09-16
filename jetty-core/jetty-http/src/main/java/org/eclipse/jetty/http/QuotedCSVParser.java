@@ -243,7 +243,7 @@ public abstract class QuotedCSVParser
                 case '"':
                     if (state == State.VALUE || state == State.PARAM_VALUE)
                     {
-                        if (state == State.VALUE && !buffer.isEmpty() || state == State.PARAM_VALUE && paramValue >= 0)
+                        if (state == State.VALUE && buffer.length() > 0 || state == State.PARAM_VALUE && paramValue >= 0)
                             openingQuoteInValue(value, i);
 
                         inQuotes = true;

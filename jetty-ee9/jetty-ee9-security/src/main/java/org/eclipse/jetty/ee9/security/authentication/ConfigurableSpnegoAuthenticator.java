@@ -37,7 +37,7 @@ import org.eclipse.jetty.security.UserIdentity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.eclipse.jetty.ee9.nested.SessionHandler.ServletSessionApi.getOrCreateSession;
+import static org.eclipse.jetty.ee9.nested.SessionHandler.getOrCreateSession;
 
 /**
  * <p>A LoginAuthenticator that uses SPNEGO and the GSS API to authenticate requests.</p>

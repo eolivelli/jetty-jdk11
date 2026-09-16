@@ -80,8 +80,11 @@ public class HTTPSessionListenerPromise implements Session.Listener, Promise<Ses
         if (this.connection.compareAndSet(null, connection, false, true))
         {
             ConnectionPool connectionPool = destination.getConnectionPool();
-            if (connectionPool instanceof AbstractConnectionPool pool)
+            if (connectionPool instanceof AbstractConnectionPool)
+            {
+                AbstractConnectionPool pool = (AbstractConnectionPool)connectionPool;
                 connection.setMaxUsage(pool.getMaxUsage());
+            }
 
             // The connection promise must be called synchronously
             // so that the HTTP/1 to HTTP/2 upgrade can create the

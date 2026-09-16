@@ -17,7 +17,6 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Array;
-import java.lang.reflect.RecordComponent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -226,20 +225,24 @@ public class JSON
                 buffer.append("null");
             }
             // Most likely first
-            else if (object instanceof Map<?, ?> map)
+            else if (object instanceof Map<?, ?>)
             {
+                Map<?, ?> map = (Map<?, ?>)object;
                 appendMap(buffer, map);
             }
-            else if (object instanceof String string)
+            else if (object instanceof String)
             {
+                String string = (String)object;
                 appendString(buffer, string);
             }
-            else if (object instanceof Number number)
+            else if (object instanceof Number)
             {
+                Number number = (Number)object;
                 appendNumber(buffer, number);
             }
-            else if (object instanceof Boolean bool)
+            else if (object instanceof Boolean)
             {
+                Boolean bool = (Boolean)object;
                 appendBoolean(buffer, bool);
             }
             else if (object.getClass().isArray())
@@ -250,12 +253,14 @@ public class JSON
             {
                 appendString(buffer, object.toString());
             }
-            else if (object instanceof Convertible convertible)
+            else if (object instanceof Convertible)
             {
+                Convertible convertible = (Convertible)object;
                 appendJSON(buffer, convertible);
             }
-            else if (object instanceof Generator generator)
+            else if (object instanceof Generator)
             {
+                Generator generator = (Generator)object;
                 appendJSON(buffer, generator);
             }
             else
@@ -266,11 +271,12 @@ public class JSON
                 {
                     appendJSON(buffer, convertor, object);
                 }
-                else if (object instanceof Collection<?> collection)
+                else if (object instanceof Collection<?>)
                 {
+                    Collection<?> collection = (Collection<?>)object;
                     appendArray(buffer, collection);
                 }
-                else if (object.getClass().isRecord())
+                else if (RecordSupport.isRecord(object.getClass()))
                 {
                     appendRecord(buffer, object);
                 }
@@ -453,11 +459,11 @@ public class JSON
             Class<?> klass = object.getClass();
             buffer.append('{');
             buffer.append("\"class\":\"").append(klass.getName()).append("\"");
-            for (RecordComponent component : klass.getRecordComponents())
+            for (RecordSupport.Component component : RecordSupport.getRecordComponents(klass))
             {
                 buffer.append(',');
                 buffer.append("\"").append(component.getName()).append("\":");
-                Object value = klass.getMethod(component.getName()).invoke(object);
+                Object value = component.getAccessor().invoke(object);
                 append(buffer, value);
             }
             buffer.append('}');
@@ -520,7 +526,7 @@ public class JSON
         if (convertor != null)
             return convertor.fromJSON(map);
 
-        if (type.isRecord())
+        if (RecordSupport.isRecord(type))
             return AsyncJSON.toRecord(type, map);
 
         return map;
@@ -1483,7 +1489,7 @@ public class JSON
         @Override
         public String toString()
         {
-            return "%s@%x[index=%d,length=%d]".formatted(TypeUtil.toShortName(getClass()), hashCode(), index, string.length());
+            return String.format("%s@%x[index=%d,length=%d]", TypeUtil.toShortName(getClass()), hashCode(), index, string.length());
         }
     }
 
@@ -1704,32 +1710,37 @@ public class JSON
                 isCommaNeede = true;
                 continue;
             }
-            if (value instanceof Boolean b)
+            if (value instanceof Boolean)
             {
+                Boolean b = (Boolean)value;
                 sb.append(b);
                 isCommaNeede = true;
                 continue;
             }
-            if (value instanceof Double d)
+            if (value instanceof Double)
             {
+                Double d = (Double)value;
                 sb.append(d);
                 isCommaNeede = true;
                 continue;
             }
-            if (value instanceof Long l)
+            if (value instanceof Long)
             {
+                Long l = (Long)value;
                 sb.append(l);
                 isCommaNeede = true;
                 continue;
             }
-            if (value instanceof String s)
+            if (value instanceof String)
             {
+                String s = (String)value;
                 quotedEscape(sb, s);
                 isCommaNeede = true;
                 continue;
             }
-            if (value instanceof HashMap<?, ?> valueMap)
+            if (value instanceof HashMap<?, ?>)
             {
+                HashMap<?, ?> valueMap = (HashMap<?, ?>)value;
                 if (valueMap.isEmpty())
                 {
                     sb.append("{}");
@@ -1747,8 +1758,9 @@ public class JSON
                 continue;
             }
 
-            if (value instanceof Object[] a)
+            if (value instanceof Object[])
             {
+                Object[] a = (Object[])value;
                 sb.append(parseArray(a));
                 isCommaNeede = true;
                 continue;

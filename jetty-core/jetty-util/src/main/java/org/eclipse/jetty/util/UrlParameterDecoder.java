@@ -101,8 +101,11 @@ class UrlParameterDecoder
      */
     public boolean parse(CharSequence charSequence) throws IOException
     {
-        if (charSequence instanceof String s)
+        if (charSequence instanceof String)
+        {
+            String s = (String)charSequence;
             return parseCompletely(new StringCharIterator(s));
+        }
         return parseCompletely(new CharSequenceCharIterator(charSequence));
     }
 
@@ -121,8 +124,11 @@ class UrlParameterDecoder
      */
     public boolean parse(CharSequence charSequence, int offset, int length) throws IOException
     {
-        if (charSequence instanceof String s)
+        if (charSequence instanceof String)
+        {
+            String s = (String)charSequence;
             return parseCompletely(new StringCharIterator(s, offset, length));
+        }
         return parseCompletely(new CharSequenceCharIterator(charSequence, offset, length));
     }
 
@@ -193,7 +199,7 @@ class UrlParameterDecoder
     {
         switch (c)
         {
-            case '&' ->
+            case '&':
             {
                 String str = takeBuiltString();
                 if (name != null)
@@ -205,8 +211,9 @@ class UrlParameterDecoder
                 {
                     onNewField(str, "");
                 }
+                break;
             }
-            case '=' ->
+            case '=':
             {
                 if (name == null)
                 {
@@ -214,9 +221,12 @@ class UrlParameterDecoder
                 }
                 else
                     builder.append(c);
+                break;
             }
-            case '+' -> builder.append(' ');
-            case '%' ->
+            case '+':
+                builder.append(' ');
+                break;
+            case '%':
             {
                 int hi = iter.next();
                 if (hi == -1)
@@ -270,10 +280,12 @@ class UrlParameterDecoder
                         }
                     }
                 }
+                break;
             }
-            default ->
+            default:
             {
                 builder.append(c);
+                break;
             }
         }
         return true;
@@ -338,7 +350,7 @@ class UrlParameterDecoder
 
     private String notValidPctEncoding(char hi, char lo)
     {
-        return "Not valid encoding '%%%c%c'".formatted(hi != 0 ? hi : '?', lo != 0 ? lo : '?');
+        return String.format("Not valid encoding '%%%c%c'", hi != 0 ? hi : '?', lo != 0 ? lo : '?');
     }
 
     private String takeBuiltString() throws CharacterCodingException

@@ -47,6 +47,6 @@ public class HttpClientMBean extends ObjectMBean
         String name = httpClient.getName();
         if (name != null)
             return name;
-        return "%s@%x".formatted(TypeUtil.toShortName(httpClient.getClass()), httpClient.hashCode());
+        return String.format("%s@%x", TypeUtil.toShortName(httpClient.getClass()), httpClient.hashCode());
     }
 }

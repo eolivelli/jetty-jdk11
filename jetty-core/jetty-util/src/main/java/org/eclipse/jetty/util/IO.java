@@ -171,8 +171,9 @@ public class IO
                 out.write(buffer, 0, len);
             }
         }
-        else if (out instanceof PrintWriter pout)
+        else if (out instanceof PrintWriter)
         {
+            PrintWriter pout = (PrintWriter)out;
             while (!pout.checkError())
             {
                 len = in.read(buffer, 0, bufferSize);
@@ -434,12 +435,21 @@ public class IO
 
     public static IOException rethrow(Throwable cause)
     {
-        if (cause instanceof ExecutionException xx)
+        if (cause instanceof ExecutionException)
+        {
+            ExecutionException xx = (ExecutionException)cause;
             cause = xx.getCause();
-        if (cause instanceof CompletionException xx)
+        }
+        if (cause instanceof CompletionException)
+        {
+            CompletionException xx = (CompletionException)cause;
             cause = xx.getCause();
-        if (cause instanceof UncheckedIOException xx)
+        }
+        if (cause instanceof UncheckedIOException)
+        {
+            UncheckedIOException xx = (UncheckedIOException)cause;
             cause = xx.getCause();
+        }
         if (cause instanceof IOException)
             return (IOException)cause;
         if (cause instanceof Error)
@@ -747,12 +757,19 @@ public class IO
     {
         if (pathObject == null)
             return null;
-        if (pathObject instanceof File file)
-            return file.toPath();
-        if (pathObject instanceof Path path)
-            return path;
-        if (pathObject instanceof String str)
+        if (pathObject instanceof File)
         {
+            File file = (File)pathObject;
+            return file.toPath();
+        }
+        if (pathObject instanceof Path)
+        {
+            Path path = (Path)pathObject;
+            return path;
+        }
+        if (pathObject instanceof String)
+        {
+            String str = (String)pathObject;
             // attempt to support absolute, relative, partial, and URI syntaxes.
             if (URIUtil.hasScheme(str))
             {

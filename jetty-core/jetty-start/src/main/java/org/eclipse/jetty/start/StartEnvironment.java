@@ -273,6 +273,6 @@ public class StartEnvironment
     @Override
     public String toString()
     {
-        return "%s@%x{%s,%s,%s,%s,%s}".formatted(this.getClass().getSimpleName(), hashCode(), getName(), getClasspath(), getXmlFiles(), getProperties(), getPropertyFiles());
+        return String.format("%s@%x{%s,%s,%s,%s,%s}", this.getClass().getSimpleName(), hashCode(), getName(), getClasspath(), getXmlFiles(), getProperties(), getPropertyFiles());
     }
 }

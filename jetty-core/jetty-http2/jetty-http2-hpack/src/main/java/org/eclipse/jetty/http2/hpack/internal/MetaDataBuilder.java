@@ -113,8 +113,9 @@ public class MetaDataBuilder
         if (maxSize > 0 && _size > maxSize)
             throw new SessionException("Header size %d > %d", _size, maxSize);
 
-        if (field instanceof StaticTableHttpField staticField)
+        if (field instanceof StaticTableHttpField)
         {
+            StaticTableHttpField staticField = (StaticTableHttpField)field;
             switch (header)
             {
                 case C_STATUS:
@@ -232,8 +233,9 @@ public class MetaDataBuilder
     public void streamException(Throwable t)
     {
         HpackException.StreamException streamException;
-        if (t instanceof HpackException.StreamException stream)
+        if (t instanceof HpackException.StreamException)
         {
+            HpackException.StreamException stream = (HpackException.StreamException)t;
             streamException = stream;
         }
         else

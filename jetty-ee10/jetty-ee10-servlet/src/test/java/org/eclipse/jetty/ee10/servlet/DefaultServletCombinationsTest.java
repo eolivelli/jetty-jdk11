@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import jakarta.servlet.ServletException;
@@ -164,8 +165,76 @@ public class DefaultServletCombinationsTest
         }
     }
 
-    record Data(boolean pathInfoOnly, ResourceService.WelcomeMode welcomeMode, String requestPath, int expectedStatus, String expected)
+    static final class Data
     {
+        private final boolean pathInfoOnly;
+        private final ResourceService.WelcomeMode welcomeMode;
+        private final String requestPath;
+        private final int expectedStatus;
+        private final String expected;
+
+        Data(boolean pathInfoOnly, ResourceService.WelcomeMode welcomeMode, String requestPath, int expectedStatus, String expected)
+        {
+            this.pathInfoOnly = pathInfoOnly;
+            this.welcomeMode = welcomeMode;
+            this.requestPath = requestPath;
+            this.expectedStatus = expectedStatus;
+            this.expected = expected;
+        }
+
+        public boolean pathInfoOnly()
+        {
+            return pathInfoOnly;
+        }
+
+        public ResourceService.WelcomeMode welcomeMode()
+        {
+            return welcomeMode;
+        }
+
+        public String requestPath()
+        {
+            return requestPath;
+        }
+
+        public int expectedStatus()
+        {
+            return expectedStatus;
+        }
+
+        public String expected()
+        {
+            return expected;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Data that = (Data)obj;
+            return pathInfoOnly == that.pathInfoOnly &&
+                Objects.equals(welcomeMode, that.welcomeMode) &&
+                Objects.equals(requestPath, that.requestPath) &&
+                expectedStatus == that.expectedStatus &&
+                Objects.equals(expected, that.expected);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(pathInfoOnly, welcomeMode, requestPath, expectedStatus, expected);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Data[pathInfoOnly=" + pathInfoOnly + ", welcomeMode=" + welcomeMode +
+                ", requestPath=" + requestPath + ", expectedStatus=" + expectedStatus +
+                ", expected=" + expected + "]";
+        }
     }
 
     public static Stream<Data> data()
@@ -183,76 +252,92 @@ public class DefaultServletCombinationsTest
 
                     switch (requestPath)
                     {
-                        case "/" ->
+                        case "/":
                         {
                             switch (welcomeMode)
                             {
-                                case SERVE ->
+                                case SERVE:
                                 {
                                     expectedStatus = HttpStatus.OK_200;
                                     expected = "Static index.html at root";
+                                    break;
                                 }
-                                case REDIRECT ->
+                                case REDIRECT:
                                 {
                                     expectedStatus = HttpStatus.FOUND_302;
                                     expected = pathInfoOnly ? "/ctx/static/index.html" : "/ctx/index.html";
+                                    break;
                                 }
-                                case REHANDLE ->
+                                case REHANDLE:
                                 {
                                     expectedStatus = pathInfoOnly ? HttpStatus.IM_A_TEAPOT_418 : HttpStatus.NOT_FOUND_404;
                                     expected = null;
+                                    break;
                                 }
-                                default -> throw new AssertionError();
+                                default:
+                                    throw new AssertionError();
                             }
+                            break;
                         }
-                        case "/foo.welcome" ->
+                        case "/foo.welcome":
                         {
                             expectedStatus = HttpStatus.OK_200;
                             expected = pathInfoOnly ? "Static foo.welcome at root" : "Servlet at welcome extension";
+                            break;
                         }
-                        case "/subdirHtml/" ->
+                        case "/subdirHtml/":
                         {
                             switch (welcomeMode)
                             {
-                                case SERVE ->
+                                case SERVE:
                                 {
                                     expectedStatus = HttpStatus.OK_200;
                                     expected = "Static index.html at root subdirHtml";
+                                    break;
                                 }
-                                case REDIRECT ->
+                                case REDIRECT:
                                 {
                                     expectedStatus = HttpStatus.FOUND_302;
                                     expected = pathInfoOnly ? "/ctx/static/subdirHtml/index.html" : "/ctx/subdirHtml/index.html";
+                                    break;
                                 }
-                                case REHANDLE ->
+                                case REHANDLE:
                                 {
                                     expectedStatus = pathInfoOnly ? HttpStatus.IM_A_TEAPOT_418 : HttpStatus.NOT_FOUND_404;
                                     expected = null;
+                                    break;
                                 }
-                                default -> throw new AssertionError();
+                                default:
+                                    throw new AssertionError();
                             }
+                            break;
                         }
-                        case "/subdirWelcome/" ->
+                        case "/subdirWelcome/":
                         {
                             expectedStatus = HttpStatus.FORBIDDEN_403;
                             expected = null;
+                            break;
                         }
-                        case "/empty/" ->
+                        case "/empty/":
                         {
                             expectedStatus = HttpStatus.FORBIDDEN_403;
                             expected = null;
+                            break;
                         }
-                        case "/nothing/index.welcome" ->
+                        case "/nothing/index.welcome":
                         {
                             expectedStatus = pathInfoOnly ? HttpStatus.NOT_FOUND_404 : HttpStatus.OK_200;
                             expected = pathInfoOnly ? null : "Servlet at welcome extension";
+                            break;
                         }
-                        case "/nothing/" ->
+                        case "/nothing/":
                         {
                             expectedStatus = HttpStatus.NOT_FOUND_404;
                             expected = null;
+                            break;
                         }
-                        default -> throw new AssertionError();
+                        default:
+                            throw new AssertionError();
                     }
 
                     datas.add(new Data(pathInfoOnly, welcomeMode, requestPath, expectedStatus, expected));
@@ -268,12 +353,10 @@ public class DefaultServletCombinationsTest
     {
         startServer(data.pathInfoOnly(), data.welcomeMode());
         String requestPath = context.getContextPath() + (data.pathInfoOnly() ? "/static" : "") + data.requestPath();
-        String rawResponse = connector.getResponse(String.format("""
-            GET %s HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """, requestPath));
+        String rawResponse = connector.getResponse(String.format("GET %s HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n", requestPath));
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
         int status = response.getStatus();
         assertThat(response.toString(), status, is(data.expectedStatus()));

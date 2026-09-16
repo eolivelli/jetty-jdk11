@@ -416,11 +416,9 @@ public class ConnectHandlerTest extends AbstractConnectHandlerTest
         try
         {
             InetAddress address = InetAddress.getByName(invalidHostname);
-            String err = """
-                DNS Hijacking detected: %s should have not returned a valid IP address [%s].
-                Fix your DNS provider to have this test pass.
-                For more info see https://en.wikipedia.org/wiki/DNS_hijacking")
-                """.formatted(invalidHostname, address.getHostAddress());
+            String err = String.format("DNS Hijacking detected: %s should have not returned a valid IP address [%s].\n" +
+                "Fix your DNS provider to have this test pass.\n" +
+                "For more info see https://en.wikipedia.org/wiki/DNS_hijacking\")\n", invalidHostname, address.getHostAddress());
             assertNull(address, err);
         }
         catch (UnknownHostException e)
@@ -898,7 +896,7 @@ public class ConnectHandlerTest extends AbstractConnectHandlerTest
             String cp = Request.getPathInContext(request);
             switch (cp)
             {
-                case "/echo" ->
+                case "/echo":
                 {
                     StringBuilder builder = new StringBuilder();
                     builder.append(request.getMethod()).append(" ").append(cp);
@@ -933,13 +931,16 @@ public class ConnectHandlerTest extends AbstractConnectHandlerTest
                                     response.write(true, ByteBuffer.wrap(bytes), callback);
                             });
                     }
+                    break;
                 }
-                case "/close" ->
+                case "/close":
                 {
                     request.getConnectionMetaData().getConnection().getEndPoint().close();
                     callback.succeeded();
+                    break;
                 }
-                default -> throw new IllegalStateException();
+                default:
+                    throw new IllegalStateException();
             }
             return true;
         }

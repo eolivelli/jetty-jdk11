@@ -19,6 +19,7 @@ import org.eclipse.jetty.quic.api.frames.ConnectionCloseFrame;
 import org.eclipse.jetty.quic.util.ErrorCode;
 import org.eclipse.jetty.quic.util.QuicException;
 import org.eclipse.jetty.quic.util.VarLenInt;
+import org.eclipse.jetty.util.BufferUtil;
 import org.eclipse.jetty.util.Utf8StringBuilder;
 
 public class ConnectionCloseParser
@@ -48,22 +49,25 @@ public class ConnectionCloseParser
         {
             switch (state)
             {
-                case FRAME_TYPE ->
+                case FRAME_TYPE:
                 {
                     appError = (byteBuffer.get() & 0xFF) == 0x1D;
                     state = State.ERROR_CODE;
+                    break;
                 }
-                case ERROR_CODE ->
+                case ERROR_CODE:
                 {
                     if (varLenInt.tryDecode(byteBuffer, v -> errorCode = v))
                         state = appError ? State.REASON_LENGTH : State.CAUSE_FRAME_TYPE;
+                    break;
                 }
-                case CAUSE_FRAME_TYPE ->
+                case CAUSE_FRAME_TYPE:
                 {
                     if (varLenInt.tryDecode(byteBuffer, v -> causeFrameType = v))
                         state = State.REASON_LENGTH;
+                    break;
                 }
-                case REASON_LENGTH ->
+                case REASON_LENGTH:
                 {
                     if (varLenInt.tryDecode(byteBuffer, v -> reasonLength = v))
                     {
@@ -71,16 +75,18 @@ public class ConnectionCloseParser
                             throw new QuicException(ErrorCode.FRAME_ENCODING_ERROR, "invalid_reason_length", appError ? 0x1D : 0x1C);
                         state = State.REASON;
                     }
+                    break;
                 }
-                case REASON ->
+                case REASON:
                 {
                     int position = byteBuffer.position();
                     int length = (int)Math.min(reasonLength, byteBuffer.remaining());
-                    reasonBuilder.append(byteBuffer.slice(position, length));
+                    reasonBuilder.append(BufferUtil.absoluteSlice(byteBuffer, position, length));
                     byteBuffer.position(position + length);
                     reasonLength -= length;
                     if (reasonLength == 0)
                         return result();
+                    break;
                 }
             }
         }

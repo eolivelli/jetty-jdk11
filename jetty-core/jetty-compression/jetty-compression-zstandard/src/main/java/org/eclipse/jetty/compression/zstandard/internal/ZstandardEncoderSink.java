@@ -84,13 +84,23 @@ public class ZstandardEncoderSink extends EncoderSink
         while (!done)
         {
             State state = this.state.get();
-            writeRecord = switch (state)
+            switch (state)
             {
-                case CONTINUE -> continueOp(last, content);
-                case END -> endOp(last);
-                case FLUSH -> flushOp(last);
-                case FINISHED -> null;
-            };
+                case CONTINUE:
+                    writeRecord = continueOp(last, content);
+                    break;
+                case END:
+                    writeRecord = endOp(last);
+                    break;
+                case FLUSH:
+                    writeRecord = flushOp(last);
+                    break;
+                case FINISHED:
+                    writeRecord = null;
+                    break;
+                default:
+                    throw new IllegalStateException();
+            }
             if (writeRecord != null)
                 done = true;
             else if (!last && !content.hasRemaining())
@@ -115,8 +125,8 @@ public class ZstandardEncoderSink extends EncoderSink
         RetainableByteBuffer direct = compression.acquireByteBuffer(size);
         ByteBuffer directBuf = direct.getByteBuffer();
         directBuf.clear();
-        directBuf.put(0, buffer, pos, length);
-        directBuf.limit(length);
+        directBuf.put(buffer.duplicate().limit(pos + length).position(pos));
+        directBuf.flip();
         // buffer.position() is NOT modified - tracking happens in continueOp()
         return direct;
     }

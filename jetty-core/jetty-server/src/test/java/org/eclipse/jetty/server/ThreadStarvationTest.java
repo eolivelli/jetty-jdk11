@@ -194,12 +194,11 @@ public class ThreadStarvationTest
                     {
                         client.setSoTimeout(10000);
 
-                        String request = """
-                            PUT / HTTP/1.0\r
-                            host: localhost\r
-                            content-length: 10\r
-                            \r
-                            1""";
+                        String request = "PUT / HTTP/1.0\r\n" +
+                            "host: localhost\r\n" +
+                            "content-length: 10\r\n" +
+                            "\r\n" +
+                            "1";
 
                         // Write partial request
                         out.write(request.getBytes(StandardCharsets.UTF_8));
@@ -266,13 +265,12 @@ public class ThreadStarvationTest
                     {
                         client.setSoTimeout(10000);
 
-                        String request = """
-                            POST / HTTP/1.0\r
-                            host: localhost\r
-                            content-type: application/x-www-form-urlencoded\r
-                            content-length: 11\r
-                            \r
-                            a=1&b""";
+                        String request = "POST / HTTP/1.0\r\n" +
+                            "host: localhost\r\n" +
+                            "content-type: application/x-www-form-urlencoded\r\n" +
+                            "content-length: 11\r\n" +
+                            "\r\n" +
+                            "a=1&b";
 
                         // Write partial request
                         out.write(request.getBytes(StandardCharsets.UTF_8));
@@ -348,26 +346,22 @@ public class ThreadStarvationTest
                          InputStream in = client.getInputStream())
                     {
                         client.setSoTimeout(10000);
-                        String content = """
-                            --A1B2C3
-                            Content-Disposition: form-data; name="part1"
-                            Content-Type: text/plain; charset="UTF-8"
-                            
-                            content1
-                            --A1B2C3
-                            Content-Disposition: form-data; name="part2"
-                            Content-Type: text/plain; charset="UTF-8"
-                            
-                            content2
-                            --A1B2C3--
-                            """;
-                        String header = """
-                           POST / HTTP/1.0
-                           Host: localhost
-                           Content-Type: multipart/form-data; boundary="A1B2C3"
-                           Content-Length: %d
-                           
-                           """.formatted(content.length());
+                        String content = "--A1B2C3\n" +
+                            "Content-Disposition: form-data; name=\"part1\"\n" +
+                            "Content-Type: text/plain; charset=\"UTF-8\"\n" +
+                            "\n" +
+                            "content1\n" +
+                            "--A1B2C3\n" +
+                            "Content-Disposition: form-data; name=\"part2\"\n" +
+                            "Content-Type: text/plain; charset=\"UTF-8\"\n" +
+                            "\n" +
+                            "content2\n" +
+                            "--A1B2C3--\n";
+                        String header = String.format("POST / HTTP/1.0\n" +
+                            "Host: localhost\n" +
+                            "Content-Type: multipart/form-data; boundary=\"A1B2C3\"\n" +
+                            "Content-Length: %d\n" +
+                            "\n", content.length());
 
                         // Write partial request
                         out.write(header.getBytes(StandardCharsets.UTF_8));
@@ -441,11 +435,9 @@ public class ThreadStarvationTest
                     {
                         client.setSoTimeout(30000);
 
-                        String request = """
-                            GET / HTTP/1.0\r
-                            host: localhost\r
-                            \r
-                            """;
+                        String request = "GET / HTTP/1.0\r\n" +
+                            "host: localhost\r\n" +
+                            "\r\n";
 
                         // Write GET request
                         out.write(request.getBytes(StandardCharsets.UTF_8));
@@ -540,7 +532,7 @@ public class ThreadStarvationTest
         @Override
         public String toString()
         {
-            return "%s|%b".formatted(testType, delayed);
+            return String.format("%s|%b", testType, delayed);
         }
     }
 }

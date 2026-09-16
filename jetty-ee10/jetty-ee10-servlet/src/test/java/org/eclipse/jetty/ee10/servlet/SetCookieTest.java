@@ -76,12 +76,10 @@ public class SetCookieTest
         contextHandler.addServlet(testServlet, "/test/*");
         startServer(contextHandler);
 
-        String rawRequest = """
-            GET /test/cookie-attr HTTP/1.1
-            Host: test
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /test/cookie-attr HTTP/1.1\n" +
+            "Host: test\n" +
+            "Connection: close\n" +
+            "\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(rawRequest));
         assertThat(response.getStatus(), is(200));
         assertThat(response.get(HttpHeader.SET_COOKIE), is("key=foo; SameSite=Lax"));
@@ -112,12 +110,10 @@ public class SetCookieTest
 
         contextHandler.addServlet(testServlet, "/test/*");
         startServer(contextHandler);
-                String rawRequest = """
-            GET /test/after-commit HTTP/1.1
-            Host: test
-            Connection: close
-
-            """;
+                String rawRequest = "GET /test/after-commit HTTP/1.1\n" +
+                    "Host: test\n" +
+                    "Connection: close\n" +
+                    "\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(rawRequest));
         assertThat(response.getStatus(), is(200));
         assertThat(response.get(HttpHeader.SET_COOKIE), nullValue());

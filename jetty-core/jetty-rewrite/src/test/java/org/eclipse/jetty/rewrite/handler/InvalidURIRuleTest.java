@@ -51,11 +51,9 @@ public class InvalidURIRuleTest extends AbstractRuleTest
         rule.setCode(HttpStatus.NOT_ACCEPTABLE_406);
         start(rule);
 
-        String request = """
-            GET /valid/uri.html HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /valid/uri.html HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -68,11 +66,9 @@ public class InvalidURIRuleTest extends AbstractRuleTest
         rule.setCode(HttpStatus.NOT_ACCEPTABLE_406);
         start(rule);
 
-        String request = """
-            GET /invalid%0c/uri.html HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /invalid%0c/uri.html HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.NOT_ACCEPTABLE_406, response.getStatus());
@@ -86,11 +82,9 @@ public class InvalidURIRuleTest extends AbstractRuleTest
         rule.setMessage("foo");
         start(rule);
 
-        String request = """
-            GET /%01/ HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /%01/ HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.NOT_ACCEPTABLE_406, response.getStatus());
@@ -104,11 +98,9 @@ public class InvalidURIRuleTest extends AbstractRuleTest
         rule.setCode(HttpStatus.NOT_ACCEPTABLE_406);
         start(rule);
 
-        String request = """
-            GET /jsp/bean1.jsp%00 HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /jsp/bean1.jsp%00 HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         // The rule is not invoked because byte NULL is rejected at parsing level.
@@ -122,11 +114,9 @@ public class InvalidURIRuleTest extends AbstractRuleTest
         rule.setCode(HttpStatus.NOT_ACCEPTABLE_406);
         start(rule);
 
-        String request = """
-            GET /jsp/bean1.jsp%01 HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /jsp/bean1.jsp%01 HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.NOT_ACCEPTABLE_406, response.getStatus());
@@ -139,11 +129,9 @@ public class InvalidURIRuleTest extends AbstractRuleTest
         rule.setCode(HttpStatus.NOT_ACCEPTABLE_406);
         start(rule);
 
-        String request = """
-            GET /jsp/bean1.jsp\000 HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /jsp/bean1.jsp\u0000 HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         // The rule is not invoked because byte NULL is rejected at parsing level.
@@ -157,11 +145,9 @@ public class InvalidURIRuleTest extends AbstractRuleTest
         rule.setCode(HttpStatus.NOT_ACCEPTABLE_406);
         start(rule);
 
-        String request = """
-            GET /jsp/bean1.jsp\001 HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /jsp/bean1.jsp\u0001 HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         // The rule is not invoked because byte CNTL bytes are rejected at parsing level.
@@ -175,11 +161,9 @@ public class InvalidURIRuleTest extends AbstractRuleTest
         rule.setCode(HttpStatus.NOT_ACCEPTABLE_406);
         start(rule);
 
-        String request = """
-            GET /jsp/shamrock-%00%E2%98%98.jsp HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /jsp/shamrock-%00%E2%98%98.jsp HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         // The rule is not invoked because byte NULL is rejected at parsing level.
@@ -193,11 +177,9 @@ public class InvalidURIRuleTest extends AbstractRuleTest
         rule.setCode(HttpStatus.NOT_ACCEPTABLE_406);
         start(rule);
 
-        String request = """
-            GET /jsp/shamrock-%0F%E2%98%98.jsp HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /jsp/shamrock-%0F%E2%98%98.jsp HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.NOT_ACCEPTABLE_406, response.getStatus());
@@ -210,11 +192,9 @@ public class InvalidURIRuleTest extends AbstractRuleTest
         rule.setCode(HttpStatus.NOT_ACCEPTABLE_406);
         start(rule);
 
-        String request = """
-            GET /jsp/shamrock-%E2%98%98.jsp HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /jsp/shamrock-%E2%98%98.jsp HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -227,11 +207,9 @@ public class InvalidURIRuleTest extends AbstractRuleTest
         rule.setCode(HttpStatus.NOT_ACCEPTABLE_406);
         start(rule);
 
-        String request = """
-            GET /jsp/shamrock-%xx%zz.jsp HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /jsp/shamrock-%xx%zz.jsp HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         // The rule is not invoked because the UTF-8 sequence is invalid.
@@ -247,11 +225,9 @@ public class InvalidURIRuleTest extends AbstractRuleTest
         rule.setCode(HttpStatus.NOT_ACCEPTABLE_406);
         start(rule);
 
-        String request = """
-            GET /jsp/shamrock-%A0%A1.jsp HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /jsp/shamrock-%A0%A1.jsp HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.NOT_ACCEPTABLE_406, response.getStatus());
@@ -266,11 +242,9 @@ public class InvalidURIRuleTest extends AbstractRuleTest
         rule.setCode(HttpStatus.NOT_ACCEPTABLE_406);
         start(rule);
 
-        String request = """
-            GET /foo%CE%BA%E1 HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /foo%CE%BA%E1 HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.NOT_ACCEPTABLE_406, response.getStatus());

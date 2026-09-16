@@ -135,11 +135,9 @@ public class ServerTest
         });
         _server.start();
 
-        String request = """
-                GET /path HTTP/1.0\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "GET /path HTTP/1.0\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
         assertThat(response.getContent(), is("Hello"));
@@ -214,11 +212,9 @@ public class ServerTest
         });
         _server.start();
 
-        String request = """
-                GET /path HTTP/1.1\r
-                Host: hostname\r
-                \r
-                """;
+        String request = "GET /path HTTP/1.1\r\n" +
+            "Host: hostname\r\n" +
+            "\r\n";
         String rawResponse = _connector.getResponse(request);
 
         if (succeeded || written)

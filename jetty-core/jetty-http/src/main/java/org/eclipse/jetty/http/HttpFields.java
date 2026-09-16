@@ -677,8 +677,11 @@ public interface HttpFields extends Iterable<HttpField>, Supplier<HttpFields>
             @Override
             public boolean contains(Object o)
             {
-                if (o instanceof String s)
+                if (o instanceof String)
+                {
+                    String s = (String)o;
                     return seenByName != null && seenByName.contains(s) || seenByHeader.contains(HttpHeader.CACHE.get(s));
+                }
                 return false;
             }
         };
@@ -965,8 +968,8 @@ public interface HttpFields extends Iterable<HttpField>, Supplier<HttpFields>
      */
     static Map<String, List<String>> asMap(HttpFields fields)
     {
-        return (fields instanceof HttpFields.Mutable mutable)
-            ? new HttpFieldsMap.Mutable(mutable)
+        return (fields instanceof HttpFields.Mutable)
+            ? new HttpFieldsMap.Mutable((HttpFields.Mutable)fields)
             : new HttpFieldsMap.Immutable(fields);
     }
 
@@ -1498,7 +1501,8 @@ public interface HttpFields extends Iterable<HttpField>, Supplier<HttpFields>
         default Mutable computeField(HttpHeader header, BiFunction<HttpHeader, List<HttpField>, HttpField> computeFn)
         {
             Objects.requireNonNull(header);
-            HttpField result = computeFn.apply(header, stream().filter(f -> f.getHeader() == header).toList());
+            List<HttpField> fields = Collections.unmodifiableList(stream().filter(f -> f.getHeader() == header).collect(Collectors.toList()));
+            HttpField result = computeFn.apply(header, fields);
             return result != null ? put(result) : remove(header);
         }
 
@@ -1513,7 +1517,8 @@ public interface HttpFields extends Iterable<HttpField>, Supplier<HttpFields>
         default Mutable computeField(String name, BiFunction<String, List<HttpField>, HttpField> computeFn)
         {
             Objects.requireNonNull(name);
-            HttpField result = computeFn.apply(name, stream().filter(f -> f.is(name)).toList());
+            List<HttpField> fields = Collections.unmodifiableList(stream().filter(f -> f.is(name)).collect(Collectors.toList()));
+            HttpField result = computeFn.apply(name, fields);
             return result != null ? put(result) : remove(name);
         }
 
@@ -1598,11 +1603,11 @@ public interface HttpFields extends Iterable<HttpField>, Supplier<HttpFields>
                 {
                     if (v == null)
                         continue;
-                    if (!value.isEmpty())
+                    if (value.length() > 0)
                         value.append(", ");
                     value.append(v);
                 }
-                if (!value.isEmpty())
+                if (value.length() > 0)
                     return value.toString();
             }
 
@@ -1632,7 +1637,7 @@ public interface HttpFields extends Iterable<HttpField>, Supplier<HttpFields>
             for (HttpField f : fields)
             {
                 // Always append multiple fields into a single field value
-                if (!v.isEmpty())
+                if (v.length() > 0)
                     v.append(", ");
                 v.append(f.getValue());
 
@@ -1692,7 +1697,7 @@ public interface HttpFields extends Iterable<HttpField>, Supplier<HttpFields>
             for (HttpField f : fields)
             {
                 // Always append multiple fields into a single field value
-                if (!v.isEmpty())
+                if (v.length() > 0)
                     v.append(", ");
                 v.append(f.getValue());
 

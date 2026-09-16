@@ -44,6 +44,8 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractEEActivator implements BundleActivator, ServerClasspathContributor.Registry
 {
+    private static final Logger LOG = LoggerFactory.getLogger(ServerTracker.class);
+
     private BundleContext _bootBundleContext;
     private ServiceTracker<Server, Object> _serverTracker;
     private PackageAdminServiceListener _packageAdminServiceListener;
@@ -128,7 +130,6 @@ public abstract class AbstractEEActivator implements BundleActivator, ServerClas
      */
     public class ServerTracker implements ServiceTrackerCustomizer<Server, Object>
     {
-        private static final Logger LOG = LoggerFactory.getLogger(ServerTracker.class);
         private Bundle _myBundle = null;
 
         public ServerTracker(Bundle bundle)
@@ -183,13 +184,15 @@ public abstract class AbstractEEActivator implements BundleActivator, ServerClas
 
                 for (AbstractContextProvider provider : osgiProviders)
                 {
-                    if (provider instanceof BundleContextProvider bundleContextProvider)
+                    if (provider instanceof BundleContextProvider)
                     {
+                        BundleContextProvider bundleContextProvider = (BundleContextProvider)provider;
                         if (bundleContextProvider.getEnvironmentName().equalsIgnoreCase(getEnvironment()))
                             contextProvider = bundleContextProvider;
                     }
-                    if (provider instanceof BundleWebAppProvider bundleWebAppProvider)
+                    if (provider instanceof BundleWebAppProvider)
                     {
+                        BundleWebAppProvider bundleWebAppProvider = (BundleWebAppProvider)provider;
                         if (bundleWebAppProvider.getEnvironmentName().equalsIgnoreCase(getEnvironment()))
                             webAppProvider = bundleWebAppProvider;
                     }
@@ -307,7 +310,7 @@ public abstract class AbstractEEActivator implements BundleActivator, ServerClas
         {
             try (Stream<Path> listing = Files.list(dir))
             {
-                return listing.toList();
+                return listing.collect(Collectors.toList());
             }
         }
     }

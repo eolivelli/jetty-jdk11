@@ -53,24 +53,27 @@ public class StreamVsIteratorBenchmark
     {
         switch (size)
         {
-            case 0 ->
+            case 0:
             {
                 _iteratorSupplier = Collections.emptyList()::iterator;
                 _streamSupplier = Stream::empty;
+                break;
             }
-            case 1 ->
+            case 1:
             {
                 Object item = System.nanoTime();
                 _iteratorSupplier = List.of(item)::iterator;
                 _streamSupplier = () -> Stream.of(item);
+                break;
             }
-            default ->
+            default:
             {
                 List<Object> list = new ArrayList<>();
                 for (int i = 0; i < size; i++)
                     list.add(System.nanoTime());
                 _iteratorSupplier = list::iterator;
                 _streamSupplier = list::stream;
+                break;
             }
         }
     }

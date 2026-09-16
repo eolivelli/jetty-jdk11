@@ -15,6 +15,7 @@ package org.eclipse.jetty.ee10.websocket.jakarta.tests;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -187,7 +188,7 @@ public class JakartaClientShutdownWithServerWebAppTest
             .filter(line -> line.contains("+- "))
             .filter(line -> line.contains(JakartaWebSocketShutdownContainer.class.getSimpleName()))
             .filter(line -> line.contains("size=1"))
-            .toList();
+            .collect(Collectors.toList());
 
         // We only have 3 Shutdown Containers and they all contain only 1 item to be shutdown.
         assertThat(dump, results.size(), is(3));

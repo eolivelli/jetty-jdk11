@@ -60,10 +60,17 @@ public class TempDirTest
         FS.ensureDirExists(tmpDir);
         switch (type)
         {
-            case "File" -> webAppContext.setAttribute(ServletContext.TEMPDIR, tmpDir.toFile());
-            case "String" -> webAppContext.setAttribute(ServletContext.TEMPDIR, tmpDir.toString());
-            case "Path" -> webAppContext.setAttribute(ServletContext.TEMPDIR, tmpDir);
-            default -> throw new IllegalStateException();
+            case "File":
+                webAppContext.setAttribute(ServletContext.TEMPDIR, tmpDir.toFile());
+                break;
+            case "String":
+                webAppContext.setAttribute(ServletContext.TEMPDIR, tmpDir.toString());
+                break;
+            case "Path":
+                webAppContext.setAttribute(ServletContext.TEMPDIR, tmpDir);
+                break;
+            default:
+                throw new IllegalStateException();
         }
 
         // Test we have correct value as the webapp temp directory.
@@ -89,10 +96,17 @@ public class TempDirTest
 
         switch (type)
         {
-            case "File" -> webAppContext.setAttribute(ServletContext.TEMPDIR, tmpDir.toFile());
-            case "String" -> webAppContext.setAttribute(ServletContext.TEMPDIR, tmpDir.toString());
-            case "Path" -> webAppContext.setAttribute(ServletContext.TEMPDIR, tmpDir);
-            default -> throw new IllegalStateException();
+            case "File":
+                webAppContext.setAttribute(ServletContext.TEMPDIR, tmpDir.toFile());
+                break;
+            case "String":
+                webAppContext.setAttribute(ServletContext.TEMPDIR, tmpDir.toString());
+                break;
+            case "Path":
+                webAppContext.setAttribute(ServletContext.TEMPDIR, tmpDir);
+                break;
+            default:
+                throw new IllegalStateException();
         }
 
         // Test we have correct value as the webapp temp directory.

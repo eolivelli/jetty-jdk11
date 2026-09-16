@@ -172,10 +172,14 @@ public class SslConnectionFactory extends AbstractConnectionFactory implements C
     @Override
     protected <T extends AbstractConnection> T configure(T connection, Connector connector, EndPoint endPoint)
     {
-        if (connection instanceof SslConnection sslConnection)
+        if (connection instanceof SslConnection)
         {
-            if (connector instanceof ContainerLifeCycle container)
+            SslConnection sslConnection = (SslConnection)connection;
+            if (connector instanceof ContainerLifeCycle)
+            {
+                ContainerLifeCycle container = (ContainerLifeCycle)connector;
                 container.getBeans(SslHandshakeListener.class).forEach(sslConnection::addHandshakeListener);
+            }
             getBeans(SslHandshakeListener.class).forEach(sslConnection::addHandshakeListener);
         }
         return super.configure(connection, connector, endPoint);

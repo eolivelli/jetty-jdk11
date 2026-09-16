@@ -216,13 +216,27 @@ public class JettyWebSocketFrameHandler implements FrameHandler
 
         switch (frame.getOpCode())
         {
-            case OpCode.TEXT -> onTextFrame(frame, coreCallback);
-            case OpCode.BINARY -> onBinaryFrame(frame, coreCallback);
-            case OpCode.CONTINUATION -> onContinuationFrame(frame, coreCallback);
-            case OpCode.PING -> onPingFrame(frame, coreCallback);
-            case OpCode.PONG -> onPongFrame(frame, coreCallback);
-            case OpCode.CLOSE -> onCloseFrame(frame, coreCallback);
-            default -> coreCallback.failed(new IllegalStateException());
+            case OpCode.TEXT:
+                onTextFrame(frame, coreCallback);
+                break;
+            case OpCode.BINARY:
+                onBinaryFrame(frame, coreCallback);
+                break;
+            case OpCode.CONTINUATION:
+                onContinuationFrame(frame, coreCallback);
+                break;
+            case OpCode.PING:
+                onPingFrame(frame, coreCallback);
+                break;
+            case OpCode.PONG:
+                onPongFrame(frame, coreCallback);
+                break;
+            case OpCode.CLOSE:
+                onCloseFrame(frame, coreCallback);
+                break;
+            default:
+                coreCallback.failed(new IllegalStateException());
+                break;
         }
     }
 
@@ -439,8 +453,11 @@ public class JettyWebSocketFrameHandler implements FrameHandler
         if (cause instanceof InvalidSignatureException)
             return new org.eclipse.jetty.websocket.api.exceptions.InvalidWebSocketException(cause.getMessage(), cause);
 
-        if (cause instanceof UpgradeException ue)
+        if (cause instanceof UpgradeException)
+        {
+            UpgradeException ue = (UpgradeException)cause;
             return new org.eclipse.jetty.websocket.api.exceptions.UpgradeException(ue.getRequestURI(), ue.getResponseStatusCode(), cause);
+        }
 
         return cause;
     }

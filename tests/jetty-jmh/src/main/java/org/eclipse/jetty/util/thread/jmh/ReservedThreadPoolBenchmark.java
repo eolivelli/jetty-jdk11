@@ -102,7 +102,7 @@ public class ReservedThreadPoolBenchmark
         {
             if (NanoTime.secondsSince(startSpin) > 5)
             {
-                System.err.printf("FAILED %d < %d\n".formatted(complete.longValue(), jobs.longValue()));
+                System.err.printf("FAILED %d < %d%n", complete.longValue(), jobs.longValue());
                 break;
             }
             Thread.onSpinWait();

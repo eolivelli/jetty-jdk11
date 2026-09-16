@@ -21,8 +21,10 @@ import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -450,9 +452,58 @@ public class ServerQuicheConnection extends QuicheConnection
                 return InvocationType.NON_BLOCKING;
             return entry.callback.getInvocationType();
         }
+    }
 
-        private record Entry(Callback callback, SocketAddress address, ByteBuffer[] buffers)
+    private static final class Entry
+    {
+        private final Callback callback;
+        private final SocketAddress address;
+        private final ByteBuffer[] buffers;
+
+        private Entry(Callback callback, SocketAddress address, ByteBuffer[] buffers)
         {
+            this.callback = callback;
+            this.address = address;
+            this.buffers = buffers;
+        }
+
+        public Callback callback()
+        {
+            return callback;
+        }
+
+        public SocketAddress address()
+        {
+            return address;
+        }
+
+        public ByteBuffer[] buffers()
+        {
+            return buffers;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Entry that = (Entry)obj;
+            return Objects.equals(callback, that.callback) && Objects.equals(address, that.address) &&
+                Arrays.equals(buffers, that.buffers);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return 31 * Objects.hash(callback, address) + Arrays.hashCode(buffers);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Entry[callback=" + callback + ", address=" + address + ", buffers=" + Arrays.toString(buffers) + "]";
         }
     }
 }

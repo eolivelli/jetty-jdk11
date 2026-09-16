@@ -274,7 +274,7 @@ public class JettyHttpServer extends com.sun.net.httpserver.HttpsServer
     private void checkIfContextIsFree(String path)
     {
         Handler serverHandler = _server.getHandler();
-        if (serverHandler instanceof ContextHandler ctx && ctx.getContextPath().equals(path))
+        if (serverHandler instanceof ContextHandler && ((ContextHandler)serverHandler).getContextPath().equals(path))
         {
             throw new RuntimeException("another context already bound to path " + path);
         }
@@ -282,7 +282,7 @@ public class JettyHttpServer extends com.sun.net.httpserver.HttpsServer
         List<Handler> handlers = _server.getHandlers();
         for (Handler handler : handlers)
         {
-            if (handler instanceof ContextHandler ctx && ctx.getContextPath().equals(path))
+            if (handler instanceof ContextHandler && ((ContextHandler)handler).getContextPath().equals(path))
             {
                 throw new RuntimeException("another context already bound to path " + path);
             }

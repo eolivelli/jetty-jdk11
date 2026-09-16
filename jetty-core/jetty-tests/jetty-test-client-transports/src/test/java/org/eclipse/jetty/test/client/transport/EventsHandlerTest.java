@@ -18,6 +18,7 @@ import java.nio.ByteBuffer;
 import java.nio.ReadOnlyBufferException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -299,7 +300,7 @@ public class EventsHandlerTest extends AbstractTest
         startClient(transportType);
 
         long delayMs = 500;
-        URI uri = URI.create(newURI(transportType).toASCIIString() + "?handling=%d&succeeding=%d".formatted(delayMs, delayMs));
+        URI uri = URI.create(newURI(transportType).toASCIIString() + String.format("?handling=%d&succeeding=%d", delayMs, delayMs));
 
         ContentResponse response = client.GET(uri);
         assertThat(response.getStatus(), is(200));
@@ -379,8 +380,49 @@ public class EventsHandlerTest extends AbstractTest
             addEvent("onComplete");
         }
 
-        record Event(String name, long delayInNs)
+        static final class Event
         {
+            private final String name;
+            private final long delayInNs;
+
+            Event(String name, long delayInNs)
+            {
+                this.name = name;
+                this.delayInNs = delayInNs;
+            }
+
+            public String name()
+            {
+                return name;
+            }
+
+            public long delayInNs()
+            {
+                return delayInNs;
+            }
+
+            @Override
+            public boolean equals(Object obj)
+            {
+                if (this == obj)
+                    return true;
+                if (obj == null || getClass() != obj.getClass())
+                    return false;
+                Event that = (Event)obj;
+                return delayInNs == that.delayInNs && Objects.equals(name, that.name);
+            }
+
+            @Override
+            public int hashCode()
+            {
+                return Objects.hash(name, delayInNs);
+            }
+
+            @Override
+            public String toString()
+            {
+                return "Event[name=" + name + ", delayInNs=" + delayInNs + "]";
+            }
         }
     }
 

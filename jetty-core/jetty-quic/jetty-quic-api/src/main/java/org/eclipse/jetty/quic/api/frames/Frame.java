@@ -39,7 +39,7 @@ public class Frame
     @Override
     public String toString()
     {
-        return "%s@%x".formatted(TypeUtil.toShortName(getClass()), hashCode());
+        return String.format("%s@%x", TypeUtil.toShortName(getClass()), hashCode());
     }
 
     /**
@@ -63,7 +63,7 @@ public class Frame
         @Override
         public String toString()
         {
-            return "%s#%d".formatted(super.toString(), getStreamId());
+            return String.format("%s#%d", super.toString(), getStreamId());
         }
     }
 }

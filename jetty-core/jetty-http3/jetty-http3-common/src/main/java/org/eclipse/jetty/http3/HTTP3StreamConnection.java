@@ -14,6 +14,7 @@
 package org.eclipse.jetty.http3;
 
 import java.io.UncheckedIOException;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -130,30 +131,37 @@ public abstract class HTTP3StreamConnection extends AbstractConnection
                         if (result == null)
                             result = parseAndFill();
 
-                        boolean loop = switch (result)
+                        boolean loop;
+                        switch (result)
                         {
-                            case NO_FRAME ->
+                            case NO_FRAME:
                             {
                                 fillInterested();
-                                yield false;
+                                loop = false;
+                                break;
                             }
-                            case BLOCKED_FRAME ->
+                            case BLOCKED_FRAME:
                             {
                                 // A QPACK-blocked request/response HEADERS frame.
                                 // Return immediately, processing will
                                 // resume when the stream is QPACK-unblocked.
-                                yield false;
+                                loop = false;
+                                break;
                             }
-                            case FRAME ->
+                            case FRAME:
                             {
                                 FrameAction action = frameAction.getAndSet(null);
 
                                 boolean interim = false;
-                                if (action.frame() instanceof HeadersFrame headers)
+                                Frame actionFrame = action.frame();
+                                if (actionFrame instanceof HeadersFrame)
                                 {
-                                    MetaData metaData = headers.getMetaData();
-                                    if (metaData instanceof MetaData.Response response)
+                                    MetaData metaData = ((HeadersFrame)actionFrame).getMetaData();
+                                    if (metaData instanceof MetaData.Response)
+                                    {
+                                        MetaData.Response response = (MetaData.Response)metaData;
                                         interim = HttpStatus.isInterim(response.getStatus());
+                                    }
                                 }
 
                                 // Now the listener drives fill interest via Stream.demand().
@@ -164,13 +172,17 @@ public abstract class HTTP3StreamConnection extends AbstractConnection
                                 // Notify the listener via onRequest()/onResponse().
                                 action.task().run();
 
-                                yield interim;
+                                loop = interim;
+                                break;
                             }
-                            case EOF ->
+                            case EOF:
                             {
-                                yield false;
+                                loop = false;
+                                break;
                             }
-                        };
+                            default:
+                                throw new IllegalStateException();
+                        }
 
                         if (loop)
                             result = null;
@@ -244,31 +256,36 @@ public abstract class HTTP3StreamConnection extends AbstractConnection
             if (result == null)
                 result = parseAndFill();
 
-            Content.Chunk chunk = switch (result)
+            Content.Chunk chunk;
+            switch (result)
             {
-                case NO_FRAME ->
+                case NO_FRAME:
                 {
-                    yield null;
+                    chunk = null;
+                    break;
                 }
-                case BLOCKED_FRAME ->
+                case BLOCKED_FRAME:
                 {
                     // A QPACK-blocked trailer HEADERS frame.
                     // Return null until the stream is QPACK-unblocked.
                     trailerBlocked = true;
-                    yield null;
+                    chunk = null;
+                    break;
                 }
-                case FRAME ->
+                case FRAME:
                 {
                     FrameAction action = frameAction.getAndSet(null);
                     action.task().run();
 
                     Frame frame = action.frame();
-                    if (frame instanceof DataFrame dataFrame)
+                    if (frame instanceof DataFrame)
                     {
+                        DataFrame dataFrame = (DataFrame)frame;
                         if (dataFrame.isLast() && !dataFrame.getByteBuffer().hasRemaining())
                         {
                             tryReleaseData(true);
-                            yield Content.Chunk.EOF;
+                            chunk = Content.Chunk.EOF;
+                            break;
                         }
                         else
                         {
@@ -277,19 +294,24 @@ public abstract class HTTP3StreamConnection extends AbstractConnection
                             Content.Chunk h3Chunk = Content.Chunk.asChunk(dataFrame.getByteBuffer(), dataFrame.isLast(), quicChunk);
                             if (h3Chunk.isLast())
                                 tryReleaseData(true);
-                            yield h3Chunk;
+                            chunk = h3Chunk;
+                            break;
                         }
                     }
 
                     // It is a trailer HEADERS frame.
                     tryReleaseData(true);
-                    yield Content.Chunk.EOF;
+                    chunk = Content.Chunk.EOF;
+                    break;
                 }
-                case EOF ->
+                case EOF:
                 {
-                    yield Content.Chunk.EOF;
+                    chunk = Content.Chunk.EOF;
+                    break;
                 }
-            };
+                default:
+                    throw new IllegalStateException();
+            }
 
             if (LOG.isDebugEnabled())
                 LOG.debug("read {} on {}", chunk, this);
@@ -461,8 +483,49 @@ public abstract class HTTP3StreamConnection extends AbstractConnection
         EOF
     }
 
-    private record FrameAction(Frame frame, Runnable task)
+    private static final class FrameAction
     {
+        private final Frame frame;
+        private final Runnable task;
+
+        private FrameAction(Frame frame, Runnable task)
+        {
+            this.frame = frame;
+            this.task = task;
+        }
+
+        public Frame frame()
+        {
+            return frame;
+        }
+
+        public Runnable task()
+        {
+            return task;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            FrameAction that = (FrameAction)obj;
+            return Objects.equals(frame, that.frame) && Objects.equals(task, that.task);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(frame, task);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "FrameAction[frame=" + frame + ", task=" + task + "]";
+        }
     }
 
     private class FillableCallback implements Callback
@@ -489,7 +552,7 @@ public abstract class HTTP3StreamConnection extends AbstractConnection
         @Override
         public String toString()
         {
-            return "%s@%x[%s]".formatted(TypeUtil.toShortName(getClass()), hashCode(), getInvocationType());
+            return String.format("%s@%x[%s]", TypeUtil.toShortName(getClass()), hashCode(), getInvocationType());
         }
     }
 }

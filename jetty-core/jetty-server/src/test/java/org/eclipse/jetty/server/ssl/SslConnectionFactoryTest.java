@@ -195,7 +195,7 @@ public class SslConnectionFactoryTest
     {
         HttpTester.Response response = getResponse(host, host, cn);
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
-        assertThat(response.getContent(), containsString("url=https://%s:%d/ctx/path".formatted(host, _port)));
+        assertThat(response.getContent(), containsString(String.format("url=https://%s:%d/ctx/path", host, _port)));
         return response;
     }
 
@@ -228,12 +228,10 @@ public class SslConnectionFactoryTest
             try (OutputStream os = sslSocket.getOutputStream();
                  InputStream in = sslSocket.getInputStream())
             {
-                String rawRequest = """
-                    GET /ctx/path HTTP/1.1\r
-                    Host: %s:%d\r
-                    Connection: close\r
-                    \r
-                    """.formatted(reqHost, _port);
+                String rawRequest = String.format("GET /ctx/path HTTP/1.1\r\n" +
+                    "Host: %s:%d\r\n" +
+                    "Connection: close\r\n" +
+                    "\r\n", reqHost, _port);
 
                 os.write(rawRequest.getBytes(StandardCharsets.UTF_8));
                 String rawResponse = IO.toString(in);

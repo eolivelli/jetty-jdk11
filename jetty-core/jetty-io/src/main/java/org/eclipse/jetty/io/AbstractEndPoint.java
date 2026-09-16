@@ -245,21 +245,29 @@ public abstract class AbstractEndPoint extends IdleTimeout implements EndPoint
     @Override
     public boolean isOutputShutdown()
     {
-        return switch (_state.get())
+        switch (_state.get())
         {
-            case CLOSED, OSHUT, OSHUTTING -> true;
-            default -> false;
-        };
+            case CLOSED:
+            case OSHUT:
+            case OSHUTTING:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override
     public boolean isInputShutdown()
     {
-        return switch (_state.get())
+        switch (_state.get())
         {
-            case CLOSED, ISHUT, ISHUTTING -> true;
-            default -> false;
-        };
+            case CLOSED:
+            case ISHUT:
+            case ISHUTTING:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override

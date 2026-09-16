@@ -151,7 +151,7 @@ public class ConnectionPoolTest
             {
                 switch (HttpMethod.fromString(request.getMethod()))
                 {
-                    case GET ->
+                    case GET:
                     {
                         long contentLength = request.getHeaders().getLongField("X-Download");
                         if (contentLength > 0)
@@ -163,8 +163,9 @@ public class ConnectionPoolTest
                                 callback.block();
                             }
                         }
+                        break;
                     }
-                    case POST ->
+                    case POST:
                     {
                         long contentLength = request.getLength();
                         if (contentLength > 0)
@@ -196,8 +197,10 @@ public class ConnectionPoolTest
                             if (chunk.isLast())
                                 break;
                         }
+                        break;
                     }
-                    default -> throw new IllegalStateException();
+                    default:
+                        throw new IllegalStateException();
                 }
 
                 if (Boolean.parseBoolean(request.getHeaders().get("X-Close")))
@@ -259,13 +262,17 @@ public class ConnectionPoolTest
 
         switch (method)
         {
-            case GET -> request.headers(fields -> fields.put("X-Download", String.valueOf(contentLength)));
-            case POST ->
+            case GET:
+                request.headers(fields -> fields.put("X-Download", String.valueOf(contentLength)));
+                break;
+            case POST:
             {
                 request.headers(fields -> fields.put(HttpHeader.CONTENT_LENGTH, String.valueOf(contentLength)));
                 request.body(new BytesRequestContent(new byte[contentLength]));
+                break;
             }
-            default -> throw new IllegalStateException();
+            default:
+                throw new IllegalStateException();
         }
 
         try

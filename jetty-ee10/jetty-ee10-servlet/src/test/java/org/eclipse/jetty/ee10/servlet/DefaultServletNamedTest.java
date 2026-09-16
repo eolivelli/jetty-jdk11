@@ -105,9 +105,14 @@ public class DefaultServletNamedTest
                 RequestDispatcher dispatcher = getServletContext().getNamedDispatcher("default");
                 switch (dispatcherType)
                 {
-                    case FORWARD -> dispatcher.forward(request, response);
-                    case INCLUDE -> dispatcher.include(request, response);
-                    default -> throw new ServletException("Test doesn't support dispatcherType: " + dispatcherType);
+                    case FORWARD:
+                        dispatcher.forward(request, response);
+                        break;
+                    case INCLUDE:
+                        dispatcher.include(request, response);
+                        break;
+                    default:
+                        throw new ServletException("Test doesn't support dispatcherType: " + dispatcherType);
                 }
             }
         };
@@ -116,12 +121,10 @@ public class DefaultServletNamedTest
         contextHandler.addServlet(testServlet, "/*");
         startServer(contextHandler);
 
-        String rawRequest = """
-            GET /ctx/foo.txt HTTP/1.1
-            Host: test
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /ctx/foo.txt HTTP/1.1\n" +
+            "Host: test\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(localConnector.getResponse(rawRequest));
         assertThat(response.getStatus(), is(HttpStatus.OK_200));

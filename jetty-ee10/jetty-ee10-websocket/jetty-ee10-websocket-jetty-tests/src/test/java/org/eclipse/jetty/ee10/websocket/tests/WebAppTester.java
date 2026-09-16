@@ -193,14 +193,13 @@ public class WebAppTester extends ContainerLifeCycle
 
         public void createWebInf() throws IOException
         {
-            String emptyWebXml = """
-                <web-app
-                    xmlns="https://jakarta.ee/xml/ns/jakartaee"
-                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
-                    metadata-complete="false"
-                    version="6.0">
-                </web-app>""";
+            String emptyWebXml = "<web-app\n" +
+                "    xmlns=\"https://jakarta.ee/xml/ns/jakartaee\"\n" +
+                "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                "    xsi:schemaLocation=\"https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd\"\n" +
+                "    metadata-complete=\"false\"\n" +
+                "    version=\"6.0\">\n" +
+                "</web-app>";
 
             File webXml = _webInf.resolve("web.xml").toFile();
             try (FileWriter out = new FileWriter(webXml))

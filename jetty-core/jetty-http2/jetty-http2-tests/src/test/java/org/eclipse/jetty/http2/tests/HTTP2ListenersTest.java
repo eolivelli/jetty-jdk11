@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.client.ContentResponse;
 import org.eclipse.jetty.client.StringRequestContent;
@@ -209,7 +210,7 @@ public class HTTP2ListenersTest extends AbstractTest
                 ((HTTP2Session)session).addEventListener(new PingListener());
             }
 
-            private class PingListener implements HTTP2Session.FrameListener
+            class PingListener implements HTTP2Session.FrameListener
             {
                 private final AtomicBoolean firstPing = new AtomicBoolean();
                 private Scheduler.Task task;
@@ -219,16 +220,18 @@ public class HTTP2ListenersTest extends AbstractTest
                 {
                     switch (frame.getType())
                     {
-                        case SETTINGS ->
+                        case SETTINGS:
                         {
                             if (firstPing.compareAndSet(false, true))
                                 ping(session);
+                            break;
                         }
-                        case PING ->
+                        case PING:
                         {
                             PingFrame pingFrame = (PingFrame)frame;
                             if (pingFrame.isReply() && task.cancel())
                                 httpClient.getScheduler().schedule(() -> ping(session), pingInterval, TimeUnit.MILLISECONDS);
+                            break;
                         }
                     }
                 }
@@ -301,7 +304,7 @@ public class HTTP2ListenersTest extends AbstractTest
 
         private static List<FrameType> toFrameTypes(List<Frame> frames)
         {
-            return frames.stream().map(Frame::getType).toList();
+            return frames.stream().map(Frame::getType).collect(Collectors.toList());
         }
     }
 

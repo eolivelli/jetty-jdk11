@@ -121,11 +121,15 @@ public class FlowControlStrategyTest
 
     protected FlowControlStrategy newFlowControlStrategy(FlowControlStrategyType type)
     {
-        return switch (type)
+        switch (type)
         {
-            case SIMPLE -> new SimpleFlowControlStrategy();
-            case BUFFERING -> new BufferingFlowControlStrategy(0.5F);
-        };
+            case SIMPLE:
+                return new SimpleFlowControlStrategy();
+            case BUFFERING:
+                return new BufferingFlowControlStrategy(0.5F);
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     @AfterEach
@@ -1045,12 +1049,19 @@ public class FlowControlStrategyTest
 
         assertTrue(latch.await(5, TimeUnit.SECONDS));
 
-        int sessionUpdates = switch (type)
+        int sessionUpdates;
+        switch (type)
         {
-            case SIMPLE -> 1;
+            case SIMPLE:
+                sessionUpdates = 1;
+                break;
             // For small writes, session updates are buffered.
-            case BUFFERING -> 0;
-        };
+            case BUFFERING:
+                sessionUpdates = 0;
+                break;
+            default:
+                throw new IllegalStateException();
+        }
         assertEquals(sessionUpdates, sessionWindowUpdates.size());
         assertEquals(0, streamWindowUpdates.size());
     }

@@ -16,6 +16,7 @@ package org.eclipse.jetty.test.client.transport;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.client.Destination;
 import org.eclipse.jetty.client.transport.HttpClientTransportOverHTTP;
@@ -60,19 +61,40 @@ public class ConnectionPoolTest extends AbstractTest
         {
             switch (transportType)
             {
-                case HTTP, HTTPS -> assertThat(serverConnections.filter(HttpConnection.class).size(), is(maxConnectionsPerDestination));
-                case H2C, H2 -> assertThat(serverConnections.filter(HTTP2ServerConnection.class).size(), is(maxConnectionsPerDestination));
-                case H3_QUICHE -> assertThat(serverConnections.filter(ServerQuicheConnection.class).size(), is(1));
-                case FCGI -> assertThat(serverConnections.filter(ServerFCGIConnection.class).size(), is(maxConnectionsPerDestination));
+                case HTTP:
+                case HTTPS:
+                    assertThat(serverConnections.filter(HttpConnection.class).size(), is(maxConnectionsPerDestination));
+                    break;
+                case H2C:
+                case H2:
+                    assertThat(serverConnections.filter(HTTP2ServerConnection.class).size(), is(maxConnectionsPerDestination));
+                    break;
+                case H3_QUICHE:
+                    assertThat(serverConnections.filter(ServerQuicheConnection.class).size(), is(1));
+                    break;
+                case FCGI:
+                    assertThat(serverConnections.filter(ServerFCGIConnection.class).size(), is(maxConnectionsPerDestination));
+                    break;
             }
         });
 
         // Verify that TLS was performed.
-        List<Connection> sslConnections = switch (transportType)
+        List<Connection> sslConnections;
+        switch (transportType)
         {
-            case HTTP, H2C, FCGI, H3_QUICHE -> null;
-            case HTTPS, H2 -> serverConnections.filter(SslConnection.class);
-        };
+            case HTTP:
+            case H2C:
+            case FCGI:
+            case H3_QUICHE:
+                sslConnections = null;
+                break;
+            case HTTPS:
+            case H2:
+                sslConnections = serverConnections.filter(SslConnection.class);
+                break;
+            default:
+                throw new IllegalStateException();
+        }
         if (sslConnections != null)
         {
             assertThat(sslConnections.size(), is(maxConnectionsPerDestination));
@@ -101,7 +123,7 @@ public class ConnectionPoolTest extends AbstractTest
         {
             return connections.stream()
                 .filter(klass::isInstance)
-                .toList();
+                .collect(Collectors.toList());
         }
     }
 }

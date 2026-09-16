@@ -181,8 +181,11 @@ public abstract class ConnectorTimeoutTest extends HttpServerTestFixture
 
         // Get the server side endpoint
         EndPoint endPoint = exchanger.exchange(null, 10, TimeUnit.SECONDS);
-        if (endPoint instanceof SslConnection.SslEndPoint sslEndPoint)
+        if (endPoint instanceof SslConnection.SslEndPoint)
+        {
+            SslConnection.SslEndPoint sslEndPoint = (SslConnection.SslEndPoint)endPoint;
             endPoint = sslEndPoint.getSslConnection().getEndPoint();
+        }
 
         // read the response
         String result = IO.toString(is);
@@ -244,8 +247,11 @@ public abstract class ConnectorTimeoutTest extends HttpServerTestFixture
 
         // Get the server side endpoint
         EndPoint endPoint = exchanger.exchange(null, 10, TimeUnit.SECONDS);
-        if (endPoint instanceof SslConnection.SslEndPoint sslEndPoint)
+        if (endPoint instanceof SslConnection.SslEndPoint)
+        {
+            SslConnection.SslEndPoint sslEndPoint = (SslConnection.SslEndPoint)endPoint;
             endPoint = sslEndPoint.getSslConnection().getEndPoint();
+        }
 
         // read the response
         IO.toString(is);
@@ -391,15 +397,13 @@ public abstract class ConnectorTimeoutTest extends HttpServerTestFixture
                 // but the request hasn't sent all of it.
                 int requestBodyLength = requestBody.length * 2;
 
-                String rawRequest = ("""
-                    GET / HTTP/1.1\r
-                    host: localhost:%d\r
-                    connection: keep-alive\r
-                    Content-Length: %d\r
-                    Content-Type: text/plain\r
-                    Connection: close\r
-                    \r
-                    """).formatted(_serverURI.getPort(), requestBodyLength);
+                String rawRequest = String.format(("GET / HTTP/1.1\r\n" +
+                    "host: localhost:%d\r\n" +
+                    "connection: keep-alive\r\n" +
+                    "Content-Length: %d\r\n" +
+                    "Content-Type: text/plain\r\n" +
+                    "Connection: close\r\n" +
+                    "\r\n"), _serverURI.getPort(), requestBodyLength);
 
                 os.write(rawRequest.getBytes(StandardCharsets.UTF_8));
                 os.write(requestBody);

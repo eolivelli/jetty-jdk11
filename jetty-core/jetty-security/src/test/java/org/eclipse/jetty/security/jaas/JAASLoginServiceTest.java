@@ -100,10 +100,8 @@ public class JAASLoginServiceTest
         public boolean handle(Request request, Response response, Callback callback) throws Exception
         {
             response.getHeaders().add(HttpHeader.CONTENT_TYPE, "text/plain");
-            Content.Sink.write(response, true, """
-                All OK
-                httpURI=%s
-                """.formatted(request.getHttpURI()), callback);
+            Content.Sink.write(response, true, String.format("All OK\n" +
+                "httpURI=%s\n", request.getHttpURI()), callback);
             return true;
         }
     }

@@ -26,10 +26,12 @@ import java.nio.file.Paths;
 import java.nio.file.ProviderNotFoundException;
 import java.nio.file.attribute.FileTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.util.IO;
 import org.eclipse.jetty.util.TypeUtil;
@@ -90,6 +92,8 @@ public class FileSystemPool implements Dumpable
         Map<String, String> env = new HashMap<>();
         // Key and Value documented at https://docs.oracle.com/en/java/javase/17/docs/api/jdk.zipfs/module-summary.html
         env.put("releaseVersion", "runtime");
+        // Java 11 and 12 use this older key for the same feature.
+        env.put("multi-release", "runtime");
         ENV_MULTIRELEASE_RUNTIME = env;
     }
 
@@ -248,7 +252,7 @@ public class FileSystemPool implements Dumpable
     {
         try (AutoLock ignore = poolLock.lock())
         {
-            return pool.values().stream().map(m -> m.mount).toList();
+            return Collections.unmodifiableList(pool.values().stream().map(m -> m.mount).collect(Collectors.toList()));
         }
     }
 
@@ -353,7 +357,7 @@ public class FileSystemPool implements Dumpable
 
     public String toString()
     {
-        return "%s@%x{%d}".formatted(TypeUtil.toShortName(getClass()), hashCode(), pool.size());
+        return String.format("%s@%x{%d}", TypeUtil.toShortName(getClass()), hashCode(), pool.size());
     }
 
     /**

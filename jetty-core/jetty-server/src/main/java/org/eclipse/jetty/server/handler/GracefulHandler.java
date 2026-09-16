@@ -160,8 +160,9 @@ public class GracefulHandler extends Handler.Wrapper implements Graceful
         {
             for (Connector connector : getServer().getConnectors())
             {
-                if (connector instanceof AbstractConnector abstractConnector)
+                if (connector instanceof AbstractConnector)
                 {
+                    AbstractConnector abstractConnector = (AbstractConnector)connector;
                     abstractConnector.setShutdownIdleTimeout(_shutdownIdleTimeout);
                 }
             }

@@ -746,12 +746,11 @@ public class ConstraintTest
 
         scenarios.add(Arguments.of(
             new Scenario(
-                """
-                    POST /ctx/auth/info HTTP/1.1\r
-                    Host: test\r
-                    Content-Length: 10\r
-                    \r
-                    0123456789""",
+                "POST /ctx/auth/info HTTP/1.1\r\n" +
+                "Host: test\r\n" +
+                "Content-Length: 10\r\n" +
+                "\r\n" +
+                "0123456789",
                 HttpStatus.UNAUTHORIZED_401,
                 (response) ->
                 {
@@ -764,12 +763,11 @@ public class ConstraintTest
 
         scenarios.add(Arguments.of(
             new Scenario(
-                """
-                    POST /ctx/auth/info HTTP/1.1\r
-                    Host: test\r
-                    Content-Length: 10\r
-                    \r
-                    012345""",
+                "POST /ctx/auth/info HTTP/1.1\r\n" +
+                "Host: test\r\n" +
+                "Content-Length: 10\r\n" +
+                "\r\n" +
+                "012345",
                 HttpStatus.UNAUTHORIZED_401,
                 (response) ->
                 {
@@ -1431,13 +1429,11 @@ public class ConstraintTest
         response = _connector.getResponse("GET /ctx/forbid/info HTTP/1.0\r\n\r\n");
         assertThat(response, startsWith("HTTP/1.1 403 Forbidden"));
 
-        response = _connector.getResponse("""
-            POST /ctx/auth/info HTTP/1.0\r
-            Content-Type: application/x-www-form-urlencoded\r
-            Content-Length: 27\r
-            \r
-            test_parameter=test_value\r
-            """);
+        response = _connector.getResponse("POST /ctx/auth/info HTTP/1.0\r\n" +
+            "Content-Type: application/x-www-form-urlencoded\r\n" +
+            "Content-Length: 27\r\n" +
+            "\r\n" +
+            "test_parameter=test_value\r\n");
         assertThat(response, containsString(" 302 Found"));
         assertThat(response, containsString("/ctx/testLoginPage"));
         String session = response.substring(response.indexOf("JSESSIONID=") + 11, response.indexOf("; Path=/ctx"));
@@ -1498,28 +1494,24 @@ public class ConstraintTest
         _server.addBean(newTestLoginService());
         _server.start();
 
-        String response = _connector.getResponse("""
-            POST /ctx/auth/info HTTP/1.0\r
-            Content-Type: text/plain\r
-            Connection: keep-alive\r
-            Content-Length: 10\r
-            \r
-            0123456789\r
-            """);
+        String response = _connector.getResponse("POST /ctx/auth/info HTTP/1.0\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Connection: keep-alive\r\n" +
+            "Content-Length: 10\r\n" +
+            "\r\n" +
+            "0123456789\r\n");
         assertThat(response, containsString(" 302 Found"));
         assertThat(response, containsString("/ctx/testLoginPage"));
         assertThat(response, not(containsString("Connection: close")));
         assertThat(response, containsString("Connection: keep-alive"));
 
-        response = _connector.getResponse("""
-            POST /ctx/auth/info HTTP/1.0\r
-            Host: localhost\r
-            Content-Type: text/plain\r
-            Connection: keep-alive\r
-            Content-Length: 10000\r
-            \r
-            012345\r
-            """);
+        response = _connector.getResponse("POST /ctx/auth/info HTTP/1.0\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Connection: keep-alive\r\n" +
+            "Content-Length: 10000\r\n" +
+            "\r\n" +
+            "012345\r\n");
         assertThat(response, containsString(" 302 Found"));
         assertThat(response, containsString("/ctx/testLoginPage"));
         assertThat(response, not(containsString("Connection: keep-alive")));
@@ -1534,26 +1526,22 @@ public class ConstraintTest
         _server.addBean(newTestLoginService());
         _server.start();
 
-        String response = _connector.getResponse("""
-            POST /ctx/auth/info HTTP/1.1\r
-            Host: test\r
-            Content-Type: text/plain\r
-            Content-Length: 10\r
-            \r
-            0123456789\r
-            """);
+        String response = _connector.getResponse("POST /ctx/auth/info HTTP/1.1\r\n" +
+            "Host: test\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Content-Length: 10\r\n" +
+            "\r\n" +
+            "0123456789\r\n");
         assertThat(response, containsString(" 303 See Other"));
         assertThat(response, containsString("/ctx/testLoginPage"));
         assertThat(response, not(containsString("Connection: close")));
 
-        response = _connector.getResponse("""
-            POST /ctx/auth/info HTTP/1.1\r
-            Host: test\r
-            Content-Type: text/plain\r
-            Content-Length: 10\r
-            \r
-            012345\r
-            """);
+        response = _connector.getResponse("POST /ctx/auth/info HTTP/1.1\r\n" +
+            "Host: test\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Content-Length: 10\r\n" +
+            "\r\n" +
+            "012345\r\n");
         assertThat(response, containsString(" 303 See Other"));
         assertThat(response, containsString("/ctx/testLoginPage"));
         assertThat(response, containsString("Connection: close"));
@@ -2221,10 +2209,8 @@ public class ConstraintTest
 
         String response;
 
-        response = _connector.getResponse("""
-            GET /ctx/noauth/info HTTP/1.0\r
-            \r
-            """);
+        response = _connector.getResponse("GET /ctx/noauth/info HTTP/1.0\r\n" +
+            "\r\n");
         assertThat(response, startsWith("HTTP/1.1 200 OK"));
         assertThat(response, containsString("user=null"));
 
@@ -2572,20 +2558,18 @@ public class ConstraintTest
 
         Constraint constraint = _security.getConstraint(requestPath, httpMethod);
         if (!coveredByConstraint)
-            assertThat("%s %s constraint not covered".formatted(httpMethod, requestPath), constraint, nullValue());
+            assertThat(String.format("%s %s constraint not covered", httpMethod, requestPath), constraint, nullValue());
         else
         {
-            assertThat("%s %s roles".formatted(httpMethod, requestPath), constraint.getRoles(), rolesMatcher);
-            assertThat("%s %s authorization".formatted(httpMethod, requestPath), constraint.getAuthorization(), authorizationMatcher);
-            assertThat("%s %s transport".formatted(httpMethod, requestPath), constraint.getTransport(), transportMatcher);
+            assertThat(String.format("%s %s roles", httpMethod, requestPath), constraint.getRoles(), rolesMatcher);
+            assertThat(String.format("%s %s authorization", httpMethod, requestPath), constraint.getAuthorization(), authorizationMatcher);
+            assertThat(String.format("%s %s transport", httpMethod, requestPath), constraint.getTransport(), transportMatcher);
         }
     }
 
     @ParameterizedTest
-    @CsvSource(textBlock = """
-        PROPPATCH, PATCH
-        PATCH, PATCHED
-        """)
+    @CsvSource(textBlock = "PROPPATCH, PATCH\n" +
+        "PATCH, PATCHED\n")
     public void testSubstringMethod(String methodConstraint, String methodRequest) throws Exception
     {
         ConstraintMapping forbiddenMapping = new ConstraintMapping();
@@ -2597,7 +2581,7 @@ public class ConstraintTest
 
         String requestPath = "/test/foo";
         Constraint constraint = _security.getConstraint(requestPath, methodRequest);
-        assertThat("%s %s constraint not covered".formatted(methodRequest, requestPath), constraint, nullValue());
+        assertThat(String.format("%s %s constraint not covered", methodRequest, requestPath), constraint, nullValue());
     }
 
     public static Stream<Arguments> singleForbiddenMethodOmissionCases()
@@ -2644,9 +2628,9 @@ public class ConstraintTest
 
         Constraint constraint = _security.getConstraint(requestPath, requestHttpMethod);
         if (!coveredByConstraint)
-            assertThat("%s %s constraint not covered".formatted(requestHttpMethod, requestPath), constraint, nullValue());
+            assertThat(String.format("%s %s constraint not covered", requestHttpMethod, requestPath), constraint, nullValue());
         else
-            assertThat("%s %s authorization".formatted(requestHttpMethod, requestPath), constraint.getAuthorization(), authorizationMatcher);
+            assertThat(String.format("%s %s authorization", requestHttpMethod, requestPath), constraint.getAuthorization(), authorizationMatcher);
     }
 
     public static Stream<Arguments> singleAllowedMethodOmissionCases()
@@ -2693,9 +2677,9 @@ public class ConstraintTest
 
         Constraint constraint = _security.getConstraint(requestPath, requestHttpMethod);
         if (!coveredByConstraint)
-            assertThat("%s %s constraint not covered".formatted(requestHttpMethod, requestPath), constraint, nullValue());
+            assertThat(String.format("%s %s constraint not covered", requestHttpMethod, requestPath), constraint, nullValue());
         else
-            assertThat("%s %s authorization".formatted(requestHttpMethod, requestPath), constraint.getAuthorization(), authorizationMatcher);
+            assertThat(String.format("%s %s authorization", requestHttpMethod, requestPath), constraint.getAuthorization(), authorizationMatcher);
     }
 
     public static Stream<Arguments> combinedAllowedForbiddenMethodOmissionConstraintsCases()
@@ -2736,9 +2720,9 @@ public class ConstraintTest
 
         Constraint constraint = _security.getConstraint(requestPath, httpMethod);
         if (!coveredByConstraint)
-            assertThat("%s %s constraint not covered".formatted(httpMethod, requestPath), constraint, nullValue());
+            assertThat(String.format("%s %s constraint not covered", httpMethod, requestPath), constraint, nullValue());
         else
-            assertThat("%s %s authorization".formatted(httpMethod, requestPath), constraint.getAuthorization(), authorizationMatcher);
+            assertThat(String.format("%s %s authorization", httpMethod, requestPath), constraint.getAuthorization(), authorizationMatcher);
     }
 
     /**
@@ -2767,9 +2751,9 @@ public class ConstraintTest
 
         Constraint constraint = _security.getConstraint(requestPath, httpMethod);
         if (!coveredByConstraint)
-            assertThat("%s %s constraint not covered".formatted(httpMethod, requestPath), constraint, nullValue());
+            assertThat(String.format("%s %s constraint not covered", httpMethod, requestPath), constraint, nullValue());
         else
-            assertThat("%s %s authorization".formatted(httpMethod, requestPath), constraint.getAuthorization(), authorizationMatcher);
+            assertThat(String.format("%s %s authorization", httpMethod, requestPath), constraint.getAuthorization(), authorizationMatcher);
     }
 
     @Test

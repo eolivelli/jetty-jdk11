@@ -141,13 +141,15 @@ public class ClientAuthProxyTest
             @Override
             public boolean handle(org.eclipse.jetty.server.Request request, Response response, Callback callback)
             {
-                if (request.getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData sslSessionData)
+                Object attribute = request.getAttribute(EndPoint.SslSessionData.ATTRIBUTE);
+                if (attribute instanceof EndPoint.SslSessionData)
                 {
+                    EndPoint.SslSessionData sslSessionData = (EndPoint.SslSessionData)attribute;
                     X509Certificate[] certificates = sslSessionData.peerCertificates();
                     Assertions.assertNotNull(certificates);
                     X509Certificate certificate = certificates[0];
                     X500Principal principal = certificate.getSubjectX500Principal();
-                    String body = "%s\r\n%d\r\n".formatted(principal.toString(), org.eclipse.jetty.server.Request.getRemotePort(request));
+                    String body = String.format("%s\r\n%d\r\n", principal.toString(), org.eclipse.jetty.server.Request.getRemotePort(request));
                     Content.Sink.write(response, true, body, callback);
                     return true;
                 }

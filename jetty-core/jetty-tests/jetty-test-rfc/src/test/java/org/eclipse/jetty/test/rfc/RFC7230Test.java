@@ -127,12 +127,10 @@ public class RFC7230Test
     @Test
     public void testNoUserInfo_2_7_1() throws Exception
     {
-        String req = """
-            GET http://username:password@host:8888/path HTTP/1.1
-            Host: localhost
-            Connection: close
-            
-            """;
+        String req = "GET http://username:password@host:8888/path HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(req));
 
@@ -142,13 +140,11 @@ public class RFC7230Test
     @Test
     public void testInvalidWhiteSpaceInField_3_2() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("""
-            GET http://localhost/path HTTP/1.1
-            Host: localhost
-            Bad : whitespace
-            Connection: close
-            
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("GET http://localhost/path HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Bad : whitespace\n" +
+            "Connection: close\n" +
+            "\n"));
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST_400));
     }
@@ -157,14 +153,12 @@ public class RFC7230Test
     @Disabled // TODO
     public void testInvalidWhiteSpaceInTE_3_2() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("""
-            GET http://localhost/path HTTP/1.1
-            Host: localhost
-            Transfer-Encoding: identity;bad = space,chunked
-            
-            0;
-            
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(connector.getResponse("GET http://localhost/path HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Transfer-Encoding: identity;bad = space,chunked\n" +
+            "\n" +
+            "0;\n" +
+            "\n"));
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST_400));
     }
@@ -172,16 +166,14 @@ public class RFC7230Test
     @Test
     public void testNoFolding_3_2_4() throws Exception
     {
-        String req = """
-            GET http://localhost/path HTTP/1.1
-            Host: localhost
-            Folded: value
-             over
-             many
-             lines
-            Connection: close
-            
-            """;
+        String req = "GET http://localhost/path HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Folded: value\n" +
+            " over\n" +
+            " many\n" +
+            " lines\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(req));
 

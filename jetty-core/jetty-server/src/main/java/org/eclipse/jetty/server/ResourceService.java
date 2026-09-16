@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.http.ByteRange;
 import org.eclipse.jetty.http.CompressedContentFormat;
@@ -338,13 +339,20 @@ public class ResourceService extends ContainerLifeCycle
                 {
                     switch (field.getHeader())
                     {
-                        case IF_MATCH -> ifm = field.getValue();
-                        case IF_NONE_MATCH -> ifnm = field.getValue();
-                        case IF_MODIFIED_SINCE -> ifms = field.getValue();
-                        case IF_UNMODIFIED_SINCE -> ifums = field.getValue();
-                        default ->
-                        {
-                        }
+                        case IF_MATCH:
+                            ifm = field.getValue();
+                            break;
+                        case IF_NONE_MATCH:
+                            ifnm = field.getValue();
+                            break;
+                        case IF_MODIFIED_SINCE:
+                            ifms = field.getValue();
+                            break;
+                        case IF_UNMODIFIED_SINCE:
+                            ifums = field.getValue();
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -522,12 +530,60 @@ public class ResourceService extends ContainerLifeCycle
 
     /**
      * <p>A welcome target paired with how to process it.</p>
-     *
-     * @param target the welcome target
-     * @param mode the welcome mode
      */
-    public record WelcomeAction(String target, WelcomeMode mode)
+    public static final class WelcomeAction
     {
+        private final String target;
+        private final WelcomeMode mode;
+
+        /**
+         * @param target the welcome target
+         * @param mode the welcome mode
+         */
+        public WelcomeAction(String target, WelcomeMode mode)
+        {
+            this.target = target;
+            this.mode = mode;
+        }
+
+        /**
+         * @return the welcome target
+         */
+        public String target()
+        {
+            return target;
+        }
+
+        /**
+         * @return the welcome mode
+         */
+        public WelcomeMode mode()
+        {
+            return mode;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            WelcomeAction that = (WelcomeAction)obj;
+            return Objects.equals(target, that.target) && mode == that.mode;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(target, mode);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "WelcomeAction[target=" + target + ", mode=" + mode + "]";
+        }
     }
 
     private boolean welcome(HttpContent content, Request request, Response response, Callback callback) throws Exception
@@ -547,9 +603,15 @@ public class ResourceService extends ContainerLifeCycle
     {
         switch (welcomeAction.mode)
         {
-            case REDIRECT -> redirectWelcome(request, response, callback, welcomeAction.target);
-            case SERVE -> serveWelcome(request, response, callback, welcomeAction.target);
-            case REHANDLE -> rehandleWelcome(request, response, callback, welcomeAction.target);
+            case REDIRECT:
+                redirectWelcome(request, response, callback, welcomeAction.target);
+                break;
+            case SERVE:
+                serveWelcome(request, response, callback, welcomeAction.target);
+                break;
+            case REHANDLE:
+                rehandleWelcome(request, response, callback, welcomeAction.target);
+                break;
         }
     }
 
@@ -621,13 +683,19 @@ public class ResourceService extends ContainerLifeCycle
         String contextPath = request.getContext().getContextPath();
         WelcomeMode welcomeMode = getWelcomeMode();
 
-        welcomeTarget = switch (welcomeMode)
+        switch (welcomeMode)
         {
-            case REDIRECT, REHANDLE -> HttpURI.build(request.getHttpURI())
-                .path(URIUtil.addPaths(contextPath, welcomeTarget))
-                .getPathQuery();
-            case SERVE -> welcomeTarget;
-        };
+            case REDIRECT:
+            case REHANDLE:
+                welcomeTarget = HttpURI.build(request.getHttpURI())
+                    .path(URIUtil.addPaths(contextPath, welcomeTarget))
+                    .getPathQuery();
+                break;
+            case SERVE:
+                break;
+            default:
+                throw new IllegalStateException();
+        }
 
         if (LOG.isDebugEnabled())
             LOG.debug("welcome {} {}", welcomeMode, welcomeTarget);
@@ -870,7 +938,7 @@ public class ResourceService extends ContainerLifeCycle
         _precompressedFormats.addAll(precompressedFormats);
         // TODO: this preferred encoding order should be a separate configurable
         _preferredEncodingOrder.clear();
-        _preferredEncodingOrder.addAll(_precompressedFormats.stream().map(CompressedContentFormat::getEncoding).toList());
+        _preferredEncodingOrder.addAll(_precompressedFormats.stream().map(CompressedContentFormat::getEncoding).collect(Collectors.toList()));
     }
 
     public void setEncodingCacheSize(int encodingCacheSize)

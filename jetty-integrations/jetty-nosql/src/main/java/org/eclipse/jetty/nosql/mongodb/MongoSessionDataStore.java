@@ -519,8 +519,8 @@ public class MongoSessionDataStore extends NoSqlSessionDataStore
     {
         var indexes =
                 StreamSupport.stream(_dbSessions.listIndexes().spliterator(), false)
-                        .toList();
-        var indexesNames = indexes.stream().map(document -> document.getString("name")).toList();
+                        .collect(Collectors.toList());
+        var indexesNames = indexes.stream().map(document -> document.getString("name")).collect(Collectors.toList());
         if (!indexesNames.contains("id_1"))
         {
             String createResult = _dbSessions.createIndex(Indexes.text("id"),

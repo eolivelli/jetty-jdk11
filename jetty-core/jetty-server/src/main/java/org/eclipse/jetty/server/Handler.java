@@ -190,8 +190,11 @@ public interface Handler extends LifeCycle, Destroyable, Request.Handler
                     T t = (T)h;
                     handlers.add(t);
                 }
-                if (h instanceof Container c)
+                if (h instanceof Container)
+                {
+                    Container c = (Container)h;
                     handlers.addAll(c.getDescendants(type));
+                }
             }
             return handlers;
         }
@@ -212,8 +215,9 @@ public interface Handler extends LifeCycle, Destroyable, Request.Handler
                     T t = (T)h;
                     return t;
                 }
-                if (h instanceof Container c)
+                if (h instanceof Container)
                 {
+                    Container c = (Container)h;
                     T t = c.getDescendant(type);
                     if (t != null)
                         return t;
@@ -396,8 +400,11 @@ public interface Handler extends LifeCycle, Destroyable, Request.Handler
         default Singleton getTail()
         {
             Singleton tail = this;
-            while (tail.getHandler() instanceof Singleton wrapped)
-                tail = wrapped;
+            Handler next;
+            while ((next = tail.getHandler()) instanceof Singleton)
+            {
+                tail = (Singleton)next;
+            }
             return tail;
         }
 
@@ -421,8 +428,11 @@ public interface Handler extends LifeCycle, Destroyable, Request.Handler
             // check state
             checkHandler(singleton, handler);
 
-            if (singleton instanceof org.eclipse.jetty.util.component.ContainerLifeCycle container)
+            if (singleton instanceof org.eclipse.jetty.util.component.ContainerLifeCycle)
+            {
+                org.eclipse.jetty.util.component.ContainerLifeCycle container = (org.eclipse.jetty.util.component.ContainerLifeCycle)singleton;
                 container.updateBean(singleton.getHandler(), handler);
+            }
 
             return handler;
         }
@@ -459,8 +469,8 @@ public interface Handler extends LifeCycle, Destroyable, Request.Handler
             }
 
             // Check for loops.
-            if (handler == singleton || (handler instanceof Handler.Container container &&
-                container.getDescendants().contains(singleton)))
+            if (handler == singleton || (handler instanceof Handler.Container &&
+                ((Handler.Container)handler).getDescendants().contains(singleton)))
                 throw new IllegalStateException("Handler loop");
 
             if (handler != null && server != null)
@@ -636,8 +646,9 @@ public interface Handler extends LifeCycle, Destroyable, Request.Handler
         @SuppressWarnings("unchecked")
         private <H extends Handler> void expandHandler(Handler handler, List<H> list, Class<H> type)
         {
-            if (!(handler instanceof Container container))
+            if (!(handler instanceof Container))
                 return;
+            Container container = (Container)handler;
 
             for (Handler child : container.getHandlers())
             {
@@ -656,8 +667,9 @@ public interface Handler extends LifeCycle, Destroyable, Request.Handler
         @SuppressWarnings("unchecked")
         private <H extends Handler> H findHandler(Handler handler, Class<H> type)
         {
-            if (!(handler instanceof Container container))
+            if (!(handler instanceof Container))
                 return null;
+            Container container = (Container)handler;
 
             for (Handler child : container.getHandlers())
             {
@@ -886,8 +898,8 @@ public interface Handler extends LifeCycle, Destroyable, Request.Handler
                 if (handler == null)
                     continue;
 
-                if (handler == this || (handler instanceof Handler.Container container &&
-                    container.getDescendants().contains(this)))
+                if (handler == this || (handler instanceof Handler.Container &&
+                    ((Handler.Container)handler).getDescendants().contains(this)))
                     throw new IllegalStateException("setHandler loop");
                 invocationType = Invocable.combine(invocationType, handler.getInvocationType());
                 if (server != null)

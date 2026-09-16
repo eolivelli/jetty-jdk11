@@ -84,7 +84,7 @@ public class DecoderInstructionParser
         {
             switch (_state)
             {
-                case PARSING ->
+                case PARSING:
                 {
                     byte firstByte = buffer.get(buffer.position());
                     if ((firstByte & 0x80) != 0)
@@ -105,13 +105,23 @@ public class DecoderInstructionParser
                         _state = State.DUPLICATE;
                         _integerDecoder.setPrefix(5);
                     }
+                    break;
                 }
 
-                case SET_CAPACITY -> parseSetDynamicTableCapacity(buffer);
-                case DUPLICATE -> parseDuplicate(buffer);
-                case LITERAL_NAME -> parseInsertWithLiteralName(buffer);
-                case REFERENCED_NAME -> parseInsertNameWithReference(buffer);
-                default -> throw new IllegalStateException(_state.name());
+                case SET_CAPACITY:
+                    parseSetDynamicTableCapacity(buffer);
+                    break;
+                case DUPLICATE:
+                    parseDuplicate(buffer);
+                    break;
+                case LITERAL_NAME:
+                    parseInsertWithLiteralName(buffer);
+                    break;
+                case REFERENCED_NAME:
+                    parseInsertNameWithReference(buffer);
+                    break;
+                default:
+                    throw new IllegalStateException(_state.name());
             }
         }
     }
@@ -122,14 +132,15 @@ public class DecoderInstructionParser
         {
             switch (_operation)
             {
-                case NONE ->
+                case NONE:
                 {
                     byte firstByte = buffer.get(buffer.position());
                     _referenceDynamicTable = (firstByte & 0x40) == 0;
                     _operation = Operation.INDEX;
                     _integerDecoder.setPrefix(6);
+                    break;
                 }
-                case INDEX ->
+                case INDEX:
                 {
                     _index = _integerDecoder.decodeInt(buffer);
                     if (_index < 0)
@@ -137,8 +148,9 @@ public class DecoderInstructionParser
 
                     _operation = Operation.VALUE;
                     _stringDecoder.setPrefix(8);
+                    break;
                 }
-                case VALUE ->
+                case VALUE:
                 {
                     String value = _stringDecoder.decode(buffer);
                     if (value == null)
@@ -151,7 +163,8 @@ public class DecoderInstructionParser
                     return;
                 }
 
-                default -> throw new IllegalStateException(_operation.name());
+                default:
+                    throw new IllegalStateException(_operation.name());
             }
         }
     }
@@ -162,12 +175,13 @@ public class DecoderInstructionParser
         {
             switch (_operation)
             {
-                case NONE ->
+                case NONE:
                 {
                     _operation = Operation.NAME;
                     _stringDecoder.setPrefix(6);
+                    break;
                 }
-                case NAME ->
+                case NAME:
                 {
                     _name = _stringDecoder.decode(buffer);
                     if (_name == null)
@@ -175,8 +189,9 @@ public class DecoderInstructionParser
 
                     _operation = Operation.VALUE;
                     _stringDecoder.setPrefix(8);
+                    break;
                 }
-                case VALUE ->
+                case VALUE:
                 {
                     String value = _stringDecoder.decode(buffer);
                     if (value == null)
@@ -187,7 +202,8 @@ public class DecoderInstructionParser
                     _handler.onInsertWithLiteralName(name, value);
                     return;
                 }
-                default -> throw new IllegalStateException(_operation.name());
+                default:
+                    throw new IllegalStateException(_operation.name());
             }
         }
     }

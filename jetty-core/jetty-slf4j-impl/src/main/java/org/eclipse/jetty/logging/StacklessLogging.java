@@ -94,8 +94,12 @@ public class StacklessLogging implements AutoCloseable
         List<JettyLogger> stackless = new ArrayList<>();
         for (Logger log : logs)
         {
-            if (log instanceof JettyLogger jettyLogger && !jettyLogger.isDebugEnabled())
-                stackless.add(jettyLogger);
+            if (log instanceof JettyLogger)
+            {
+                JettyLogger jettyLogger = (JettyLogger)log;
+                if (!jettyLogger.isDebugEnabled())
+                    stackless.add(jettyLogger);
+            }
         }
         squelched = List.copyOf(stackless);
 

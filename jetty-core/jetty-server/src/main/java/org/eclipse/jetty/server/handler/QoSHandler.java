@@ -246,8 +246,11 @@ public class QoSHandler extends ConditionalHandler.Abstract
         if (maxRequests <= 0)
         {
             ThreadPool threadPool = getServer().getThreadPool();
-            if (threadPool instanceof ThreadPool.SizedThreadPool sized)
+            if (threadPool instanceof ThreadPool.SizedThreadPool)
+            {
+                ThreadPool.SizedThreadPool sized = (ThreadPool.SizedThreadPool)threadPool;
                 maxRequests = sized.getMaxThreads() / 2;
+            }
             else
                 maxRequests = ProcessorUtils.availableProcessors();
             setMaxRequestCount(maxRequests);
@@ -511,7 +514,7 @@ public class QoSHandler extends ConditionalHandler.Abstract
     @Override
     public String toString()
     {
-        return "%s[maxReq=%d,maxSus=%d,sus/res/tot/exp/exc=(%d,%d)/%d/%d/%d/%d]".formatted(
+        return String.format("%s[maxReq=%d,maxSus=%d,sus/res/tot/exp/exc=(%d,%d)/%d/%d/%d/%d]",
             super.toString(),
             getMaxRequestCount(),
             getMaxSuspendedRequestCount(),
@@ -520,8 +523,7 @@ public class QoSHandler extends ConditionalHandler.Abstract
             getTotalResumedRequestCount(),
             getTotalRequestCount(),
             getTotalExpiredRequestCount(),
-            getTotalExceededRequestCount()
-        );
+            getTotalExceededRequestCount());
     }
 
     private class Entry implements CyclicTimeouts.Expirable, Runnable

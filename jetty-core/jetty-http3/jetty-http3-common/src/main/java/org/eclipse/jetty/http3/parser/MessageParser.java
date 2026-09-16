@@ -104,7 +104,7 @@ public class MessageParser
             {
                 switch (state)
                 {
-                    case HEADER ->
+                    case HEADER:
                     {
                         if (buffer.hasRemaining())
                             storeBeginNanoTime();
@@ -112,8 +112,9 @@ public class MessageParser
                             state = State.BODY;
                         else
                             return Result.NO_FRAME;
+                        break;
                     }
-                    case BODY ->
+                    case BODY:
                     {
                         BodyParser bodyParser = null;
                         long frameType = headerParser.getFrameType();
@@ -178,8 +179,10 @@ public class MessageParser
                                 throw new IllegalStateException();
                             }
                         }
+                        break;
                     }
-                    default -> throw new IllegalStateException();
+                    default:
+                        throw new IllegalStateException();
                 }
             }
         }

@@ -13,6 +13,7 @@
 
 package org.eclipse.jetty.rewrite.handler;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.eclipse.jetty.http.HttpStatus;
@@ -92,11 +93,9 @@ public class RewriteRegexRuleTest extends AbstractRuleTest
         RewriteRegexRule rule = new RewriteRegexRule(scenario.regex, scenario.replacement);
         start(rule);
 
-        String request = """
-            GET $T HTTP/1.1
-            Host: localhost
-            
-            """.replace("$T", scenario.pathQuery);
+        String request = ("GET $T HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n").replace("$T", scenario.pathQuery);
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus(), "Response status code");
@@ -126,11 +125,9 @@ public class RewriteRegexRuleTest extends AbstractRuleTest
         RewriteRegexRule rule = new RewriteRegexRule(regex, replacement);
         start(rule);
 
-        String request = """
-            GET $T HTTP/1.1
-            Host: localhost
-            
-            """.replace("$T", target);
+        String request = ("GET $T HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n").replace("$T", target);
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus(), "Response status code");
@@ -165,11 +162,9 @@ public class RewriteRegexRuleTest extends AbstractRuleTest
         rule.setAddQueries(true);
         start(rule);
 
-        String request = """
-            GET $T HTTP/1.1
-            Host: localhost
-            
-            """.replace("$T", target);
+        String request = ("GET $T HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n").replace("$T", target);
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertEquals(HttpStatus.OK_200, response.getStatus(), "Response status code");
@@ -181,7 +176,72 @@ public class RewriteRegexRuleTest extends AbstractRuleTest
         assertThat(result, is(expectedResult));
     }
 
-    public record Scenario(String pathQuery, String regex, String replacement, String expectedPath, String expectedQuery)
+    public static final class Scenario
     {
+        private final String pathQuery;
+        private final String regex;
+        private final String replacement;
+        private final String expectedPath;
+        private final String expectedQuery;
+
+        public Scenario(String pathQuery, String regex, String replacement, String expectedPath, String expectedQuery)
+        {
+            this.pathQuery = pathQuery;
+            this.regex = regex;
+            this.replacement = replacement;
+            this.expectedPath = expectedPath;
+            this.expectedQuery = expectedQuery;
+        }
+
+        public String pathQuery()
+        {
+            return pathQuery;
+        }
+
+        public String regex()
+        {
+            return regex;
+        }
+
+        public String replacement()
+        {
+            return replacement;
+        }
+
+        public String expectedPath()
+        {
+            return expectedPath;
+        }
+
+        public String expectedQuery()
+        {
+            return expectedQuery;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Scenario that = (Scenario)obj;
+            return Objects.equals(pathQuery, that.pathQuery) && Objects.equals(regex, that.regex) &&
+                Objects.equals(replacement, that.replacement) && Objects.equals(expectedPath, that.expectedPath) &&
+                Objects.equals(expectedQuery, that.expectedQuery);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(pathQuery, regex, replacement, expectedPath, expectedQuery);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Scenario[pathQuery=" + pathQuery + ", regex=" + regex + ", replacement=" + replacement +
+                ", expectedPath=" + expectedPath + ", expectedQuery=" + expectedQuery + "]";
+        }
     }
 }

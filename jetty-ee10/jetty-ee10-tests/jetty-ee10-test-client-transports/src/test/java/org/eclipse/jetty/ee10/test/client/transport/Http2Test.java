@@ -80,15 +80,13 @@ public class Http2Test
     }
 
     @ParameterizedTest
-    @CsvSource(useHeadersInDisplayName = true, textBlock = """
-        contentLengthMode, flushMode
-        int              , false
-        int              , true
-        long             , false
-        long             , true
-        string           , false
-        string           , true
-        """)
+    @CsvSource(useHeadersInDisplayName = true, textBlock = "contentLengthMode, flushMode\n" +
+        "int              , false\n" +
+        "int              , true\n" +
+        "long             , false\n" +
+        "long             , true\n" +
+        "string           , false\n" +
+        "string           , true\n")
     public void testServletContentLengthDoesSendEmptyLastDataFrame(String contentLengthMode, boolean flushMode) throws Exception
     {
         start(new HttpServlet()
@@ -99,9 +97,15 @@ public class Http2Test
                 int length = 64;
                 switch (contentLengthMode)
                 {
-                    case "int" -> response.setContentLength(length);
-                    case "long" -> response.setContentLengthLong(length);
-                    case "string" -> response.setHeader("Content-Length", String.valueOf(length));
+                    case "int":
+                        response.setContentLength(length);
+                        break;
+                    case "long":
+                        response.setContentLengthLong(length);
+                        break;
+                    case "string":
+                        response.setHeader("Content-Length", String.valueOf(length));
+                        break;
                 }
                 response.getOutputStream().write(new byte[length]);
                 if (flushMode)

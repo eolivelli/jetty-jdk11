@@ -195,8 +195,11 @@ public class JettyHttpExchangeDelegate extends HttpExchange
     public InetSocketAddress getRemoteAddress()
     {
         SocketAddress remote = _request.getConnectionMetaData().getRemoteSocketAddress();
-        if (remote instanceof InetSocketAddress inet)
+        if (remote instanceof InetSocketAddress)
+        {
+            InetSocketAddress inet = (InetSocketAddress)remote;
             return inet;
+        }
         return null;
     }
 
@@ -210,8 +213,11 @@ public class JettyHttpExchangeDelegate extends HttpExchange
     public InetSocketAddress getLocalAddress()
     {
         SocketAddress local = _request.getConnectionMetaData().getLocalSocketAddress();
-        if (local instanceof InetSocketAddress inet)
+        if (local instanceof InetSocketAddress)
+        {
+            InetSocketAddress inet = (InetSocketAddress)local;
             return inet;
+        }
         return null;
     }
 

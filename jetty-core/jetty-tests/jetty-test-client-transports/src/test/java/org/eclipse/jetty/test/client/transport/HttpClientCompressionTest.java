@@ -38,20 +38,18 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HttpClientCompressionTest extends AbstractTest
 {
-    private static final String SAMPLE_CONTENT = """
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. In quis felis nunc.
-        Quisque suscipit mauris et ante auctor ornare rhoncus lacus aliquet. Pellentesque
-        habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
-        Vestibulum sit amet felis augue, vel convallis dolor. Cras accumsan vehicula diam
-        at faucibus. Etiam in urna turpis, sed congue mi. Morbi et lorem eros. Donec vulputate
-        velit in risus suscipit lobortis. Aliquam id urna orci, nec sollicitudin ipsum.
-        Cras a orci turpis. Donec suscipit vulputate cursus. Mauris nunc tellus, fermentum
-        eu auctor ut, mollis at diam. Quisque porttitor ultrices metus, vitae tincidunt massa
-        sollicitudin a. Vivamus porttitor libero eget purus hendrerit cursus. Integer aliquam
-        consequat mauris quis luctus. Cras enim nibh, dignissim eu faucibus ac, mollis nec neque.
-        Aliquam purus mauris, consectetur nec convallis lacinia, porta sed ante. Suspendisse
-        et cursus magna. Donec orci enim, molestie a lobortis eu, imperdiet vitae neque.
-        """;
+    private static final String SAMPLE_CONTENT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In quis felis nunc.\n" +
+        "Quisque suscipit mauris et ante auctor ornare rhoncus lacus aliquet. Pellentesque\n" +
+        "habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n" +
+        "Vestibulum sit amet felis augue, vel convallis dolor. Cras accumsan vehicula diam\n" +
+        "at faucibus. Etiam in urna turpis, sed congue mi. Morbi et lorem eros. Donec vulputate\n" +
+        "velit in risus suscipit lobortis. Aliquam id urna orci, nec sollicitudin ipsum.\n" +
+        "Cras a orci turpis. Donec suscipit vulputate cursus. Mauris nunc tellus, fermentum\n" +
+        "eu auctor ut, mollis at diam. Quisque porttitor ultrices metus, vitae tincidunt massa\n" +
+        "sollicitudin a. Vivamus porttitor libero eget purus hendrerit cursus. Integer aliquam\n" +
+        "consequat mauris quis luctus. Cras enim nibh, dignissim eu faucibus ac, mollis nec neque.\n" +
+        "Aliquam purus mauris, consectetur nec convallis lacinia, porta sed ante. Suspendisse\n" +
+        "et cursus magna. Donec orci enim, molestie a lobortis eu, imperdiet vitae neque.\n";
 
     @ParameterizedTest
     @MethodSource("transports")
@@ -238,7 +236,7 @@ public class HttpClientCompressionTest extends AbstractTest
 
         AtomicReference<String> contentEncodingRef = new AtomicReference<>();
         ContentResponse response = client.newRequest(newURI(transportType))
-            .headers(h -> h.put(HttpHeader.ACCEPT_ENCODING, "gzip;q=0.5, %s;q=1.0".formatted(encoding)))
+            .headers(h -> h.put(HttpHeader.ACCEPT_ENCODING, String.format("gzip;q=0.5, %s;q=1.0", encoding)))
             .onResponseHeader((r, f) ->
             {
                 if (f.getHeader() == HttpHeader.CONTENT_ENCODING)

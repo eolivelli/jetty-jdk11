@@ -92,11 +92,9 @@ public class TransferEncodingChunkTest
 
         try (Socket client = new Socket("localhost", connector.getLocalPort()))
         {
-            String request = """
-                GET / HTTP/1.1
-                Host: localhost
-                
-                """;
+            String request = "GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "\n";
             OutputStream output = client.getOutputStream();
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
@@ -142,14 +140,14 @@ public class TransferEncodingChunkTest
             int index = -1;
             for (int i = 0; i < count; ++i)
             {
-                index = responseString.indexOf("\r\n%x\r\n".formatted(chunkMaxLength), index + 1);
+                index = responseString.indexOf(String.format("\r\n%x\r\n", chunkMaxLength), index + 1);
                 assertThat(index, greaterThan(0));
             }
             // Check that there are no extra bytes after the response end.
             try
             {
                 int read = input.read(b);
-                fail("unexpected read of %d bytes ".formatted(read));
+                fail(String.format("unexpected read of %d bytes ", read));
             }
             catch (SocketTimeoutException ignored)
             {
@@ -189,11 +187,9 @@ public class TransferEncodingChunkTest
 
         try (Socket client = new Socket("localhost", connector.getLocalPort()))
         {
-            String request = """
-                GET / HTTP/1.1
-                Host: localhost
-                
-                """;
+            String request = "GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "\n";
             OutputStream output = client.getOutputStream();
             output.write(request.getBytes(StandardCharsets.UTF_8));
             output.flush();
@@ -240,14 +236,14 @@ public class TransferEncodingChunkTest
             int index = -1;
             for (int i = 0; i < count; ++i)
             {
-                index = responseString.indexOf("\r\n%x\r\n".formatted(chunkMaxLength), index + 1);
+                index = responseString.indexOf(String.format("\r\n%x\r\n", chunkMaxLength), index + 1);
                 assertThat(index, greaterThan(0));
             }
             // Check that there are no extra bytes after the response end.
             try
             {
                 int read = input.read(b);
-                fail("unexpected read of %d bytes ".formatted(read));
+                fail(String.format("unexpected read of %d bytes ", read));
             }
             catch (SocketTimeoutException ignored)
             {

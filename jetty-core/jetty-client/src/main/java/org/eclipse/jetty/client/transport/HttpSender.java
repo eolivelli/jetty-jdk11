@@ -148,12 +148,13 @@ public abstract class HttpSender
     protected boolean someToContent(HttpExchange exchange, ByteBuffer content)
     {
         RequestState current = requestState.get();
-        return switch (current)
+        switch (current)
         {
-            case COMMIT, CONTENT ->
+            case COMMIT:
+            case CONTENT:
             {
                 if (!updateRequestState(current, RequestState.TRANSIENT))
-                    yield false;
+                    return false;
 
                 HttpRequest request = exchange.getRequest();
                 if (LOG.isDebugEnabled())
@@ -161,26 +162,28 @@ public abstract class HttpSender
                 request.notifyContent(content);
 
                 if (updateRequestState(RequestState.TRANSIENT, RequestState.CONTENT))
-                    yield true;
+                    return true;
 
                 abortRequest(exchange);
-                yield false;
+                return false;
             }
-            default -> false;
-        };
+            default:
+                return false;
+        }
     }
 
     protected boolean someToSuccess(HttpExchange exchange)
     {
         RequestState current = requestState.get();
-        return switch (current)
+        switch (current)
         {
-            case COMMIT, CONTENT ->
+            case COMMIT:
+            case CONTENT:
             {
                 // Mark atomically the request as completed, with respect
                 // to concurrency between request success and request failure.
                 if (!exchange.requestComplete(null))
-                    yield false;
+                    return false;
 
                 requestState.set(RequestState.QUEUED);
 
@@ -196,10 +199,11 @@ public abstract class HttpSender
                 // respect to concurrency between request and response.
                 Result result = exchange.terminateRequest();
                 terminateRequest(exchange, null, result);
-                yield true;
+                return true;
             }
-            default -> false;
-        };
+            default:
+                return false;
+        }
     }
 
     private boolean failRequest(Throwable failure)

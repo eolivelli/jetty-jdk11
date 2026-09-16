@@ -103,19 +103,30 @@ public class CoreAppContext extends ContextHandler implements Deployable
     {
         switch (keyName)
         {
-            case EXTRA_CLASS_PATH_ATTRIBUTE ->
+            case EXTRA_CLASS_PATH_ATTRIBUTE:
             {
-                if (value instanceof String str)
+                if (value instanceof String)
+                {
+                    String str = (String)value;
                     setExtraClassPath(str);
+                }
+                break;
             }
-            case Deployable.DIR_ALLOWED ->
+            case Deployable.DIR_ALLOWED:
             {
-                if (value instanceof String str)
+                if (value instanceof String)
+                {
+                    String str = (String)value;
                     setDirAllowed(Boolean.parseBoolean(str));
-                else if (value instanceof Boolean bool)
+                }
+                else if (value instanceof Boolean)
+                {
+                    Boolean bool = (Boolean)value;
                     setDirAllowed(bool);
+                }
+                break;
             }
-            case Deployable.MAIN_PATH ->
+            case Deployable.MAIN_PATH:
             {
                 // The Base Resource
                 Path mainPath = (Path)value;
@@ -125,8 +136,9 @@ public class CoreAppContext extends ContextHandler implements Deployable
                     Resource baseResource = resourceFactory.newResource((Path)value);
                     setBaseResource(baseResource);
                 }
+                break;
             }
-            case Deployable.OTHER_PATHS ->
+            case Deployable.OTHER_PATHS:
             {
                 //noinspection unchecked
                 java.util.Collection<Path> deployablePaths = (java.util.Collection<Path>)value;
@@ -156,6 +168,7 @@ public class CoreAppContext extends ContextHandler implements Deployable
                     Resource resourceDir = resourceFactory.newResource(mainDir);
                     setBaseResource(resourceDir);
                 }
+                break;
             }
         }
     }
@@ -210,7 +223,7 @@ public class CoreAppContext extends ContextHandler implements Deployable
     {
         setExtraClassPath(Stream.of(extraClasspath)
             .map(entry -> getResourceFactory().newResource(entry))
-            .toList()
+            .collect(Collectors.toList())
         );
     }
 
@@ -457,10 +470,16 @@ public class CoreAppContext extends ContextHandler implements Deployable
     {
         if (obj == null)
             return null;
-        if (obj instanceof Enum<?> en)
+        if (obj instanceof Enum<?>)
+        {
+            Enum<?> en = (Enum<?>)obj;
             return en.name();
-        if (obj instanceof Environment env)
+        }
+        if (obj instanceof Environment)
+        {
+            Environment env = (Environment)obj;
             return env.getName();
+        }
         return Objects.toString(obj);
     }
 
@@ -468,8 +487,9 @@ public class CoreAppContext extends ContextHandler implements Deployable
     {
         for (Handler handler : getHandlers())
         {
-            if (handler instanceof ResourceHandler resourceHandler)
+            if (handler instanceof ResourceHandler)
             {
+                ResourceHandler resourceHandler = (ResourceHandler)handler;
                 Resource baseResource = resourceHandler.getBaseResource();
                 if (baseResource != null)
                 {

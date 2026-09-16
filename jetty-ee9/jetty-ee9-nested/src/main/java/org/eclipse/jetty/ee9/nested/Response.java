@@ -159,10 +159,13 @@ public class Response implements HttpServletResponse
     {
         while (true)
         {
-            if (servletResponse instanceof Response response)
-                return response;
-            if (servletResponse instanceof ServletResponseWrapper wrapper)
+            if (servletResponse instanceof Response)
+                return (Response)servletResponse;
+            if (servletResponse instanceof ServletResponseWrapper)
+            {
+                ServletResponseWrapper wrapper = (ServletResponseWrapper)servletResponse;
                 servletResponse = wrapper.getResponse();
+            }
             else
                 return null;
         }
@@ -488,10 +491,18 @@ public class Response implements HttpServletResponse
 
         switch (code)
         {
-            case -1 -> _channel.abort(new org.eclipse.jetty.server.Request.Handler.AbortException(message));
-            case HttpStatus.PROCESSING_102 -> sendProcessing();
-            case HttpStatus.EARLY_HINTS_103 -> sendEarlyHint();
-            default -> _channel.getState().sendError(code, message);
+            case -1:
+                _channel.abort(new org.eclipse.jetty.server.Request.Handler.AbortException(message));
+                break;
+            case HttpStatus.PROCESSING_102:
+                sendProcessing();
+                break;
+            case HttpStatus.EARLY_HINTS_103:
+                sendEarlyHint();
+                break;
+            default:
+                _channel.getState().sendError(code, message);
+                break;
         }
     }
 
@@ -1689,7 +1700,7 @@ public class Response implements HttpServletResponse
                 }
             }
 
-            if (builder.isEmpty())
+            if (builder.length() == 0)
                 return null;
             return builder.toString();
         }

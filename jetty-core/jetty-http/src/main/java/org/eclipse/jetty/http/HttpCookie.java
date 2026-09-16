@@ -563,13 +563,27 @@ public interface HttpCookie
             // Sanity checks on the values, expensive but necessary to avoid to store garbage.
             switch (name.toLowerCase(Locale.ROOT))
             {
-                case "expires" -> expires(StringUtil.isBlank(value) ? null : parseExpires(value));
-                case "httponly" -> httpOnly(asBoolean("httponly", value));
-                case "max-age" -> maxAge(StringUtil.isBlank(value) ? -1 : Long.parseLong(value));
-                case "samesite" -> sameSite(SameSite.from(value));
-                case "secure" -> secure(asBoolean("secure", value));
-                case "partitioned" -> partitioned(asBoolean("partitioned", value));
-                default -> _attributes = lazyAttributePut(_attributes, name, value);
+                case "expires":
+                    expires(StringUtil.isBlank(value) ? null : parseExpires(value));
+                    break;
+                case "httponly":
+                    httpOnly(asBoolean("httponly", value));
+                    break;
+                case "max-age":
+                    maxAge(StringUtil.isBlank(value) ? -1 : Long.parseLong(value));
+                    break;
+                case "samesite":
+                    sameSite(SameSite.from(value));
+                    break;
+                case "secure":
+                    secure(asBoolean("secure", value));
+                    break;
+                case "partitioned":
+                    partitioned(asBoolean("partitioned", value));
+                    break;
+                default:
+                    _attributes = lazyAttributePut(_attributes, name, value);
+                    break;
             }
             return this;
         }
@@ -851,8 +865,9 @@ public interface HttpCookie
             return true;
         if (cookie1 == null || obj == null)
             return false;
-        if (!(obj instanceof HttpCookie cookie2))
+        if (!(obj instanceof HttpCookie))
             return false;
+        HttpCookie cookie2 = (HttpCookie)obj;
         // RFC 2965 section. 3.3.3 and RFC 6265 section 4.1.2.
         // Names are case-sensitive.
         if (!Objects.equals(cookie1.getName(), cookie2.getName()))
@@ -898,7 +913,7 @@ public interface HttpCookie
      */
     static String toString(HttpCookie httpCookie)
     {
-        return "%s@%x[%s]".formatted(TypeUtil.toShortName(httpCookie.getClass()), httpCookie.hashCode(), asString(httpCookie));
+        return String.format("%s@%x[%s]", TypeUtil.toShortName(httpCookie.getClass()), httpCookie.hashCode(), asString(httpCookie));
     }
 
     /**

@@ -103,12 +103,10 @@ public class EmbeddedJerseyTest
     {
         start();
 
-        Request.Content content = new StringRequestContent("""
-            {
-                "principal" : "foo",
-                "roles" : ["admin", "user"]
-            }
-            """
+        Request.Content content = new StringRequestContent("{\n" +
+            "    \"principal\" : \"foo\",\n" +
+            "    \"roles\" : [\"admin\", \"user\"]\n" +
+            "}\n"
         );
         ContentResponse response = httpClient.newRequest("localhost", connector.getLocalPort())
             .method(HttpMethod.PUT)
@@ -120,11 +118,9 @@ public class EmbeddedJerseyTest
 
         assertThat(response.getStatus(), is(200));
         assertThat(response.getHeaders().get(HttpHeader.CONTENT_TYPE), is(MimeTypes.Type.APPLICATION_JSON.asString()));
-        assertThat(response.getContentAsString(), is("""
-            {
-                "response" : "ok"
-            }
-            """)
+        assertThat(response.getContentAsString(), is("{\n" +
+            "    \"response\" : \"ok\"\n" +
+            "}\n")
         );
     }
 

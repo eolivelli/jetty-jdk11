@@ -65,7 +65,7 @@ public class HttpClientTransportOverHTTP extends AbstractConnectorHttpClientTran
         HttpVersion version = request.getVersion();
         HttpVersion http1 = HttpVersion.HTTP_1_1;
         if (((HttpRequest)request).isVersionExplicit() && version.compareTo(http1) > 0)
-            throw new HttpRequestException("Cannot send explicit %s requests with %s transport".formatted(version, http1), request);
+            throw new HttpRequestException(String.format("Cannot send explicit %s requests with %s transport", version, http1), request);
         if (request.getTransport() == null)
             request.transport(Transport.TCP_IP);
         return getHttpClient().createOrigin(request, HTTP11);

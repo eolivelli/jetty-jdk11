@@ -262,26 +262,30 @@ public class IteratingCallbackTest
             {
                 processed++;
 
-                return switch (i--)
+                switch (i--)
                 {
-                    case 5, 2 ->
+                    case 5:
+                    case 2:
                     {
                         succeeded();
-                        yield Action.SCHEDULED;
+                        return Action.SCHEDULED;
                     }
-                    case 4, 1 ->
+                    case 4:
+                    case 1:
                     {
                         scheduler.schedule(successTask, 5, TimeUnit.MILLISECONDS);
-                        yield Action.SCHEDULED;
+                        return Action.SCHEDULED;
                     }
-                    case 3 ->
+                    case 3:
                     {
                         scheduler.schedule(idle::countDown, 5, TimeUnit.MILLISECONDS);
-                        yield Action.IDLE;
+                        return Action.IDLE;
                     }
-                    case 0 -> Action.SUCCEEDED;
-                    default -> throw new IllegalStateException();
-                };
+                    case 0:
+                        return Action.SUCCEEDED;
+                    default:
+                        throw new IllegalStateException();
+                }
             }
         };
 
@@ -602,20 +606,26 @@ public class IteratingCallbackTest
         {
             switch (event)
             {
-                case PROCESSED ->
+                case PROCESSED:
                 {
                     processingLatch.countDown();
                     // We can call aborted
                     Awaitility.waitAtMost(5, TimeUnit.SECONDS).pollInterval(10, TimeUnit.MILLISECONDS).until(() -> aborted.get() != null);
+                    break;
                 }
-                case ABORTED ->
+                case ABORTED:
                 {
                     abortLatch.countDown();
                     Awaitility.waitAtMost(5, TimeUnit.SECONDS).pollInterval(10, TimeUnit.MILLISECONDS).until(() -> !icb.toString().contains("AbortingException"));
+                    break;
                 }
-                case SUCCEEDED -> icb.succeeded();
+                case SUCCEEDED:
+                    icb.succeeded();
+                    break;
 
-                case FAILED -> icb.failed(new Throwable("failure"));
+                case FAILED:
+                    icb.failed(new Throwable("failure"));
+                    break;
             }
 
             if (++count < 3)

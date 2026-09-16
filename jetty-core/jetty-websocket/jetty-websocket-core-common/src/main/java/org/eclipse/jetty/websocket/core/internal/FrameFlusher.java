@@ -551,15 +551,15 @@ public class FrameFlusher extends IteratingCallback
             return (_expiry != Long.MAX_VALUE) && NanoTime.until(_expiry) < 0;
         }
 
-        private static long minNanoTime(long nanoTime1, long nanoTime2)
-        {
-            return NanoTime.isBeforeOrSame(nanoTime1, nanoTime2) ? nanoTime1 : nanoTime2;
-        }
-
         @Override
         public String toString()
         {
             return String.format("%s{entry=%b,expire=%s}", TypeUtil.toShortName(getClass()), _outgoingEntry, NanoTime.millisUntil(_expiry));
         }
+    }
+
+    private static long minNanoTime(long nanoTime1, long nanoTime2)
+    {
+        return NanoTime.isBeforeOrSame(nanoTime1, nanoTime2) ? nanoTime1 : nanoTime2;
     }
 }

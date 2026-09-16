@@ -264,12 +264,10 @@ public class AsyncTest
         try
         {
 
-            String rawRequest = """
-                GET /ctxA/dispatcher/x?foo=bar HTTP/1.1
-                Host: local
-                Connection: close
-                            
-                """;
+            String rawRequest = "GET /ctxA/dispatcher/x?foo=bar HTTP/1.1\n" +
+                "Host: local\n" +
+                "Connection: close\n" +
+                "\n";
 
             HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(rawRequest));
             assertThat(response.getStatus(), is(200));
@@ -389,12 +387,10 @@ public class AsyncTest
         try
         {
 
-            String rawRequest = """
-                GET /ctxA/dispatcher/x?foo=bar HTTP/1.1
-                Host: local
-                Connection: close
-                            
-                """;
+            String rawRequest = "GET /ctxA/dispatcher/x?foo=bar HTTP/1.1\n" +
+                "Host: local\n" +
+                "Connection: close\n" +
+                "\n";
 
             HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(rawRequest));
             assertThat(response.getStatus(), is(200));

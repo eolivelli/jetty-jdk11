@@ -49,11 +49,9 @@ public class RewriteHandlerMissingChildTest
         _server.setHandler(_rewriteHandler);
         _server.start();
 
-        String request = """
-            GET /xxx/bar HTTP/1.1
-            Host: localhost
-                        
-            """;
+        String request = "GET /xxx/bar HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
 

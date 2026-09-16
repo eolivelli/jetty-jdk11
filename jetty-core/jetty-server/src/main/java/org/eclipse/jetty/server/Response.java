@@ -194,15 +194,17 @@ public interface Response extends Content.Sink
 
         return (chunk, callback) ->
         {
-            if (chunk instanceof Trailers trailers)
+            if (chunk instanceof Trailers)
             {
+                Trailers trailers = (Trailers)chunk;
                 HttpFields requestTrailers = trailers.getTrailers();
                 if (requestTrailers != null)
                 {
                     // Call supplier in lambda to get latest responseTrailers
                     HttpFields responseTrailers = supplier.get();
-                    if (responseTrailers instanceof HttpFields.Mutable mutable)
+                    if (responseTrailers instanceof HttpFields.Mutable)
                     {
+                        HttpFields.Mutable mutable = (HttpFields.Mutable)responseTrailers;
                         mutable.add(requestTrailers);
                         callback.succeeded();
                         return true;
@@ -238,7 +240,7 @@ public interface Response extends Content.Sink
                 return null;
             if (type.isInstance(response))
                 return (T)response;
-            response = response instanceof Response.Wrapper wrapper ? wrapper.getWrapped() : null;
+            response = response instanceof Response.Wrapper ? ((Response.Wrapper)response).getWrapped() : null;
         }
         return null;
     }
@@ -260,7 +262,7 @@ public interface Response extends Content.Sink
         {
             if (type.isInstance(response))
                 return (T)response;
-            response = response instanceof Response.Wrapper wrapper ? wrapper.getWrapped() : null;
+            response = response instanceof Response.Wrapper ? ((Response.Wrapper)response).getWrapped() : null;
         }
         return null;
     }
@@ -381,13 +383,11 @@ public interface Response extends Content.Sink
             if (content == null && request.getConnectionMetaData().getHttpConfiguration().isGenerateRedirectBody())
             {
                 response.getHeaders().put(MimeTypes.Type.TEXT_HTML_8859_1.getContentTypeField());
-                String body = """
-            <!DOCTYPE html>
-            <html lang="en">
-            <head><meta charset="ISO-8859-1"/><meta http-equiv="refresh" content="0; URL=%s"/><title>Redirecting...</title></head>
-            <body><p>If you are not redirected, <a href="%s">click here</a>.</p></body>
-            </html>
-            """.formatted(location, location);
+                String body = String.format("<!DOCTYPE html>\n" +
+                    "<html lang=\"en\">\n" +
+                    "<head><meta charset=\"ISO-8859-1\"/><meta http-equiv=\"refresh\" content=\"0; URL=%s\"/><title>Redirecting...</title></head>\n" +
+                    "<body><p>If you are not redirected, <a href=\"%s\">click here</a>.</p></body>\n" +
+                    "</html>\n", location, location);
                 content = BufferUtil.toBuffer(body, StandardCharsets.ISO_8859_1);
             }
 
@@ -520,10 +520,11 @@ public interface Response extends Content.Sink
 
             switch (header)
             {
-                case SET_COOKIE ->
+                case SET_COOKIE:
                 {
-                    if (field instanceof HttpCookieUtils.SetCookieHttpField setCookieHttpField)
+                    if (field instanceof HttpCookieUtils.SetCookieHttpField)
                     {
+                        HttpCookieUtils.SetCookieHttpField setCookieHttpField = (HttpCookieUtils.SetCookieHttpField)field;
                         if (!HttpCookieUtils.match(setCookieHttpField.getHttpCookie(), cookie.getName(), cookie.getDomain(), cookie.getPath()))
                             continue;
                     }
@@ -542,9 +543,12 @@ public interface Response extends Content.Sink
                         i.set(setCookie);
                         setCookie = null;
                     }
+                    break;
                 }
 
-                case EXPIRES -> expires = true;
+                case EXPIRES:
+                    expires = true;
+                    break;
             }
         }
 
@@ -584,8 +588,9 @@ public interface Response extends Content.Sink
             cause = new Throwable("unknown cause");
         int status = HttpStatus.INTERNAL_SERVER_ERROR_500;
         String message = cause.toString();
-        if (cause instanceof HttpException httpException)
+        if (cause instanceof HttpException)
         {
+            HttpException httpException = (HttpException)cause;
             status = httpException.getCode();
             message = httpException.getReason();
         }
@@ -699,8 +704,9 @@ public interface Response extends Content.Sink
      */
     static Response getOriginalResponse(Response response)
     {
-        while (response instanceof Response.Wrapper wrapped)
+        while (response instanceof Response.Wrapper)
         {
+            Response.Wrapper wrapped = (Response.Wrapper)response;
             response = wrapped.getWrapped();
         }
         return response;
@@ -714,8 +720,11 @@ public interface Response extends Content.Sink
     static long getContentBytesWritten(Response response)
     {
         Response originalResponse = getOriginalResponse(response);
-        if (originalResponse instanceof HttpChannelState.ChannelResponse channelResponse)
+        if (originalResponse instanceof HttpChannelState.ChannelResponse)
+        {
+            HttpChannelState.ChannelResponse channelResponse = (HttpChannelState.ChannelResponse)originalResponse;
             return channelResponse.getContentBytesWritten();
+        }
         return -1;
     }
 

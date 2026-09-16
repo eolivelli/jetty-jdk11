@@ -288,16 +288,22 @@ public final class HttpCompliance implements ComplianceViolation.Mode
         if (compliance == null)
         {
             String[] elements = spec.split("\\s*,\\s*");
-            Set<Violation> sections = switch (elements[0])
+            Set<Violation> sections;
+            switch (elements[0])
                 {
-                    case "0" -> noneOf(Violation.class);
-                    case "*" -> allOf(Violation.class);
-                    default ->
+                    case "0":
+                        sections = noneOf(Violation.class);
+                        break;
+                    case "*":
+                        sections = allOf(Violation.class);
+                        break;
+                    default:
                     {
                         HttpCompliance mode = HttpCompliance.valueOf(elements[0]);
-                        yield (mode == null) ? noneOf(Violation.class) : copyOf(mode.getAllowed());
+                        sections = (mode == null) ? noneOf(Violation.class) : copyOf(mode.getAllowed());
+                        break;
                     }
-                };
+                }
 
             for (int i = 1; i < elements.length; i++)
             {

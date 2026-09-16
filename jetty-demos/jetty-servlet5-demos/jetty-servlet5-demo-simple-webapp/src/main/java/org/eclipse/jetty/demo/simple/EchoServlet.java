@@ -36,28 +36,31 @@ public class EchoServlet extends HttpServlet
         String pathInfo = request.getPathInfo();
         switch (pathInfo)
         {
-            case "/form" ->
+            case "/form":
             {
                 String content = request.getParameterMap().entrySet().stream()
-                    .map(e -> "%s=%s".formatted(e.getKey(), String.join(", ", e.getValue())))
+                    .map(e -> String.format("%s=%s", e.getKey(), String.join(", ", e.getValue())))
                     .collect(Collectors.joining("&"));
                 output.print(content);
+                break;
             }
-            case "/multipart" ->
+            case "/multipart":
             {
                 MultipartConfigElement config = new MultipartConfigElement("");
                 request.setAttribute(MultipartConfigElement.class.getName(), config);
 
                 String content = request.getParts().stream()
-                    .map(part -> "name=%s&length=%d".formatted(part.getName(), part.getSize()))
+                    .map(part -> String.format("name=%s&length=%d", part.getName(), part.getSize()))
                     .collect(Collectors.joining(","));
                 output.print(content);
+                break;
             }
-            default ->
+            default:
             {
                 ServletInputStream input = request.getInputStream();
                 response.setContentLengthLong(request.getContentLengthLong());
                 input.transferTo(output);
+                break;
             }
         }
     }

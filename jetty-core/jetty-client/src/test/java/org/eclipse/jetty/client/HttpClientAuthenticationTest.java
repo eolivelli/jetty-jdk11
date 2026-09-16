@@ -543,15 +543,15 @@ public class HttpClientAuthenticationTest extends AbstractHttpClientServerTest
         {
             switch (index)
             {
-                case 0 ->
+                case 0:
                 {
                     return ByteBuffer.wrap(new byte[]{'h', 'e', 'l', 'l', 'o'});
                 }
-                case 1 ->
+                case 1:
                 {
                     return ByteBuffer.wrap(new byte[]{'w', 'o', 'r', 'l', 'd'});
                 }
-                case 2 ->
+                case 2:
                 {
                     // Only fail the first exchange of the conversation.
                     if (fail.compareAndSet(true, false))
@@ -572,7 +572,8 @@ public class HttpClientAuthenticationTest extends AbstractHttpClientServerTest
                         return null;
                     }
                 }
-                default -> throw new IllegalStateException();
+                default:
+                    throw new IllegalStateException();
             }
         });
         CountDownLatch resultLatch = new CountDownLatch(1);
@@ -687,12 +688,10 @@ public class HttpClientAuthenticationTest extends AbstractHttpClientServerTest
         assertEquals("1523430383", headerInfo.getParameter("nonce"));
 
         // test multiple authentications
-        List<Authentication.HeaderInfo> headerInfoList = aph.getHeaderInfo("""
-            Digest qop="auth", realm="thermostat", nonce="1523430383",\
-            Digest realm="thermostat2", qop="auth2", nonce="4522530354",\
-            Digest qop="auth3", nonce="9523570528", realm="thermostat3",\
-            Digest qop="auth4", nonce="3526435321"\
-            """);
+        List<Authentication.HeaderInfo> headerInfoList = aph.getHeaderInfo("Digest qop=\"auth\", realm=\"thermostat\", nonce=\"1523430383\"," +
+            "Digest realm=\"thermostat2\", qop=\"auth2\", nonce=\"4522530354\"," +
+            "Digest qop=\"auth3\", nonce=\"9523570528\", realm=\"thermostat3\"," +
+            "Digest qop=\"auth4\", nonce=\"3526435321\"");
 
         assertTrue(headerInfoList.get(0).getType().equalsIgnoreCase("Digest"));
         assertEquals("auth", headerInfoList.get(0).getParameter("qop"));

@@ -292,6 +292,46 @@ public class BufferUtil
     }
 
     /**
+     * <p>Creates a new buffer whose content is a shared subsequence of the given buffer,
+     * starting at the given absolute index and having the given length,
+     * like {@code ByteBuffer.slice(int, int)} does in Java 13+.</p>
+     * <p>The position and limit of the given buffer are not modified.</p>
+     * @param buffer the buffer to slice
+     * @param index the absolute index at which the slice starts
+     * @param length the length of the slice
+     * @return the sliced buffer
+     * @throws IndexOutOfBoundsException if {@code index} is negative, {@code length} is negative,
+     * or {@code index + length} is greater than {@code buffer.limit()}
+     */
+    public static ByteBuffer absoluteSlice(ByteBuffer buffer, int index, int length)
+    {
+        Objects.checkFromIndexSize(index, length, buffer.limit());
+        return buffer.duplicate().limit(index + length).position(index).slice();
+    }
+
+    /**
+     * <p>Copies {@code length} bytes from the source buffer, starting at the given absolute
+     * source index, into the target buffer, starting at the given absolute target index,
+     * like {@code ByteBuffer.put(int, ByteBuffer, int, int)} does in Java 16+.</p>
+     * <p>The positions and limits of both buffers are not modified.</p>
+     * @param target the target buffer
+     * @param index the absolute index in the target buffer at which the copy starts
+     * @param source the source buffer
+     * @param offset the absolute index in the source buffer from which the copy starts
+     * @param length the number of bytes to copy
+     * @throws IndexOutOfBoundsException if the given ranges are out of bounds of the
+     * respective buffer limits
+     */
+    public static void absolutePut(ByteBuffer target, int index, ByteBuffer source, int offset, int length)
+    {
+        Objects.checkFromIndexSize(index, length, target.limit());
+        Objects.checkFromIndexSize(offset, length, source.limit());
+        ByteBuffer src = source.duplicate().limit(offset + length).position(offset);
+        ByteBuffer dst = target.duplicate().limit(index + length).position(index);
+        dst.put(src);
+    }
+
+    /**
      * Slice a buffer given an offset and a length, similar to RFC 7233 ranges.
      * @param buffer the buffer to slice
      * @param offset the offset, relative to the current position of the buffer, must be positive

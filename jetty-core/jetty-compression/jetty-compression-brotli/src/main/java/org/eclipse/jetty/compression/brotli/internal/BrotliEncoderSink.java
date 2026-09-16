@@ -83,7 +83,7 @@ public class BrotliEncoderSink extends EncoderSink
         {
             switch (state.get())
             {
-                case PROCESSING ->
+                case PROCESSING:
                 {
                     if (BufferUtil.hasContent(content))
                     {
@@ -109,8 +109,9 @@ public class BrotliEncoderSink extends EncoderSink
                         encoder.push(EncoderJNI.Operation.FLUSH, inputBuffer.limit());
                         state.set(State.FLUSH_OUTPUT);
                     }
+                    break;
                 }
-                case PROCESS_OUTPUT ->
+                case PROCESS_OUTPUT:
                 {
                     ByteBuffer output = drain(EncoderJNI.Operation.PROCESS);
                     if (output != null)
@@ -118,8 +119,9 @@ public class BrotliEncoderSink extends EncoderSink
                     // Output drained: reuse the input buffer for the next content.
                     inputBuffer.clear();
                     state.set(State.PROCESSING);
+                    break;
                 }
-                case FLUSH_OUTPUT ->
+                case FLUSH_OUTPUT:
                 {
                     ByteBuffer output = drain(EncoderJNI.Operation.FLUSH);
                     if (output != null)
@@ -127,8 +129,9 @@ public class BrotliEncoderSink extends EncoderSink
                     // Flush drained: finish the stream (no further input).
                     encoder.push(EncoderJNI.Operation.FINISH, 0);
                     state.set(State.FINISH_OUTPUT);
+                    break;
                 }
-                case FINISH_OUTPUT ->
+                case FINISH_OUTPUT:
                 {
                     ByteBuffer output = drain(EncoderJNI.Operation.FINISH);
                     if (output != null)
@@ -137,7 +140,7 @@ public class BrotliEncoderSink extends EncoderSink
                     state.set(State.FINISHED);
                     return new WriteRecord(true, BufferUtil.EMPTY_BUFFER, Callback.NOOP);
                 }
-                case FINISHED ->
+                case FINISHED:
                 {
                     return null;
                 }

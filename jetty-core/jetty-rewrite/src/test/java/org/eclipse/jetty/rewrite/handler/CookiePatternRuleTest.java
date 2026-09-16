@@ -15,6 +15,7 @@ package org.eclipse.jetty.rewrite.handler;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpHeader;
@@ -46,12 +47,12 @@ public class CookiePatternRuleTest extends AbstractRuleTest
             public boolean handle(Request request, Response response, Callback callback)
             {
                 response.getHeaders().put(HttpHeader.CONTENT_TYPE, "text/plain;charset=utf-8");
-                Content.Sink.write(response, false, "pathInContext=%s%n".formatted(Request.getPathInContext(request)), Callback.NOOP);
-                Content.Sink.write(response, false, "path=%s%n".formatted(request.getHttpURI().getPath()), Callback.NOOP);
-                Content.Sink.write(response, false, "query=%s%n".formatted(request.getHttpURI().getQuery()), Callback.NOOP);
+                Content.Sink.write(response, false, String.format("pathInContext=%s%n", Request.getPathInContext(request)), Callback.NOOP);
+                Content.Sink.write(response, false, String.format("path=%s%n", request.getHttpURI().getPath()), Callback.NOOP);
+                Content.Sink.write(response, false, String.format("query=%s%n", request.getHttpURI().getQuery()), Callback.NOOP);
                 Request original = Request.unWrap(request);
-                Content.Sink.write(response, false, "originalPath=%s%n".formatted(original.getHttpURI().getPath()), Callback.NOOP);
-                Content.Sink.write(response, false, "originalQuery=%s%n".formatted(original.getHttpURI().getQuery()), Callback.NOOP);
+                Content.Sink.write(response, false, String.format("originalPath=%s%n", original.getHttpURI().getPath()), Callback.NOOP);
+                Content.Sink.write(response, false, String.format("originalQuery=%s%n", original.getHttpURI().getQuery()), Callback.NOOP);
                 callback.succeeded();
                 return true;
             }
@@ -68,12 +69,10 @@ public class CookiePatternRuleTest extends AbstractRuleTest
 
         start(rule);
 
-        String rawRequest = """
-            GET / HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET / HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = _connector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -99,13 +98,11 @@ public class CookiePatternRuleTest extends AbstractRuleTest
         start(rule);
 
         // Cookie already present on the request.
-        String rawRequest = """
-            GET / HTTP/1.1
-            Host: local
-            Connection: close
-            Cookie: set=already
-            
-            """;
+        String rawRequest = "GET / HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "Cookie: set=already\n" +
+            "\n";
 
         String rawResponse = _connector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -123,12 +120,10 @@ public class CookiePatternRuleTest extends AbstractRuleTest
 
         start(rule);
 
-        String rawRequest = """
-            GET /other?fruit=apple HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /other?fruit=apple HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = _connector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -157,12 +152,10 @@ public class CookiePatternRuleTest extends AbstractRuleTest
 
         start(rule);
 
-        String rawRequest = """
-            GET /other;fruit=apple HTTP/1.1
-            Host: local
-            Connection: close
-            
-            """;
+        String rawRequest = "GET /other;fruit=apple HTTP/1.1\n" +
+            "Host: local\n" +
+            "Connection: close\n" +
+            "\n";
 
         String rawResponse = _connector.getResponse(rawRequest);
         HttpTester.Response response = HttpTester.parseResponse(rawResponse);
@@ -186,7 +179,7 @@ public class CookiePatternRuleTest extends AbstractRuleTest
             .filter(line -> line.startsWith(linePrefix))
             .map(line -> line.substring(linePrefix.length()))
             .filter(line -> line.equals(expectedEquals))
-            .toList();
+            .collect(Collectors.toList());
 
         if (matches.size() == 0)
             fail("Unable to find line prefixed with: " + linePrefix);

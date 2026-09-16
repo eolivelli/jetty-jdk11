@@ -223,36 +223,36 @@ public class DigestAuthentication extends AbstractAuthentication
             String digest = "Digest";
             if (isUserHashing() && userHash)
             {
-                digest += " username=\"%s\"".formatted(toHexString(digester.digest(strictEncode(cs, user + ":" + realm))));
+                digest += String.format(" username=\"%s\"", toHexString(digester.digest(strictEncode(cs, user + ":" + realm))));
                 digest += ", userhash=true";
             }
             else if (userNameNeedsEncoding(user))
             {
                 if (charset != null)
-                    digest += " username*=%s".formatted(encodeUserName(user, charset));
+                    digest += String.format(" username*=%s", encodeUserName(user, charset));
                 else
                     throw new IllegalArgumentException("Unsupported username: " + user);
             }
             else
             {
-                digest += " username=\"%s\"".formatted(user);
+                digest += String.format(" username=\"%s\"", user);
             }
-            digest += ", realm=\"%s\"".formatted(realm);
-            digest += ", nonce=\"%s\"".formatted(nonce);
+            digest += String.format(", realm=\"%s\"", realm);
+            digest += String.format(", nonce=\"%s\"", nonce);
             if (opaque != null)
-                digest += ", opaque=\"%s\"".formatted(opaque);
-            digest += ", algorithm=%s".formatted(algorithm);
-            digest += ", uri=\"%s\"".formatted(uri);
-            digest += ", qop=%s".formatted(qop);
-            digest += ", nc=%s".formatted(nonceCount);
-            digest += ", cnonce=\"%s\"".formatted(clientNonce);
-            digest += ", response=\"%s\"".formatted(hashA3);
+                digest += String.format(", opaque=\"%s\"", opaque);
+            digest += String.format(", algorithm=%s", algorithm);
+            digest += String.format(", uri=\"%s\"", uri);
+            digest += String.format(", qop=%s", qop);
+            digest += String.format(", nc=%s", nonceCount);
+            digest += String.format(", cnonce=\"%s\"", clientNonce);
+            digest += String.format(", response=\"%s\"", hashA3);
             String value = digest;
 
             request.headers(headers -> headers.add(header, value));
         }
 
-        private static byte[] strictEncode(Charset charset, String value)
+        private byte[] strictEncode(Charset charset, String value)
         {
             try
             {
@@ -270,7 +270,7 @@ public class DigestAuthentication extends AbstractAuthentication
             }
         }
 
-        private static boolean userNameNeedsEncoding(String user)
+        private boolean userNameNeedsEncoding(String user)
         {
             // Should be RFC 9110 quoted-string,
             // but use here a simplified version.
@@ -283,7 +283,7 @@ public class DigestAuthentication extends AbstractAuthentication
             return false;
         }
 
-        private static String encodeUserName(String user, Charset charset)
+        private String encodeUserName(String user, Charset charset)
         {
             byte[] bytes = strictEncode(charset, user);
             StringBuilder builder = new StringBuilder(charset.name()).append("''");

@@ -225,7 +225,7 @@ public class ServletCoreResponse implements Response
     @Override
     public String toString()
     {
-        return "%s@%x{%s,%s}".formatted(TypeUtil.toShortName(getClass()), hashCode(), _coreRequest, _httpServletResponse);
+        return String.format("%s@%x{%s,%s}", TypeUtil.toShortName(getClass()), hashCode(), _coreRequest, _httpServletResponse);
     }
 
     private static class HttpServletResponseHttpFields implements HttpFields.Mutable

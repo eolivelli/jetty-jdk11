@@ -362,7 +362,7 @@ public class XmlParser
             catch (IOException | SAXException e)
             {
                 if (LOG.isTraceEnabled())
-                    LOG.trace("IGNORE EntityResolver exception for (pid=%s, sid=%s)".formatted(pid, sid), e);
+                    LOG.trace(String.format("IGNORE EntityResolver exception for (pid=%s, sid=%s)", pid, sid), e);
             }
         }
 

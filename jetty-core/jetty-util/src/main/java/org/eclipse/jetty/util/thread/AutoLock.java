@@ -13,7 +13,6 @@
 
 package org.eclipse.jetty.util.thread;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -31,7 +30,6 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class AutoLock implements AutoCloseable, Serializable
 {
-    @Serial
     private static final long serialVersionUID = 3300696774541816341L;
 
     private final ReentrantLock _lock = new ReentrantLock();

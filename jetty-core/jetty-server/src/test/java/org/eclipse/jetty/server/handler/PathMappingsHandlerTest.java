@@ -19,6 +19,7 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.jetty.http.HttpHeader;
@@ -99,12 +100,10 @@ public class PathMappingsHandlerTest
 
         startServer(contextHandler);
 
-        HttpTester.Response response = executeRequest("""
-            GET / HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-             
-            """);
+        HttpTester.Response response = executeRequest("GET / HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\n");
         assertEquals(HttpStatus.NOT_FOUND_404, response.getStatus());
     }
 
@@ -123,20 +122,16 @@ public class PathMappingsHandlerTest
 
         startServer(contextHandler);
 
-        HttpTester.Response response = executeRequest("""
-            GET /hello HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-             
-            """);
+        HttpTester.Response response = executeRequest("GET /hello HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\n");
         assertEquals(HttpStatus.NOT_FOUND_404, response.getStatus());
 
-        response = executeRequest("""
-            GET /hello.php HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-             
-            """);
+        response = executeRequest("GET /hello.php HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\n");
         assertEquals(HttpStatus.OK_200, response.getStatus());
         assertEquals("PhpExample Hit", response.getContent());
     }
@@ -171,12 +166,10 @@ public class PathMappingsHandlerTest
 
         startServer(contextHandler);
 
-        HttpTester.Response response = executeRequest("""
-            GET %s HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-             
-            """.formatted(requestPath));
+        HttpTester.Response response = executeRequest(String.format("GET %s HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\n", requestPath));
         assertEquals(expectedStatus, response.getStatus());
         assertEquals(expectedResponseBody, response.getContent());
     }
@@ -196,12 +189,10 @@ public class PathMappingsHandlerTest
 
         startServer(pathMappingsHandler);
 
-        HttpTester.Response response = executeRequest("""
-            GET %s HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-             
-            """.formatted(requestPath));
+        HttpTester.Response response = executeRequest(String.format("GET %s HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\n", requestPath));
         assertEquals(expectedStatus, response.getStatus());
         assertEquals(expectedResponseBody, response.getContent());
     }
@@ -243,12 +234,10 @@ public class PathMappingsHandlerTest
 
         startServer(contextHandler);
 
-        HttpTester.Response response = executeRequest("""
-            GET %s HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            
-            """.formatted(requestPath));
+        HttpTester.Response response = executeRequest(String.format("GET %s HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\n", requestPath));
         assertEquals(200, response.getStatus());
         assertThat(response.getContent(), containsString("contextPath=[" + expectedContextPath + "]"));
         assertThat(response.getContent(), containsString("pathInContext=[" + expectedPathInContext + "]"));
@@ -341,7 +330,7 @@ public class PathMappingsHandlerTest
         pathMappingsHandler.addMapping(new ServletPathSpec("/index.html"), new SimpleHandler("specific"));
         pathMappingsHandler.addMapping(new ServletPathSpec("*.php"), sequence);
 
-        List<String> actualHandlers = pathMappingsHandler.getDescendants().stream().map(Objects::toString).toList();
+        List<String> actualHandlers = pathMappingsHandler.getDescendants().stream().map(Objects::toString).collect(Collectors.toList());
 
         String[] expectedHandlers = {
             "SimpleHandler[msg=\"default\"]",

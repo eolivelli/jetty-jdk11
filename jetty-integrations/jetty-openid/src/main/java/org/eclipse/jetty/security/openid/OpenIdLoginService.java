@@ -13,6 +13,7 @@
 
 package org.eclipse.jetty.security.openid;
 
+import java.security.Principal;
 import java.util.Objects;
 import java.util.function.Function;
 import javax.security.auth.Subject;
@@ -118,8 +119,10 @@ public class OpenIdLoginService extends ContainerLifeCycle implements LoginServi
     @Override
     public boolean validate(UserIdentity user)
     {
-        if (!(user.getUserPrincipal() instanceof OpenIdUserPrincipal userPrincipal))
+        Principal principal = user.getUserPrincipal();
+        if (!(principal instanceof OpenIdUserPrincipal))
             return false;
+        OpenIdUserPrincipal userPrincipal = (OpenIdUserPrincipal)principal;
         if (configuration.isLogoutWhenIdTokenIsExpired() && userPrincipal.getCredentials().isExpired())
             return false;
         return loginService == null || loginService.validate(user);

@@ -145,16 +145,14 @@ public class RFC2616Test
     @Test
     public void testFolded_2_2() throws Exception
     {
-        String req = """
-            GET http://localhost/path HTTP/1.1
-            Host: localhost
-            Folded: value
-             over
-             many
-             lines
-            Connection: close
-            
-            """;
+        String req = "GET http://localhost/path HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Folded: value\n" +
+            " over\n" +
+            " many\n" +
+            " lines\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(req));
 
@@ -496,12 +494,10 @@ public class RFC2616Test
     @Test
     public void testUserInfo_5_1_2() throws Exception
     {
-        String req = """
-            GET http://username:password@host:8888/R1.txt HTTP/1.1
-            Host: localhost
-            Connection: close
-            
-            """;
+        String req = "GET http://username:password@host:8888/R1.txt HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(req));
 
@@ -659,22 +655,20 @@ public class RFC2616Test
     {
         // Expect with body
 
-        String request1 = """
-            GET /redirect/R1 HTTP/1.1\r
-            Host: localhost\r
-            Expect: 100-continue\r
-            Content-Type: text/plain\r
-            Content-Length: 8\r
-            \r
-            123456\r
-            GET /echo/R1 HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: text/plain\r
-            Content-Length: 8\r
-            Connection: close\r
-            \r
-            87654321
-            """;
+        String request1 = "GET /redirect/R1 HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Expect: 100-continue\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Content-Length: 8\r\n" +
+            "\r\n" +
+            "123456\r\n" +
+            "GET /echo/R1 HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Content-Length: 8\r\n" +
+            "Connection: close\r\n" +
+            "\r\n" +
+            "87654321\n";
 
         LocalEndPoint endp = connector.executeRequest(request1);
         HttpTester.Response response = HttpTester.parseResponse(endp.getResponse());
@@ -985,12 +979,10 @@ public class RFC2616Test
     {
         // HTTP/1.0 - redirect with resource/content
 
-        String req3 = """
-            GET /redirect/R1.txt HTTP/1.0
-            Host: localhost
-            Connection: close
-            
-            """;
+        String req3 = "GET /redirect/R1.txt HTTP/1.0\n" +
+            "Host: localhost\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(req3));
 
@@ -1009,12 +1001,10 @@ public class RFC2616Test
     {
         // HTTP/1.1 - redirect with resource/content
 
-        String req4 = """
-            GET /redirect/R2.txt HTTP/1.1
-            Host: localhost
-            Connection: close
-            
-            """;
+        String req4 = "GET /redirect/R2.txt HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(req4));
 
@@ -1052,12 +1042,10 @@ public class RFC2616Test
         // work, dont expect ranges to work either
         //
 
-        String req1 = """
-            GET /static/alpha.txt HTTP/1.1
-            Host: localhost
-            Connection: close
-            
-            """;
+        String req1 = "GET /static/alpha.txt HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(req1));
 
@@ -1127,13 +1115,11 @@ public class RFC2616Test
         // a) Range: bytes=a-b,5-8
 
         // Invalid range, then Valid range
-        String req1 = """
-            GET /static/alpha.txt HTTP/1.1
-            Host: localhost
-            Range: bytes=a-b,5-8
-            Connection: close
-            
-            """;
+        String req1 = "GET /static/alpha.txt HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Range: bytes=a-b,5-8\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(req1));
 
@@ -1167,13 +1153,11 @@ public class RFC2616Test
 
         // b) Range: bytes=a-b,bytes=5-8
         // Invalid range, then Valid range
-        String req1 = """
-            GET /static/alpha.txt HTTP/1.1
-            Host: localhost
-            Range: bytes=a-b,bytes=5-8
-            Connection: close
-            
-            """;
+        String req1 = "GET /static/alpha.txt HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Range: bytes=a-b,bytes=5-8\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(req1));
 
@@ -1207,14 +1191,12 @@ public class RFC2616Test
         // c) Range: bytes=a-b
         // Range: bytes=5-8
 
-        String req1 = """
-            GET /static/alpha.txt HTTP/1.1
-            Host: localhost
-            Range: bytes=a-b
-            Range: bytes=5-8
-            Connection: close
-            
-            """;
+        String req1 = "GET /static/alpha.txt HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Range: bytes=a-b\n" +
+            "Range: bytes=5-8\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(req1));
 
@@ -1420,13 +1402,11 @@ public class RFC2616Test
         String specId;
 
         // Deflate not accepted
-        String req2 = """
-            GET /static/solutions.html HTTP/1.1
-            Host: localhost
-            TE: deflate
-            Connection: close
-            
-            """;
+        String req2 = "GET /static/solutions.html HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "TE: deflate\n" +
+            "Connection: close\n" +
+            "\n";
 
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(req2));
         specId = "14.39 TE Header";

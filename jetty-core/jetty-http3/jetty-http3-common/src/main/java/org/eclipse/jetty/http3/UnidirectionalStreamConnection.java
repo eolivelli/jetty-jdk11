@@ -144,9 +144,9 @@ public class UnidirectionalStreamConnection extends AbstractConnection.NonBlocki
         StreamType streamType = StreamType.from(type);
         if (streamType != null)
         {
-            return switch (streamType)
+            switch (streamType)
             {
-                case CONTROL_STREAM ->
+                case CONTROL_STREAM:
                 {
                     ControlParser parser = new ControlParser(listener);
                     ControlStreamConnection newConnection = new ControlStreamConnection(getEndPoint(), getExecutor(), bufferPool, parser);
@@ -155,9 +155,9 @@ public class UnidirectionalStreamConnection extends AbstractConnection.NonBlocki
                     if (LOG.isDebugEnabled())
                         LOG.debug("upgrading to {}", newConnection);
                     getEndPoint().upgrade(newConnection);
-                    yield true;
+                    return true;
                 }
-                case ENCODER_STREAM ->
+                case ENCODER_STREAM:
                 {
                     EncoderStreamConnection newConnection = new EncoderStreamConnection(getEndPoint(), getExecutor(), bufferPool, decoder, listener);
                     newConnection.setInputBufferSize(getInputBufferSize());
@@ -165,9 +165,9 @@ public class UnidirectionalStreamConnection extends AbstractConnection.NonBlocki
                     if (LOG.isDebugEnabled())
                         LOG.debug("upgrading to {}", newConnection);
                     getEndPoint().upgrade(newConnection);
-                    yield true;
+                    return true;
                 }
-                case DECODER_STREAM ->
+                case DECODER_STREAM:
                 {
                     DecoderStreamConnection newConnection = new DecoderStreamConnection(getEndPoint(), getExecutor(), bufferPool, encoder, listener);
                     newConnection.setInputBufferSize(getInputBufferSize());
@@ -175,15 +175,15 @@ public class UnidirectionalStreamConnection extends AbstractConnection.NonBlocki
                     if (LOG.isDebugEnabled())
                         LOG.debug("upgrading to {}", newConnection);
                     getEndPoint().upgrade(newConnection);
-                    yield true;
+                    return true;
                 }
-                default ->
+                default:
                 {
                     Throwable failure = new IllegalArgumentException("unsupported stream type: " + streamType);
                     getEndPoint().disconnect(HTTP3ErrorCode.STREAM_CREATION_ERROR.code(), failure, true, Promise.Invocable.noop());
-                    yield false;
+                    return false;
                 }
-            };
+            }
         }
         else
         {

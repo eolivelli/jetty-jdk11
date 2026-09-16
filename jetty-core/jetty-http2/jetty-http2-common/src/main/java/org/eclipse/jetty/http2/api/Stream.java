@@ -495,7 +495,7 @@ public interface Stream
         @Override
         public String toString()
         {
-            return "%s@%x[%s]".formatted(TypeUtil.toShortName(getClass()), hashCode(), frame());
+            return String.format("%s@%x[%s]", TypeUtil.toShortName(getClass()), hashCode(), frame());
         }
 
         private static class EOF extends Data

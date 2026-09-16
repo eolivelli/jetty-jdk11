@@ -111,16 +111,14 @@ public class RequestHeadersTest
     @ParameterizedTest
     @CsvSource(
         delimiter = '|',
-        textBlock = """
-            # Request Value | Expected Locale
-            ;q=0.5          | en-US
-            q=0.6           | en-US
-            de              | de
-            en-GB           | en-GB
-            en;q=0.5,it     | it
-            bogus           | en-US
-            en_en           | en-US
-            """)
+        textBlock = "# Request Value | Expected Locale\n" +
+            ";q=0.5          | en-US\n" +
+            "q=0.6           | en-US\n" +
+            "de              | de\n" +
+            "en-GB           | en-GB\n" +
+            "en;q=0.5,it     | it\n" +
+            "bogus           | en-US\n" +
+            "en_en           | en-US\n")
     public void testLocale(String requestHeaderValue, String expectedLocale) throws Exception
     {
         startServer((context) ->

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.client.AbstractConnectorHttpClientTransport;
 import org.eclipse.jetty.client.Destination;
@@ -159,10 +160,9 @@ public class HttpClientTransportDynamic extends AbstractConnectorHttpClientTrans
         {
             List<String> available = clientConnectionFactoryInfos.stream()
                 .flatMap(info -> info.getProtocols(secure).stream())
-                .toList();
+                .collect(Collectors.toList());
             String explicit = String.valueOf(request.getVersion()).toLowerCase(Locale.ROOT);
-            throw new HttpRequestException("Cannot send request, no protocol match: available %s, explicit %s, excluded %s"
-                .formatted(available, explicit, excludedProtocols), request);
+            throw new HttpRequestException(String.format("Cannot send request, no protocol match: available %s, explicit %s, excluded %s", available, explicit, excludedProtocols), request);
         }
 
         Info preferredInfo = matchingInfos.get(0);
@@ -171,7 +171,7 @@ public class HttpClientTransportDynamic extends AbstractConnectorHttpClientTrans
             // Keep only the infos that have the same transport.
             matchingInfos = matchingInfos.stream()
                 .filter(i -> i.getTransport().equals(preferredInfo.getTransport()))
-                .toList();
+                .collect(Collectors.toList());
         }
 
         boolean manyProtocols = matchingInfos.size() > 1 || preferredInfo.getProtocols(secure).size() > 1;
@@ -223,7 +223,7 @@ public class HttpClientTransportDynamic extends AbstractConnectorHttpClientTrans
                 .orElseThrow(() ->
                 {
                     if (protocol == null)
-                        return new IOException("Cannot create connection: no protocol enabled among " + clientConnectionFactoryInfos.stream().flatMap(i -> i.getProtocols(secure).stream()).toList());
+                        return new IOException("Cannot create connection: no protocol enabled among " + clientConnectionFactoryInfos.stream().flatMap(i -> i.getProtocols(secure).stream()).collect(Collectors.toList()));
                     return new IOException("Cannot create connection: no factory for protocol " + protocol);
                 });
             if (LOG.isDebugEnabled())
@@ -253,11 +253,18 @@ public class HttpClientTransportDynamic extends AbstractConnectorHttpClientTrans
 
     private List<String> toProtocols(HttpVersion version, boolean secure)
     {
-        return switch (version)
+        switch (version)
         {
-            case HTTP_0_9, HTTP_1_0, HTTP_1_1 -> List.of("http/1.1");
-            case HTTP_2 -> secure ? List.of("h2c", "h2") : List.of("h2c");
-            case HTTP_3 -> secure ? List.of("h3") : List.of();
-        };
+            case HTTP_0_9:
+            case HTTP_1_0:
+            case HTTP_1_1:
+                return List.of("http/1.1");
+            case HTTP_2:
+                return secure ? List.of("h2c", "h2") : List.of("h2c");
+            case HTTP_3:
+                return secure ? List.of("h3") : List.of();
+            default:
+                throw new IllegalStateException();
+        }
     }
 }

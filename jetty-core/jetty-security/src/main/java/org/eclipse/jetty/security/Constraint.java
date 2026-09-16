@@ -171,7 +171,7 @@ public interface Constraint
             {
                 if (_roles == null)
                     _roles = new HashSet<>();
-                else if (!(_roles instanceof HashSet<String>))
+                else if (!(_roles instanceof HashSet))
                     _roles = new HashSet<>(_roles);
                 _roles.addAll(Arrays.asList(roles));
             }
@@ -299,7 +299,7 @@ public interface Constraint
     {
         return from(name, Transport.INHERIT, authorization, (roles == null || roles.length == 0)
             ? Collections.emptySet()
-            : new HashSet<>(Arrays.stream(roles).toList()));
+            : new HashSet<>(Arrays.asList(roles)));
     }
 
     static Constraint from(Transport transport, Authorization authorization, Set<String> roles)
@@ -311,7 +311,7 @@ public interface Constraint
     {
         return new Constraint()
         {
-            private final String _name = name == null ? "unnamed@%x".formatted(hashCode()) : name;
+            private final String _name = name == null ? String.format("unnamed@%x", hashCode()) : name;
             private final Transport _transport = transport == null ? Transport.INHERIT : transport;
             private final Set<String> _roles = roles == null || roles.isEmpty()
                 ? Collections.emptySet()
@@ -351,7 +351,7 @@ public interface Constraint
             @Override
             public String toString()
             {
-                return "Constraint@%x{%s,%s,%s,%s}".formatted(
+                return String.format("Constraint@%x{%s,%s,%s,%s}",
                     hashCode(),
                     getName(),
                     getTransport(),

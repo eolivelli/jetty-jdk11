@@ -16,6 +16,7 @@ package org.eclipse.jetty.rewrite.handler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.jetty.http.HttpException;
 import org.eclipse.jetty.http.HttpStatus;
@@ -62,8 +63,64 @@ import org.eclipse.jetty.util.URIUtil;
  */
 public class CompactPathRule extends Rule
 {
-    public record CompactedEvent(Handler input, String changedPath, String message, CompactPathRule rule)
+    public static final class CompactedEvent
     {
+        private final Handler input;
+        private final String changedPath;
+        private final String message;
+        private final CompactPathRule rule;
+
+        public CompactedEvent(Handler input, String changedPath, String message, CompactPathRule rule)
+        {
+            this.input = input;
+            this.changedPath = changedPath;
+            this.message = message;
+            this.rule = rule;
+        }
+
+        public Handler input()
+        {
+            return input;
+        }
+
+        public String changedPath()
+        {
+            return changedPath;
+        }
+
+        public String message()
+        {
+            return message;
+        }
+
+        public CompactPathRule rule()
+        {
+            return rule;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            CompactedEvent that = (CompactedEvent)obj;
+            return Objects.equals(input, that.input) && Objects.equals(changedPath, that.changedPath) &&
+                Objects.equals(message, that.message) && Objects.equals(rule, that.rule);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(input, changedPath, message, rule);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "CompactedEvent[input=" + input + ", changedPath=" + changedPath + ", message=" + message + ", rule=" + rule + "]";
+        }
     }
 
     public interface Listener

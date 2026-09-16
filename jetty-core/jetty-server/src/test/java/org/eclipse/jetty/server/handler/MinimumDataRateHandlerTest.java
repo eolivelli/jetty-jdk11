@@ -28,6 +28,7 @@ import org.eclipse.jetty.server.LocalConnector;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.BufferUtil;
 import org.eclipse.jetty.util.Callback;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -95,12 +96,10 @@ public class MinimumDataRateHandlerTest
             }
         }, minimumReadRate, 0));
 
-        String request = """
-            POST / HTTP/1.1\r
-            Host: localhost\r
-            Content-Length: 1000\r
-            \r
-            """;
+        String request = "POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Length: 1000\r\n" +
+            "\r\n";
 
         try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest(request))
         {
@@ -167,12 +166,10 @@ public class MinimumDataRateHandlerTest
             }
         }, minimumReadRate, 0));
 
-        String request = """
-            POST / HTTP/1.1\r
-            Host: localhost\r
-            Content-Length: 1000\r
-            \r
-            """;
+        String request = "POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Length: 1000\r\n" +
+            "\r\n";
 
         try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest(request))
         {
@@ -254,11 +251,9 @@ public class MinimumDataRateHandlerTest
             }
         }, 0, minimumWriteRate));
 
-        String request = """
-            GET / HTTP/1.1\r
-            Host: localhost\r
-            \r
-            """;
+        String request = "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "\r\n";
 
         try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest(request))
         {
@@ -299,11 +294,9 @@ public class MinimumDataRateHandlerTest
             }
         }, 0, minimumWriteRate));
 
-        String request = """
-            GET / HTTP/1.1\r
-            Host: localhost\r
-            \r
-            """;
+        String request = "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "\r\n";
 
         try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest(request))
         {
@@ -356,7 +349,7 @@ public class MinimumDataRateHandlerTest
                         // Only partially write the response to simulate TCP congestion.
                         // The data rate timeout should fire and fail the Handler callback.
                         int length = byteBuffer.remaining() / 2;
-                        ByteBuffer partial = byteBuffer.slice(byteBuffer.position(), length);
+                        ByteBuffer partial = BufferUtil.absoluteSlice(byteBuffer, byteBuffer.position(), length);
                         byteBuffer.position(byteBuffer.position() + length);
                         super.write(false, partial, Callback.NOOP);
                     }
@@ -364,11 +357,9 @@ public class MinimumDataRateHandlerTest
             }
         });
 
-        String request = """
-            GET / HTTP/1.1\r
-            Host: localhost\r
-            \r
-            """;
+        String request = "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "\r\n";
 
         try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest(request))
         {

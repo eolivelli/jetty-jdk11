@@ -61,12 +61,11 @@ public class End2EndClientWithClientCertAuthTest
     private Server server;
     private QuicheServerConnector connector;
     private HttpClient client;
-    private final String responseContent = """
-        <html>
-        \t<body>
-        \t\tRequest served
-        \t</body>
-        </html>""";
+    private final String responseContent = "<html>\n" +
+        "\t<body>\n" +
+        "\t\tRequest served\n" +
+        "\t</body>\n" +
+        "</html>";
     private SslContextFactory.Server serverSslContextFactory;
     private QuicheTransport transport;
 

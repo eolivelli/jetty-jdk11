@@ -13,11 +13,7 @@
   <name>Servlet 6 :: Demos</name>
 
   <modules>
-    <module>jetty-servlet6-demo-embedded</module>
     <module>jetty-servlet6-demo-jspc-webapp</module>
-    <module>jetty-servlet6-demo-jspc-6-1-webapp</module>
-    <module>jetty-servlet6-demo-simple-webapp</module>
-    <module>jetty-servlet6-demo-spec-6-1-webapp</module>
   </modules>
 
   <properties>
@@ -29,7 +25,7 @@
       <dependency>
         <groupId>jakarta.platform</groupId>
         <artifactId>jakarta.jakartaee-bom</artifactId>
-        <version>${ee11.jakarta.bom.version}</version>
+        <version>${ee10.jakarta.bom.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

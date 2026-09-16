@@ -22,6 +22,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPOutputStream;
@@ -914,12 +915,48 @@ public class AsyncMiddleManServlet extends AbstractProxyServlet
         }
     }
 
-    private record BufferWithCallback(ByteBuffer buffer, Callback callback)
+    private static final class BufferWithCallback
     {
+        private final ByteBuffer buffer;
+        private final Callback callback;
+
+        private BufferWithCallback(ByteBuffer buffer, Callback callback)
+        {
+            this.buffer = buffer;
+            this.callback = callback;
+        }
+
+        public ByteBuffer buffer()
+        {
+            return buffer;
+        }
+
+        public Callback callback()
+        {
+            return callback;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            BufferWithCallback that = (BufferWithCallback)obj;
+            return Objects.equals(buffer, that.buffer) && Objects.equals(callback, that.callback);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(buffer, callback);
+        }
+
         @Override
         public String toString()
         {
-            return "%s@%x[buffer=%s,callback=%s]".formatted(TypeUtil.toShortName(getClass()), hashCode(), buffer, callback);
+            return String.format("%s@%x[buffer=%s,callback=%s]", TypeUtil.toShortName(getClass()), hashCode(), buffer, callback);
         }
     }
 }

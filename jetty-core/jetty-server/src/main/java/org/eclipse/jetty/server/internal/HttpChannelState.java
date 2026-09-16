@@ -150,12 +150,18 @@ public class HttpChannelState implements HttpChannel, Components
         if (_complianceViolationListener == null)
         {
             List<ComplianceViolation.Listener> listeners = _connectionMetaData.getHttpConfiguration().getComplianceViolationListeners();
-            _complianceViolationListener = switch (listeners.size())
+            switch (listeners.size())
             {
-                case 0 -> ComplianceViolation.Listener.NOOP;
-                case 1 -> listeners.get(0).initialize();
-                default -> new InitializedCompositeComplianceViolationListener(listeners);
-            };
+                case 0:
+                    _complianceViolationListener = ComplianceViolation.Listener.NOOP;
+                    break;
+                case 1:
+                    _complianceViolationListener = listeners.get(0).initialize();
+                    break;
+                default:
+                    _complianceViolationListener = new InitializedCompositeComplianceViolationListener(listeners);
+                    break;
+            }
         }
 
         if (!_connectionMetaData.getHttpConfiguration().isNotifyForbiddenComplianceViolations())
@@ -285,8 +291,11 @@ public class HttpChannelState implements HttpChannel, Components
     public ThreadPool getThreadPool()
     {
         Executor executor = getExecutor();
-        if (executor instanceof ThreadPool threadPool)
+        if (executor instanceof ThreadPool)
+        {
+            ThreadPool threadPool = (ThreadPool)executor;
             return threadPool;
+        }
         return new ThreadPoolWrapper(executor);
     }
 
@@ -616,23 +625,28 @@ public class HttpChannelState implements HttpChannel, Components
     {
         assert _lock.isHeldByCurrentThread();
 
-        return switch (_streamSendState)
+        switch (_streamSendState)
         {
-            case SENDING ->
+            case SENDING:
             {
                 _streamSendState = last ? StreamSendState.LAST_SENDING : StreamSendState.SENDING;
-                yield null;
+                return null;
             }
 
             // There are many instances of code that wants to ensure the output is closed, so
             // it does a redundant write(true, callback). Other code may do a write(false, callback) to ensure
             // they are flushed. The DO_NOT_SEND option supports these by turning such writes into a NOOP.
-            case LAST_SENDING, LAST_COMPLETE -> (length > 0)
-                ? new IllegalStateException("last already written")
-                : NOTHING_TO_SEND;
+            case LAST_SENDING:
+            case LAST_COMPLETE:
+                return (length > 0)
+                    ? new IllegalStateException("last already written")
+                    : NOTHING_TO_SEND;
 
-            case FAILED -> null;
-        };
+            case FAILED:
+                return null;
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     private void lockedStreamSendCompleted(boolean success)
@@ -1059,8 +1073,11 @@ public class HttpChannelState implements HttpChannel, Components
                 if (chunk.hasRemaining())
                     _contentBytesRead.add(chunk.remaining());
 
-                if (chunk instanceof Trailers trailers)
+                if (chunk instanceof Trailers)
+                {
+                    Trailers trailers = (Trailers)chunk;
                     _trailers = trailers.getTrailers();
+                }
 
                 return chunk;
             }
@@ -1366,10 +1383,10 @@ public class HttpChannelState implements HttpChannel, Components
                 {
                     if (_writeCallback != null)
                     {
-                        if (_writeCallback instanceof InterimCallback interimCallback)
+                        if (_writeCallback instanceof InterimCallback)
                         {
                             // Do this write after the interim callback.
-                            interimCallback.whenComplete((v, t) -> write(last, content, writeCallback));
+                            ((InterimCallback)_writeCallback).whenComplete((v, t) -> write(last, content, writeCallback));
                             return;
                         }
                         writeFailure = new WritePendingException();
@@ -1390,7 +1407,7 @@ public class HttpChannelState implements HttpChannel, Components
                                 lengthError = "written %d < %d content-length";
                             if (lengthError != null)
                             {
-                                String message = lengthError.formatted(totalWritten, contentLength);
+                                String message = String.format(lengthError, totalWritten, contentLength);
                                 if (LOG.isDebugEnabled())
                                     LOG.debug("fail {} {}", writeCallback, message);
                                 writeFailure = new IOException(message);
@@ -1597,7 +1614,7 @@ public class HttpChannelState implements HttpChannel, Components
         @Override
         public String toString()
         {
-            return "%s@%x{%s,%s}".formatted(TypeUtil.toShortName(this.getClass()), hashCode(), getStatus(), getRequest());
+            return String.format("%s@%x{%s,%s}", TypeUtil.toShortName(this.getClass()), hashCode(), getStatus(), getRequest());
         }
     }
 
@@ -1695,7 +1712,7 @@ public class HttpChannelState implements HttpChannel, Components
                     if (committedContentLength >= 0 &&
                         committedContentLength != totalWritten &&
                         !(totalWritten == 0 && (HttpMethod.HEAD.is(_request.getMethod()) || response.getStatus() == HttpStatus.NOT_MODIFIED_304)))
-                        failure = ExceptionUtil.combine(failure, new IOException("content-length %d != %d written".formatted(committedContentLength, totalWritten)));
+                        failure = ExceptionUtil.combine(failure, new IOException(String.format("content-length %d != %d written", committedContentLength, totalWritten)));
                 }
 
                 // If we are still not failing, is a last stream send needed or can we complete?
@@ -1946,7 +1963,7 @@ public class HttpChannelState implements HttpChannel, Components
         @Override
         public String toString()
         {
-            return "%s@%x".formatted(TypeUtil.toShortName(getClass()), hashCode());
+            return String.format("%s@%x", TypeUtil.toShortName(getClass()), hashCode());
         }
     }
 

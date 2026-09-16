@@ -370,14 +370,16 @@ public class ServletChannel
 
     public InetSocketAddress getLocalAddress()
     {
-        return getRequest().getConnectionMetaData().getLocalSocketAddress() instanceof InetSocketAddress inetSocketAddress
-            ? inetSocketAddress : null;
+        SocketAddress local = getRequest().getConnectionMetaData().getLocalSocketAddress();
+        return local instanceof InetSocketAddress
+            ? (InetSocketAddress)local : null;
     }
 
     public InetSocketAddress getRemoteAddress()
     {
-        return getRequest().getConnectionMetaData().getRemoteSocketAddress() instanceof InetSocketAddress inetSocketAddress
-            ? inetSocketAddress : null;
+        SocketAddress remote = getRequest().getConnectionMetaData().getRemoteSocketAddress();
+        return remote instanceof InetSocketAddress
+            ? (InetSocketAddress)remote : null;
     }
 
     /**
@@ -464,7 +466,7 @@ public class ServletChannel
                     case SEND_ERROR:
                     {
                         Object errorException = _servletContextRequest.getAttribute((RequestDispatcher.ERROR_EXCEPTION));
-                        Throwable cause = errorException instanceof Throwable throwable ? throwable : null;
+                        Throwable cause = errorException instanceof Throwable ? (Throwable)errorException : null;
                         try
                         {
                             // Get ready to send an error response
@@ -591,7 +593,7 @@ public class ServletChannel
                             // they might be compressed (or changed) by child Handlers.
                             if (getHttpOutput().isContentIncomplete())
                             {
-                                String message = "Insufficient content written %d < %d".formatted(getHttpOutput().getWritten(), getHttpOutput().getApplicationContentLength());
+                                String message = String.format("Insufficient content written %d < %d", getHttpOutput().getWritten(), getHttpOutput().getApplicationContentLength());
                                 if (isCommitted() || _completeAttempted)
                                     abort(new IOException(message));
                                 else
@@ -657,8 +659,9 @@ public class ServletChannel
             .whenComplete((result, failure) -> asyncContext.complete());
 
         Connection connection = _servletContextRequest.getConnectionMetaData().getConnection();
-        if (connection instanceof Connection.Tunnel upgradeableConnection)
+        if (connection instanceof Connection.Tunnel)
         {
+            Connection.Tunnel upgradeableConnection = (Connection.Tunnel)connection;
             out.flush(); // commit the 101 response
             upgradeableConnection.startTunnel();
         }
@@ -891,11 +894,12 @@ public class ServletChannel
             AsyncContextEvent asyncContextEvent = _state.getAsyncContextEvent();
             String dispatchString = asyncContextEvent.getDispatchPath();
 
-            if (asyncContextEvent.getDispatchContext() instanceof CrossContextServletContext crossContextServletContext)
+            ServletContext dispatchContext = asyncContextEvent.getDispatchContext();
+            if (dispatchContext instanceof CrossContextServletContext)
             {
-                dispatchCrossContextAsync(crossContextServletContext);
+                dispatchCrossContextAsync((CrossContextServletContext)dispatchContext);
             }
-            else if (asyncContextEvent.getDispatchContext() == null)
+            else if (dispatchContext == null)
             {
                 //the user dispatched to the current context
                 targetContextHandler.requestInitialized(servletContextRequest, servletApiRequest);
@@ -940,8 +944,11 @@ public class ServletChannel
             {
                 //the container has dispatched to a different context
                 ServletContext targetContext = getServletContextHandler().getServletContext().getContext(asyncContextEvent.getDispatchContext().getContextPath());
-                if (targetContext instanceof CrossContextServletContext crossContextServletContext)
+                if (targetContext instanceof CrossContextServletContext)
+                {
+                    CrossContextServletContext crossContextServletContext = (CrossContextServletContext)targetContext;
                     dispatchCrossContextAsync(crossContextServletContext);
+                }
             }
         }
         finally

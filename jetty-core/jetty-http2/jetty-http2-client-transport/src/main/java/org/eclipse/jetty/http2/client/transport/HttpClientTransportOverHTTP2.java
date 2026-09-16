@@ -103,7 +103,7 @@ public class HttpClientTransportOverHTTP2 extends AbstractHttpClientTransport
     {
         HttpVersion version = request.getVersion();
         if (((HttpRequest)request).isVersionExplicit() && version != HttpVersion.HTTP_2)
-            throw new HttpRequestException("Cannot send explicit %s requests with %s transport".formatted(version, HttpVersion.HTTP_2), request);
+            throw new HttpRequestException(String.format("Cannot send explicit %s requests with %s transport", version, HttpVersion.HTTP_2), request);
         if (request.getTransport() == null)
             request.transport(Transport.TCP_IP);
         String protocol = HttpScheme.HTTPS.is(request.getScheme()) ? "h2" : "h2c";

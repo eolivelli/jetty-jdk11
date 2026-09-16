@@ -186,10 +186,16 @@ public class MultiAuthenticatorTest
     {
         AuthenticationState authenticationState = AuthenticationState.getAuthenticationState(request);
         AuthenticationState.Succeeded auth = null;
-        if (authenticationState instanceof AuthenticationState.Succeeded succeeded)
+        if (authenticationState instanceof AuthenticationState.Succeeded)
+        {
+            AuthenticationState.Succeeded succeeded = (AuthenticationState.Succeeded)authenticationState;
             auth = succeeded;
-        else if (authenticationState instanceof AuthenticationState.Deferred deferred)
+        }
+        else if (authenticationState instanceof AuthenticationState.Deferred)
+        {
+            AuthenticationState.Deferred deferred = (AuthenticationState.Deferred)authenticationState;
             auth = deferred.authenticate(request);
+        }
         return auth;
     }
 
@@ -232,18 +238,14 @@ public class MultiAuthenticatorTest
                     Map<String, Object> claims = (Map<String, Object>)session.getAttribute(OpenIdAuthenticator.CLAIMS);
                     if (claims != null)
                     {
-                        writer.printf("""
-                            <br><b>Authenticated with OpenID</b><br>
-                            userId: %s<br>
-                            name: %s<br>
-                            email: %s<br>
-                            """, claims.get("sub"), claims.get("name"), claims.get("email"));
+                        writer.printf("<br><b>Authenticated with OpenID</b><br>\n" +
+                            "userId: %s<br>\n" +
+                            "name: %s<br>\n" +
+                            "email: %s<br>\n", claims.get("sub"), claims.get("name"), claims.get("email"));
                     }
 
-                    writer.println("""
-                        <hr>
-                        <a href="/logout">Logout</a><br>
-                        """);
+                    writer.println("<hr>\n" +
+                        "<a href=\"/logout\">Logout</a><br>\n");
                 }
             }
 
@@ -262,13 +264,11 @@ public class MultiAuthenticatorTest
 
             Session session = request.getSession(false);
             String authType = (session == null || session.getAttribute(AUTH_TYPE_ATTR) == null) ? "null" : (String)session.getAttribute(AUTH_TYPE_ATTR);
-            String content = """
-                        <h1>Multi Login Page</h1>
-                        <a href="/login/openid">OpenID Login</a><br>
-                        <a href="/login/form">Form Login</a><br>
-                        <a href="/logout">Logout</a><br>
-                        <b>authType: %s</b><br>
-                        """.formatted(authType);
+            String content = String.format("<h1>Multi Login Page</h1>\n" +
+                "<a href=\"/login/openid\">OpenID Login</a><br>\n" +
+                "<a href=\"/login/form\">Form Login</a><br>\n" +
+                "<a href=\"/logout\">Logout</a><br>\n" +
+                "<b>authType: %s</b><br>\n", authType);
             response.write(true, BufferUtil.toBuffer(content), callback);
             return true;
         }
@@ -288,24 +288,22 @@ public class MultiAuthenticatorTest
                 return true;
             }
 
-            String content = """
-                    <h2>Login</h2>
-                    <form action="j_security_check" method="POST">
-                        <div>
-                            <label for="username">Username:</label>
-                            <input type="text" id="username" name="j_username" required>
-                        </div>
-                        <div>
-                            <label for="password">Password:</label>
-                            <input type="password" id="password" name="j_password" required>
-                        </div>
-                        <div>
-                            <button type="submit">Login</button>
-                        </div>
-                    </form>
-                    <p>Username: user or admin<br>
-                    Password: password</p>
-                    """;
+            String content = "<h2>Login</h2>\n" +
+                "<form action=\"j_security_check\" method=\"POST\">\n" +
+                "    <div>\n" +
+                "        <label for=\"username\">Username:</label>\n" +
+                "        <input type=\"text\" id=\"username\" name=\"j_username\" required>\n" +
+                "    </div>\n" +
+                "    <div>\n" +
+                "        <label for=\"password\">Password:</label>\n" +
+                "        <input type=\"password\" id=\"password\" name=\"j_password\" required>\n" +
+                "    </div>\n" +
+                "    <div>\n" +
+                "        <button type=\"submit\">Login</button>\n" +
+                "    </div>\n" +
+                "</form>\n" +
+                "<p>Username: user or admin<br>\n" +
+                "Password: password</p>\n";
             response.write(true, BufferUtil.toBuffer(content), callback);
             return true;
         }
@@ -313,10 +311,16 @@ public class MultiAuthenticatorTest
         private boolean onLogout(Request request, Response response, Callback callback) throws Exception
         {
             Request.AuthenticationState authState = Request.getAuthenticationState(request);
-            if (authState instanceof AuthenticationState.Succeeded succeeded)
+            if (authState instanceof AuthenticationState.Succeeded)
+            {
+                AuthenticationState.Succeeded succeeded = (AuthenticationState.Succeeded)authState;
                 succeeded.logout(request, response);
-            else if (authState instanceof AuthenticationState.Deferred deferred)
+            }
+            else if (authState instanceof AuthenticationState.Deferred)
+            {
+                AuthenticationState.Deferred deferred = (AuthenticationState.Deferred)authState;
                 deferred.logout(request, response);
+            }
             else
                 request.getSession(true).invalidate();
 

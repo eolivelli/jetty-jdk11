@@ -13,7 +13,6 @@
 
 package org.eclipse.jetty.session.test;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -23,7 +22,6 @@ import java.lang.reflect.Method;
  */
 public class FooInvocationHandler implements InvocationHandler, Serializable
 {
-    @Serial
     private static final long serialVersionUID = -4009478822490178554L;
 
     private Foo foo;

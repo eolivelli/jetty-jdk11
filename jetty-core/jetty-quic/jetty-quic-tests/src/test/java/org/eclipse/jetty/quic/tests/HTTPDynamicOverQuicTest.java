@@ -80,14 +80,17 @@ public class HTTPDynamicOverQuicTest extends AbstractTest
         HttpConnectionFactory h1 = new HttpConnectionFactory(httpConfig);
         HTTP2ServerConnectionFactory h2 = new HTTP2ServerConnectionFactory(httpConfig);
 
-        connector = switch (transportType)
+        switch (transportType)
         {
-            case QUICHE ->
+            case QUICHE:
             {
                 QuicheServerQuicConfiguration serverQuicConfig = new QuicheServerQuicConfiguration(workDir.getEmptyPathDir());
-                yield new QuicheServerConnector(server, sslContextFactory, serverQuicConfig, h1, h2);
+                connector = new QuicheServerConnector(server, sslContextFactory, serverQuicConfig, h1, h2);
+                break;
             }
-        };
+            default:
+                throw new IllegalStateException();
+        }
         server.addConnector(connector);
 
         server.setHandler(handler);
@@ -97,18 +100,27 @@ public class HTTPDynamicOverQuicTest extends AbstractTest
         ClientConnector clientConnector = new ClientConnector();
         clientConnector.setSslContextFactory(new SslContextFactory.Client(true));
         HTTP2Client http2Client = new HTTP2Client(clientConnector);
-        List<ClientConnectionFactory.Info> infos = switch (transportType)
+        List<ClientConnectionFactory.Info> infos;
+        switch (transportType)
         {
-            case QUICHE -> List.of(HttpClientConnectionFactory.HTTP11, new ClientConnectionFactoryOverHTTP2.HTTP2(http2Client));
-        };
+            case QUICHE:
+                infos = List.of(HttpClientConnectionFactory.HTTP11, new ClientConnectionFactoryOverHTTP2.HTTP2(http2Client));
+                break;
+            default:
+                throw new IllegalStateException();
+        }
         HttpClientTransportDynamic httpClientTransport = new HttpClientTransportDynamic(clientConnector, infos.toArray(ClientConnectionFactory.Info[]::new));
         httpClient = new HttpClient(httpClientTransport);
         httpClient.start();
 
-        transport = switch (transportType)
+        switch (transportType)
         {
-            case QUICHE -> new QuicheTransport(new QuicheClientQuicConfiguration());
-        };
+            case QUICHE:
+                transport = new QuicheTransport(new QuicheClientQuicConfiguration());
+                break;
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     @AfterEach

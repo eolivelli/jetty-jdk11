@@ -176,15 +176,18 @@ public class MemoryConnector extends AbstractConnector
 
     private class MemorySocketAddress extends SocketAddress
     {
-        private final String address = "[memory:@%x]".formatted(System.identityHashCode(MemoryConnector.this));
+        private final String address = String.format("[memory:@%x]", System.identityHashCode(MemoryConnector.this));
 
         @Override
         public boolean equals(Object obj)
         {
             if (this == obj)
                 return true;
-            if (obj instanceof MemorySocketAddress that)
+            if (obj instanceof MemorySocketAddress)
+            {
+                MemorySocketAddress that = (MemorySocketAddress)obj;
                 return address.equals(that.address);
+            }
             return false;
         }
 

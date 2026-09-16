@@ -60,8 +60,7 @@ pipeline {
                        "PATH+MAVEN=${ tool 'jdk22' }/bin:${tool 'maven3'}/bin",
                        "MAVEN_OPTS=-Xms3G -Xmx5G -Djava.awt.headless=true"]) {
                 configFileProvider(
-                        [configFile(fileId: 'oss-settings.xml', variable: 'GLOBAL_MVN_SETTINGS'),
-                         configFile(fileId: 'maven-build-cache-config.xml', variable: 'MVN_BUILD_CACHE_CONFIG')]) {
+                        [configFile(fileId: 'oss-settings.xml', variable: 'GLOBAL_MVN_SETTINGS')]) {
                   sh "mvn -e -s $GLOBAL_MVN_SETTINGS -DsettingsPath=$GLOBAL_MVN_SETTINGS clean verify -DskipTests javadoc:jar -B -Peclipse-release -Dgpg.skip=true"
                   sh "mvn -e -s $GLOBAL_MVN_SETTINGS -DsettingsPath=$GLOBAL_MVN_SETTINGS clean install -DskipTests javadoc:aggregate -B -Pjavadoc-aggregate"
                 }
@@ -145,20 +144,15 @@ def mavenBuild(jdk, cmdline, mvnName) {
                "MAVEN_OPTS=-Xms3G -Xmx5G -Djava.awt.headless=true"]) {
       configFileProvider(
         [configFile(fileId: 'oss-settings.xml', variable: 'GLOBAL_MVN_SETTINGS')]) {
-          def buildCache = useBuildCache()
-          if (buildCache) {
-            echo "Using build cache"
-            extraArgs = " -Dmaven.build.cache.restoreGeneratedSources=false -Dmaven.build.cache.remote.url=http://nexus-service.nexus.svc.cluster.local:8081/repository/maven-build-cache -Dmaven.build.cache.remote.enabled=true -Dmaven.build.cache.remote.save.enabled=true -Dmaven.build.cache.remote.server.id=nexus-cred  "
-          } else {
-            // when not using cache
-            echo "Not using build cache"
-            extraArgs = " -Dmaven.test.failure.ignore=true -Dmaven.build.cache.skipCache=true -Dmaven.build.cache.remote.url=http://nexus-service.nexus.svc.cluster.local:8081/repository/maven-build-cache -Dmaven.build.cache.remote.enabled=true -Dmaven.build.cache.remote.save.enabled=true -Dmaven.build.cache.remote.server.id=nexus-cred "
-          }
+          // Same rule as before the build-cache extension was removed: test failures are only
+          // tolerated on the release branch or when a PR asks for it with a label.
+          def ignoreTestFailures = (env.BRANCH_NAME == 'jetty-12.1.x')
           if (env.BRANCH_NAME ==~ /PR-\d+/) {
-            if (pullRequest.labels.contains("build-all-tests")) {
-              extraArgs = " -Dmaven.test.failure.ignore=true "
+            if (pullRequest.labels.contains("build-all-tests") || pullRequest.labels.contains("build-no-cache")) {
+              ignoreTestFailures = true
             }
           }
+          extraArgs = ignoreTestFailures ? " -Dmaven.test.failure.ignore=true " : ""
           def dashProfile = ""
           if(useEclipseDash()) {
             dashProfile = " -Peclipse-dash "
@@ -166,8 +160,6 @@ def mavenBuild(jdk, cmdline, mvnName) {
           // Pull the gcloud emulator image through the local Nexus proxy instead of gcr.io. A
           // registry mirror cannot do this: dockerd only consults a mirror for Docker Hub.
           def gcloudImage = " -Dgcloud.docker.image.name=nexus-service.nexus.svc.cluster.local:8082/google.com/cloudsdktool/cloud-sdk "
-          sh "mkdir ~/.mimir"
-          sh "cp jenkins-mimir-daemon.properties ~/.mimir/daemon.properties"
           sh "mvn $extraArgs $dashProfile $gcloudImage -s $GLOBAL_MVN_SETTINGS -Dsettings.path=$GLOBAL_MVN_SETTINGS -DsettingsPath=$GLOBAL_MVN_SETTINGS -Dmaven.repo.uri=http://nexus-service.nexus.svc.cluster.local:8081/repository/maven-public/ -ntp -Dmaven.repo.local=.repository -Pci -V -B -e -U $cmdline"
           if(saveHome()) {
             archiveArtifacts artifacts: ".repository/org/eclipse/jetty/jetty-home/**/jetty-home-*", allowEmptyArchive: true, onlyIfSuccessful: false
@@ -182,20 +174,6 @@ def mavenBuild(jdk, cmdline, mvnName) {
       archiveArtifacts artifacts: '**/target/jstacks/*.txt', allowEmptyArchive: true, onlyIfSuccessful: false, fingerprint: false
     }
   }
-}
-
-/**
- * calculate to use cache or not. per default will not run
- */
-def useBuildCache() {
-  def labelNoBuildCache = false
-  if (env.BRANCH_NAME ==~ /PR-\d+/) {
-    labelNoBuildCache = pullRequest.labels.contains("build-no-cache")
-  }
-  def noBuildCache = (env.BRANCH_NAME == 'jetty-12.1.x') || labelNoBuildCache;
-  return !noBuildCache;
-  // want to skip build cache
-  // return false
 }
 
 def useEclipseDash() {

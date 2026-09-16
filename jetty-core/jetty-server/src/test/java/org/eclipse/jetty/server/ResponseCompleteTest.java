@@ -49,12 +49,10 @@ import static org.hamcrest.Matchers.is;
 public class ResponseCompleteTest
 {
     private static final Logger LOG = LoggerFactory.getLogger(ResponseCompleteTest.class);
-    private static final byte[] GET_REQUEST_BYTES = """
-        GET / HTTP/1.1
-        Host: local
-        Connection: close
-        
-        """.getBytes(UTF_8);
+    private static final byte[] GET_REQUEST_BYTES = ("GET / HTTP/1.1\n" +
+        "Host: local\n" +
+        "Connection: close\n" +
+        "\n").getBytes(UTF_8);
     private Server server;
 
     private Server startServer(HttpConnectionFactory httpConnectionFactory, Handler handler) throws Exception

@@ -42,7 +42,7 @@ public class DistributionJSPTests extends AbstractJettyHomeTest
     private static final Logger LOG = LoggerFactory.getLogger(DistributionJSPTests.class);
 
     @ParameterizedTest
-    @ValueSource(strings = {"ee9", "ee10", "ee11"})
+    @ValueSource(strings = {"ee9", "ee10"})
     public void testSimpleWebAppWithJSPAndJSTL(String env) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -85,7 +85,7 @@ public class DistributionJSPTests extends AbstractJettyHomeTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ee10", "ee11"})
+    @ValueSource(strings = {"ee10"})
     public void testSimpleWebAppWithJSPOnModulePath(String env) throws Exception
     {
         // Testing with env=ee9 is not possible because jakarta.transaction:1.x
@@ -133,7 +133,7 @@ public class DistributionJSPTests extends AbstractJettyHomeTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ee9", "ee10", "ee11"})
+    @ValueSource(strings = {"ee9", "ee10"})
     public void testSimpleWebAppWithJSPOverH2C(String env) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -141,7 +141,7 @@ public class DistributionJSPTests extends AbstractJettyHomeTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ee9", "ee10", "ee11"})
+    @ValueSource(strings = {"ee9", "ee10"})
     public void testSimpleWebAppWithJSPOverH2(String env) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -188,7 +188,7 @@ public class DistributionJSPTests extends AbstractJettyHomeTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ee9", "ee10", "ee11"})
+    @ValueSource(strings = {"ee9", "ee10"})
     public void testLog4j2ModuleWithSimpleWebAppWithJSP(String env) throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();

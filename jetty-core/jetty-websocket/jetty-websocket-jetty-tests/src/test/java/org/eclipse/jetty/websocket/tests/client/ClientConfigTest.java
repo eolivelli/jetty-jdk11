@@ -109,19 +109,21 @@ public class ClientConfigTest
 
     public EventSocket getClientSocket(String param)
     {
-        return switch (param)
+        switch (param)
         {
-            case "clientConfig" ->
+            case "clientConfig":
             {
                 client.setInputBufferSize(INPUT_BUFFER_SIZE);
                 client.setMaxBinaryMessageSize(MAX_MESSAGE_SIZE);
                 client.setIdleTimeout(Duration.ofMillis(IDLE_TIMEOUT));
                 client.setMaxTextMessageSize(MAX_MESSAGE_SIZE);
-                yield new EventSocket();
+                return new EventSocket();
             }
-            case "sessionConfig" -> new SessionConfigEndpoint();
-            default -> throw new IllegalStateException();
-        };
+            case "sessionConfig":
+                return new SessionConfigEndpoint();
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     @ParameterizedTest

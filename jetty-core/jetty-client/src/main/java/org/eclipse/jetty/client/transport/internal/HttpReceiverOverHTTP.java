@@ -65,8 +65,9 @@ public class HttpReceiverOverHTTP extends HttpReceiver implements HttpParser.Res
         HttpClient httpClient = channel.getHttpDestination().getHttpClient();
         parser = new HttpParser(this, httpClient.getMaxResponseHeadersSize(), httpClient.getHttpCompliance());
         HttpClientTransport transport = httpClient.getHttpClientTransport();
-        if (transport instanceof HttpClientTransportOverHTTP httpTransport)
+        if (transport instanceof HttpClientTransportOverHTTP)
         {
+            HttpClientTransportOverHTTP httpTransport = (HttpClientTransportOverHTTP)transport;
             parser.setHeaderCacheSize(httpTransport.getHeaderCacheSize());
             parser.setHeaderCacheCaseSensitive(httpTransport.isHeaderCacheCaseSensitive());
         }
@@ -337,13 +338,16 @@ public class HttpReceiverOverHTTP extends HttpReceiver implements HttpParser.Res
 
             switch (state)
             {
-                case HEADERS -> responseHeaders(exchange);
-                case CONTENT ->
+                case HEADERS:
+                    responseHeaders(exchange);
+                    break;
+                case CONTENT:
                 {
                     if (notifyContentAvailable)
                         responseContentAvailable(exchange);
+                    break;
                 }
-                case COMPLETE ->
+                case COMPLETE:
                 {
                     boolean isUpgrade = status == HttpStatus.SWITCHING_PROTOCOLS_101;
                     boolean isTunnel = getHttpChannel().isTunnel(method, status);
@@ -381,7 +385,8 @@ public class HttpReceiverOverHTTP extends HttpReceiver implements HttpParser.Res
                     // be performed by receivedNext().
                     return true;
                 }
-                default -> throw new IllegalStateException("Invalid state " + state);
+                default:
+                    throw new IllegalStateException("Invalid state " + state);
             }
 
             // The application may have aborted the request.

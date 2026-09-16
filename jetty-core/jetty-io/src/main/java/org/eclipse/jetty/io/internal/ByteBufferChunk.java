@@ -43,12 +43,11 @@ public abstract class ByteBufferChunk extends RetainableByteBuffer.FixedCapacity
     @Override
     public String toString()
     {
-        return "%s@%x[l=%b,b=%s]".formatted(
+        return String.format("%s@%x[l=%b,b=%s]",
             TypeUtil.toShortName(getClass()),
             hashCode(),
             isLast(),
-            BufferUtil.toDetailString(getByteBuffer())
-        );
+            BufferUtil.toDetailString(getByteBuffer()));
     }
 
     public static class WithReferenceCount extends ByteBufferChunk
@@ -87,7 +86,7 @@ public abstract class ByteBufferChunk extends RetainableByteBuffer.FixedCapacity
         @Override
         public String toString()
         {
-            return "%s[rc=%d]".formatted(super.toString(), references.get());
+            return String.format("%s[rc=%d]", super.toString(), references.get());
         }
     }
 
@@ -176,7 +175,7 @@ public abstract class ByteBufferChunk extends RetainableByteBuffer.FixedCapacity
         @Override
         public String toString()
         {
-            return "%s[%s]".formatted(super.toString(), retainable);
+            return String.format("%s[%s]", super.toString(), retainable);
         }
     }
 
@@ -199,7 +198,7 @@ public abstract class ByteBufferChunk extends RetainableByteBuffer.FixedCapacity
         @Override
         public String toString()
         {
-            return "%s@%x[l=%b,b=%s]".formatted(
+            return String.format("%s@%x[l=%b,b=%s]",
                 TypeUtil.toShortName(getClass()),
                 hashCode(),
                 isLast(),

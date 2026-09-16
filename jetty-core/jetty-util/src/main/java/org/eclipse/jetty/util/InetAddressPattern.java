@@ -88,7 +88,7 @@ public abstract class InetAddressPattern implements Predicate<InetAddress>
     @Override
     public boolean equals(Object obj)
     {
-        return obj instanceof InetAddressPattern inetAddressPattern && _pattern.equals(inetAddressPattern._pattern);
+        return obj instanceof InetAddressPattern && _pattern.equals(((InetAddressPattern)obj)._pattern);
     }
 
     @Override

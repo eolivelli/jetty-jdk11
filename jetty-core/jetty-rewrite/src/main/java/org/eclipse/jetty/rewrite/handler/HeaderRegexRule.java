@@ -94,6 +94,6 @@ public class HeaderRegexRule extends RegexRule
     @Override
     public String toString()
     {
-        return "%s[header:%s=%s]".formatted(super.toString(), getHeaderName(), getHeaderValue());
+        return String.format("%s[header:%s=%s]", super.toString(), getHeaderName(), getHeaderValue());
     }
 }

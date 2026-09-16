@@ -73,12 +73,13 @@ public class FrameParser
         {
             switch (state)
             {
-                case FRAME_TYPE ->
+                case FRAME_TYPE:
                 {
                     frameType = byteBuffer.get(byteBuffer.position()) & 0xFF;
                     state = State.FRAME_BODY;
+                    break;
                 }
-                case FRAME_BODY ->
+                case FRAME_BODY:
                 {
                     Frame frame;
                     FrameType type = FrameType.from(frameType);
@@ -88,7 +89,7 @@ public class FrameParser
                         frame = parseUnknownFrame(byteBuffer, frameType);
                     if (frame == null)
                         return null;
-                    if (!(frame instanceof StreamFrame streamFrame) || streamFrame.isEndData())
+                    if (!(frame instanceof StreamFrame) || ((StreamFrame)frame).isEndData())
                         state = State.FRAME_TYPE;
                     return frame;
                 }
@@ -99,21 +100,33 @@ public class FrameParser
 
     protected Frame parseFrame(ByteBuffer byteBuffer, FrameType frameType, int type)
     {
-        return switch (frameType)
+        switch (frameType)
         {
-            case PADDING -> new Frame(byteBuffer.get());
-            case RESET_STREAM -> parseResetStream(byteBuffer);
-            case STOP_SENDING -> parseStopSending(byteBuffer);
-            case STREAM -> parseStream(byteBuffer);
-            case MAX_DATA -> parseMaxData(byteBuffer);
-            case STREAM_MAX_DATA -> parseStreamMaxData(byteBuffer);
-            case MAX_STREAMS -> parseMaxStreams(byteBuffer);
-            case DATA_BLOCKED -> parseDataBlocked(byteBuffer);
-            case STREAM_DATA_BLOCKED -> parseStreamDataBlocked(byteBuffer);
-            case STREAMS_BLOCKED -> parseStreamsBlocked(byteBuffer);
-            case CONNECTION_CLOSE -> parseConnectionClose(byteBuffer);
-            default -> throw new QuicException(ErrorCode.FRAME_ENCODING_ERROR, "unsupported_quic_frame_type", type);
-        };
+            case PADDING:
+                return new Frame(byteBuffer.get());
+            case RESET_STREAM:
+                return parseResetStream(byteBuffer);
+            case STOP_SENDING:
+                return parseStopSending(byteBuffer);
+            case STREAM:
+                return parseStream(byteBuffer);
+            case MAX_DATA:
+                return parseMaxData(byteBuffer);
+            case STREAM_MAX_DATA:
+                return parseStreamMaxData(byteBuffer);
+            case MAX_STREAMS:
+                return parseMaxStreams(byteBuffer);
+            case DATA_BLOCKED:
+                return parseDataBlocked(byteBuffer);
+            case STREAM_DATA_BLOCKED:
+                return parseStreamDataBlocked(byteBuffer);
+            case STREAMS_BLOCKED:
+                return parseStreamsBlocked(byteBuffer);
+            case CONNECTION_CLOSE:
+                return parseConnectionClose(byteBuffer);
+            default:
+                throw new QuicException(ErrorCode.FRAME_ENCODING_ERROR, "unsupported_quic_frame_type", type);
+        }
     }
 
     protected Frame parseUnknownFrame(ByteBuffer byteBuffer, int frameType)

@@ -53,8 +53,10 @@ public class MavenWebInfConfiguration extends WebInfConfiguration
         MavenWebAppContext jwac = (MavenWebAppContext)context;
 
         //put the classes dir and all dependencies into the classpath
-        if (jwac.getClassPathUris() != null && context.getClassLoader() instanceof WebAppClassLoader loader)
+        ClassLoader classLoader = context.getClassLoader();
+        if (jwac.getClassPathUris() != null && classLoader instanceof WebAppClassLoader)
         {
+            WebAppClassLoader loader = (WebAppClassLoader)classLoader;
             if (LOG.isDebugEnabled())
                 LOG.debug("Setting up classpath ...");
             for (URI uri : jwac.getClassPathUris())

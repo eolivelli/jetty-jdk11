@@ -919,7 +919,7 @@ public class ServletHolder extends Holder<Servlet> implements Comparable<Servlet
     {
         if (StringUtil.isBlank(element))
             return;
-        if (!path.isEmpty())
+        if (path.length() > 0)
             path.append(".");
         path.append(element);
     }
@@ -1352,7 +1352,7 @@ public class ServletHolder extends Holder<Servlet> implements Comparable<Servlet
         {
             ServletContextRequest servletContextRequest = ServletContextRequest.getServletContextRequest(request);
             AuthenticationState authenticationState = AuthenticationState.getAuthenticationState(servletContextRequest);
-            UserIdentity userIdentity = (authenticationState instanceof AuthenticationState.Succeeded user) ? user.getUserIdentity() : _identityService.getSystemUserIdentity();
+            UserIdentity userIdentity = (authenticationState instanceof AuthenticationState.Succeeded) ? ((AuthenticationState.Succeeded)authenticationState).getUserIdentity() : _identityService.getSystemUserIdentity();
             try (IdentityService.Association ignored = _identityService.associate(userIdentity, _runAsToken))
             {
                 getWrapped().service(request, res);

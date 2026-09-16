@@ -80,14 +80,19 @@ public class ProxyCustomizer implements HttpConfiguration.Customizer
         @Override
         public Object getAttribute(String name)
         {
-            return switch (name)
+            switch (name)
             {
-                case REMOTE_ADDRESS_ATTRIBUTE_NAME -> _remoteAddress;
-                case REMOTE_PORT_ATTRIBUTE_NAME -> _remotePort;
-                case LOCAL_ADDRESS_ATTRIBUTE_NAME -> _localAddress;
-                case LOCAL_PORT_ATTRIBUTE_NAME -> _localPort;
-                default -> super.getAttribute(name);
-            };
+                case REMOTE_ADDRESS_ATTRIBUTE_NAME:
+                    return _remoteAddress;
+                case REMOTE_PORT_ATTRIBUTE_NAME:
+                    return _remotePort;
+                case LOCAL_ADDRESS_ATTRIBUTE_NAME:
+                    return _localAddress;
+                case LOCAL_PORT_ATTRIBUTE_NAME:
+                    return _localPort;
+                default:
+                    return super.getAttribute(name);
+            }
         }
 
         @Override

@@ -132,13 +132,12 @@ public class GracefulHandlerTest
         server.setStopTimeout(10000);
         server.start();
 
-        String rawRequest = """
-            POST /?hint=intentional_failure HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: text/plain\r
-            Content-Length: 10\r
-            \r
-            1234567890""";
+        String rawRequest = "POST /?hint=intentional_failure HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Content-Length: 10\r\n" +
+            "\r\n" +
+            "1234567890";
 
         Socket client0 = newSocketToServer("client0");
         OutputStream output0 = client0.getOutputStream();
@@ -194,13 +193,12 @@ public class GracefulHandlerTest
         server.setStopTimeout(10000);
         server.start();
 
-        String rawRequest = """
-            POST /?hint=intentional_failure HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: text/plain\r
-            Content-Length: 10\r
-            \r
-            1234567890""";
+        String rawRequest = "POST /?hint=intentional_failure HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Content-Length: 10\r\n" +
+            "\r\n" +
+            "1234567890";
 
         Socket client0 = newSocketToServer("client0");
         OutputStream output0 = client0.getOutputStream();
@@ -255,13 +253,12 @@ public class GracefulHandlerTest
         server.setStopTimeout(10000);
         server.start();
 
-        String rawRequest = """
-            POST /?hint=intentional_failure HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: text/plain\r
-            Content-Length: 10\r
-            \r
-            1234567890""";
+        String rawRequest = "POST /?hint=intentional_failure HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Content-Length: 10\r\n" +
+            "\r\n" +
+            "1234567890";
 
         Socket client0 = newSocketToServer("client0");
         OutputStream output0 = client0.getOutputStream();
@@ -316,13 +313,12 @@ public class GracefulHandlerTest
         server.setStopTimeout(10000);
         server.start();
 
-        String rawRequest = """
-            POST /?hint=intentional_failure HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: text/plain\r
-            Content-Length: 10\r
-            \r
-            1234567890""";
+        String rawRequest = "POST /?hint=intentional_failure HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Content-Length: 10\r\n" +
+            "\r\n" +
+            "1234567890";
 
         Socket client0 = newSocketToServer("client0");
         OutputStream output0 = client0.getOutputStream();
@@ -377,12 +373,10 @@ public class GracefulHandlerTest
         server.setStopTimeout(10000);
         server.start();
 
-        String rawRequest = """
-            GET / HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: text/plain\r
-            \r
-            """;
+        String rawRequest = "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "\r\n";
 
         Socket client0 = newSocketToServer("client0");
         OutputStream output0 = client0.getOutputStream();
@@ -432,13 +426,12 @@ public class GracefulHandlerTest
         server.setStopTimeout(10000);
         server.start();
 
-        String rawRequest = """
-            POST / HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: text/plain\r
-            Content-Length: 10\r
-            \r
-            12345""";
+        String rawRequest = "POST / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Content-Length: 10\r\n" +
+            "\r\n" +
+            "12345";
 
         Socket client0 = newSocketToServer("client0");
         OutputStream output0 = client0.getOutputStream();
@@ -486,13 +479,12 @@ public class GracefulHandlerTest
         server.start();
 
         // Body is incomplete (send 5 bytes out of 10)
-        String rawRequest = """
-            POST /?hint=incomplete_body HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: text/plain\r
-            Content-Length: 10\r
-            \r
-            12345""";
+        String rawRequest = "POST /?hint=incomplete_body HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Content-Length: 10\r\n" +
+            "\r\n" +
+            "12345";
 
         Socket client0 = newSocketToServer("client0");
         OutputStream output0 = client0.getOutputStream();
@@ -567,13 +559,12 @@ public class GracefulHandlerTest
         server.start();
 
         // Body is incomplete (send 5 bytes out of 10)
-        String rawRequest = """
-            POST /?hint=incomplete_body HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: text/plain\r
-            Content-Length: 10\r
-            \r
-            12345""";
+        String rawRequest = "POST /?hint=incomplete_body HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Content-Length: 10\r\n" +
+            "\r\n" +
+            "12345";
 
         Socket client0 = newSocketToServer("client0");
         OutputStream output0 = client0.getOutputStream();
@@ -629,13 +620,12 @@ public class GracefulHandlerTest
         server.start();
 
         // Complete request
-        String rawRequest = """
-            POST /?num=%d HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: text/plain\r
-            Content-Length: 10\r
-            \r
-            1234567890""";
+        String rawRequest = "POST /?num=%d HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Content-Length: 10\r\n" +
+            "\r\n" +
+            "1234567890";
 
         Socket client0 = newSocketToServer("client0");
         OutputStream output0 = client0.getOutputStream();
@@ -643,7 +633,7 @@ public class GracefulHandlerTest
         HttpTester.Response response;
 
         // Send one normal request to server
-        output0.write(rawRequest.formatted(1).getBytes(StandardCharsets.UTF_8));
+        output0.write(String.format(rawRequest, 1).getBytes(StandardCharsets.UTF_8));
         output0.flush();
 
         // Verify response
@@ -660,7 +650,7 @@ public class GracefulHandlerTest
         await().atMost(5, TimeUnit.SECONDS).until(() -> gracefulHandler.isShutdown());
 
         // Send another request on same connection
-        output0.write(rawRequest.formatted(2).getBytes(StandardCharsets.UTF_8));
+        output0.write(String.format(rawRequest, 2).getBytes(StandardCharsets.UTF_8));
         output0.flush();
 
         // Verify response (should be a 503)
@@ -687,7 +677,7 @@ public class GracefulHandlerTest
         output0 = client0.getOutputStream();
 
         // Send one normal request to server
-        output0.write(rawRequest.formatted(1).getBytes(StandardCharsets.UTF_8));
+        output0.write(String.format(rawRequest, 1).getBytes(StandardCharsets.UTF_8));
         output0.flush();
 
         // Verify response
@@ -722,20 +712,19 @@ public class GracefulHandlerTest
         server.setStopTimeout(10000);
         server.start();
 
-        String rawRequest = """
-            POST /?num=%d HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: text/plain\r
-            Content-Length: 10\r
-            \r
-            1234567890""";
+        String rawRequest = "POST /?num=%d HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Content-Length: 10\r\n" +
+            "\r\n" +
+            "1234567890";
 
         Socket client0 = newSocketToServer("client0");
         OutputStream output0 = client0.getOutputStream();
         HttpTester.Response response;
 
         // Normal request before shutdown: no custom header.
-        output0.write(rawRequest.formatted(1).getBytes(StandardCharsets.UTF_8));
+        output0.write(String.format(rawRequest, 1).getBytes(StandardCharsets.UTF_8));
         output0.flush();
 
         response = HttpTester.parseResponse(client0.getInputStream());
@@ -749,7 +738,7 @@ public class GracefulHandlerTest
         await().atMost(5, TimeUnit.SECONDS).until(() -> gracefulHandler.isShutdown());
 
         // Same connection, now rejected: 503 with our custom header.
-        output0.write(rawRequest.formatted(2).getBytes(StandardCharsets.UTF_8));
+        output0.write(String.format(rawRequest, 2).getBytes(StandardCharsets.UTF_8));
         output0.flush();
 
         response = HttpTester.parseResponse(client0.getInputStream());
@@ -774,19 +763,17 @@ public class GracefulHandlerTest
         server.start();
 
         // Complete request
-        String rawRequest = """
-            GET /?num=%d HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: text/plain\r
-            \r
-            """;
+        String rawRequest = "GET /?num=%d HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "\r\n";
 
         Socket client0 = newSocketToServer("client0");
         OutputStream output0 = client0.getOutputStream();
         HttpTester.Response response;
 
         // Send one normal request to server
-        output0.write(rawRequest.formatted(1).getBytes(StandardCharsets.UTF_8));
+        output0.write(String.format(rawRequest, 1).getBytes(StandardCharsets.UTF_8));
         output0.flush();
 
         // Verify response
@@ -895,7 +882,7 @@ public class GracefulHandlerTest
                 }
             }
 
-            String responseBody = "(Read:%d) (Content-Length:%d)".formatted(bytesRead, contentLength);
+            String responseBody = String.format("(Read:%d) (Content-Length:%d)", bytesRead, contentLength);
             if (LOG.isDebugEnabled())
                 LOG.debug("Content.Sink.Write: {}", responseBody);
             Content.Sink.write(response, true, responseBody, callback);

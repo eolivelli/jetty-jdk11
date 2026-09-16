@@ -137,12 +137,12 @@ public class GzipEncoderSink extends EncoderSink
             {
                 switch (state.get())
                 {
-                    case HEADERS ->
+                    case HEADERS:
                     {
                         state.compareAndSet(State.HEADERS, State.BODY);
                         return new WriteRecord(false, ByteBuffer.wrap(GZIP_HEADER), Callback.NOOP);
                     }
-                    case BODY ->
+                    case BODY:
                     {
                         // Processing input
                         if (BufferUtil.hasContent(content))
@@ -168,8 +168,9 @@ public class GzipEncoderSink extends EncoderSink
                                 return null;
                             }
                         }
+                        break;
                     }
-                    case FLUSHING ->
+                    case FLUSHING:
                     {
                         // flush anything left out of the deflater
                         if (output == null)
@@ -182,8 +183,9 @@ public class GzipEncoderSink extends EncoderSink
                             output = null;
                             return writeRecord;
                         }
+                        break;
                     }
-                    case TRAILERS ->
+                    case TRAILERS:
                     {
                         if (output == null)
                             output = compression.acquireByteBuffer(16);
@@ -193,7 +195,7 @@ public class GzipEncoderSink extends EncoderSink
                         output = null;
                         return writeRecord;
                     }
-                    case FINISHED ->
+                    case FINISHED:
                     {
                         return null;
                     }

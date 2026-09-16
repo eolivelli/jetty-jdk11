@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.jetty.client.ContentResponse;
@@ -90,7 +91,7 @@ public class RedispatchPlansTests extends AbstractRedispatchTest
                 .filter((file) -> file.getFileName().toString().endsWith(".txt"))
                 .filter((file) -> !disabledTests.contains(file.getFileName().toString()))
                 .sorted(PathCollators.byName(true))
-                .toList();
+                .collect(Collectors.toList());
 
             for (Path plansText : testPlans)
             {
@@ -148,7 +149,7 @@ public class RedispatchPlansTests extends AbstractRedispatchTest
             List<String> attrNames = responseProps.keySet().stream()
                 .map(Object::toString)
                 .filter((name) -> name.startsWith("req.attr[session["))
-                .toList();
+                .collect(Collectors.toList());
 
             if (attrNames.size() > 1)
             {
@@ -172,7 +173,7 @@ public class RedispatchPlansTests extends AbstractRedispatchTest
             List<String> newSessions = logEntries.stream()
                 .filter(line -> line.contains("SessionCache.event.newSession()"))
                 .map(line -> line.substring(line.indexOf("=") + 1))
-                .toList();
+                .collect(Collectors.toList());
             // we should have the commit() and release() for each new Session.
             for (String sessionId : newSessions)
             {

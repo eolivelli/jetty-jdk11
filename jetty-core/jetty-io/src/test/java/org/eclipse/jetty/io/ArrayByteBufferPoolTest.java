@@ -288,13 +288,11 @@ public class ArrayByteBufferPoolTest
     }
 
     @ParameterizedTest
-    @CsvSource(useHeadersInDisplayName = true, textBlock = """
-        minCapacity, factor, maxCapacity, buckets
-                 10,      3,          20, 12;15;18;21
-                 10,      4,          20, 12;16;20
-                 10,      5,          20, 10;15;20
-                 10,     10,          20, 10;20
-        """)
+    @CsvSource(useHeadersInDisplayName = true, textBlock = "minCapacity, factor, maxCapacity, buckets\n" +
+        "         10,      3,          20, 12;15;18;21\n" +
+        "         10,      4,          20, 12;16;20\n" +
+        "         10,      5,          20, 10;15;20\n" +
+        "         10,     10,          20, 10;20\n")
     public void testFactorCapacityAcquireRelease(int minCapacity, int factor, int maxCapacity, String buckets)
     {
         ArrayByteBufferPool pool = new ArrayByteBufferPool(minCapacity, factor, maxCapacity, Integer.MAX_VALUE);
@@ -440,12 +438,10 @@ public class ArrayByteBufferPoolTest
     }
 
     @ParameterizedTest
-    @CsvSource(useHeadersInDisplayName = true, textBlock = """
-        minCapacity, maxCapacity, buckets
-                 -1,          -1, 1024;2048;4096;8192;16384;32768;65536
-                100,         800, 128;256;512;1024
-                  2,         200, 2;4;8;16;32;64;128;256
-        """)
+    @CsvSource(useHeadersInDisplayName = true, textBlock = "minCapacity, maxCapacity, buckets\n" +
+        "         -1,          -1, 1024;2048;4096;8192;16384;32768;65536\n" +
+        "        100,         800, 128;256;512;1024\n" +
+        "          2,         200, 2;4;8;16;32;64;128;256\n")
     public void testQuadraticFactorCapacityAcquireRelease(int minCapacity, int maxCapacity, String buckets)
     {
         ArrayByteBufferPool pool = new ArrayByteBufferPool.Quadratic(minCapacity, maxCapacity, Integer.MAX_VALUE);

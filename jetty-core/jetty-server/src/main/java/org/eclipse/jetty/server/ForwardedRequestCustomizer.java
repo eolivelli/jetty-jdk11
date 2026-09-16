@@ -148,6 +148,7 @@ import static java.lang.invoke.MethodType.methodType;
 public class ForwardedRequestCustomizer implements HttpConfiguration.Customizer
 {
     private static final Logger LOG = LoggerFactory.getLogger(HttpConnection.class);
+    private static final Set<String> SSL_SESSION_DATA_ATTRIBUTES = Set.of(EndPoint.SslSessionData.ATTRIBUTE);
 
     private HostPortHttpField _forcedHost;
     private boolean _proxyAsAuthority = false;
@@ -601,14 +602,13 @@ public class ForwardedRequestCustomizer implements HttpConfiguration.Customizer
             @Override
             public String toString()
             {
-                return "%s@%x{id=%s,remote=%s,authority=%s,%s}".formatted(
+                return String.format("%s@%x{id=%s,remote=%s,authority=%s,%s}",
                     TypeUtil.toShortName(this.getClass()),
                     hashCode(),
                     getId(),
                     remote,
                     authority,
-                    getWrapped()
-                );
+                    getWrapped());
             }
         };
 
@@ -619,8 +619,6 @@ public class ForwardedRequestCustomizer implements HttpConfiguration.Customizer
         EndPoint.SslSessionData sslSessionData = forwarded._sslSessionData;
         return new Request.AttributesWrapper(request, sslSessionData == null ? request : new Attributes.Synthetic(request)
         {
-            private static final Set<String> ATTRIBUTES = Set.of(EndPoint.SslSessionData.ATTRIBUTE);
-
             @Override
             protected Object getSyntheticAttribute(String name)
             {
@@ -630,7 +628,7 @@ public class ForwardedRequestCustomizer implements HttpConfiguration.Customizer
             @Override
             protected Set<String> getSyntheticNameSet()
             {
-                return ATTRIBUTES;
+                return SSL_SESSION_DATA_ATTRIBUTES;
             }
         })
         {
@@ -803,7 +801,7 @@ public class ForwardedRequestCustomizer implements HttpConfiguration.Customizer
         @Override
         public String toString()
         {
-            return "%s@%x{host='%s'/%s, port=%d/%s}".formatted(TypeUtil.toShortName(getClass()), hashCode(), _host, _hostSource, _port, _portSource);
+            return String.format("%s@%x{host='%s'/%s, port=%d/%s}", TypeUtil.toShortName(getClass()), hashCode(), _host, _hostSource, _port, _portSource);
         }
     }
 

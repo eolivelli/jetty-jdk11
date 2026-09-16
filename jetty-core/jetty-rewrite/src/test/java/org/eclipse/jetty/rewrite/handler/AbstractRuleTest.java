@@ -13,6 +13,8 @@
 
 package org.eclipse.jetty.rewrite.handler;
 
+import java.util.List;
+
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -41,8 +43,16 @@ public abstract class AbstractRuleTest
     {
         _server.addConnector(_connector);
         _next = _server;
-        while (_next.getHandlers() != null && _next.getHandlers().size() == 1 && _next.getHandlers().get(0) instanceof Handler.Singleton singleton)
-            _next = singleton;
+        while (true)
+        {
+            List<Handler> handlers = _next.getHandlers();
+            if (handlers == null || handlers.size() != 1)
+                break;
+            Handler nextHandler = handlers.get(0);
+            if (!(nextHandler instanceof Handler.Singleton))
+                break;
+            _next = (Handler.Singleton)nextHandler;
+        }
         _next.setHandler(_rewriteHandler);
         _rewriteHandler.setHandler(handler);
         _server.start();

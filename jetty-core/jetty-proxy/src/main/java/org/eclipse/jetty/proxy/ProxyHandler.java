@@ -262,10 +262,9 @@ public abstract class ProxyHandler extends Handler.Abstract
     public boolean handle(Request clientToProxyRequest, Response proxyToClientResponse, Callback proxyToClientCallback)
     {
         if (LOG.isDebugEnabled())
-            LOG.debug("""
-                {} C2P received request
-                {}
-                {}""",
+            LOG.debug("{} C2P received request\n" +
+                "{}\n" +
+                "{}",
                 requestId(clientToProxyRequest),
                 clientToProxyRequest,
                 clientToProxyRequest.getHeaders());
@@ -410,12 +409,11 @@ public abstract class ProxyHandler extends Handler.Abstract
         // For example, a client with a forward proxy may want to communicate in clear-text with the
         // server (so the scheme is http), but securely with the forward proxy (so isSecure() is true).
         String protoAttr = scheme == null ? (clientToProxyRequest.isSecure() ? "https" : "http") : scheme;
-        String forwardedValue = "by=%s;for=%s;host=%s;proto=%s".formatted(
+        String forwardedValue = String.format("by=%s;for=%s;host=%s;proto=%s",
             HttpField.PARAMETER_TOKENIZER.quote(byAttr),
             HttpField.PARAMETER_TOKENIZER.quote(forAttr),
             HttpField.PARAMETER_TOKENIZER.quote(hostAttr),
-            protoAttr
-        );
+            protoAttr);
 
         proxyToServerRequest.headers(headers -> headers.computeField(HttpHeader.FORWARDED, (header, fields) ->
         {
@@ -460,10 +458,9 @@ public abstract class ProxyHandler extends Handler.Abstract
     {
         if (LOG.isDebugEnabled())
         {
-            LOG.debug("""
-                    {} P2S sending request
-                    {}
-                    {}""",
+            LOG.debug("{} P2S sending request\n" +
+                "{}\n" +
+                "{}",
                 requestId(clientToProxyRequest),
                 proxyToServerRequest,
                 proxyToServerRequest.getHeaders());
@@ -674,10 +671,9 @@ public abstract class ProxyHandler extends Handler.Abstract
         {
             if (LOG.isDebugEnabled())
             {
-                LOG.debug("""
-                        {} S2P received response
-                        {}
-                        {}""",
+                LOG.debug("{} S2P received response\n" +
+                    "{}\n" +
+                    "{}",
                     requestId(clientToProxyRequest),
                     serverToProxyResponse,
                     serverToProxyResponse.getHeaders());
@@ -699,10 +695,9 @@ public abstract class ProxyHandler extends Handler.Abstract
             }
             if (LOG.isDebugEnabled())
             {
-                LOG.debug("""
-                        {} P2C sending response
-                        {}
-                        {}""",
+                LOG.debug("{} P2C sending response\n" +
+                    "{}\n" +
+                    "{}",
                     requestId(clientToProxyRequest),
                     proxyToClientResponse,
                     proxyToClientResponse.getHeaders());

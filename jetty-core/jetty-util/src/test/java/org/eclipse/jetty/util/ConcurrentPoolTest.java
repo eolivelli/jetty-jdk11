@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.ToIntFunction;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -334,7 +335,7 @@ public class ConcurrentPoolTest
         pool.reserve().enable("bbb", false);
         List<String> objects = pool.stream()
             .map(Pool.Entry::getPooled)
-            .toList();
+            .collect(Collectors.toList());
         assertThat(objects, equalTo(Arrays.asList("aaa", "bbb")));
         assertThat(pool.size(), is(2));
     }

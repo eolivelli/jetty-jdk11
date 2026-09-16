@@ -29,12 +29,21 @@ public interface HttpException extends QuietException
 
     static HttpException asHttpException(Throwable throwable)
     {
-        if (throwable instanceof IllegalArgumentException iae)
+        if (throwable instanceof IllegalArgumentException)
+        {
+            IllegalArgumentException iae = (IllegalArgumentException)throwable;
             return iae;
-        if (throwable instanceof IllegalStateException ise)
+        }
+        if (throwable instanceof IllegalStateException)
+        {
+            IllegalStateException ise = (IllegalStateException)throwable;
             return ise;
-        if (throwable instanceof RuntimeException re)
+        }
+        if (throwable instanceof RuntimeException)
+        {
+            RuntimeException re = (RuntimeException)throwable;
             return re;
+        }
         if (throwable instanceof java.lang.IllegalArgumentException)
             return new HttpException.IllegalArgumentException(HttpStatus.BAD_REQUEST_400, throwable.getMessage(), throwable);
         if (throwable instanceof java.lang.IllegalStateException)
@@ -51,8 +60,11 @@ public interface HttpException extends QuietException
      */
     static void throwAsUnchecked(HttpException httpException)
     {
-        if (httpException instanceof Throwable throwable)
+        if (httpException instanceof Throwable)
+        {
+            Throwable throwable = (Throwable)httpException;
             ExceptionUtil.ifExceptionThrowUnchecked(throwable);
+        }
         throw new IllegalStateException(httpException.getCode(), httpException.getReason());
     }
 
@@ -73,8 +85,11 @@ public interface HttpException extends QuietException
      */
     static void throwIfHttpException(Throwable th)
     {
-        if (th instanceof HttpException he)
+        if (th instanceof HttpException)
+        {
+            HttpException he = (HttpException)th;
             HttpException.throwAsUnchecked(he);
+        }
     }
 
     /**

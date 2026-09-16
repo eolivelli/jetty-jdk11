@@ -394,8 +394,9 @@ public class ClientConnector extends ContainerLifeCycle
             channel = transport.newSelectableChannel();
             configure(channel);
 
-            if (channel instanceof NetworkChannel networkChannel)
+            if (channel instanceof NetworkChannel)
             {
+                NetworkChannel networkChannel = (NetworkChannel)channel;
                 SocketAddress bindAddress = getBindAddress();
                 if (bindAddress != null)
                     bind(networkChannel, bindAddress);
@@ -404,8 +405,9 @@ public class ClientConnector extends ContainerLifeCycle
             }
 
             boolean connected = true;
-            if (channel instanceof SocketChannel socketChannel)
+            if (channel instanceof SocketChannel)
             {
+                SocketChannel socketChannel = (SocketChannel)channel;
                 boolean blocking = isConnectBlocking() && address instanceof InetSocketAddress;
                 if (LOG.isDebugEnabled())
                     LOG.debug("Connecting {} to {}", blocking ? "blocking" : "non-blocking", address);
@@ -480,8 +482,9 @@ public class ClientConnector extends ContainerLifeCycle
 
     protected void configure(SelectableChannel selectable) throws IOException
     {
-        if (selectable instanceof NetworkChannel channel)
+        if (selectable instanceof NetworkChannel)
         {
+            NetworkChannel channel = (NetworkChannel)selectable;
             setSocketOption(channel, StandardSocketOptions.TCP_NODELAY, isTCPNoDelay());
             setSocketOption(channel, StandardSocketOptions.SO_REUSEADDR, getReuseAddress());
             setSocketOption(channel, StandardSocketOptions.SO_REUSEPORT, isReusePort());
@@ -534,8 +537,11 @@ public class ClientConnector extends ContainerLifeCycle
     {
         if (LOG.isDebugEnabled())
             LOG.debug("Could not connect to {}", address);
-        if (channel instanceof SocketChannel socketChannel)
+        if (channel instanceof SocketChannel)
+        {
+            SocketChannel socketChannel = (SocketChannel)channel;
             notifyConnectFailure(socketChannel, address, failure);
+        }
         Promise<?> promise = (Promise<?>)context.get(CONNECTION_PROMISE_CONTEXT_KEY);
         if (promise != null)
             promise.failed(failure);
@@ -546,8 +552,11 @@ public class ClientConnector extends ContainerLifeCycle
     {
         if (super.addEventListener(listener))
         {
-            if (listener instanceof ConnectListener connectListener)
+            if (listener instanceof ConnectListener)
+            {
+                ConnectListener connectListener = (ConnectListener)listener;
                 listeners.add(connectListener);
+            }
             return true;
         }
         return false;
@@ -558,8 +567,11 @@ public class ClientConnector extends ContainerLifeCycle
     {
         if (super.removeEventListener(listener))
         {
-            if (listener instanceof ConnectListener connectListener)
+            if (listener instanceof ConnectListener)
+            {
+                ConnectListener connectListener = (ConnectListener)listener;
                 listeners.remove(connectListener);
+            }
             return true;
         }
         return false;

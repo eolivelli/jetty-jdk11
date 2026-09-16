@@ -287,22 +287,28 @@ public class HpackDecoder
                 // and/or of a type that may be looked up multiple times.
                 switch (header)
                 {
-                    case C_STATUS ->
+                    case C_STATUS:
                     {
                         if (indexed)
                             field = new HttpField.IntValueHttpField(header, name, value);
                         else
                             field = new HttpField(header, name, value);
+                        break;
                     }
-                    case C_AUTHORITY -> field = new AuthorityHttpField(value);
-                    case CONTENT_LENGTH ->
+                    case C_AUTHORITY:
+                        field = new AuthorityHttpField(value);
+                        break;
+                    case CONTENT_LENGTH:
                     {
                         if ("0".equals(value))
                             field = LOWER_CASE_CONTENT_LENGTH_0;
                         else
                             field = new HttpField.LongValueHttpField(header, name, value);
+                        break;
                     }
-                    default -> field = new HttpField(header, name, value);
+                    default:
+                        field = new HttpField(header, name, value);
+                        break;
                 }
             }
             catch (Throwable t)

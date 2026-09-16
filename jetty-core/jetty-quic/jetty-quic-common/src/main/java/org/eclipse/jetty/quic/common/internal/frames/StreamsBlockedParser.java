@@ -36,15 +36,17 @@ public class StreamsBlockedParser
         {
             switch (state)
             {
-                case FRAME_TYPE ->
+                case FRAME_TYPE:
                 {
                     bidirectional =  (byteBuffer.get() & 0xFF) == 0x16;
                     state = State.MAX_STREAMS;
+                    break;
                 }
-                case MAX_STREAMS ->
+                case MAX_STREAMS:
                 {
                     if (varLenInt.tryDecode(byteBuffer, v -> maxStreams = v))
                         return result();
+                    break;
                 }
             }
         }

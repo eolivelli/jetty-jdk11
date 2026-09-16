@@ -84,17 +84,15 @@ public abstract class HttpServerTestBase extends HttpServerTestFixture
 {
     private static final Logger LOG = LoggerFactory.getLogger(HttpServerTestBase.class);
 
-    private static final String REQUEST1_HEADER = """
-        POST / HTTP/1.0
-        Host: localhost
-        Content-Type: text/xml; charset=utf-8
-        Connection: close
-        Content-Length:\s""";
-    private static final String REQUEST1_CONTENT = """
-        <?xml version="1.0" encoding="UTF-8"?>
-        <nimbus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xsi:noNamespaceSchemaLocation="nimbus.xsd" version="1.0">
-        </nimbus>""";
+    private static final String REQUEST1_HEADER = "POST / HTTP/1.0\n" +
+        "Host: localhost\n" +
+        "Content-Type: text/xml; charset=utf-8\n" +
+        "Connection: close\n" +
+        "Content-Length: ";
+    private static final String REQUEST1_CONTENT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+        "<nimbus xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+        "        xsi:noNamespaceSchemaLocation=\"nimbus.xsd\" version=\"1.0\">\n" +
+        "</nimbus>";
     private static final String REQUEST1 = REQUEST1_HEADER + REQUEST1_CONTENT.getBytes().length + "\n\n" + REQUEST1_CONTENT;
 
     private static final String RESPONSE1 = "HTTP/1.1 200 OK\n" +
@@ -141,12 +139,10 @@ public abstract class HttpServerTestBase extends HttpServerTestFixture
         {
             OutputStream os = client.getOutputStream();
 
-            String request = """
-                GET / HTTP/1.1
-                Host: localhost
-                Connection: close
-                
-                """;
+            String request = "GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Connection: close\n" +
+                "\n";
             os.write(request.getBytes(StandardCharsets.ISO_8859_1));
             os.flush();
 
@@ -168,17 +164,15 @@ public abstract class HttpServerTestBase extends HttpServerTestFixture
         {
             OutputStream os = client.getOutputStream();
 
-            String request = """
-                POST / HTTP/1.1\r
-                Host: localhost\r
-                Transfer-Encoding: chunked\r
-                Connection: close\r
-                \r
-                0a\r
-                0123456789\r
-                0\r
-                \r
-                """;
+            String request = "POST / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Transfer-Encoding: chunked\r\n" +
+                "Connection: close\r\n" +
+                "\r\n" +
+                "0a\r\n" +
+                "0123456789\r\n" +
+                "0\r\n" +
+                "\r\n";
             os.write(request.getBytes(StandardCharsets.ISO_8859_1));
             os.flush();
 
@@ -208,12 +202,10 @@ public abstract class HttpServerTestBase extends HttpServerTestFixture
         {
             OutputStream os = client.getOutputStream();
 
-            String request = """
-                GET / HTTP/1.1
-                Host: localhost
-                Connection: close
-                
-                """;
+            String request = "GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Connection: close\n" +
+                "\n";
             os.write(request.getBytes(StandardCharsets.ISO_8859_1));
             os.flush();
 
@@ -241,12 +233,10 @@ public abstract class HttpServerTestBase extends HttpServerTestFixture
         {
             OutputStream os = client.getOutputStream();
 
-            String request = """
-                GET / HTTP/1.1
-                Host: localhost
-                Connection: close
-                
-                """;
+            String request = "GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Connection: close\n" +
+                "\n";
             os.write(request.getBytes(StandardCharsets.ISO_8859_1));
             os.flush();
 
@@ -407,14 +397,12 @@ public abstract class HttpServerTestBase extends HttpServerTestFixture
         {
             OutputStream os = client.getOutputStream();
 
-            String request = """
-                POST / HTTP/1.1
-                Host: localhost
-                Transfer-Encoding: chunked
-                
-                xx;
-                
-                """;
+            String request = "POST / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Transfer-Encoding: chunked\n" +
+                "\n" +
+                "xx;\n" +
+                "\n";
             os.write(request.getBytes(StandardCharsets.ISO_8859_1));
             os.flush();
 
@@ -435,17 +423,15 @@ public abstract class HttpServerTestBase extends HttpServerTestFixture
         {
             OutputStream os = client.getOutputStream();
 
-            String request = """
-                POST / HTTP/1.1\r
-                Host: localhost\r
-                Transfer-Encoding: chunked\r
-                \r
-                0a\r
-                1234567890\r
-                xx\r
-                \r
-                \r
-                """;
+            String request = "POST / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Transfer-Encoding: chunked\r\n" +
+                "\r\n" +
+                "0a\r\n" +
+                "1234567890\r\n" +
+                "xx\r\n" +
+                "\r\n" +
+                "\r\n";
             os.write(request.getBytes(StandardCharsets.ISO_8859_1));
             os.flush();
 
@@ -968,26 +954,20 @@ public abstract class HttpServerTestBase extends HttpServerTestFixture
             ).getBytes());
             os.flush();
             Thread.sleep(10);
-            os.write(("""
-                a\r
-                1234567890\r
-                """
+            os.write(("a\r\n" +
+                "1234567890\r\n"
             ).getBytes());
             os.flush();
 
             Thread.sleep(10);
-            os.write(("""
-                4\r
-                abcd\r
-                """
+            os.write(("4\r\n" +
+                "abcd\r\n"
             ).getBytes());
             os.flush();
 
             Thread.sleep(10);
-            os.write(("""
-                X\r
-                abcd\r
-                """
+            os.write(("X\r\n" +
+                "abcd\r\n"
             ).getBytes());
             os.flush();
 
@@ -1118,12 +1098,10 @@ public abstract class HttpServerTestBase extends HttpServerTestFixture
         try (Socket client = newSocket(_serverURI.getHost(), _serverURI.getPort()))
         {
             OutputStream output = client.getOutputStream();
-            output.write("""
-                   GET / HTTP/1.1\r
-                   Host: localhost:%d\r
-                   Connection: close\r
-                   \r
-                   """.formatted(_serverURI.getPort())
+            output.write(String.format("GET / HTTP/1.1\r\n" +
+                "Host: localhost:%d\r\n" +
+                "Connection: close\r\n" +
+                "\r\n", _serverURI.getPort())
                 .getBytes());
             output.flush();
 
@@ -1422,40 +1400,36 @@ public abstract class HttpServerTestBase extends HttpServerTestFixture
             OutputStream os = client.getOutputStream();
             InputStream is = client.getInputStream();
 
-            os.write("""
-                GET / HTTP/1.1
-                Host: localhost
-                
-                HEAD / HTTP/1.1
-                Host: localhost
-                
-                HEAD /writeNull HTTP/1.1
-                Host: localhost
-                
-                GET / HTTP/1.1
-                Host: localhost
-                Connection: close
-                
-                """.getBytes(StandardCharsets.ISO_8859_1));
+            os.write(("GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "\n" +
+                "HEAD / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "\n" +
+                "HEAD /writeNull HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "\n" +
+                "GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Connection: close\n" +
+                "\n").getBytes(StandardCharsets.ISO_8859_1));
 
             String in = IO.toString(is);
-            assertThat(in.replace("\r", ""), is("""
-                HTTP/1.1 200 OK
-                Content-Length: 10
-                
-                123456789
-                HTTP/1.1 200 OK
-                Content-Length: 10
-                
-                HTTP/1.1 200 OK
-                Content-Length: 10
-                
-                HTTP/1.1 200 OK
-                Content-Length: 10
-                Connection: close
-                
-                123456789
-                """));
+            assertThat(in.replace("\r", ""), is("HTTP/1.1 200 OK\n" +
+                "Content-Length: 10\n" +
+                "\n" +
+                "123456789\n" +
+                "HTTP/1.1 200 OK\n" +
+                "Content-Length: 10\n" +
+                "\n" +
+                "HTTP/1.1 200 OK\n" +
+                "Content-Length: 10\n" +
+                "\n" +
+                "HTTP/1.1 200 OK\n" +
+                "Content-Length: 10\n" +
+                "Connection: close\n" +
+                "\n" +
+                "123456789\n"));
         }
     }
 
@@ -1479,12 +1453,10 @@ public abstract class HttpServerTestBase extends HttpServerTestFixture
             OutputStream os = client.getOutputStream();
             InputStream is = client.getInputStream();
 
-            os.write(("""
-                GET /R1 HTTP/1.1\r
-                Host: localhost\r
-                Connection: close\r
-                
-                """).getBytes(StandardCharsets.ISO_8859_1));
+            os.write(("GET /R1 HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Connection: close\r\n" +
+                "\n").getBytes(StandardCharsets.ISO_8859_1));
 
             String in = IO.toString(is);
             assertThat(in, containsString("304 Not Modified"));
@@ -1866,23 +1838,19 @@ public abstract class HttpServerTestBase extends HttpServerTestFixture
             OutputStream os = client.getOutputStream();
 
             // Send two persistent pipelined requests and then shutdown output
-            os.write(("""
-                GET /one HTTP/1.1\r
-                Host: localhost\r
-                Transfer-Encoding: chunked\r
-                \r
-                1000\r
-                """).getBytes(StandardCharsets.ISO_8859_1));
+            os.write(("GET /one HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Transfer-Encoding: chunked\r\n" +
+                "\r\n" +
+                "1000\r\n").getBytes(StandardCharsets.ISO_8859_1));
             Arrays.fill(content, (byte)'1');
             os.write(content);
             os.write("\r\n0\r\n\r\n".getBytes(StandardCharsets.ISO_8859_1));
-            os.write(("""
-                GET /two HTTP/1.1\r
-                Host: localhost\r
-                Transfer-Encoding: chunked\r
-                \r
-                1000\r
-                """).getBytes(StandardCharsets.ISO_8859_1));
+            os.write(("GET /two HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Transfer-Encoding: chunked\r\n" +
+                "\r\n" +
+                "1000\r\n").getBytes(StandardCharsets.ISO_8859_1));
             Arrays.fill(content, (byte)'2');
             os.write(content);
             os.write("\r\n0\r\n\r\n".getBytes(StandardCharsets.ISO_8859_1));
@@ -1973,13 +1941,11 @@ public abstract class HttpServerTestBase extends HttpServerTestFixture
         {
             OutputStream os = client.getOutputStream();
             BufferedOutputStream out = new BufferedOutputStream(os, bufferSize);
-            String request = """
-                POST / HTTP/1.1\r
-                Host: localhost\r
-                Connection: %s\r
-                Transfer-Encoding: chunked\r
-                \r
-                """.formatted(pipeline ? "other" : "close");
+            String request = String.format("POST / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Connection: %s\r\n" +
+                "Transfer-Encoding: chunked\r\n" +
+                "\r\n", pipeline ? "other" : "close");
             if (LOG.isDebugEnabled())
                 LOG.debug("raw request {}", request);
             out.write(request.getBytes(StandardCharsets.ISO_8859_1));
@@ -2033,8 +1999,9 @@ public abstract class HttpServerTestBase extends HttpServerTestFixture
         long total = contents.stream().mapToLong(Content.Chunk::remaining).sum();
         assertThat(total, equalTo(chunk.length * 4L));
         ByteBufferPool rbbp = _connector.getByteBufferPool();
-        if (rbbp instanceof ArrayByteBufferPool pool)
+        if (rbbp instanceof ArrayByteBufferPool)
         {
+            ArrayByteBufferPool pool = (ArrayByteBufferPool)rbbp;
             long buffersBeforeRelease = pool.getAvailableDirectByteBufferCount() + pool.getAvailableHeapByteBufferCount();
             if (LOG.isDebugEnabled())
             {
@@ -2129,12 +2096,10 @@ public abstract class HttpServerTestBase extends HttpServerTestFixture
         {
             OutputStream os = client.getOutputStream();
 
-            String request = """
-                GET / HTTP/1.1\r
-                Host: localhost\r
-                Connection: close\r
-                \r
-                """;
+            String request = "GET / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Connection: close\r\n" +
+                "\r\n";
             os.write(request.getBytes(StandardCharsets.ISO_8859_1));
             os.flush();
 

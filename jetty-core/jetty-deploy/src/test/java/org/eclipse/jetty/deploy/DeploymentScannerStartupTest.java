@@ -212,9 +212,7 @@ public class DeploymentScannerStartupTest extends AbstractCleanEnvironmentTest
         FS.ensureDirExists(environments);
 
         Files.writeString(environments.resolve("test.properties"),
-            """
-                test.displayName=DisplayName Set By Property
-                """);
+            "test.displayName=DisplayName Set By Property\n");
 
         Files.copy(MavenPaths.findTestResourceFile("etc/test-context-sub.xml"),
             environments.resolve("test-context-sub.xml"),
@@ -230,12 +228,10 @@ public class DeploymentScannerStartupTest extends AbstractCleanEnvironmentTest
 
     private static void writeXmlDisplayName(Path filePath, String displayName) throws IOException
     {
-        String content = """
-            <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure.dtd">
-            <Configure class="org.eclipse.jetty.server.handler.ContextHandler">
-              <Set name="displayName">@NAME@</Set>
-            </Configure>
-            """.replace("@NAME@", displayName);
+        String content = ("<!DOCTYPE Configure PUBLIC \"-//Jetty//Configure//EN\" \"https://jetty.org/configure.dtd\">\n" +
+            "<Configure class=\"org.eclipse.jetty.server.handler.ContextHandler\">\n" +
+            "  <Set name=\"displayName\">@NAME@</Set>\n" +
+            "</Configure>\n").replace("@NAME@", displayName);
 
         Files.writeString(filePath, content, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
     }

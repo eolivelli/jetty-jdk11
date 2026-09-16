@@ -398,12 +398,19 @@ public class StreamEndPoint implements EndPoint
         // but stream.data() would remain as a pending operation and possibly
         // operate on the buffers concurrently.
 
-        return switch (writeState.get())
+        switch (writeState.get())
         {
-            case IDLE, PENDING -> false;
-            case CLOSING, CLOSED -> throw new EofException("output shutdown");
-            case FAILED -> throw IO.rethrow(writeFailure.get());
-        };
+            case IDLE:
+            case PENDING:
+                return false;
+            case CLOSING:
+            case CLOSED:
+                throw new EofException("output shutdown");
+            case FAILED:
+                throw IO.rethrow(writeFailure.get());
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     @Override
@@ -436,7 +443,7 @@ public class StreamEndPoint implements EndPoint
                 WriteState current = writeState.get();
                 switch (current)
                 {
-                    case IDLE ->
+                    case IDLE:
                     {
                         if (!writeState.compareAndSet(current, WriteState.PENDING))
                             continue;
@@ -454,11 +461,21 @@ public class StreamEndPoint implements EndPoint
                                 writeFailure(x, callback);
                             }
                         });
+                        break;
                     }
-                    case PENDING -> callback.failed(new WritePendingException());
-                    case CLOSING, CLOSED -> callback.failed(new EofException("output shutdown"));
-                    case FAILED -> callback.failed(writeFailure.get());
-                    default -> callback.failed(new IllegalStateException("unexpected state: " + current));
+                    case PENDING:
+                        callback.failed(new WritePendingException());
+                        break;
+                    case CLOSING:
+                    case CLOSED:
+                        callback.failed(new EofException("output shutdown"));
+                        break;
+                    case FAILED:
+                        callback.failed(writeFailure.get());
+                        break;
+                    default:
+                        callback.failed(new IllegalStateException("unexpected state: " + current));
+                        break;
                 }
                 return;
             }
@@ -486,20 +503,26 @@ public class StreamEndPoint implements EndPoint
             WriteState current = writeState.get();
             switch (current)
             {
-                case PENDING ->
+                case PENDING:
                 {
                     if (!writeState.compareAndSet(current, WriteState.IDLE))
                         continue;
                     callback.succeeded();
+                    break;
                 }
-                case CLOSING ->
+                case CLOSING:
                 {
                     // TODO: no state change?
                     callback.succeeded();
                     shutdownOutput();
+                    break;
                 }
-                case FAILED -> callback.failed(writeFailure.get());
-                default -> callback.failed(new IllegalStateException("unexpected state: " + current));
+                case FAILED:
+                    callback.failed(writeFailure.get());
+                    break;
+                default:
+                    callback.failed(new IllegalStateException("unexpected state: " + current));
+                    break;
             }
             return;
         }
@@ -512,18 +535,21 @@ public class StreamEndPoint implements EndPoint
             WriteState current = writeState.get();
             switch (current)
             {
-                case PENDING, CLOSING ->
+                case PENDING:
+                case CLOSING:
                 {
                     writeFailure.compareAndSet(null, failure);
                     if (!writeState.compareAndSet(current, WriteState.FAILED))
                         continue;
                     callback.failed(failure);
+                    break;
                 }
-                case FAILED ->
-                {
+                case FAILED:
                     // Already failed.
-                }
-                default -> callback.failed(new IllegalStateException("unexpected state: " + current));
+                    break;
+                default:
+                    callback.failed(new IllegalStateException("unexpected state: " + current));
+                    break;
             }
             return;
         }
@@ -610,8 +636,11 @@ public class StreamEndPoint implements EndPoint
         Connection oldConnection = getConnection();
 
         ByteBuffer byteBuffer = null;
-        if (oldConnection instanceof Connection.UpgradeFrom from)
+        if (oldConnection instanceof Connection.UpgradeFrom)
+        {
+            Connection.UpgradeFrom from = (Connection.UpgradeFrom)oldConnection;
             byteBuffer = from.onUpgradeFrom();
+        }
 
         oldConnection.onClose(null);
         setConnection(newConnection);
@@ -622,8 +651,11 @@ public class StreamEndPoint implements EndPoint
 
         if (BufferUtil.hasContent(byteBuffer))
         {
-            if (newConnection instanceof Connection.UpgradeTo to)
+            if (newConnection instanceof Connection.UpgradeTo)
+            {
+                Connection.UpgradeTo to = (Connection.UpgradeTo)newConnection;
                 to.onUpgradeTo(byteBuffer);
+            }
             else
                 throw new IllegalStateException("Cannot upgrade: " + newConnection + " does not implement " + Connection.UpgradeTo.class.getName());
         }
@@ -644,9 +676,12 @@ public class StreamEndPoint implements EndPoint
         Connection connection = getConnection();
         if (connection == null)
             return "<null>";
-        if (connection instanceof AbstractConnection c)
+        if (connection instanceof AbstractConnection)
+        {
+            AbstractConnection c = (AbstractConnection)connection;
             return c.toConnectionString();
-        return "%s@%x".formatted(TypeUtil.toShortName(connection.getClass()), connection.hashCode());
+        }
+        return String.format("%s@%x", TypeUtil.toShortName(connection.getClass()), connection.hashCode());
     }
 
     @Override

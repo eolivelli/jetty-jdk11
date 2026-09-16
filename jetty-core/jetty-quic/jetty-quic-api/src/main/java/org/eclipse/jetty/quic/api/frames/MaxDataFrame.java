@@ -31,6 +31,6 @@ public class MaxDataFrame extends Frame
     @Override
     public String toString()
     {
-        return "%s[maxData=%d]".formatted(super.toString(), getMaxData());
+        return String.format("%s[maxData=%d]", super.toString(), getMaxData());
     }
 }

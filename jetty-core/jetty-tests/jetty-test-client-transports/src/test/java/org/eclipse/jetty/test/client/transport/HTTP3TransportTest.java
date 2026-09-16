@@ -108,8 +108,11 @@ public class HTTP3TransportTest extends AbstractTransportTest
         assertThat(destinations.size(), is(1));
         Destination destination = destinations.get(0);
         Transport transport = destination.getOrigin().getTransport();
-        if (transport instanceof Transport.Wrapper wrapper)
+        if (transport instanceof Transport.Wrapper)
+        {
+            Transport.Wrapper wrapper = (Transport.Wrapper)transport;
             transport = wrapper.unwrap();
+        }
         assertThat(transport, sameInstance(Transport.UDP_IP));
 
         HttpClientTransportOverHTTP3 httpClientTransport = (HttpClientTransportOverHTTP3)httpClient.getHttpClientTransport();

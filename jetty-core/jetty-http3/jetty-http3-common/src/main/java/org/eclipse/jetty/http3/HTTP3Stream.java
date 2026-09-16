@@ -373,33 +373,36 @@ public abstract class HTTP3Stream implements Stream, CyclicTimeouts.Expirable, A
             CloseState oldCloseState = closeState;
             switch (oldCloseState)
             {
-                case NOT_CLOSED ->
+                case NOT_CLOSED:
                 {
                     if (local)
                         closeState = CloseState.LOCALLY_CLOSED;
                     else
                         closeState = CloseState.REMOTELY_CLOSED;
+                    break;
                 }
-                case LOCALLY_CLOSED ->
+                case LOCALLY_CLOSED:
                 {
                     if (!local)
                     {
                         closeState = CloseState.CLOSED;
                         remove = true;
                     }
+                    break;
                 }
-                case REMOTELY_CLOSED ->
+                case REMOTELY_CLOSED:
                 {
                     if (local)
                     {
                         closeState = CloseState.CLOSED;
                         remove = true;
                     }
+                    break;
                 }
-                case CLOSED ->
-                {
-                }
-                default -> throw new IllegalStateException();
+                case CLOSED:
+                    break;
+                default:
+                    throw new IllegalStateException();
             }
             if (LOG.isDebugEnabled())
                 LOG.debug("updated close {}->{} on {}", oldCloseState, closeState, this);

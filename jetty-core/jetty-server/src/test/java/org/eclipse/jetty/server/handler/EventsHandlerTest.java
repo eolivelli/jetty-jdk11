@@ -53,6 +53,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EventsHandlerTest
 {
+    private static final String ATTRIBUTE_NAME = EventsHandlerTest.class.getName();
+
     private Server server;
     private ServerConnector connector;
 
@@ -82,8 +84,6 @@ public class EventsHandlerTest
         AtomicReference<String> attribute = new AtomicReference<>();
         EventsHandler eventsHandler = new EventsHandler(new EchoHandler())
         {
-            static final String ATTRIBUTE_NAME = EventsHandlerTest.class.getName();
-
             @Override
             protected void onBeforeHandling(Request request)
             {
@@ -113,12 +113,10 @@ public class EventsHandlerTest
 
         try (SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", connector.getLocalPort())))
         {
-            client.write(UTF_8.encode("""
-                GET / HTTP/1.1\r
-                Host: localhost\r
-                Connection: close\r
-                \r
-                """));
+            client.write(UTF_8.encode("GET / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Connection: close\r\n" +
+                "\r\n"));
 
             HttpTester.Response response = HttpTester.parseResponse(client);
             assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -148,13 +146,11 @@ public class EventsHandlerTest
         {
             client.write(UTF_8.encode("POST / HTTP/1.1\r\n"));
             Thread.sleep(500);
-            client.write(UTF_8.encode("""
-                Host: localhost\r
-                Content-length: 6\r
-                Content-type: application/octet-stream\r
-                Connection: close\r
-                \r
-                """));
+            client.write(UTF_8.encode("Host: localhost\r\n" +
+                "Content-length: 6\r\n" +
+                "Content-type: application/octet-stream\r\n" +
+                "Connection: close\r\n" +
+                "\r\n"));
             Thread.sleep(500);
             client.write(UTF_8.encode("ABCDEF"));
 
@@ -235,12 +231,10 @@ public class EventsHandlerTest
 
         try (SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", connector.getLocalPort())))
         {
-            client.write(UTF_8.encode("""
-                GET / HTTP/1.1\r
-                Host: localhost\r
-                Connection: close\r
-                \r
-                """));
+            client.write(UTF_8.encode("GET / HTTP/1.1\r\n" +
+                "Host: localhost\r\n" +
+                "Connection: close\r\n" +
+                "\r\n"));
 
             HttpTester.Response response = HttpTester.parseResponse(client);
             assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -267,12 +261,10 @@ public class EventsHandlerTest
 
         try (SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", connector.getLocalPort())))
         {
-            client.write(UTF_8.encode("""
-                GET / HTTP/1.1
-                Host: localhost
-                Connection: close
-                
-                """));
+            client.write(UTF_8.encode("GET / HTTP/1.1\n" +
+                "Host: localhost\n" +
+                "Connection: close\n" +
+                "\n"));
 
             // Do not read yet to cause TCP congestion.
             WriteFlusher writeFlusher = await().atMost(5, TimeUnit.SECONDS).until(() ->

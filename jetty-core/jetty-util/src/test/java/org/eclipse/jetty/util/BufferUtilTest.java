@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
+import java.nio.ReadOnlyBufferException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -31,6 +32,8 @@ import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -445,6 +448,7 @@ public class BufferUtilTest
     }
 
     @Test
+    @DisabledOnJre(value = JRE.JAVA_11, disabledReason = "jrt:/<module> paths require the newer jrt file system layout")
     public void testToMappedBufferResource() throws Exception
     {
         Path testZip = MavenTestingUtils.getTestResourcePathFile("TestData/test.zip");
@@ -476,5 +480,86 @@ public class BufferUtilTest
             Path jarPath = resourceFactory.newJarFileResource(jarFile.toUri()).resolve("WEB-INF/web.xml").getPath();
             assertThat(BufferUtil.toMappedBuffer(jarPath), nullValue());
         }
+    }
+
+    @Test
+    public void testAbsoluteSlice()
+    {
+        ByteBuffer buffer = ByteBuffer.wrap("0123456789".getBytes(StandardCharsets.UTF_8));
+        buffer.position(2);
+        buffer.limit(8);
+
+        ByteBuffer slice = BufferUtil.absoluteSlice(buffer, 3, 4);
+        assertThat(BufferUtil.toString(slice, StandardCharsets.UTF_8), is("3456"));
+        assertThat(slice.position(), is(0));
+        assertThat(slice.limit(), is(4));
+        // The source buffer is not modified.
+        assertThat(buffer.position(), is(2));
+        assertThat(buffer.limit(), is(8));
+
+        // Slicing the whole limit is allowed.
+        assertThat(BufferUtil.toString(BufferUtil.absoluteSlice(buffer, 0, 8), StandardCharsets.UTF_8), is("01234567"));
+        // Empty slices are allowed.
+        assertThat(BufferUtil.absoluteSlice(buffer, 8, 0).remaining(), is(0));
+
+        assertThrows(IndexOutOfBoundsException.class, () -> BufferUtil.absoluteSlice(buffer, 5, 4));
+        assertThrows(IndexOutOfBoundsException.class, () -> BufferUtil.absoluteSlice(buffer, 9, 1));
+        assertThrows(IndexOutOfBoundsException.class, () -> BufferUtil.absoluteSlice(buffer, -1, 2));
+        assertThrows(IndexOutOfBoundsException.class, () -> BufferUtil.absoluteSlice(buffer, 1, -2));
+    }
+
+    @Test
+    public void testAbsoluteSlicePreservesDirectAndReadOnly()
+    {
+        ByteBuffer direct = ByteBuffer.allocateDirect(10);
+        direct.put("0123456789".getBytes(StandardCharsets.UTF_8));
+        direct.flip();
+        ByteBuffer directSlice = BufferUtil.absoluteSlice(direct, 2, 3);
+        assertTrue(directSlice.isDirect());
+        assertFalse(directSlice.isReadOnly());
+        assertThat(BufferUtil.toString(directSlice, StandardCharsets.UTF_8), is("234"));
+
+        ByteBuffer readOnly = ByteBuffer.wrap("0123456789".getBytes(StandardCharsets.UTF_8)).asReadOnlyBuffer();
+        ByteBuffer readOnlySlice = BufferUtil.absoluteSlice(readOnly, 4, 3);
+        assertTrue(readOnlySlice.isReadOnly());
+        assertThat(BufferUtil.toString(readOnlySlice, StandardCharsets.UTF_8), is("456"));
+    }
+
+    @Test
+    public void testAbsolutePut()
+    {
+        ByteBuffer source = ByteBuffer.wrap("0123456789".getBytes(StandardCharsets.UTF_8));
+        ByteBuffer target = ByteBuffer.wrap("__________".getBytes(StandardCharsets.UTF_8));
+        target.position(1);
+        target.limit(9);
+
+        BufferUtil.absolutePut(target, 2, source, 5, 3);
+        // The positions and limits of both buffers are not modified.
+        assertThat(source.position(), is(0));
+        assertThat(source.limit(), is(10));
+        assertThat(target.position(), is(1));
+        assertThat(target.limit(), is(9));
+        assertThat(new String(target.array(), StandardCharsets.UTF_8), is("__567_____"));
+
+        assertThrows(IndexOutOfBoundsException.class, () -> BufferUtil.absolutePut(target, 7, source, 0, 3));
+        assertThrows(IndexOutOfBoundsException.class, () -> BufferUtil.absolutePut(target, 0, source, 8, 3));
+        assertThrows(IndexOutOfBoundsException.class, () -> BufferUtil.absolutePut(target, -1, source, 0, 3));
+        assertThrows(IndexOutOfBoundsException.class, () -> BufferUtil.absolutePut(target, 0, source, 0, -1));
+    }
+
+    @Test
+    public void testAbsolutePutDirectAndReadOnlySource()
+    {
+        ByteBuffer source = ByteBuffer.wrap("0123456789".getBytes(StandardCharsets.UTF_8)).asReadOnlyBuffer();
+        ByteBuffer target = ByteBuffer.allocateDirect(10);
+        BufferUtil.clearToFill(target);
+
+        BufferUtil.absolutePut(target, 0, source, 3, 4);
+        assertThat(target.position(), is(0));
+        assertThat(target.limit(), is(10));
+        assertThat(BufferUtil.toString(BufferUtil.absoluteSlice(target, 0, 4), StandardCharsets.UTF_8), is("3456"));
+
+        ByteBuffer readOnlyTarget = ByteBuffer.allocate(10).asReadOnlyBuffer();
+        assertThrows(ReadOnlyBufferException.class, () -> BufferUtil.absolutePut(readOnlyTarget, 0, source, 0, 4));
     }
 }

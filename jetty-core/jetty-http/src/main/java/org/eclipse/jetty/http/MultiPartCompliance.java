@@ -139,16 +139,22 @@ public class MultiPartCompliance implements ComplianceViolation.Mode
         {
             String[] elements = spec.split("\\s*,\\s*");
 
-            Set<MultiPartCompliance.Violation> violations = switch (elements[0])
+            Set<MultiPartCompliance.Violation> violations;
+            switch (elements[0])
             {
-                case "0" -> noneOf(MultiPartCompliance.Violation.class);
-                case "*" -> allOf(MultiPartCompliance.Violation.class);
-                default ->
+                case "0":
+                    violations = noneOf(MultiPartCompliance.Violation.class);
+                    break;
+                case "*":
+                    violations = allOf(MultiPartCompliance.Violation.class);
+                    break;
+                default:
                 {
                     MultiPartCompliance mode = MultiPartCompliance.valueOf(elements[0]);
-                    yield (mode == null) ? noneOf(MultiPartCompliance.Violation.class) : copyOf(mode.getAllowed());
+                    violations = (mode == null) ? noneOf(MultiPartCompliance.Violation.class) : copyOf(mode.getAllowed());
+                    break;
                 }
-            };
+            }
 
             for (int i = 1; i < elements.length; i++)
             {

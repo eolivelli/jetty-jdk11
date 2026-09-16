@@ -31,6 +31,6 @@ public class StopSendingFrame extends Frame.WithStreamId
     @Override
     public String toString()
     {
-        return "%s[appError=%d]".formatted(super.toString(), getApplicationErrorCode());
+        return String.format("%s[appError=%d]", super.toString(), getApplicationErrorCode());
     }
 }

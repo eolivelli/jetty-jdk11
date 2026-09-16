@@ -128,18 +128,14 @@ public class ConditionalHandlerTest
         testHandler.includeInetAddressPattern("192.168.128.0-192.168.128.128");
         testHandler.excludeInetAddressPattern("192.168.128.30-192.168.128.39");
         startServer(testHandler);
-        String response = _connector.getResponse("""
-            GET /foo HTTP/1.0
-            Forwarded: for=192.168.128.1
-            
-            """);
+        String response = _connector.getResponse("GET /foo HTTP/1.0\n" +
+            "Forwarded: for=192.168.128.1\n" +
+            "\n");
         _expected.testDoHandle(response);
 
-        response = _connector.getResponse("""
-            GET /foo HTTP/1.0
-            Forwarded: for=192.168.128.31
-            
-            """);
+        response = _connector.getResponse("GET /foo HTTP/1.0\n" +
+            "Forwarded: for=192.168.128.31\n" +
+            "\n");
         _expected.testDoNotHandle(response);
     }
 

@@ -201,7 +201,7 @@ public class LargeHeaderTest
                     if (LOG.isDebugEnabled())
                         LOG.debug("X-Count: {} - Send Request - {}->{}", count, client.getLocalAddress(), client.getRemoteSocketAddress());
 
-                    output.write(rawRequest.formatted(count).getBytes(UTF_8));
+                    output.write(String.format(rawRequest, count).getBytes(UTF_8));
                     output.flush();
 
                     // String rawResponse = readResponse(client, count, input);
@@ -271,14 +271,12 @@ public class LargeHeaderTest
         assertTrue(executorService.awaitTermination(timeout * 2, TimeUnit.SECONDS));
         assertEquals(iterations, count500.get(), () ->
         {
-            return """
-                All tasks did not fail as expected.
-                Iterations: %d
-                Count (500 response status) [expected]: %d
-                Count (empty response): %d
-                Count (throwables): %d
-                Count (other status codes): %d
-                """.formatted(iterations, count500.get(), countEmpty.get(), countFailure.get(), countOther.get());
+            return String.format("All tasks did not fail as expected.\n" +
+                "Iterations: %d\n" +
+                "Count (500 response status) [expected]: %d\n" +
+                "Count (empty response): %d\n" +
+                "Count (throwables): %d\n" +
+                "Count (other status codes): %d\n", iterations, count500.get(), countEmpty.get(), countFailure.get(), countOther.get());
         });
     }
 
@@ -303,7 +301,7 @@ public class LargeHeaderTest
                  OutputStream output = client.getOutputStream();
                  InputStream input = client.getInputStream())
             {
-                output.write(rawRequest.formatted(count).getBytes(UTF_8));
+                output.write(String.format(rawRequest, count).getBytes(UTF_8));
                 output.flush();
 
                 long start = NanoTime.now();
@@ -343,13 +341,11 @@ public class LargeHeaderTest
         }
 
         assertEquals(iterations, count500.get(), () ->
-            """
-                All tasks did not fail as expected.
-                Iterations: %d
-                Count (500 response status) [expected]: %d
-                Count (empty responses): %d
-                Count (throwables): %d
-                Count (other status codes): %d
-                """.formatted(iterations, count500.get(), countEmpty.get(), countFailure.get(), countOther.get()));
+            String.format("All tasks did not fail as expected.\n" +
+                "Iterations: %d\n" +
+                "Count (500 response status) [expected]: %d\n" +
+                "Count (empty responses): %d\n" +
+                "Count (throwables): %d\n" +
+                "Count (other status codes): %d\n", iterations, count500.get(), countEmpty.get(), countFailure.get(), countOther.get()));
     }
 }

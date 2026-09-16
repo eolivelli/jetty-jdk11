@@ -129,12 +129,10 @@ public class AsyncContextTest
         });
 
         String request =
-            """
-                GET /ctx/startthrow HTTP/1.1\r
-                Host: localhost\r
-                Connection: close\r
-                \r
-                """;
+            "GET /ctx/startthrow HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
 
         try (LocalConnector.LocalEndPoint localEndPoint = _connector.connect())
         {
@@ -183,12 +181,10 @@ public class AsyncContextTest
         });
 
         String request =
-            """
-                GET /ctx/startthrow HTTP/1.1\r
-                Host: localhost\r
-                Connection: close\r
-                \r
-                """;
+            "GET /ctx/startthrow HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
 
         // OK b/c exception was thrown after AsyncContext.dispatch() was called
@@ -222,13 +218,11 @@ public class AsyncContextTest
             errorHandler.addErrorPage(IOException.class.getName(), "/error/IOE");
         });
 
-        String request = """
-            GET /ctx/startthrow HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: application/x-www-form-urlencoded\r
-            Connection: close\r
-            \r
-            """;
+        String request = "GET /ctx/startthrow HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: application/x-www-form-urlencoded\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
 
           // OK b/c exception was thrown after AsyncContext.complete() was called
@@ -262,13 +256,11 @@ public class AsyncContextTest
             errorHandler.addErrorPage(IOException.class.getName(), "/error/IOE");
         });
 
-        String request = """
-            GET /ctx/startthrow HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: application/x-www-form-urlencoded\r
-            Connection: close\r
-            \r
-            """;
+        String request = "GET /ctx/startthrow HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: application/x-www-form-urlencoded\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertThat("Response.status", response.getStatus(), is(HttpServletResponse.SC_OK));
 
@@ -319,13 +311,11 @@ public class AsyncContextTest
             _contextHandler.addServlet(new ServletHolder(new TestServlet2()), "/test2/*");
         });
 
-        String request = """
-            GET /ctx/encoded/hello%20there?dispatch=true HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: application/x-www-form-urlencoded\r
-            Connection: close\r
-            \r
-            """;
+        String request = "GET /ctx/encoded/hello%20there?dispatch=true HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: application/x-www-form-urlencoded\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertThat("Response.status", response.getStatus(), is(HttpServletResponse.SC_OK));
 
@@ -366,13 +356,11 @@ public class AsyncContextTest
             _contextHandler.addServlet(new ServletHolder(new TestServlet2()), "/test2/*");
         });
 
-        String request = """
-            GET /ctx/ambiguous/hello%20there?dispatch=true HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: application/x-www-form-urlencoded\r
-            Connection: close\r
-            \r
-            """;
+        String request = "GET /ctx/ambiguous/hello%20there?dispatch=true HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: application/x-www-form-urlencoded\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
         assertThat("Response.status", response.getStatus(), is(HttpServletResponse.SC_OK));
 
@@ -415,8 +403,8 @@ public class AsyncContextTest
                     DispatcherType dispatcherType = request.getDispatcherType();
 
                     ServletOutputStream out = response.getOutputStream();
-                    out.print("doGet.%s.requestURI:%s\n".formatted(dispatcherType.name(), request.getRequestURI()));
-                    out.print("doGet.%s.requestURL:%s\n".formatted(dispatcherType.name(), request.getRequestURL()));
+                    out.print(String.format("doGet.%s.requestURI:%s\n", dispatcherType.name(), request.getRequestURI()));
+                    out.print(String.format("doGet.%s.requestURL:%s\n", dispatcherType.name(), request.getRequestURL()));
 
                     if (dispatcherType == DispatcherType.ASYNC)
                     {
@@ -775,13 +763,11 @@ public class AsyncContextTest
             errorHandler.addErrorPage(500, "/error/500");
         });
 
-        String request = """
-            GET /ctx/async HTTP/1.1\r
-            Host: localhost\r
-            Content-Type: application/x-www-form-urlencoded\r
-            Connection: close\r
-            \r
-            """;
+        String request = "GET /ctx/async HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Content-Type: application/x-www-form-urlencoded\r\n" +
+            "Connection: close\r\n" +
+            "\r\n";
 
         HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(request));
 

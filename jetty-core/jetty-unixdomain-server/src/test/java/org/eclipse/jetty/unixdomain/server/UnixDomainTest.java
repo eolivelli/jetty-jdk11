@@ -15,7 +15,6 @@ package org.eclipse.jetty.unixdomain.server;
 
 import java.io.IOException;
 import java.net.SocketAddress;
-import java.net.UnixDomainSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -31,6 +30,7 @@ import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.io.ClientConnector;
 import org.eclipse.jetty.io.EndPoint;
 import org.eclipse.jetty.io.Transport;
+import org.eclipse.jetty.io.UnixDomain;
 import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -46,6 +46,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.eclipse.jetty.client.ProxyProtocolClientConnectionFactory.V1;
@@ -58,6 +60,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(value = OS.WINDOWS, disabledReason = "Fails on Windows")
+@EnabledForJreRange(min = JRE.JAVA_16)
 public class UnixDomainTest
 {
     private ConnectionFactory[] factories = new ConnectionFactory[]{new HttpConnectionFactory()};
@@ -101,9 +104,9 @@ public class UnixDomainTest
 
                 // Verify the SocketAddresses.
                 SocketAddress local = endPoint.getLocalSocketAddress();
-                assertThat(local, Matchers.instanceOf(UnixDomainSocketAddress.class));
+                assertTrue(UnixDomain.isUnixDomainAddress(local));
                 SocketAddress remote = endPoint.getRemoteSocketAddress();
-                assertThat(remote, Matchers.instanceOf(UnixDomainSocketAddress.class));
+                assertTrue(UnixDomain.isUnixDomainAddress(remote));
 
                 assertDoesNotThrow(endPoint::toString);
 
@@ -177,10 +180,10 @@ public class UnixDomainTest
             {
                 EndPoint endPoint = request.getConnectionMetaData().getConnection().getEndPoint();
                 assertThat(endPoint, Matchers.instanceOf(ProxyConnectionFactory.ProxyEndPoint.class));
-                assertThat(endPoint.getLocalSocketAddress(), Matchers.instanceOf(UnixDomainSocketAddress.class));
-                assertThat(endPoint.getRemoteSocketAddress(), Matchers.instanceOf(UnixDomainSocketAddress.class));
+                assertTrue(UnixDomain.isUnixDomainAddress(endPoint.getLocalSocketAddress()));
+                assertTrue(UnixDomain.isUnixDomainAddress(endPoint.getRemoteSocketAddress()));
                 String target = Request.getPathInContext(request);
-                Path localPath = ((UnixDomainSocketAddress)endPoint.getLocalSocketAddress()).getPath();
+                Path localPath = UnixDomain.getPath(endPoint.getLocalSocketAddress());
                 if ("/v1".equals(target))
                 {
                     // As PROXYv1 does not support UNIX, the wrapped EndPoint data is used.
@@ -189,7 +192,7 @@ public class UnixDomainTest
                 else if ("/v2".equals(target))
                 {
                     assertThat(localPath.toString(), Matchers.equalTo(FS.separators(dstAddr)));
-                    Path remotePath = ((UnixDomainSocketAddress)endPoint.getRemoteSocketAddress()).getPath();
+                    Path remotePath = UnixDomain.getPath(endPoint.getRemoteSocketAddress());
                     assertThat(remotePath.toString(), Matchers.equalTo(FS.separators(srcAddr)));
                 }
                 else

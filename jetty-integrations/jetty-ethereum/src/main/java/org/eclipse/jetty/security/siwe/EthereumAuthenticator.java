@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
@@ -475,13 +476,14 @@ public class EthereumAuthenticator extends LoginAuthenticator implements Dumpabl
             String message;
             switch (mimeType)
             {
-                case FORM_ENCODED ->
+                case FORM_ENCODED:
                 {
                     Fields fields = FormFields.getFields(contentSource, request, getFormEncodedCharset(request), 10, _maxMessageSize);
                     signature = fields.get("signature").getValue();
                     message = fields.get("message").getValue();
+                    break;
                 }
-                case MULTIPART_FORM_DATA ->
+                case MULTIPART_FORM_DATA:
                 {
                     MultiPartConfig config = Request.getMultiPartConfig(request, null)
                         .maxSize(_maxMessageSize)
@@ -491,9 +493,11 @@ public class EthereumAuthenticator extends LoginAuthenticator implements Dumpabl
                     MultiPartFormData.Parts parts = MultiPartFormData.from(contentSource, request, contentType, config).get();
                     signature = parts.getFirst("signature").getContentAsString(StandardCharsets.ISO_8859_1);
                     message = parts.getFirst("message").getContentAsString(StandardCharsets.ISO_8859_1);
+                    break;
                 }
-                default -> throw new ServerAuthException("Unsupported mime type: " + mimeType);
-            };
+                default:
+                    throw new ServerAuthException("Unsupported mime type: " + mimeType);
+            }
 
             // The browser may convert LF to CRLF, EIP4361 specifies to only use LF.
             message = message.replace("\r\n", "\n");
@@ -831,11 +835,54 @@ public class EthereumAuthenticator extends LoginAuthenticator implements Dumpabl
         }
     }
 
-    public record SignedMessage(String message, String signature)
+    public static final class SignedMessage
     {
+        private final String message;
+        private final String signature;
+
+        public SignedMessage(String message, String signature)
+        {
+            this.message = message;
+            this.signature = signature;
+        }
+
+        public String message()
+        {
+            return message;
+        }
+
+        public String signature()
+        {
+            return signature;
+        }
+
         public String recoverAddress()
         {
             return EthereumUtil.recoverAddress(this);
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            SignedMessage that = (SignedMessage)obj;
+            return Objects.equals(message, that.message) &&
+                Objects.equals(signature, that.signature);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(message, signature);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "SignedMessage[message=" + message + ", signature=" + signature + "]";
         }
     }
 }

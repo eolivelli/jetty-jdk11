@@ -35,10 +35,8 @@ public class BasicPropertiesTest extends AbstractUseCase
         setupStandardHomeDir();
 
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            jetty.http.port=${port}
-            """, UTF_8);
+            "--modules=main\n" +
+            "jetty.http.port=${port}\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = List.of(

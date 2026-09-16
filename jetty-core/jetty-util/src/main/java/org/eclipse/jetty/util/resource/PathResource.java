@@ -320,29 +320,33 @@ public class PathResource extends Resource
         // this FileSystem to resolve against.
 
         String scheme = Objects.requireNonNull(resolvedUri.getScheme(), "scheme cannot be null");
-        Path newPath = switch (scheme)
+        Path newPath;
+        switch (scheme)
         {
-            case "jar" ->
+            case "jar":
             {
                 // Grab the portion of the raw URI that represents the path.
                 String ssp = resolvedUri.getSchemeSpecificPart();
                 int idx = ssp.indexOf("!/");
                 if (idx == -1)
                     throw new IllegalArgumentException("Unable to find jar !/ deep reference in " + resolvedUri);
-                yield path.resolve(ssp.substring(idx + 1));
+                newPath = path.resolve(ssp.substring(idx + 1));
+                break;
             }
-            case "file" ->
+            case "file":
             {
                 // The "file" scheme is the only safe scheme to use Path.of() with.
                 // For example, on NTFS you can have a URI of `file:///E:/foo/test.txt`.
-                yield Path.of(resolvedUri);
+                newPath = Path.of(resolvedUri);
+                break;
             }
-            default ->
+            default:
             {
                 // Resolve from this PathResource instance.
-                yield path.resolve(resolvedUri.getPath());
+                newPath = path.resolve(resolvedUri.getPath());
+                break;
             }
-        };
+        }
         return newResource(newPath, resolvedUri);
     }
 

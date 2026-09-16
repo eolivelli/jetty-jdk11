@@ -53,7 +53,7 @@ public class MultiPartRequestContent extends MultiPartFormData.ContentSource imp
     public MultiPartRequestContent(String boundary)
     {
         super(boundary);
-        this.contentType = "multipart/form-data; boundary=\"%s\"".formatted(boundary);
+        this.contentType = String.format("multipart/form-data; boundary=\"%s\"", boundary);
     }
 
     @Override
@@ -70,8 +70,9 @@ public class MultiPartRequestContent extends MultiPartFormData.ContentSource imp
             return headers;
 
         Content.Source partContent = part.getContentSource();
-        if (partContent instanceof Request.Content requestContent)
+        if (partContent instanceof Request.Content)
         {
+            Request.Content requestContent = (Request.Content)partContent;
             String contentType = requestContent.getContentType();
             if (contentType != null)
                 return HttpFields.build(headers).put(HttpHeader.CONTENT_TYPE, contentType);

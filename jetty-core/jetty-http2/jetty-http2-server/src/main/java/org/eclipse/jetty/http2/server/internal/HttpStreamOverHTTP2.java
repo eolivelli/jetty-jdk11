@@ -136,7 +136,7 @@ public class HttpStreamOverHTTP2 implements HttpStream, HTTP2Channel.Server
         }
         catch (Throwable x)
         {
-            HttpException httpException = x instanceof HttpException http ? http : new HttpException.RuntimeException(HttpStatus.INTERNAL_SERVER_ERROR_500, x);
+            HttpException httpException = x instanceof HttpException ? (HttpException)x : new HttpException.RuntimeException(HttpStatus.INTERNAL_SERVER_ERROR_500, x);
             return onBadMessage(httpException);
         }
     }
@@ -533,7 +533,7 @@ public class HttpStreamOverHTTP2 implements HttpStream, HTTP2Channel.Server
         }
         catch (Throwable x)
         {
-            HttpException httpException = x instanceof HttpException http ? http : new HttpException.RuntimeException(HttpStatus.INTERNAL_SERVER_ERROR_500, x);
+            HttpException httpException = x instanceof HttpException ? (HttpException)x : new HttpException.RuntimeException(HttpStatus.INTERNAL_SERVER_ERROR_500, x);
             return () -> onBadMessage(httpException);
         }
     }
@@ -771,7 +771,7 @@ public class HttpStreamOverHTTP2 implements HttpStream, HTTP2Channel.Server
         @Override
         public String toString()
         {
-            return "%s[%s]".formatted(TypeUtil.toShortName(getClass()), task);
+            return String.format("%s[%s]", TypeUtil.toShortName(getClass()), task);
         }
     }
 }

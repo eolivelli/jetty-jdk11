@@ -158,12 +158,10 @@ public class DispatcherTest
         createServer(_contextCollection);
         _server.start();
 
-        String responses = _connector.getResponse("""
-            GET /context/ForwardServlet?do=req.echo&uri=/subdir HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """);
+        String responses = _connector.getResponse("GET /context/ForwardServlet?do=req.echo&uri=/subdir HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
 
         assertThat(responses, containsString("HTTP/1.1 302 Found"));
     }
@@ -339,17 +337,15 @@ public class DispatcherTest
         _server.start();
 
         String expected =
-                """
-                HTTP/1.1 200 OK\r
-                Content-Type: text/plain\r
-                Content-Length: 94\r
-                \r
-                /context\r
-                /EchoURI\r
-                /x x\r
-                /context/EchoURI/x%20x;a=1\r
-                http://local/context/EchoURI/x%20x;a=1\r
-                """;
+                "HTTP/1.1 200 OK\r\n" +
+                "Content-Type: text/plain\r\n" +
+                "Content-Length: 94\r\n" +
+                "\r\n" +
+                "/context\r\n" +
+                "/EchoURI\r\n" +
+                "/x x\r\n" +
+                "/context/EchoURI/x%20x;a=1\r\n" +
+                "http://local/context/EchoURI/x%20x;a=1\r\n";
 
         String responses = _connector.getResponse("GET /context/ForwardServlet;ignore=true?do=req.echo&uri=EchoURI%2Fx%2520x%3Ba=1%3Fb=2 HTTP/1.0\n\n");
 
@@ -366,17 +362,15 @@ public class DispatcherTest
         _server.start();
 
         String expected =
-                """
-                HTTP/1.1 200 OK\r
-                Content-Type: text/plain\r
-                Content-Length: 109\r
-                \r
-                /context\r
-                /forward\r
-                /info\r
-                /context/forward/info;param=value\r
-                http://local/context/forward/info;param=value\r
-                """;
+                "HTTP/1.1 200 OK\r\n" +
+                "Content-Type: text/plain\r\n" +
+                "Content-Length: 109\r\n" +
+                "\r\n" +
+                "/context\r\n" +
+                "/forward\r\n" +
+                "/info\r\n" +
+                "/context/forward/info;param=value\r\n" +
+                "http://local/context/forward/info;param=value\r\n";
         String responses = _connector.getResponse("GET /context/forward/info;param=value?name=" + echo + " HTTP/1.0\n\n");
         assertEquals(expected, responses);
     }
@@ -391,16 +385,14 @@ public class DispatcherTest
         _server.start();
 
         String expected =
-                """
-                HTTP/1.1 200 OK\r
-                Content-Length: 109\r
-                \r
-                /context\r
-                /include\r
-                /info\r
-                /context/include/info;param=value\r
-                http://local/context/include/info;param=value\r
-                """;
+                "HTTP/1.1 200 OK\r\n" +
+                "Content-Length: 109\r\n" +
+                "\r\n" +
+                "/context\r\n" +
+                "/include\r\n" +
+                "/info\r\n" +
+                "/context/include/info;param=value\r\n" +
+                "http://local/context/include/info;param=value\r\n";
         String responses = _connector.getResponse("GET /context/include/info;param=value?name=" + echo + " HTTP/1.0\n\n");
         assertEquals(expected, responses);
     }
@@ -454,51 +446,42 @@ public class DispatcherTest
         createServer(_contextCollection);
         _server.start();
 
-        String rawResponse = _connector.getResponse("""
-            GET /context/r/ HTTP/1.0\r
-            Host: localhost\r
-            Connection: close\r
-            \r
-            """);
+        String rawResponse = _connector.getResponse("GET /context/r/ HTTP/1.0\r\n" +
+            "Host: localhost\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
 
-        String expected = """
-            HTTP/1.1 200 OK\r
-            Content-Length: 11\r
-            \r
-            Roger That!""";
+        String expected = "HTTP/1.1 200 OK\r\n" +
+            "Content-Length: 11\r\n" +
+            "\r\n" +
+            "Roger That!";
 
         assertEquals(expected, rawResponse);
 
 
         // direct include
-        rawResponse = _connector.getResponse("""
-            GET /context/dispatch/test?include=/index.x HTTP/1.0\r
-            Host: localhost\r
-            Connection: close\r
-            \r
-            """);
+        rawResponse = _connector.getResponse("GET /context/dispatch/test?include=/index.x HTTP/1.0\r\n" +
+            "Host: localhost\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
 
-        expected = """
-            HTTP/1.1 200 OK\r
-            Content-Length: 11\r
-            \r
-            Roger That!""";
+        expected = "HTTP/1.1 200 OK\r\n" +
+            "Content-Length: 11\r\n" +
+            "\r\n" +
+            "Roger That!";
 
         assertEquals(expected, rawResponse);
 
         // include through welcome file based on servlet mapping
-        rawResponse = _connector.getResponse("""
-            GET /context/dispatch/test?include=/r/ HTTP/1.0\r
-            Host: localhost\r
-            Connection: close\r
-            \r
-            """);
+        rawResponse = _connector.getResponse("GET /context/dispatch/test?include=/r/ HTTP/1.0\r\n" +
+            "Host: localhost\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
 
-        expected = """
-            HTTP/1.1 200 OK\r
-            Content-Length: 11\r
-            \r
-            Roger That!""";
+        expected = "HTTP/1.1 200 OK\r\n" +
+            "Content-Length: 11\r\n" +
+            "\r\n" +
+            "Roger That!";
 
         assertEquals(expected, rawResponse);
     }
@@ -532,20 +515,17 @@ public class DispatcherTest
         createServer(_contextCollection);
         _server.start();
 
-        String responses = _connector.getResponse("""
-            GET /context/IncludeServlet?do=static HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """);
+        String responses = _connector.getResponse("GET /context/IncludeServlet?do=static HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
 
-        String expected = """
-            HTTP/1.1 200 OK\r
-            Content-Length: 26\r
-            Connection: close\r
-            \r
-            Include:
-            Test 2 to too two""";
+        String expected = "HTTP/1.1 200 OK\r\n" +
+            "Content-Length: 26\r\n" +
+            "Connection: close\r\n" +
+            "\r\n" +
+            "Include:\n" +
+            "Test 2 to too two";
 
         assertEquals(expected, responses);
     }
@@ -559,24 +539,21 @@ public class DispatcherTest
         createServer(_contextCollection);
         _server.start();
 
-        String responses = _connector.getResponse("""
-            GET /context/ForwardServlet?do=req.echo&uri=/test.txt HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """);
+        String responses = _connector.getResponse("GET /context/ForwardServlet?do=req.echo&uri=/test.txt HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n");
 
         responses = responses.replaceFirst("Last-Modified: .*\r\n", "Last-Modified: xxx\r\n");
 
-        String expected = """
-            HTTP/1.1 200 OK\r
-            Last-Modified: xxx\r
-            Content-Type: text/plain\r
-            Accept-Ranges: bytes\r
-            Content-Length: 17\r
-            Connection: close\r
-            \r
-            Test 2 to too two""";
+        String expected = "HTTP/1.1 200 OK\r\n" +
+            "Last-Modified: xxx\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Accept-Ranges: bytes\r\n" +
+            "Content-Length: 17\r\n" +
+            "Connection: close\r\n" +
+            "\r\n" +
+            "Test 2 to too two";
 
 
         assertEquals(expected, responses);

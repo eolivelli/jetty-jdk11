@@ -89,12 +89,10 @@ public class ReadWriteFailuresTest
         });
         connector.setIdleTimeout(idleTimeout);
 
-        String request = """
-            POST / HTTP/1.1
-            Host: localhost
-            Content-Length: 1
-            
-            """;
+        String request = "POST / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Content-Length: 1\n" +
+            "\n";
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request, 5, TimeUnit.SECONDS));
 
         assertEquals(HttpStatus.ACCEPTED_202, response.getStatus());
@@ -144,13 +142,11 @@ public class ReadWriteFailuresTest
             }
         });
 
-        String request = """
-            POST / HTTP/1.1
-            Host: localhost
-            Content-Length: %d
-            
-            %s
-            """.formatted(content.length(), content);
+        String request = String.format("POST / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Content-Length: %d\n" +
+            "\n" +
+            "%s\n", content.length(), content);
         try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest(request))
         {
             endPoint.waitUntilClosedOrIdleFor(5, TimeUnit.SECONDS);
@@ -198,12 +194,10 @@ public class ReadWriteFailuresTest
         });
         connector.setIdleTimeout(idleTimeout);
 
-        String request = """
-            POST / HTTP/1.1
-            Host: localhost
-            Content-Length: 1
-            
-            """;
+        String request = "POST / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Content-Length: 1\n" +
+            "\n";
         try (LocalConnector.LocalEndPoint endPoint = connector.executeRequest(request))
         {
             endPoint.waitUntilClosedOrIdleFor(5, TimeUnit.SECONDS);
@@ -230,13 +224,11 @@ public class ReadWriteFailuresTest
         });
 
         String content = "hello world";
-        String request = """
-            POST / HTTP/1.1
-            Host: localhost
-            Content-Length: %d
-            
-            %s
-            """.formatted(content.length(), content);
+        String request = String.format("POST / HTTP/1.1\n" +
+            "Host: localhost\n" +
+            "Content-Length: %d\n" +
+            "\n" +
+            "%s\n", content.length(), content);
         HttpTester.Response response = HttpTester.parseResponse(connector.getResponse(request, 5, TimeUnit.SECONDS));
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, response.getStatus());

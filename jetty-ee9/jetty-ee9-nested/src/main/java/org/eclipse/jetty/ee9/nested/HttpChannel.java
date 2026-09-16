@@ -186,8 +186,11 @@ public class HttpChannel implements Runnable, HttpOutput.Interceptor
 
         if (chunk.hasRemaining())
             onContent(chunk);
-        if (chunk instanceof Trailers trailers)
+        if (chunk instanceof Trailers)
+        {
+            Trailers trailers = (Trailers)chunk;
             onTrailers(trailers.getTrailers());
+        }
         if (chunk.isLast())
             onContentComplete();
 
@@ -385,8 +388,9 @@ public class HttpChannel implements Runnable, HttpOutput.Interceptor
      */
     public String getLocalName()
     {
-        return getConnectionMetaData().getLocalSocketAddress() instanceof InetSocketAddress inetSocketAddress
-            ? org.eclipse.jetty.server.Request.getHostName(inetSocketAddress) : null;
+        SocketAddress localSocketAddress = getConnectionMetaData().getLocalSocketAddress();
+        return localSocketAddress instanceof InetSocketAddress
+            ? org.eclipse.jetty.server.Request.getHostName((InetSocketAddress)localSocketAddress) : null;
     }
 
     /**
@@ -408,20 +412,23 @@ public class HttpChannel implements Runnable, HttpOutput.Interceptor
      */
     public int getLocalPort()
     {
-        return getConnectionMetaData().getLocalSocketAddress() instanceof InetSocketAddress inetSocketAddress
-            ? inetSocketAddress.getPort() : 0;
+        SocketAddress localSocketAddress = getConnectionMetaData().getLocalSocketAddress();
+        return localSocketAddress instanceof InetSocketAddress
+            ? ((InetSocketAddress)localSocketAddress).getPort() : 0;
     }
 
     public InetSocketAddress getLocalAddress()
     {
-        return getConnectionMetaData().getLocalSocketAddress() instanceof InetSocketAddress inetSocketAddress
-            ? inetSocketAddress : null;
+        SocketAddress localSocketAddress = getConnectionMetaData().getLocalSocketAddress();
+        return localSocketAddress instanceof InetSocketAddress
+            ? (InetSocketAddress)localSocketAddress : null;
     }
 
     public InetSocketAddress getRemoteAddress()
     {
-        return getConnectionMetaData().getRemoteSocketAddress() instanceof InetSocketAddress inetSocketAddress
-            ? inetSocketAddress : null;
+        SocketAddress remoteSocketAddress = getConnectionMetaData().getRemoteSocketAddress();
+        return remoteSocketAddress instanceof InetSocketAddress
+            ? (InetSocketAddress)remoteSocketAddress : null;
     }
 
     /**
@@ -1436,8 +1443,9 @@ public class HttpChannel implements Runnable, HttpOutput.Interceptor
             if (LOG.isDebugEnabled())
                 LOG.debug("Commit failed", x);
 
-            if (x instanceof HttpException httpException)
+            if (x instanceof HttpException)
             {
+                HttpException httpException = (HttpException)x;
                 MetaData.Response responseMeta = new MetaData.Response(httpException.getCode(), httpException.getReason(), HttpVersion.HTTP_1_1, HttpFields.build().add(HttpFields.CONNECTION_CLOSE), 0);
                 send(_request.getMetaData(), responseMeta, null, true, new Nested(getCallback())
                 {
@@ -1600,26 +1608,32 @@ public class HttpChannel implements Runnable, HttpOutput.Interceptor
             else
             {
                 //the user has dispatched to a different context
-                if (event.getDispatchContext() instanceof CrossContextServletContext crossContextServletContext)
+                ServletContext dispatchContext = event.getDispatchContext();
+                if (dispatchContext instanceof CrossContextServletContext)
                 {
-                   dispatchCrossContext(crossContextServletContext);
+                    dispatchCrossContext((CrossContextServletContext)dispatchContext);
                 }
                 else
                 {
                     //the container has dispatched us to a different context
-                    ServletContext targetContext = _contextHandler.getServletContext().getContext(event.getDispatchContext().getContextPath());
-                    if (targetContext instanceof CrossContextServletContext crossContextServletContext)
+                    ServletContext targetContext = _contextHandler.getServletContext().getContext(dispatchContext.getContextPath());
+                    if (targetContext instanceof CrossContextServletContext)
+                    {
+                        CrossContextServletContext crossContextServletContext = (CrossContextServletContext)targetContext;
                         dispatchCrossContext(crossContextServletContext);
+                    }
                     else
-                        throw new IllegalStateException("Dispatch " + _contextHandler.getContextPath() + " -> non CrossContextServletContext" + event.getDispatchContext().getContextPath() + event.getDispatchContext());
+                        throw new IllegalStateException("Dispatch " + _contextHandler.getContextPath() + " -> non CrossContextServletContext" + dispatchContext.getContextPath() + dispatchContext);
                 }
             }
         }
 
         private void dispatchCrossContext(CrossContextServletContext crossContextServletContext) throws ServletException, IOException
         {
-            if (crossContextServletContext.getTargetContext().getContextHandler() instanceof ContextHandler.CoreContextHandler coreContextHandler)
+            org.eclipse.jetty.server.handler.ContextHandler targetContextHandler = crossContextServletContext.getTargetContext().getContextHandler();
+            if (targetContextHandler instanceof ContextHandler.CoreContextHandler)
             {
+                ContextHandler.CoreContextHandler coreContextHandler = (ContextHandler.CoreContextHandler)targetContextHandler;
                 coreContextHandler.getContextHandler().handleCrossContextAsync(HttpChannel.this);
             }
         }

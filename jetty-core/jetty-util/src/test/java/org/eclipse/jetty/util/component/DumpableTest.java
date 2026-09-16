@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.util.thread.Invocable;
 import org.hamcrest.Matchers;
@@ -55,19 +56,17 @@ public class DumpableTest
     @Test
     public void testDumpableCollectionWithCycle() throws Exception
     {
-        final String EXPECTED = """
-        A size=3
-        +> B size=4
-        |  +> si
-        |  +> see
-        |  +> sea
-        |  +> C size=3
-        |     +> ay
-        |     +>@ A size=3
-        |     +> ai
-        +> be
-        +> bee
-        """;
+        final String EXPECTED = "A size=3\n" +
+            "+> B size=4\n" +
+            "|  +> si\n" +
+            "|  +> see\n" +
+            "|  +> sea\n" +
+            "|  +> C size=3\n" +
+            "|     +> ay\n" +
+            "|     +>@ A size=3\n" +
+            "|     +> ai\n" +
+            "+> be\n" +
+            "+> bee\n";
 
         List<Object> listC = new ArrayList<>();
         DumpableCollection c = new DumpableCollection("C", listC);
@@ -123,7 +122,7 @@ public class DumpableTest
             .filter(s -> !s.startsWith("JVM:"))
             .map(s -> s.replaceAll("@[a-z0-9]*", "@xxx"))
             .map(s -> s.replaceAll("\\$\\$Lambda[^@]*@", "\\$\\$Lambda@"))
-            .toList();
+            .collect(Collectors.toList());
         assertThat(dump, Matchers.contains(
             "oejuc.DumpableTest$InvocableContainer@xxx{STARTED} ~ BLOCKING - STARTED",
             "+- oejut.Invocable$ReadyTask@xxx[EITHER][org.eclipse.jetty.util.thread.Invocable$$Lambda@xxx] ~ EITHER",

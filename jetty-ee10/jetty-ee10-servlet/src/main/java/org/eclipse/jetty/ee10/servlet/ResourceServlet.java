@@ -253,8 +253,8 @@ public class ResourceServlet extends HttpServlet
             boolean addAliasCheck = true;
             for (AliasCheck aliasCheck : contextHandler.getAliasChecks())
             {
-                if (aliasCheck instanceof AllowedResourceAliasChecker allowedResourceAliasChecker &&
-                    Objects.equals(baseResource, allowedResourceAliasChecker.getBaseResource()))
+                if (aliasCheck instanceof AllowedResourceAliasChecker &&
+                    Objects.equals(baseResource, ((AllowedResourceAliasChecker)aliasCheck).getBaseResource()))
                 {
                     addAliasCheck = false;
                     break;
@@ -270,8 +270,8 @@ public class ResourceServlet extends HttpServlet
             boolean addAliasCheck = true;
             for (AliasCheck aliasCheck : contextHandler.getAliasChecks())
             {
-                if (aliasCheck instanceof SymlinkAllowedResourceAliasChecker aliasChecker &&
-                    Objects.equals(baseResource, aliasChecker.getBaseResource()))
+                if (aliasCheck instanceof SymlinkAllowedResourceAliasChecker &&
+                    Objects.equals(baseResource, ((SymlinkAllowedResourceAliasChecker)aliasCheck).getBaseResource()))
                 {
                     addAliasCheck = false;
                     break;
@@ -355,12 +355,18 @@ public class ResourceServlet extends HttpServlet
         if (welcomeServlets != null)
         {
             welcomeServlets = welcomeServlets.toLowerCase(Locale.ENGLISH);
-            _welcomeServletMode = switch (welcomeServlets)
+            switch (welcomeServlets)
             {
-                case "true" -> WelcomeServletMode.MATCH;
-                case "exact" -> WelcomeServletMode.EXACT;
-                default -> WelcomeServletMode.NONE;
-            };
+                case "true":
+                    _welcomeServletMode = WelcomeServletMode.MATCH;
+                    break;
+                case "exact":
+                    _welcomeServletMode = WelcomeServletMode.EXACT;
+                    break;
+                default:
+                    _welcomeServletMode = WelcomeServletMode.NONE;
+                    break;
+            }
         }
 
         int encodingHeaderCacheSize = getInitInt("encodingHeaderCacheSize", -1);
@@ -513,12 +519,18 @@ public class ResourceServlet extends HttpServlet
 
     protected ServletContextHandler initContextHandler(ServletContext servletContext)
     {
-        if (servletContext instanceof ServletContextHandler.ServletContextApi api)
+        if (servletContext instanceof ServletContextHandler.ServletContextApi)
+        {
+            ServletContextHandler.ServletContextApi api = (ServletContextHandler.ServletContextApi)servletContext;
             return api.getContext().getServletContextHandler();
+        }
 
         Context context = ContextHandler.getCurrentContext();
-        if (context instanceof ContextHandler.ScopedContext scopedContext)
+        if (context instanceof ContextHandler.ScopedContext)
+        {
+            ContextHandler.ScopedContext scopedContext = (ContextHandler.ScopedContext)context;
             return scopedContext.getContextHandler();
+        }
 
         throw new IllegalArgumentException("The servletContext " + servletContext + " " +
             servletContext.getClass().getName() + " is not " + ContextHandler.ScopedContext.class.getName());
@@ -634,9 +646,10 @@ public class ResourceServlet extends HttpServlet
         HttpServletMapping mapping = request.getHttpServletMapping();
         if (included)
         {
-            if (request.getAttribute(Dispatcher.INCLUDE_MAPPING) instanceof HttpServletMapping httpServletMapping)
+            Object includeMapping = request.getAttribute(Dispatcher.INCLUDE_MAPPING);
+            if (includeMapping instanceof HttpServletMapping)
             {
-                mapping = httpServletMapping;
+                mapping = (HttpServletMapping)includeMapping;
             }
             else
             {
@@ -645,40 +658,51 @@ public class ResourceServlet extends HttpServlet
             }
         }
 
-        return switch (mapping.getMappingMatch())
+        switch (mapping.getMappingMatch())
         {
-            case CONTEXT_ROOT -> "/";
-            case DEFAULT, EXTENSION, EXACT ->
+            case CONTEXT_ROOT:
+                return "/";
+            case DEFAULT:
+            case EXTENSION:
+            case EXACT:
             {
                 if (included)
-                    yield URIUtil.encodePath((String)request.getAttribute(Dispatcher.INCLUDE_SERVLET_PATH));
-                else if (request instanceof ServletApiRequest apiRequest)
+                    return URIUtil.encodePath((String)request.getAttribute(Dispatcher.INCLUDE_SERVLET_PATH));
+                else if (request instanceof ServletApiRequest)
+                {
+                    ServletApiRequest apiRequest = (ServletApiRequest)request;
                     // Strip the context path from the canonically encoded path, so no need to re-encode (and mess up %2F etc.)
-                    yield Context.getPathInContext(request.getContextPath(), apiRequest.getRequest().getHttpURI().getCanonicalPath());
+                    return Context.getPathInContext(request.getContextPath(), apiRequest.getRequest().getHttpURI().getCanonicalPath());
+                }
                 else
-                    yield URIUtil.encodePath(request.getServletPath());
+                    return URIUtil.encodePath(request.getServletPath());
             }
-            case PATH ->
+            case PATH:
             {
                 if (_pathInfoOnly)
                 {
                     if (included)
-                        yield URIUtil.encodePath((String)request.getAttribute(Dispatcher.INCLUDE_PATH_INFO));
+                        return URIUtil.encodePath((String)request.getAttribute(Dispatcher.INCLUDE_PATH_INFO));
                     else
-                        yield URIUtil.encodePath(request.getPathInfo());
+                        return URIUtil.encodePath(request.getPathInfo());
                 }
                 else
                 {
                     if (included)
-                        yield URIUtil.encodePath(URIUtil.addPaths((String)request.getAttribute(Dispatcher.INCLUDE_SERVLET_PATH), (String)request.getAttribute(Dispatcher.INCLUDE_PATH_INFO)));
-                    else if (request instanceof ServletApiRequest apiRequest)
+                        return URIUtil.encodePath(URIUtil.addPaths((String)request.getAttribute(Dispatcher.INCLUDE_SERVLET_PATH), (String)request.getAttribute(Dispatcher.INCLUDE_PATH_INFO)));
+                    else if (request instanceof ServletApiRequest)
+                    {
+                        ServletApiRequest apiRequest = (ServletApiRequest)request;
                         // Strip the context path from the canonically encoded path, so no need to re-encode (and mess up %2F etc.)
-                        yield Context.getPathInContext(request.getContextPath(), apiRequest.getRequest().getHttpURI().getCanonicalPath());
+                        return Context.getPathInContext(request.getContextPath(), apiRequest.getRequest().getHttpURI().getCanonicalPath());
+                    }
                     else
-                        yield URIUtil.encodePath(URIUtil.addPaths(request.getServletPath(), request.getPathInfo()));
+                        return URIUtil.encodePath(URIUtil.addPaths(request.getServletPath(), request.getPathInfo()));
                 }
             }
-        };
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     @Override
@@ -827,8 +851,9 @@ public class ResourceServlet extends HttpServlet
 
             int statusCode = HttpStatus.INTERNAL_SERVER_ERROR_500;
             String reason = null;
-            if (cause instanceof HttpException httpException)
+            if (cause instanceof HttpException)
             {
+                HttpException httpException = (HttpException)cause;
                 statusCode = httpException.getCode();
                 reason = httpException.getReason();
             }

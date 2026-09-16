@@ -279,11 +279,15 @@ public class HTTP2Stream implements Stream, Attachable, Closeable, Callback, Dum
     {
         try (AutoLock ignored = lock.lock())
         {
-            return switch (closeState)
+            switch (closeState)
             {
-                case REMOTELY_CLOSED, CLOSING, CLOSED -> true;
-                default -> false;
-            };
+                case REMOTELY_CLOSED:
+                case CLOSING:
+                case CLOSED:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 
@@ -390,13 +394,26 @@ public class HTTP2Stream implements Stream, Attachable, Closeable, Callback, Dum
         notIdle();
         switch (frame.getType())
         {
-            case PREFACE -> onNewStream(callback);
-            case HEADERS -> onHeaders((HeadersFrame)frame, callback);
-            case RST_STREAM -> onReset((ResetFrame)frame, callback);
-            case PUSH_PROMISE -> onPush((PushPromiseFrame)frame, callback);
-            case WINDOW_UPDATE -> onWindowUpdate((WindowUpdateFrame)frame, callback);
-            case FAILURE -> onFailure((FailureFrame)frame, callback);
-            default -> throw new UnsupportedOperationException();
+            case PREFACE:
+                onNewStream(callback);
+                break;
+            case HEADERS:
+                onHeaders((HeadersFrame)frame, callback);
+                break;
+            case RST_STREAM:
+                onReset((ResetFrame)frame, callback);
+                break;
+            case PUSH_PROMISE:
+                onPush((PushPromiseFrame)frame, callback);
+                break;
+            case WINDOW_UPDATE:
+                onWindowUpdate((WindowUpdateFrame)frame, callback);
+                break;
+            case FAILURE:
+                onFailure((FailureFrame)frame, callback);
+                break;
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 
@@ -751,12 +768,17 @@ public class HTTP2Stream implements Stream, Attachable, Closeable, Callback, Dum
         if (!update)
             return false;
 
-        return switch (event)
+        switch (event)
         {
-            case RECEIVED -> updateCloseAfterReceived();
-            case BEFORE_SEND -> updateCloseBeforeSend();
-            case AFTER_SEND -> updateCloseAfterSend();
-        };
+            case RECEIVED:
+                return updateCloseAfterReceived();
+            case BEFORE_SEND:
+                return updateCloseBeforeSend();
+            case AFTER_SEND:
+                return updateCloseAfterSend();
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     private boolean updateCloseAfterReceived()
@@ -764,22 +786,28 @@ public class HTTP2Stream implements Stream, Attachable, Closeable, Callback, Dum
         boolean closed;
         try (AutoLock ignored = lock.lock())
         {
-            closed = switch (closeState)
+            switch (closeState)
             {
-                case NOT_CLOSED ->
+                case NOT_CLOSED:
                 {
                     closeState = CloseState.REMOTELY_CLOSED;
-                    yield false;
+                    closed = false;
+                    break;
                 }
-                case LOCALLY_CLOSING ->
+                case LOCALLY_CLOSING:
                 {
                     closeState = CloseState.CLOSING;
                     updateStreamCount(0, 1);
-                    yield false;
+                    closed = false;
+                    break;
                 }
-                case LOCALLY_CLOSED -> doClose();
-                default -> false;
-            };
+                case LOCALLY_CLOSED:
+                    closed = doClose();
+                    break;
+                default:
+                    closed = false;
+                    break;
+            }
         }
         if (closed)
             onClose();
@@ -792,11 +820,14 @@ public class HTTP2Stream implements Stream, Attachable, Closeable, Callback, Dum
         {
             switch (closeState)
             {
-                case NOT_CLOSED -> closeState = CloseState.LOCALLY_CLOSING;
-                case REMOTELY_CLOSED ->
+                case NOT_CLOSED:
+                    closeState = CloseState.LOCALLY_CLOSING;
+                    break;
+                case REMOTELY_CLOSED:
                 {
                     closeState = CloseState.CLOSING;
                     updateStreamCount(0, 1);
+                    break;
                 }
             }
             return false;
@@ -808,16 +839,23 @@ public class HTTP2Stream implements Stream, Attachable, Closeable, Callback, Dum
         boolean closed;
         try (AutoLock ignored = lock.lock())
         {
-            closed = switch (closeState)
+            switch (closeState)
             {
-                case NOT_CLOSED, LOCALLY_CLOSING ->
+                case NOT_CLOSED:
+                case LOCALLY_CLOSING:
                 {
                     closeState = CloseState.LOCALLY_CLOSED;
-                    yield false;
+                    closed = false;
+                    break;
                 }
-                case REMOTELY_CLOSED, CLOSING -> doClose();
-                default -> false;
-            };
+                case REMOTELY_CLOSED:
+                case CLOSING:
+                    closed = doClose();
+                    break;
+                default:
+                    closed = false;
+                    break;
+            }
         }
         if (closed)
             onClose();

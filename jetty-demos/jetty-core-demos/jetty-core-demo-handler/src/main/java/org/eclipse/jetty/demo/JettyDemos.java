@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.eclipse.jetty.util.StringUtil;
@@ -58,7 +59,7 @@ public class JettyDemos
                     LOG.debug("JettyDemos(prop(user.dir)) = {}", working);
                 while (dir == null && working != null)
                 {
-                    dir = asDirectory(working.resolve("jetty-ee11-demos").toString());
+                    dir = asDirectory(working.resolve("jetty-ee10-demos").toString());
                     if (dir != null && Files.exists(dir.resolve("pom.xml")))
                     {
                         demosDir = dir;
@@ -185,13 +186,76 @@ public class JettyDemos
     }
 
     /**
-     *
-     * @param groupId Maven groupId
-     * @param artifactId Maven artifactId
-     * @param version can be <code>null</code> and default current project version will be used
-     * @param packaging Maven packaging (war, jar)
+     * Maven coordinate of a demo artifact.
      */
-    public record MavenCoordinate(String groupId, String artifactId, String version, String packaging){}
+    public static final class MavenCoordinate
+    {
+        private final String groupId;
+        private final String artifactId;
+        private final String version;
+        private final String packaging;
+
+        /**
+         * @param groupId Maven groupId
+         * @param artifactId Maven artifactId
+         * @param version can be <code>null</code> and default current project version will be used
+         * @param packaging Maven packaging (war, jar)
+         */
+        public MavenCoordinate(String groupId, String artifactId, String version, String packaging)
+        {
+            this.groupId = groupId;
+            this.artifactId = artifactId;
+            this.version = version;
+            this.packaging = packaging;
+        }
+
+        public String groupId()
+        {
+            return groupId;
+        }
+
+        public String artifactId()
+        {
+            return artifactId;
+        }
+
+        public String version()
+        {
+            return version;
+        }
+
+        public String packaging()
+        {
+            return packaging;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            MavenCoordinate that = (MavenCoordinate)obj;
+            return Objects.equals(groupId, that.groupId) &&
+                Objects.equals(artifactId, that.artifactId) &&
+                Objects.equals(version, that.version) &&
+                Objects.equals(packaging, that.packaging);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(groupId, artifactId, version, packaging);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "MavenCoordinate[groupId=" + groupId + ", artifactId=" + artifactId +
+                ", version=" + version + ", packaging=" + packaging + "]";
+        }
+    }
 
     public static void main(String... arg)
     {

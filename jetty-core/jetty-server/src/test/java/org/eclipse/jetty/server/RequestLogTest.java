@@ -63,7 +63,7 @@ public class RequestLogTest
         public boolean handle(Request request, Response response, Callback callback) throws Exception
         {
             response.getHeaders().put(HttpHeader.CONTENT_TYPE, "text/plain; charset=UTF-8");
-            Content.Sink.write(response, true, "Got %s to %s%n".formatted(request.getMethod(), request.getHttpURI()), callback);
+            Content.Sink.write(response, true, String.format("Got %s to %s%n", request.getMethod(), request.getHttpURI()), callback);
             return true;
         }
     }
@@ -102,16 +102,14 @@ public class RequestLogTest
                  OutputStream out = socket.getOutputStream();
                  InputStream in = socket.getInputStream())
             {
-                String rawRequest = """
-                    GET /hello HTTP/1.1
-                    Host: %s
-                    Connection: close
-                    
-                    """.formatted(baseURI.getRawAuthority());
+                String rawRequest = String.format("GET /hello HTTP/1.1\n" +
+                    "Host: %s\n" +
+                    "Connection: close\n" +
+                    "\n", baseURI.getRawAuthority());
                 out.write(rawRequest.getBytes(UTF_8));
                 out.flush();
 
-                String expectedURI = "http://%s/hello".formatted(baseURI.getRawAuthority());
+                String expectedURI = String.format("http://%s/hello", baseURI.getRawAuthority());
                 HttpTester.Response response = HttpTester.parseResponse(in);
 
                 // Find status code
@@ -122,7 +120,7 @@ public class RequestLogTest
                 assertThat("Body Content", bodyContent, containsString("Got GET to " + expectedURI));
 
                 String reqlog = requestLogLines.poll(5, TimeUnit.SECONDS);
-                assertThat("RequestLog", reqlog, containsString("method:GET|uri:%s|status:200".formatted(expectedURI)));
+                assertThat("RequestLog", reqlog, containsString(String.format("method:GET|uri:%s|status:200", expectedURI)));
             }
         }
         finally
@@ -176,20 +174,18 @@ public class RequestLogTest
 
                 byte[] bufForm = form.toString().getBytes(UTF_8);
 
-                String rawRequest = """
-                    POST %s HTTP/1.1
-                    Host: %s
-                    Content-Type: application/x-www-form-urlencoded
-                    Content-Length: %d
-                    Connection: %s
-                    
-                    """.formatted(requestPath, baseURI.getRawAuthority(), bufForm.length, persistent ? "keepalive" : "close");
+                String rawRequest = String.format("POST %s HTTP/1.1\n" +
+                    "Host: %s\n" +
+                    "Content-Type: application/x-www-form-urlencoded\n" +
+                    "Content-Length: %d\n" +
+                    "Connection: %s\n" +
+                    "\n", requestPath, baseURI.getRawAuthority(), bufForm.length, persistent ? "keepalive" : "close");
 
                 out.write(rawRequest.getBytes(UTF_8));
                 out.write(bufForm);
                 out.flush();
 
-                String expectedURI = "http://%s%s".formatted(baseURI.getRawAuthority(), requestPath);
+                String expectedURI = String.format("http://%s%s", baseURI.getRawAuthority(), requestPath);
                 HttpTester.Response response = HttpTester.parseResponse(in);
 
                 // Find status code
@@ -202,8 +198,7 @@ public class RequestLogTest
                 int querySize = 0;
                 if (requestPath.contains("?"))
                     querySize = 1; // assuming that parameterized version only has 1 query value
-                assertThat("RequestLog", reqlog, containsString("method:POST|uri:%s|params.size:%d|status:200"
-                    .formatted(expectedURI, querySize)
+                assertThat("RequestLog", reqlog, containsString(String.format("method:POST|uri:%s|params.size:%d|status:200", expectedURI, querySize)
                 ));
             }
         }
@@ -259,15 +254,13 @@ public class RequestLogTest
 
                 byte[] bufForm = form.toString().getBytes(UTF_8);
 
-                String rawRequest = """
-                    POST /hello HTTP/1.1
-                    Host: %s
-                    Content-Type: application/x-www-form-urlencoded
-                    Content-Length: %d
-                    Transfer-Encoding: chunked
-                    Connection: close
-                    
-                    """.formatted(baseURI.getRawAuthority(), bufForm.length);
+                String rawRequest = String.format("POST /hello HTTP/1.1\n" +
+                    "Host: %s\n" +
+                    "Content-Type: application/x-www-form-urlencoded\n" +
+                    "Content-Length: %d\n" +
+                    "Transfer-Encoding: chunked\n" +
+                    "Connection: close\n" +
+                    "\n", baseURI.getRawAuthority(), bufForm.length);
 
                 out.write(rawRequest.getBytes(UTF_8));
                 out.write(bufForm);
@@ -319,7 +312,7 @@ public class RequestLogTest
                     response.getHeaders().put("X-Name", "actual");
                     response.getHeaders().put(HttpHeader.CONTENT_TYPE, "text/plain; charset=utf-8");
 
-                    String msg = "Got %s to %s%n".formatted(request.getMethod(), request.getHttpURI());
+                    String msg = String.format("Got %s to %s%n", request.getMethod(), request.getHttpURI());
                     Callback testCallback = Callback.from(callback, () ->
                     {
                         assertTrue(response.isCommitted(), "Response should be committed");
@@ -347,17 +340,15 @@ public class RequestLogTest
                  OutputStream out = socket.getOutputStream();
                  InputStream in = socket.getInputStream())
             {
-                String rawRequest = """
-                    GET /world HTTP/1.1
-                    Host: %s
-                    Connection: close
-                    
-                    """.formatted(baseURI.getRawAuthority());
+                String rawRequest = String.format("GET /world HTTP/1.1\n" +
+                    "Host: %s\n" +
+                    "Connection: close\n" +
+                    "\n", baseURI.getRawAuthority());
 
                 out.write(rawRequest.getBytes(UTF_8));
                 out.flush();
 
-                String expectedURI = "http://%s/world".formatted(baseURI.getRawAuthority());
+                String expectedURI = String.format("http://%s/world", baseURI.getRawAuthority());
                 HttpTester.Response response = HttpTester.parseResponse(in);
 
                 // Find status code
@@ -368,7 +359,7 @@ public class RequestLogTest
 
                 // We should see a requestlog entry for the original 202 response
                 String reqlog = requestLogLines.poll(3, TimeUnit.SECONDS);
-                assertThat("RequestLog", reqlog, containsString("method:GET|uri:%s|header[x-name]:actual|status:202".formatted(expectedURI)));
+                assertThat("RequestLog", reqlog, containsString(String.format("method:GET|uri:%s|header[x-name]:actual|status:202", expectedURI)));
             }
         }
         finally
@@ -407,7 +398,7 @@ public class RequestLogTest
                     response.getHeaders().put("X-LocalAddr", Objects.toString(request.getConnectionMetaData().getLocalSocketAddress(), "<null>"));
                     response.getHeaders().put(HttpHeader.CONTENT_TYPE, "text/plain; charset=utf-8");
 
-                    String msg = "Got %s to %s%n".formatted(request.getMethod(), request.getHttpURI());
+                    String msg = String.format("Got %s to %s%n", request.getMethod(), request.getHttpURI());
                     Callback testCallback = Callback.from(callback, () ->
                     {
                         EndPoint endPoint = request.getConnectionMetaData().getConnection().getEndPoint();
@@ -430,17 +421,15 @@ public class RequestLogTest
                  OutputStream out = socket.getOutputStream();
                  InputStream in = socket.getInputStream())
             {
-                String rawRequest = """
-                    GET /world HTTP/1.1
-                    Host: %s
-                    Connection: close
-                    
-                    """.formatted(baseURI.getRawAuthority());
+                String rawRequest = String.format("GET /world HTTP/1.1\n" +
+                    "Host: %s\n" +
+                    "Connection: close\n" +
+                    "\n", baseURI.getRawAuthority());
 
                 out.write(rawRequest.getBytes(UTF_8));
                 out.flush();
 
-                String expectedURI = "http://%s/world".formatted(baseURI.getRawAuthority());
+                String expectedURI = String.format("http://%s/world", baseURI.getRawAuthority());
                 HttpTester.Response response = HttpTester.parseResponse(in);
 
                 // Find status code
@@ -457,8 +446,7 @@ public class RequestLogTest
 
                 // We should see a requestlog entry for this 400 response
                 String reqlog = requestLogLines.poll(3, TimeUnit.SECONDS);
-                assertThat("RequestLog", reqlog, containsString("method:GET|uri:%s|remote-addr:%s|local-addr:%s|status:202"
-                    .formatted(expectedURI, remoteAddrStr, localAddrStr)));
+                assertThat("RequestLog", reqlog, containsString(String.format("method:GET|uri:%s|remote-addr:%s|local-addr:%s|status:202", expectedURI, remoteAddrStr, localAddrStr)));
             }
         }
         finally

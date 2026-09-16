@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.client.ContentResponse;
 import org.eclipse.jetty.client.HttpClient;
@@ -65,7 +66,7 @@ public class AliasCheckerMultipleResourceTest extends AliasCheckerTestBase
         Resource combinedResourceBase = ResourceFactory.combine(
             baseResources.stream()
                 .map(AliasCheckerTestBase::toResource)
-                .toList()
+                .collect(Collectors.toList())
         );
         start(combinedResourceBase, configurator);
     }

@@ -105,7 +105,7 @@ public class PersistAuthenticationCredentialsTest
                 if (LOG.isDebugEnabled())
                     LOG.debug("auth {}", authenticationState);
                 // Has authentication been revoked?
-                if (authenticationState instanceof AuthenticationState.Succeeded succeeded && _loginService != null && !_loginService.validate(succeeded.getUserIdentity()))
+                if (authenticationState instanceof AuthenticationState.Succeeded && _loginService != null && !_loginService.validate(((AuthenticationState.Succeeded)authenticationState).getUserIdentity()))
                 {
                     if (LOG.isDebugEnabled())
                         LOG.debug("auth revoked {}", authenticationState);
@@ -175,12 +175,10 @@ public class PersistAuthenticationCredentialsTest
             _securityHandler.setPersistAuthenticationCredentials(true);
         _server.start();
 
-        HttpTester.Response response = HttpTester.parseResponse(_localConnector.getResponse("""
-            GET /hello HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_localConnector.getResponse("GET /hello HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n"));
         assertThat(response.getStatus(), equalTo(HttpStatus.OK_200));
         assertThat(response.get("source"), equalTo("login"));
         String sessionId = response.get(HttpHeader.SET_COOKIE).split("JSESSIONID=")[1].split(";")[0];
@@ -192,13 +190,11 @@ public class PersistAuthenticationCredentialsTest
             assertThat(getSessionData(), not(containsString("bar")));
 
         // Verify that we can load it from disk again.
-        response = HttpTester.parseResponse(_localConnector.getResponse("""
-            GET /hello HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            Cookie: JSESSIONID=%s\r
-            \r
-            """.formatted(sessionId)));
+        response = HttpTester.parseResponse(_localConnector.getResponse(String.format("GET /hello HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "Cookie: JSESSIONID=%s\r\n" +
+            "\r\n", sessionId)));
         assertThat(response.getStatus(), equalTo(HttpStatus.OK_200));
         assertThat(response.get("source"), equalTo("session"));
     }
@@ -209,12 +205,10 @@ public class PersistAuthenticationCredentialsTest
         _securityHandler.setPersistAuthenticationCredentials(true);
         _server.start();
 
-        HttpTester.Response response = HttpTester.parseResponse(_localConnector.getResponse("""
-            GET /hello HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_localConnector.getResponse("GET /hello HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n"));
         assertThat(response.getStatus(), equalTo(HttpStatus.OK_200));
         assertThat(response.get("source"), equalTo("login"));
         String sessionId = response.get(HttpHeader.SET_COOKIE).split("JSESSIONID=")[1].split(";")[0];
@@ -228,13 +222,11 @@ public class PersistAuthenticationCredentialsTest
         _server.start();
 
         // Verify that we can load it from disk again.
-        response = HttpTester.parseResponse(_localConnector.getResponse("""
-            GET /hello HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            Cookie: JSESSIONID=%s\r
-            \r
-            """.formatted(sessionId)));
+        response = HttpTester.parseResponse(_localConnector.getResponse(String.format("GET /hello HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "Cookie: JSESSIONID=%s\r\n" +
+            "\r\n", sessionId)));
         assertThat(response.getStatus(), equalTo(HttpStatus.OK_200));
         assertThat(response.get("source"), equalTo("session"));
 
@@ -248,12 +240,10 @@ public class PersistAuthenticationCredentialsTest
         _securityHandler.setPersistAuthenticationCredentials(false);
         _server.start();
 
-        HttpTester.Response response = HttpTester.parseResponse(_localConnector.getResponse("""
-            GET /hello HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            \r
-            """));
+        HttpTester.Response response = HttpTester.parseResponse(_localConnector.getResponse("GET /hello HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "\r\n"));
         assertThat(response.getStatus(), equalTo(HttpStatus.OK_200));
         assertThat(response.get("source"), equalTo("login"));
         String sessionId = response.get(HttpHeader.SET_COOKIE).split("JSESSIONID=")[1].split(";")[0];
@@ -269,13 +259,11 @@ public class PersistAuthenticationCredentialsTest
         // The persisted authentication has no credentials, and credentials are now required to
         // re-login, so the cached authentication cannot be restored. Rather than failing the
         // request, it is treated as unauthenticated and the user must authenticate.
-        response = HttpTester.parseResponse(_localConnector.getResponse("""
-            GET /hello HTTP/1.1\r
-            Host: local\r
-            Connection: close\r
-            Cookie: JSESSIONID=%s\r
-            \r
-            """.formatted(sessionId)));
+        response = HttpTester.parseResponse(_localConnector.getResponse(String.format("GET /hello HTTP/1.1\r\n" +
+            "Host: local\r\n" +
+            "Connection: close\r\n" +
+            "Cookie: JSESSIONID=%s\r\n" +
+            "\r\n", sessionId)));
         assertThat(response.getStatus(), equalTo(HttpStatus.OK_200));
         assertThat(response.get("source"), equalTo("login"));
 

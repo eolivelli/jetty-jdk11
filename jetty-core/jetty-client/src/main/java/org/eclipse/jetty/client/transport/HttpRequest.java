@@ -405,11 +405,11 @@ public class HttpRequest implements Request
         StringBuilder result = new StringBuilder();
         for (String accept : accepts)
         {
-            if (!result.isEmpty())
+            if (result.length() > 0)
                 result.append(", ");
             result.append(accept);
         }
-        if (!result.isEmpty())
+        if (result.length() > 0)
             headers.put(HttpHeader.ACCEPT, result.toString());
         return this;
     }
@@ -762,8 +762,10 @@ public class HttpRequest implements Request
             // This has the effect of changing this method from mostly throwing a TimeoutException
             // to always throwing an ExecutionException(TimeoutException).
             // Thus, for backwards compatibility we unwrap the TimeoutException here.
-            if (x.getCause() instanceof TimeoutException t)
+            Throwable cause = x.getCause();
+            if (cause instanceof TimeoutException)
             {
+                TimeoutException t = (TimeoutException)cause;
                 abort(t);
                 throw t;
             }

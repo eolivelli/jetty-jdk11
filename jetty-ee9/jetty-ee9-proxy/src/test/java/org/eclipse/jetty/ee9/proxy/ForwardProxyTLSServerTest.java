@@ -664,8 +664,9 @@ public class ForwardProxyTLSServerTest
                 for (int i = 0; i < keyManagers.length; i++)
                 {
                     KeyManager keyManager = keyManagers[i];
-                    if (keyManager instanceof X509ExtendedKeyManager extKeyManager)
+                    if (keyManager instanceof X509ExtendedKeyManager)
                     {
+                        X509ExtendedKeyManager extKeyManager = (X509ExtendedKeyManager)keyManager;
                         keyManagers[i] = new X509ExtendedKeyManagerWrapper(extKeyManager)
                         {
                             @Override

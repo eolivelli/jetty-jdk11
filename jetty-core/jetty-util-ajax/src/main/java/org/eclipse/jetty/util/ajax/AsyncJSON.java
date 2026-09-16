@@ -13,7 +13,6 @@
 
 package org.eclipse.jetty.util.ajax;
 
-import java.lang.reflect.RecordComponent;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1163,7 +1162,7 @@ public class AsyncJSON
         try
         {
             Class<?> klass = Loader.loadClass(className);
-            if (!klass.isRecord())
+            if (!RecordSupport.isRecord(klass))
                 return null;
             return toRecord(klass, object);
         }
@@ -1177,18 +1176,21 @@ public class AsyncJSON
     {
         try
         {
-            RecordComponent[] components = klass.getRecordComponents();
-            Class<?>[] types = new Class<?>[components.length];
-            Object[] values = new Object[components.length];
-            for (int i = 0; i < components.length; ++i)
+            List<RecordSupport.Component> components = RecordSupport.getRecordComponents(klass);
+            Class<?>[] types = new Class<?>[components.size()];
+            Object[] values = new Object[components.size()];
+            for (int i = 0; i < components.size(); ++i)
             {
-                RecordComponent component = components[i];
+                RecordSupport.Component component = components.get(i);
                 if (!object.containsKey(component.getName()))
                     return null;
                 types[i] = component.getType();
                 Object value = object.get(component.getName());
-                if (value instanceof Number number)
+                if (value instanceof Number)
+                {
+                    Number number = (Number)value;
                     value = convertNumber(types[i], number);
+                }
                 values[i] = value;
             }
             return klass.getConstructor(types).newInstance(values);
@@ -1230,11 +1232,16 @@ public class AsyncJSON
 
     private static boolean isWhitespace(byte ws)
     {
-        return switch (ws)
+        switch (ws)
         {
-            case ' ', '\n', '\r', '\t' -> true;
-            default -> false;
-        };
+            case ' ':
+            case '\n':
+            case '\r':
+            case '\t':
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -1299,7 +1306,7 @@ public class AsyncJSON
         {
             if (integer == 0)
             {
-                if (builder.isEmpty())
+                if (builder.length() == 0)
                 {
                     builder.append((char)b);
                     return true;

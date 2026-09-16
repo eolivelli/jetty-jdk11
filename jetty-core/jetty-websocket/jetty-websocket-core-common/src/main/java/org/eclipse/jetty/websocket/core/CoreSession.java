@@ -146,8 +146,11 @@ public interface CoreSession extends OutgoingFrames, IncomingFrames, Configurati
      */
     default void close(CloseStatus closeStatus, Callback callback)
     {
-        if (this instanceof WebSocketCoreSession coreSession)
+        if (this instanceof WebSocketCoreSession)
+        {
+            WebSocketCoreSession coreSession = (WebSocketCoreSession)this;
             coreSession.close(closeStatus, callback);
+        }
         else
             close(closeStatus.getCode(), closeStatus.getReason(), callback);
     }

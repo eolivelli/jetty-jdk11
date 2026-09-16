@@ -47,9 +47,7 @@ public class BasicTest extends AbstractUseCase
         setupStandardHomeDir();
 
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            """, UTF_8);
+            "--modules=main\n", UTF_8);
     }
 
     @Test
@@ -58,9 +56,7 @@ public class BasicTest extends AbstractUseCase
         setupDistHome();
 
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            """, UTF_8);
+            "--modules=main\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = new ArrayList<>();
@@ -115,10 +111,8 @@ public class BasicTest extends AbstractUseCase
         setupDistHome();
 
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            --modules=does-not-exist
-            """, UTF_8);
+            "--modules=main\n" +
+            "--modules=does-not-exist\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = new ArrayList<>();
@@ -140,11 +134,9 @@ public class BasicTest extends AbstractUseCase
         setupDistHome();
 
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            --modules=does-not-exist
-            --modules=also-not-present
-            """, UTF_8);
+            "--modules=main\n" +
+            "--modules=does-not-exist\n" +
+            "--modules=also-not-present\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = new ArrayList<>();
@@ -166,9 +158,7 @@ public class BasicTest extends AbstractUseCase
         Path homePath = MavenPaths.findTestResourceDir("providers-home");
 
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=server
-            """, UTF_8);
+            "--modules=server\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = new ArrayList<>();
@@ -199,9 +189,7 @@ public class BasicTest extends AbstractUseCase
         Path homePath = MavenPaths.findTestResourceDir("providers-home");
 
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=server
-            """, UTF_8);
+            "--modules=server\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = new ArrayList<>();
@@ -233,9 +221,7 @@ public class BasicTest extends AbstractUseCase
         setupDistHome();
 
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            """, UTF_8);
+            "--modules=main\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = new ArrayList<>();
@@ -309,9 +295,7 @@ public class BasicTest extends AbstractUseCase
         setupDistHome();
 
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            """, UTF_8);
+            "--modules=main\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = new ArrayList<>();

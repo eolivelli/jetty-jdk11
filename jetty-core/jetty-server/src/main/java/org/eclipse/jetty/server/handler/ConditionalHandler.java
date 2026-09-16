@@ -311,10 +311,16 @@ public abstract class ConditionalHandler extends Handler.Wrapper
             throw new IllegalStateException(getState());
         for (Predicate<Request> p : predicates)
         {
-            if (p instanceof MethodPredicate methodPredicate)
+            if (p instanceof MethodPredicate)
+            {
+                MethodPredicate methodPredicate = (MethodPredicate)p;
                 includeMethod(methodPredicate._method);
-            else if (p instanceof PathSpecPredicate pathSpecPredicate)
+            }
+            else if (p instanceof PathSpecPredicate)
+            {
+                PathSpecPredicate pathSpecPredicate = (PathSpecPredicate)p;
                 include(pathSpecPredicate._pathSpec);
+            }
             else
                 _predicates.include(p);
         }
@@ -333,10 +339,16 @@ public abstract class ConditionalHandler extends Handler.Wrapper
             throw new IllegalStateException(getState());
         for (Predicate<Request> p : predicates)
         {
-            if (p instanceof MethodPredicate methodPredicate)
+            if (p instanceof MethodPredicate)
+            {
+                MethodPredicate methodPredicate = (MethodPredicate)p;
                 excludeMethod(methodPredicate._method);
-            else if (p instanceof PathSpecPredicate pathSpecPredicate)
+            }
+            else if (p instanceof PathSpecPredicate)
+            {
+                PathSpecPredicate pathSpecPredicate = (PathSpecPredicate)p;
                 exclude(pathSpecPredicate._pathSpec);
+            }
             else
                 _predicates.exclude(p);
         }
@@ -561,7 +573,7 @@ public abstract class ConditionalHandler extends Handler.Wrapper
         @Override
         public boolean equals(Object obj)
         {
-            return obj instanceof ConnectorPredicate other && _connector.equals(other._connector);
+            return obj instanceof ConnectorPredicate && _connector.equals(((ConnectorPredicate)obj)._connector);
         }
 
         @Override
@@ -580,8 +592,9 @@ public abstract class ConditionalHandler extends Handler.Wrapper
     {
         public static InetAddress getInetAddress(SocketAddress socketAddress)
         {
-            if (socketAddress instanceof InetSocketAddress inetSocketAddress)
+            if (socketAddress instanceof InetSocketAddress)
             {
+                InetSocketAddress inetSocketAddress = (InetSocketAddress)socketAddress;
                 if (inetSocketAddress.isUnresolved())
                 {
                     try
@@ -623,13 +636,13 @@ public abstract class ConditionalHandler extends Handler.Wrapper
         @Override
         public boolean equals(Object other)
         {
-            return other instanceof InetAddressPatternPredicate inetAddressPatternPredicate && _pattern.equals(inetAddressPatternPredicate._pattern);
+            return other instanceof InetAddressPatternPredicate && _pattern.equals(((InetAddressPatternPredicate)other)._pattern);
         }
 
         @Override
         public String toString()
         {
-            return "%s@%x{%s}".formatted(TypeUtil.toShortName(getClass()), hashCode(), _pattern);
+            return String.format("%s@%x{%s}", TypeUtil.toShortName(getClass()), hashCode(), _pattern);
         }
     }
 
@@ -663,7 +676,7 @@ public abstract class ConditionalHandler extends Handler.Wrapper
         @Override
         public boolean equals(Object obj)
         {
-            return obj instanceof MethodPredicate other && _method.equals(other._method);
+            return obj instanceof MethodPredicate && _method.equals(((MethodPredicate)obj)._method);
         }
 
         @Override
@@ -704,7 +717,7 @@ public abstract class ConditionalHandler extends Handler.Wrapper
         @Override
         public boolean equals(Object obj)
         {
-            return obj instanceof PathSpecPredicate other && _pathSpec.equals(other._pathSpec);
+            return obj instanceof PathSpecPredicate && _pathSpec.equals(((PathSpecPredicate)obj)._pathSpec);
         }
 
         @Override
@@ -845,9 +858,10 @@ public abstract class ConditionalHandler extends Handler.Wrapper
         @Override
         protected boolean onConditionsMet(Request request, Response response, Callback callback) throws Exception
         {
-            if (!(getHandler() instanceof Singleton nextHandler))
+            Handler handler = getHandler();
+            if (!(handler instanceof Singleton))
                 return false;
-            Handler nextNext = nextHandler.getHandler();
+            Handler nextNext = ((Singleton)handler).getHandler();
             return nextNext != null && nextNext.handle(request, response, callback);
         }
     }

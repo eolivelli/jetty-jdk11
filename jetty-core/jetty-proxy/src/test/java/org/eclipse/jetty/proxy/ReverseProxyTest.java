@@ -18,6 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.jetty.client.CompletableResponseListener;
@@ -137,7 +138,7 @@ public class ReverseProxyTest extends AbstractProxyTest
                 List<String> requestValues = request.getHeaders().stream()
                     .filter(field -> field.getName().equalsIgnoreCase("X-Request"))
                     .map(HttpField::getValue)
-                    .toList();
+                    .collect(Collectors.toList());
                 assertEquals(List.of("req1", "req2"), requestValues);
 
                 response.getHeaders().add("X-Response", "resp1");
@@ -181,7 +182,7 @@ public class ReverseProxyTest extends AbstractProxyTest
         List<String> responseValues = response.getHeaders().stream()
             .filter(field -> field.getName().equalsIgnoreCase("X-Response"))
             .map(HttpField::getValue)
-            .toList();
+            .collect(Collectors.toList());
         assertEquals(List.of("resp1", "resp2"), responseValues);
 
         assertEquals(1, response.getHeaders().getValuesList("Server").size());
@@ -437,7 +438,7 @@ public class ReverseProxyTest extends AbstractProxyTest
         {
             switch (httpVersion)
             {
-                case HTTP_1_1 ->
+                case HTTP_1_1:
                 {
                     // HTTP/1.1 fails to generate the response, but does not commit,
                     // so it is able to write an error response to the client.
@@ -445,13 +446,15 @@ public class ReverseProxyTest extends AbstractProxyTest
                     assertNotNull(response);
                     assertNull(failure);
                     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, response.getStatus());
+                    break;
                 }
-                case HTTP_2 ->
+                case HTTP_2:
                 {
                     // HTTP/2 fails to generate the response, sends a GOAWAY,
                     // and the client aborts the response.
                     assertNull(response);
                     assertNotNull(failure);
+                    break;
                 }
             }
             return null;

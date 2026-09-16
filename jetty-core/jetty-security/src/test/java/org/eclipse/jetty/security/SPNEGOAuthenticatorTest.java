@@ -84,11 +84,9 @@ public class SPNEGOAuthenticatorTest
     @Test
     public void testChallengeSentWithUnhandledAuthorization() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/any/thing HTTP/1.0\r
-            %s: Basic asdf\r
-            \r
-            """.formatted(HttpHeader.AUTHORIZATION)));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(String.format("GET /ctx/any/thing HTTP/1.0\r\n" +
+            "%s: Basic asdf\r\n" +
+            "\r\n", HttpHeader.AUTHORIZATION)));
 
         assertThat(response.getStatus(), is(HttpStatus.UNAUTHORIZED_401));
         assertThat(response.get(HttpHeader.WWW_AUTHENTICATE), is(HttpHeader.NEGOTIATE.asString()));
@@ -98,11 +96,9 @@ public class SPNEGOAuthenticatorTest
     @Disabled // TODO this test needs a lot of work
     public void testChallengeBadResponse() throws Exception
     {
-        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse("""
-            GET /ctx/any/thing HTTP/1.0\r
-            %s: %s badtokenT\r
-            \r
-            """.formatted(HttpHeader.AUTHORIZATION, HttpHeader.NEGOTIATE)));
+        HttpTester.Response response = HttpTester.parseResponse(_connector.getResponse(String.format("GET /ctx/any/thing HTTP/1.0\r\n" +
+            "%s: %s badtokenT\r\n" +
+            "\r\n", HttpHeader.AUTHORIZATION, HttpHeader.NEGOTIATE)));
 
         assertThat(response.getStatus(), is(HttpStatus.UNAUTHORIZED_401));
         assertThat(response.get(HttpHeader.WWW_AUTHENTICATE), is(HttpHeader.NEGOTIATE.asString()));

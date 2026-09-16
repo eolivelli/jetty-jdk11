@@ -41,28 +41,22 @@ public class PropertyOverrideTest extends AbstractUseCase
         setupStandardHomeDir();
 
         Files.writeString(homeDir.resolve("modules/ssl.mod"),
-            """
-            [depend]
-            main
-            [ini-template]
-            # jetty.sslContext.keyStorePassword=default
-            """, UTF_8);
+            "[depend]\n" +
+            "main\n" +
+            "[ini-template]\n" +
+            "# jetty.sslContext.keyStorePassword=default\n", UTF_8);
 
         FS.ensureDirectoryExists(baseDir.resolve("modules"));
 
         Files.writeString(baseDir.resolve("modules/ssl-ini.mod"),
-            """
-            [depend]
-            ssl
-            [ini]
-            %s
-            """.formatted(propRef), UTF_8);
+            String.format("[depend]\n" +
+                "ssl\n" +
+                "[ini]\n" +
+                "%s\n", propRef), UTF_8);
 
         FS.ensureDirectoryExists(baseDir.resolve("start.d"));
         Files.writeString(baseDir.resolve("start.d/main.ini"),
-            """
-            --modules=ssl-ini
-            """, UTF_8);
+            "--modules=ssl-ini\n", UTF_8);
 
         // === Execute Main
         List<String> commandLine = List.of(
@@ -113,29 +107,23 @@ public class PropertyOverrideTest extends AbstractUseCase
         setupStandardHomeDir();
 
         Files.writeString(homeDir.resolve("modules/ssl.mod"),
-            """
-            [depend]
-            main
-            [ini-template]
-            # jetty.sslContext.keyStorePassword=default
-            """, UTF_8);
+            "[depend]\n" +
+            "main\n" +
+            "[ini-template]\n" +
+            "# jetty.sslContext.keyStorePassword=default\n", UTF_8);
 
         FS.ensureDirectoryExists(baseDir.resolve("modules"));
 
         Files.writeString(baseDir.resolve("modules/ssl-ini.mod"),
-            """
-            [depend]
-            ssl
-            [ini]
-            %s
-            """.formatted(propRef), UTF_8);
+            String.format("[depend]\n" +
+                "ssl\n" +
+                "[ini]\n" +
+                "%s\n", propRef), UTF_8);
 
         FS.ensureDirectoryExists(baseDir.resolve("start.d"));
         Files.writeString(baseDir.resolve("start.d/main.ini"),
-            """
-            --modules=ssl-ini
-            jetty.sslContext.keyStorePassword=storepwd
-            """, UTF_8);
+            "--modules=ssl-ini\n" +
+            "jetty.sslContext.keyStorePassword=storepwd\n", UTF_8);
 
         // === Execute Main
         List<String> commandLine = List.of();

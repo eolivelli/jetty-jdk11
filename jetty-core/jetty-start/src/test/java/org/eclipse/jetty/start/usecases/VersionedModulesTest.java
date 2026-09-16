@@ -36,23 +36,17 @@ public class VersionedModulesTest extends AbstractUseCase
 
         FS.ensureDirExists(baseDir.resolve("modules"));
         Files.writeString(baseDir.resolve("modules/new.mod"),
-            """
-            [version]
-            9.3
-            [ini]
-            the-future=is-new
-            """, UTF_8);
+            "[version]\n" +
+            "9.3\n" +
+            "[ini]\n" +
+            "the-future=is-new\n", UTF_8);
         Files.writeString(baseDir.resolve("modules/old.mod"),
-            """
-            [defaults]
-            from-module=old
-            """, UTF_8);
+            "[defaults]\n" +
+            "from-module=old\n", UTF_8);
         Files.writeString(baseDir.resolve("start.ini"),
-            """
-            --modules=main
-            --modules=old
-            --modules=new
-            """, UTF_8);
+            "--modules=main\n" +
+            "--modules=old\n" +
+            "--modules=new\n", UTF_8);
 
         // === Execute Main
         List<String> runArgs = Collections.emptyList();

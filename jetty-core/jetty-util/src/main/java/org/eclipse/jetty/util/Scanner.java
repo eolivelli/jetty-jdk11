@@ -911,8 +911,9 @@ public class Scanner extends ContainerLifeCycle
             if (listener == null)
                 continue; // skip
 
-            if (listener instanceof BulkListener bulkListener)
+            if (listener instanceof BulkListener)
             {
+                BulkListener bulkListener = (BulkListener)listener;
                 try
                 {
                     bulkListener.pathsChanged(changes);
@@ -926,8 +927,9 @@ public class Scanner extends ContainerLifeCycle
                 }
             }
 
-            if (listener instanceof DiscreteListener discreteListener)
+            if (listener instanceof DiscreteListener)
             {
+                DiscreteListener discreteListener = (DiscreteListener)listener;
                 for (Map.Entry<Path, Notification> entry : changes.entrySet())
                 {
                     if (entry.getKey() == null)
@@ -937,10 +939,18 @@ public class Scanner extends ContainerLifeCycle
                     {
                         switch (entry.getValue())
                         {
-                            case ADDED -> discreteListener.pathAdded(entry.getKey());
-                            case CHANGED -> discreteListener.pathChanged(entry.getKey());
-                            case REMOVED -> discreteListener.pathRemoved(entry.getKey());
-                            default -> LOG.warn("Unknown file change: {} -> {}", entry.getKey(), entry.getValue());
+                            case ADDED:
+                                discreteListener.pathAdded(entry.getKey());
+                                break;
+                            case CHANGED:
+                                discreteListener.pathChanged(entry.getKey());
+                                break;
+                            case REMOVED:
+                                discreteListener.pathRemoved(entry.getKey());
+                                break;
+                            default:
+                                LOG.warn("Unknown file change: {} -> {}", entry.getKey(), entry.getValue());
+                                break;
                         }
                     }
                     catch (Throwable t)
@@ -973,8 +983,11 @@ public class Scanner extends ContainerLifeCycle
         {
             try
             {
-                if (listener instanceof ScanCycleListener scanCycleListener)
+                if (listener instanceof ScanCycleListener)
+                {
+                    ScanCycleListener scanCycleListener = (ScanCycleListener)listener;
                     scanCycleListener.scanStarted(cycle);
+                }
             }
             catch (Exception e)
             {
@@ -994,8 +1007,11 @@ public class Scanner extends ContainerLifeCycle
         {
             try
             {
-                if (listener instanceof ScanCycleListener scanCycleListener)
+                if (listener instanceof ScanCycleListener)
+                {
+                    ScanCycleListener scanCycleListener = (ScanCycleListener)listener;
                     scanCycleListener.scanEnded(cycle);
+                }
             }
             catch (Exception e)
             {

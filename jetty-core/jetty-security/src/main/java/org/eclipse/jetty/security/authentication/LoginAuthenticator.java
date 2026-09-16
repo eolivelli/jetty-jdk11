@@ -13,7 +13,6 @@
 
 package org.eclipse.jetty.security.authentication;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.function.Function;
 
@@ -226,7 +225,6 @@ public abstract class LoginAuthenticator implements Authenticator
      */
     public static class UserAuthenticationSucceeded implements AuthenticationState.Succeeded, Serializable
     {
-        @Serial
         private static final long serialVersionUID = -6290411814232723403L;
         protected String _authenticationType;
         protected transient UserIdentity _userIdentity;
@@ -271,8 +269,9 @@ public abstract class LoginAuthenticator implements Authenticator
                 Authenticator authenticator = security.getAuthenticator();
 
                 AuthenticationState authenticationState = null;
-                if (authenticator instanceof LoginAuthenticator loginAuthenticator)
+                if (authenticator instanceof LoginAuthenticator)
                 {
+                    LoginAuthenticator loginAuthenticator = (LoginAuthenticator)authenticator;
                     loginAuthenticator.logout(request, response);
                     authenticationState = new LoginAuthenticator.LoggedOutAuthentication(loginAuthenticator);
                 }
@@ -283,7 +282,7 @@ public abstract class LoginAuthenticator implements Authenticator
         @Override
         public String toString()
         {
-            return "%s@%x{%s,%s}".formatted(TypeUtil.toShortName(getClass()), hashCode(), getAuthenticationType(), getUserIdentity());
+            return String.format("%s@%x{%s,%s}", TypeUtil.toShortName(getClass()), hashCode(), getAuthenticationType(), getUserIdentity());
         }
     }
 

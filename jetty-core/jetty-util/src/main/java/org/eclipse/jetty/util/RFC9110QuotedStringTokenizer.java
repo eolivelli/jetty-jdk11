@@ -59,6 +59,14 @@ public class RFC9110QuotedStringTokenizer implements QuotedStringTokenizer
         return Character.isWhitespace(c);
     }
 
+    private enum State
+    {
+        START,
+        TOKEN,
+        QUOTE,
+        END,
+    }
+
     @Override
     public Iterator<String> tokenize(String string)
     {
@@ -66,14 +74,6 @@ public class RFC9110QuotedStringTokenizer implements QuotedStringTokenizer
 
         return new Iterator<>()
         {
-            private enum State
-            {
-                START,
-                TOKEN,
-                QUOTE,
-                END,
-            }
-
             private final StringBuilder _token = new StringBuilder();
             State _state = State.START;
             private boolean _hasToken;
@@ -93,7 +93,7 @@ public class RFC9110QuotedStringTokenizer implements QuotedStringTokenizer
 
                     switch (_state)
                     {
-                        case START ->
+                        case START:
                         {
                             if (_delim.indexOf(c) >= 0)
                             {
@@ -117,8 +117,9 @@ public class RFC9110QuotedStringTokenizer implements QuotedStringTokenizer
                                 _ows = -1;
                                 _state = State.TOKEN;
                             }
+                            break;
                         }
-                        case TOKEN ->
+                        case TOKEN:
                         {
                             _hasToken = true;
                             if (_delim.indexOf(c) >= 0)
@@ -148,8 +149,9 @@ public class RFC9110QuotedStringTokenizer implements QuotedStringTokenizer
                                 _ows = -1;
                                 _token.append(c);
                             }
+                            break;
                         }
-                        case QUOTE ->
+                        case QUOTE:
                         {
                             _hasToken = true;
                             if (escape)
@@ -187,8 +189,9 @@ public class RFC9110QuotedStringTokenizer implements QuotedStringTokenizer
                             {
                                 _token.append(c);
                             }
+                            break;
                         }
-                        case END ->
+                        case END:
                         {
                             if (_delim.indexOf(c) >= 0)
                             {
@@ -201,8 +204,10 @@ public class RFC9110QuotedStringTokenizer implements QuotedStringTokenizer
                             }
                             else if (!_optionalWhiteSpace || !isOptionalWhiteSpace(c))
                                 throw new IllegalArgumentException("characters after end quote");
+                            break;
                         }
-                        default -> throw new IllegalStateException();
+                        default:
+                            throw new IllegalStateException();
                     }
                 }
 

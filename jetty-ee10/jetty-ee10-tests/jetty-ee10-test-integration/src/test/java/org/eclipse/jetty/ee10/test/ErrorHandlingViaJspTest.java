@@ -96,45 +96,41 @@ public class ErrorHandlingViaJspTest
 
         Path webxml = webinfDir.resolve("web.xml");
 
-        Files.writeString(webxml, """
-            <web-app
-              xmlns="https://jakarta.ee/xml/ns/jakartaee"
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
-              metadata-complete="false"
-              version="5.0">
-              <display-name>Sample WebApp</display-name>
-            
-              <servlet>
-                <servlet-name>always-throw-an-exception</servlet-name>
-                <servlet-class>%s</servlet-class>
-              </servlet>
-            
-              <servlet-mapping>
-                <servlet-name>always-throw-an-exception</servlet-name>
-                <url-pattern>/toss/*</url-pattern>
-              </servlet-mapping>
-            
-              <error-page>
-                <exception-type>java.lang.UnsupportedOperationException</exception-type>
-                <location>/error.jsp</location>
-              </error-page>
-            </web-app>
-            """.formatted(AlwaysUnsupportedServlet.class.getName()), StandardCharsets.UTF_8);
+        Files.writeString(webxml, String.format("<web-app\n" +
+            "  xmlns=\"https://jakarta.ee/xml/ns/jakartaee\"\n" +
+            "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+            "  xsi:schemaLocation=\"https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd\"\n" +
+            "  metadata-complete=\"false\"\n" +
+            "  version=\"5.0\">\n" +
+            "  <display-name>Sample WebApp</display-name>\n" +
+            "\n" +
+            "  <servlet>\n" +
+            "    <servlet-name>always-throw-an-exception</servlet-name>\n" +
+            "    <servlet-class>%s</servlet-class>\n" +
+            "  </servlet>\n" +
+            "\n" +
+            "  <servlet-mapping>\n" +
+            "    <servlet-name>always-throw-an-exception</servlet-name>\n" +
+            "    <url-pattern>/toss/*</url-pattern>\n" +
+            "  </servlet-mapping>\n" +
+            "\n" +
+            "  <error-page>\n" +
+            "    <exception-type>java.lang.UnsupportedOperationException</exception-type>\n" +
+            "    <location>/error.jsp</location>\n" +
+            "  </error-page>\n" +
+            "</web-app>\n", AlwaysUnsupportedServlet.class.getName()), StandardCharsets.UTF_8);
 
-        Files.writeString(webappDir.resolve("error.jsp"), """
-            <%@ page language="java" contentType="text/html; charset=utf-8"
-                     pageEncoding="utf-8" %>
-            (From JSP Error Handler)
-            Request.Params       : <%= request.getParameterMap() %>
-            ERROR_EXCEPTION      : <%= request.getAttribute("jakarta.servlet.error.exception") %>
-            ERROR_EXCEPTION_TYPE : <%= request.getAttribute("jakarta.servlet.error.exception_type") %>
-            ERROR_MESSAGE        : <%= request.getAttribute("jakarta.servlet.error.message") %>
-            ERROR_REQUEST_URI    : <%= request.getAttribute("jakarta.servlet.error.request_uri") %>
-            ERROR_SERVLET_NAME   : <%= request.getAttribute("jakarta.servlet.error.servlet_name") %>
-            ERROR_STATUS_CODE    : <%= request.getAttribute("jakarta.servlet.error.status_code") %>
-            <% response.setStatus(418); %>
-            """, StandardCharsets.UTF_8);
+        Files.writeString(webappDir.resolve("error.jsp"), "<%@ page language=\"java\" contentType=\"text/html; charset=utf-8\"\n" +
+            "         pageEncoding=\"utf-8\" %>\n" +
+            "(From JSP Error Handler)\n" +
+            "Request.Params       : <%= request.getParameterMap() %>\n" +
+            "ERROR_EXCEPTION      : <%= request.getAttribute(\"jakarta.servlet.error.exception\") %>\n" +
+            "ERROR_EXCEPTION_TYPE : <%= request.getAttribute(\"jakarta.servlet.error.exception_type\") %>\n" +
+            "ERROR_MESSAGE        : <%= request.getAttribute(\"jakarta.servlet.error.message\") %>\n" +
+            "ERROR_REQUEST_URI    : <%= request.getAttribute(\"jakarta.servlet.error.request_uri\") %>\n" +
+            "ERROR_SERVLET_NAME   : <%= request.getAttribute(\"jakarta.servlet.error.servlet_name\") %>\n" +
+            "ERROR_STATUS_CODE    : <%= request.getAttribute(\"jakarta.servlet.error.status_code\") %>\n" +
+            "<% response.setStatus(418); %>\n", StandardCharsets.UTF_8);
 
         WebAppContext webAppContext = new WebAppContext();
         webAppContext.setContextPath("/");

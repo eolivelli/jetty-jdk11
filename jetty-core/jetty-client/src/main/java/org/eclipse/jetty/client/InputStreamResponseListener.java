@@ -22,6 +22,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -367,8 +368,57 @@ public class InputStreamResponseListener implements Listener, AutoCloseable
         }
     }
 
-    private record ChunkCallback(Content.Chunk chunk, Runnable success, Consumer<Throwable> throwableConsumer)
+    private static final class ChunkCallback
     {
+        private final Content.Chunk chunk;
+        private final Runnable success;
+        private final Consumer<Throwable> throwableConsumer;
+
+        private ChunkCallback(Content.Chunk chunk, Runnable success, Consumer<Throwable> throwableConsumer)
+        {
+            this.chunk = chunk;
+            this.success = success;
+            this.throwableConsumer = throwableConsumer;
+        }
+
+        public Content.Chunk chunk()
+        {
+            return chunk;
+        }
+
+        public Runnable success()
+        {
+            return success;
+        }
+
+        public Consumer<Throwable> throwableConsumer()
+        {
+            return throwableConsumer;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            ChunkCallback that = (ChunkCallback)obj;
+            return Objects.equals(chunk, that.chunk) && Objects.equals(success, that.success) && Objects.equals(throwableConsumer, that.throwableConsumer);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(chunk, success, throwableConsumer);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "ChunkCallback[chunk=" + chunk + ", success=" + success + ", throwableConsumer=" + throwableConsumer + "]";
+        }
+
         private void releaseAndSucceed()
         {
             chunk.release();

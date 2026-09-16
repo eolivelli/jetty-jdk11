@@ -93,7 +93,7 @@ public class FileIDTest
             Path root = zipfs.getPath("/");
             Path path = touchTestPath(root, input);
             String actual = FileID.getBasename(path);
-            assertThat("getBasename(%s, \"%s\")".formatted(path, expected), actual, is(expected));
+            assertThat(String.format("getBasename(%s, \"%s\")", path, expected), actual, is(expected));
         }
     }
 
@@ -142,7 +142,7 @@ public class FileIDTest
     public void testHasNamedPathSegmentTrue(String input, String dirname) throws IOException
     {
         Path path = touchTestPath(input);
-        assertTrue(FileID.hasNamedPathSegment(path, dirname), "hasNamedPathSegment(%s, \"%s\")".formatted(path, dirname));
+        assertTrue(FileID.hasNamedPathSegment(path, dirname), String.format("hasNamedPathSegment(%s, \"%s\")", path, dirname));
     }
 
     public static Stream<Arguments> hasNamedPathSegmentFalseCases()
@@ -163,7 +163,7 @@ public class FileIDTest
     public void testHasNamedPathSegmentFalse(String input, String dirname) throws IOException
     {
         Path path = touchTestPath(input);
-        assertFalse(FileID.hasNamedPathSegment(path, dirname), "hasNamedPathSegment(%s, \"%s\")".formatted(path, dirname));
+        assertFalse(FileID.hasNamedPathSegment(path, dirname), String.format("hasNamedPathSegment(%s, \"%s\")", path, dirname));
     }
 
     public static Stream<Arguments> hasNamedPathSegmentCasesTrue()
@@ -192,7 +192,7 @@ public class FileIDTest
         {
             Path root = zipfs.getPath("/");
             Path path = touchTestPath(root, input);
-            assertTrue(FileID.hasNamedPathSegment(path, dirname), "hasNamedPathSegment(%s, \"%s\")".formatted(path, dirname));
+            assertTrue(FileID.hasNamedPathSegment(path, dirname), String.format("hasNamedPathSegment(%s, \"%s\")", path, dirname));
         }
     }
 
@@ -224,7 +224,7 @@ public class FileIDTest
             Path root = zipfs.getPath("/");
             FS.ensureDirExists(root.resolve("/tmp"));
             Path path = touchTestPath(root, input);
-            assertFalse(FileID.hasNamedPathSegment(path, dirname), "hasNamedPathSegment(%s, \"%s\")".formatted(path, dirname));
+            assertFalse(FileID.hasNamedPathSegment(path, dirname), String.format("hasNamedPathSegment(%s, \"%s\")", path, dirname));
         }
     }
 
@@ -252,10 +252,10 @@ public class FileIDTest
         String actual;
 
         actual = FileID.getExtension(input);
-        assertThat("getExtension((String) \"%s\")".formatted(input), actual, is(expected));
+        assertThat(String.format("getExtension((String) \"%s\")", input), actual, is(expected));
         Path path = touchTestPath(input);
         actual = FileID.getExtension(path);
-        assertThat("getExtension((Path) \"%s\")".formatted(path), actual, is(expected));
+        assertThat(String.format("getExtension((Path) \"%s\")", path), actual, is(expected));
     }
 
     @ParameterizedTest
@@ -454,9 +454,9 @@ public class FileIDTest
     })
     public void testIsWebArchiveStringFalse(String input) throws IOException
     {
-        assertFalse(FileID.isWebArchive(input), "isWebArchive((String) \"%s\")".formatted(input));
+        assertFalse(FileID.isWebArchive(input), String.format("isWebArchive((String) \"%s\")", input));
         Path path = touchTestPath(input);
-        assertFalse(FileID.isWebArchive(path), "isWebArchive((Path) \"%s\")".formatted(path));
+        assertFalse(FileID.isWebArchive(path), String.format("isWebArchive((Path) \"%s\")", path));
     }
 
     @ParameterizedTest
@@ -470,9 +470,9 @@ public class FileIDTest
     })
     public void testIsWebArchiveStringTrue(String input) throws IOException
     {
-        assertTrue(FileID.isWebArchive(input), "isWebArchive((String) \"%s\")".formatted(input));
+        assertTrue(FileID.isWebArchive(input), String.format("isWebArchive((String) \"%s\")", input));
         Path path = touchTestPath(input);
-        assertTrue(FileID.isWebArchive(path), "isWebArchive((Path) \"%s\")".formatted(path));
+        assertTrue(FileID.isWebArchive(path), String.format("isWebArchive((Path) \"%s\")", path));
     }
 
     @ParameterizedTest
@@ -485,9 +485,9 @@ public class FileIDTest
     })
     public void testIsXmlFalse(String input) throws IOException
     {
-        assertFalse(FileID.isXml(input), "isXml((String) \"%s\")".formatted(input));
+        assertFalse(FileID.isXml(input), String.format("isXml((String) \"%s\")", input));
         Path path = touchTestPath(input);
-        assertFalse(FileID.isXml(path), "isXml((Path) \"%s\")".formatted(path));
+        assertFalse(FileID.isXml(path), String.format("isXml((Path) \"%s\")", path));
     }
 
     @ParameterizedTest
@@ -501,9 +501,9 @@ public class FileIDTest
     })
     public void testIsXmlTrue(String input) throws IOException
     {
-        assertTrue(FileID.isXml(input), "isXml((String) \"%s\")".formatted(input));
+        assertTrue(FileID.isXml(input), String.format("isXml((String) \"%s\")", input));
         Path path = touchTestPath(input);
-        assertTrue(FileID.isXml(path), "isXml((Path) \"%s\")".formatted(path));
+        assertTrue(FileID.isXml(path), String.format("isXml((Path) \"%s\")", path));
     }
 
     @ParameterizedTest

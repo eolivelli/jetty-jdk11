@@ -13,7 +13,6 @@
 
 package org.eclipse.jetty.test.client.transport;
 
-import java.net.UnixDomainSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -47,6 +46,7 @@ import org.eclipse.jetty.http3.server.HTTP3ServerQuicConfiguration;
 import org.eclipse.jetty.io.ClientConnector;
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.io.Transport;
+import org.eclipse.jetty.io.UnixDomain;
 import org.eclipse.jetty.quic.quiche.client.QuicheClientQuicConfiguration;
 import org.eclipse.jetty.quic.quiche.client.QuicheTransport;
 import org.eclipse.jetty.quic.quiche.server.QuicheServerConnectionFactory;
@@ -74,6 +74,8 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.eclipse.jetty.test.client.transport.AbstractTest.freePort;
@@ -372,6 +374,7 @@ public class HTTPDynamicTransportTest extends AbstractTransportTest
 
     @Test
     @DisabledOnOs(value = OS.WINDOWS, disabledReason = "Fails on Windows")
+    @EnabledForJreRange(min = JRE.JAVA_16)
     public void testHighLevelH1OverUNIX() throws Exception
     {
         ConnectionFactory h1 = new HttpConnectionFactory();
@@ -402,6 +405,7 @@ public class HTTPDynamicTransportTest extends AbstractTransportTest
 
     @Test
     @DisabledOnOs(value = OS.WINDOWS, disabledReason = "Fails on Windows")
+    @EnabledForJreRange(min = JRE.JAVA_16)
     public void testLowLevelH2OverUNIX() throws Exception
     {
         HttpConfiguration httpConfig = new HttpConfiguration();
@@ -423,7 +427,7 @@ public class HTTPDynamicTransportTest extends AbstractTransportTest
 
         Transport.TCPUnix transport = new Transport.TCPUnix(unixDomainPath);
         Promise.Completable<Session> promise = new Promise.Completable<>();
-        http2Client.connect(transport, null, UnixDomainSocketAddress.of(unixDomainPath), new Session.Listener() {}, promise);
+        http2Client.connect(transport, null, UnixDomain.addressOf(unixDomainPath), new Session.Listener() {}, promise);
         Session session = promise.get(5, TimeUnit.SECONDS);
 
         CountDownLatch responseLatch = new CountDownLatch(1);

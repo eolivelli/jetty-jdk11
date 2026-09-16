@@ -171,8 +171,11 @@ public class ServletContextHandler extends ContextHandler
 
     public static ServletContextHandler getServletContextHandler(jakarta.servlet.ServletContext servletContext, String purpose)
     {
-        if (servletContext instanceof ServletContextApi servletContextApi)
+        if (servletContext instanceof ServletContextApi)
+        {
+            ServletContextApi servletContextApi = (ServletContextApi)servletContext;
             return servletContextApi.getContext().getServletContextHandler();
+        }
         ServletContextHandler sch = getCurrentServletContextHandler();
         if (sch != null)
             return sch;
@@ -194,16 +197,22 @@ public class ServletContextHandler extends ContextHandler
 
     public static jakarta.servlet.ServletContext getServletContext(Context context)
     {
-        if (context instanceof ServletScopedContext servletScopedContext)
+        if (context instanceof ServletScopedContext)
+        {
+            ServletScopedContext servletScopedContext = (ServletScopedContext)context;
             return servletScopedContext.getServletContext();
+        }
         return null;
     }
 
     public static ServletContextHandler getCurrentServletContextHandler()
     {
         Context context = ContextHandler.getCurrentContext();
-        if (context instanceof ServletScopedContext servletScopedContext)
+        if (context instanceof ServletScopedContext)
+        {
+            ServletScopedContext servletScopedContext = (ServletScopedContext)context;
             return servletScopedContext.getServletContextHandler();
+        }
         return null;
     }
 
@@ -892,8 +901,9 @@ public class ServletContextHandler extends ContextHandler
     @Override
     public ServletScopedContext getContext()
     {
-        if (super.getContext() instanceof ServletScopedContext servletScopedContext)
-            return servletScopedContext;
+        ScopedContext context = super.getContext();
+        if (context instanceof ServletScopedContext)
+            return (ServletScopedContext)context;
         throw new IllegalStateException("Context is not ServletScopedContext");
     }
 
@@ -1000,19 +1010,22 @@ public class ServletContextHandler extends ContextHandler
     private void relinkHandlers()
     {
         Singleton handler = this;
+        Handler wrapped;
 
         // link session handler
         if (getSessionHandler() != null)
         {
-            while (!(handler.getHandler() instanceof SessionHandler) &&
-                !(handler.getHandler() instanceof SecurityHandler) &&
-                !(handler.getHandler() instanceof ServletHandler) &&
-                handler.getHandler() instanceof Singleton wrapped)
+            wrapped = handler.getHandler();
+            while (!(wrapped instanceof SessionHandler) &&
+                !(wrapped instanceof SecurityHandler) &&
+                !(wrapped instanceof ServletHandler) &&
+                wrapped instanceof Singleton)
             {
-                handler = wrapped;
+                handler = (Singleton)wrapped;
+                wrapped = handler.getHandler();
             }
 
-            if (handler.getHandler() != _sessionHandler)
+            if (wrapped != _sessionHandler)
                 doSetHandler(handler, _sessionHandler);
             handler = _sessionHandler;
         }
@@ -1020,14 +1033,16 @@ public class ServletContextHandler extends ContextHandler
         // link security handler
         if (getSecurityHandler() != null)
         {
-            while (!(handler.getHandler() instanceof SecurityHandler) &&
-                !(handler.getHandler() instanceof ServletHandler) &&
-                handler.getHandler() instanceof Singleton wrapped)
+            wrapped = handler.getHandler();
+            while (!(wrapped instanceof SecurityHandler) &&
+                !(wrapped instanceof ServletHandler) &&
+                wrapped instanceof Singleton)
             {
-                handler = wrapped;
+                handler = (Singleton)wrapped;
+                wrapped = handler.getHandler();
             }
 
-            if (handler.getHandler() != _securityHandler)
+            if (wrapped != _securityHandler)
                 doSetHandler(handler, _securityHandler);
             handler = _securityHandler;
         }
@@ -1035,13 +1050,15 @@ public class ServletContextHandler extends ContextHandler
         // link servlet handler
         if (getServletHandler() != null)
         {
-            while (!(handler.getHandler() instanceof ServletHandler) &&
-                handler.getHandler() instanceof Singleton wrapped)
+            wrapped = handler.getHandler();
+            while (!(wrapped instanceof ServletHandler) &&
+                wrapped instanceof Singleton)
             {
-                handler = wrapped;
+                handler = (Singleton)wrapped;
+                wrapped = handler.getHandler();
             }
 
-            if (handler.getHandler() != _servletHandler)
+            if (wrapped != _servletHandler)
                 doSetHandler(handler, _servletHandler);
         }
     }
@@ -1179,7 +1196,8 @@ public class ServletContextHandler extends ContextHandler
         Attributes cache = request.getComponents().getCache();
         Object cachedChannel = cache.getAttribute(ServletChannel.class.getName());
         ServletChannel servletChannel;
-        if (cachedChannel instanceof ServletChannel sc && sc.getContext() == getContext() && !sc.isAborted())
+        ServletChannel sc = cachedChannel instanceof ServletChannel ? (ServletChannel)cachedChannel : null;
+        if (sc != null && sc.getContext() == getContext() && !sc.isAborted())
         {
             servletChannel = sc;
         }
@@ -1206,8 +1224,11 @@ public class ServletContextHandler extends ContextHandler
     @Override
     protected ContextResponse wrapResponse(ContextRequest request, Response response)
     {
-        if (request instanceof ServletContextRequest servletContextRequest)
+        if (request instanceof ServletContextRequest)
+        {
+            ServletContextRequest servletContextRequest = (ServletContextRequest)request;
             return servletContextRequest.getServletContextResponse();
+        }
         return super.wrapResponse(request, response);
     }
 
@@ -1222,8 +1243,12 @@ public class ServletContextHandler extends ContextHandler
         {
             // If we have a Servlet ErrorHandler, then writeError will return false, and it will signal
             // the ServletChannel to trigger a sendError() when it is started.
-            if (request.getContext().getErrorHandler() instanceof org.eclipse.jetty.server.handler.ErrorHandler errorHandler)
+            Request.Handler contextErrorHandler = request.getContext().getErrorHandler();
+            if (contextErrorHandler instanceof org.eclipse.jetty.server.handler.ErrorHandler)
+            {
+                org.eclipse.jetty.server.handler.ErrorHandler errorHandler = (org.eclipse.jetty.server.handler.ErrorHandler)contextErrorHandler;
                 return errorHandler.writeError(request, response, callback, HttpStatus.NOT_FOUND_404);
+            }
             Response.writeError(request, response, callback, HttpStatus.NOT_FOUND_404);
             return true;
         }
@@ -1652,13 +1677,14 @@ public class ServletContextHandler extends ContextHandler
             Singleton wrapper = this;
             while (wrapper != null)
             {
-                if (wrapper.getHandler() == handler)
+                Handler wrapped = wrapper.getHandler();
+                if (wrapped == handler)
                 {
                     doSetHandler(wrapper, replacement);
                     break;
                 }
 
-                wrapper = (wrapper.getHandler() instanceof Singleton wrapped) ? wrapped : null;
+                wrapper = (wrapped instanceof Singleton) ? (Singleton)wrapped : null;
             }
         }
 
@@ -2084,39 +2110,43 @@ public class ServletContextHandler extends ContextHandler
         @Override
         public Object getAttribute(String name)
         {
-            return switch (name)
+            switch (name)
             {
-                case FormFields.MAX_FIELDS_ATTRIBUTE -> getMaxFormKeys();
-                case FormFields.MAX_LENGTH_ATTRIBUTE -> getMaxFormContentSize();
-                default -> super.getAttribute(name);
-            };
+                case FormFields.MAX_FIELDS_ATTRIBUTE:
+                    return getMaxFormKeys();
+                case FormFields.MAX_LENGTH_ATTRIBUTE:
+                    return getMaxFormContentSize();
+                default:
+                    return super.getAttribute(name);
+            }
         }
 
         @Override
         public Object setAttribute(String name, Object attribute)
         {
-            return switch (name)
+            switch (name)
             {
-                case FormFields.MAX_FIELDS_ATTRIBUTE ->
+                case FormFields.MAX_FIELDS_ATTRIBUTE:
                 {
                     int oldValue = getMaxFormKeys();
                     if (attribute == null)
                         setMaxFormKeys(DEFAULT_MAX_FORM_KEYS);
                     else
                         setMaxFormKeys(Integer.parseInt(attribute.toString()));
-                    yield oldValue;
+                    return oldValue;
                 }
-                case FormFields.MAX_LENGTH_ATTRIBUTE ->
+                case FormFields.MAX_LENGTH_ATTRIBUTE:
                 {
                     int oldValue = getMaxFormContentSize();
                     if (attribute == null)
                         setMaxFormContentSize(DEFAULT_MAX_FORM_CONTENT_SIZE);
                     else
                         setMaxFormContentSize(Integer.parseInt(attribute.toString()));
-                    yield oldValue;
+                    return oldValue;
                 }
-                default -> super.setAttribute(name, attribute);
-            };
+                default:
+                    return super.setAttribute(name, attribute);
+            }
         }
 
         @Override

@@ -110,8 +110,9 @@ public class SslClientConnectionFactory extends ClientConnectionFactory.Wrapper
     {
         SSLEngine engine;
         SocketAddress remote = (SocketAddress)context.get(ClientConnector.REMOTE_SOCKET_ADDRESS_CONTEXT_KEY);
-        if (remote instanceof InetSocketAddress inetRemote)
+        if (remote instanceof InetSocketAddress)
         {
+            InetSocketAddress inetRemote = (InetSocketAddress)remote;
             String host = inetRemote.getHostString();
             int port = inetRemote.getPort();
             engine = _sslContextFactory instanceof SslEngineFactory
@@ -144,8 +145,9 @@ public class SslClientConnectionFactory extends ClientConnectionFactory.Wrapper
     @Override
     public Connection customize(Connection connection, Map<String, Object> context)
     {
-        if (connection instanceof SslConnection sslConnection)
+        if (connection instanceof SslConnection)
         {
+            SslConnection sslConnection = (SslConnection)connection;
             sslConnection.setRenegotiationAllowed(_sslContextFactory.isRenegotiationAllowed());
             sslConnection.setRenegotiationLimit(_sslContextFactory.getRenegotiationLimit());
             sslConnection.setRequireCloseMessage(isRequireCloseMessage());

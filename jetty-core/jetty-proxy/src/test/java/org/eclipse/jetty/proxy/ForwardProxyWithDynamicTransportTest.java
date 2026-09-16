@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
@@ -275,7 +276,7 @@ public class ForwardProxyWithDynamicTransportTest
 
         List<Destination> destinations = client.getDestinations().stream()
             .filter(d -> d.getOrigin().getAddress().getPort() == serverPort)
-            .toList();
+            .collect(Collectors.toList());
         assertEquals(1, destinations.size());
         Destination destination = destinations.get(0);
         AbstractConnectionPool connectionPool = (AbstractConnectionPool)destination.getConnectionPool();
@@ -516,7 +517,7 @@ public class ForwardProxyWithDynamicTransportTest
 
         List<Destination> destinations = client.getDestinations().stream()
             .filter(d -> d.getOrigin().getAddress().getPort() == serverPort)
-            .toList();
+            .collect(Collectors.toList());
         assertEquals(1, destinations.size());
         Destination destination = destinations.get(0);
         AbstractConnectionPool connectionPool = (AbstractConnectionPool)destination.getConnectionPool();
@@ -525,7 +526,7 @@ public class ForwardProxyWithDynamicTransportTest
         List<HTTP2Connection> serverConnections = proxyConnector.getConnectedEndPoints().stream()
             .map(EndPoint::getConnection)
             .map(HTTP2Connection.class::cast)
-            .toList();
+            .collect(Collectors.toList());
         assertEquals(1, serverConnections.size());
         assertTrue(serverConnections.get(0).getSession().getStreams().isEmpty());
     }
@@ -591,7 +592,7 @@ public class ForwardProxyWithDynamicTransportTest
 
         List<Destination> destinations = client.getDestinations().stream()
             .filter(d -> d.getOrigin().getAddress().getPort() == proxyPort)
-            .toList();
+            .collect(Collectors.toList());
         assertEquals(1, destinations.size());
         Destination destination = destinations.get(0);
         AbstractConnectionPool connectionPool = (AbstractConnectionPool)destination.getConnectionPool();

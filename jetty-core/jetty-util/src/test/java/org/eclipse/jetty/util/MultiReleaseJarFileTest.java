@@ -54,11 +54,9 @@ public class MultiReleaseJarFileTest
         {
             Path root = zipfs.getPath("/");
 
-            writeString(root.resolve("META-INF/MANIFEST.MF"), """
-                Manifest-Version: 1.0
-                Multi-Release: true
-                Created-By: MultiReleaseJarFileTest
-                """);
+            writeString(root.resolve("META-INF/MANIFEST.MF"), "Manifest-Version: 1.0\n" +
+                "Multi-Release: true\n" +
+                "Created-By: MultiReleaseJarFileTest\n");
 
             writeString(root.resolve("META-INF/versions/10/org/example/In10Only.class"), "In10Only (versions/10)");
             writeString(root.resolve("META-INF/versions/10/org/example/InBoth.class"), "InBoth (versions/10)");

@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.ee.webapp.WebAppClassLoader;
 import org.eclipse.jetty.server.Server;
@@ -84,14 +85,12 @@ public class MetaInfConfigurationTest
         FS.ensureDirExists(webinf);
         Path webxml = webinf.resolve("web.xml");
 
-        String web25 = """
-            <?xml version="1.0" encoding="ISO-8859-1"?>
-            <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-               version="2.5">
-              <display-name>Test 2.5 WebApp</display-name>
-            </web-app>
-            """;
+        String web25 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+            "<web-app xmlns=\"http://java.sun.com/xml/ns/javaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+            "   xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd\"\n" +
+            "   version=\"2.5\">\n" +
+            "  <display-name>Test 2.5 WebApp</display-name>\n" +
+            "</web-app>\n";
 
         Files.writeString(webxml, web25, StandardCharsets.UTF_8);
         Path libDir = webinf.resolve("lib");
@@ -139,7 +138,7 @@ public class MetaInfConfigurationTest
                 .sorted(ResourceCollators.byName(true))
                 .map(Resource::getURI)
                 .map(URI::toASCIIString)
-                .toList();
+                .collect(Collectors.toList());
             String[] expectedWebInfResources = {
                 fooFragmentJar.toUri().toASCIIString(),
                 barResourceJar.toUri().toASCIIString(),
@@ -158,7 +157,7 @@ public class MetaInfConfigurationTest
                 .stream()
                 .map(Resource::getURI)
                 .map(URI::toASCIIString)
-                .toList();
+                .collect(Collectors.toList());
             String[] expectedResources = {
                 URIUtil.toJarFileUri(barResourceJar.toUri()).toASCIIString() + "META-INF/resources/"
             };
@@ -170,7 +169,7 @@ public class MetaInfConfigurationTest
             List<String> discoveredTlds = tldSet
                 .stream()
                 .map(URL::toExternalForm)
-                .toList();
+                .collect(Collectors.toList());
             String[] expectedTlds = {
                 URIUtil.toJarFileUri(zedTldJar.toUri()).toASCIIString() + "META-INF/zed.tld"
             };
@@ -195,14 +194,12 @@ public class MetaInfConfigurationTest
         FS.ensureDirExists(webinf);
         Path webxml = webinf.resolve("web.xml");
 
-        String web25 = """
-            <?xml version="1.0" encoding="ISO-8859-1"?>
-            <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-               version="2.5">
-              <display-name>Test 2.5 WebApp</display-name>
-            </web-app>
-            """;
+        String web25 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+            "<web-app xmlns=\"http://java.sun.com/xml/ns/javaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+            "   xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd\"\n" +
+            "   version=\"2.5\">\n" +
+            "  <display-name>Test 2.5 WebApp</display-name>\n" +
+            "</web-app>\n";
 
         Files.writeString(webxml, web25, StandardCharsets.UTF_8);
         Path libDir = webinf.resolve("lib");
@@ -250,7 +247,7 @@ public class MetaInfConfigurationTest
                 .sorted(ResourceCollators.byName(true))
                 .map(Resource::getURI)
                 .map(URI::toASCIIString)
-                .toList();
+                .collect(Collectors.toList());
             String[] expectedWebInfResources = {
                 fooFragmentJar.toUri().toASCIIString(),
                 barResourceJar.toUri().toASCIIString(),
@@ -264,7 +261,7 @@ public class MetaInfConfigurationTest
             List<String> discoveredFragments = fragmentMap.entrySet()
                 .stream()
                 .map(e -> e.getValue().getURI().toASCIIString())
-                .toList();
+                .collect(Collectors.toList());
             String[] expectedFragments = {
                 URIUtil.toJarFileUri(fooFragmentJar.toUri()).toASCIIString() + "META-INF/web-fragment.xml"
             };
@@ -277,7 +274,7 @@ public class MetaInfConfigurationTest
                 .stream()
                 .map(Resource::getURI)
                 .map(URI::toASCIIString)
-                .toList();
+                .collect(Collectors.toList());
             String[] expectedResources = {
                 URIUtil.toJarFileUri(barResourceJar.toUri()).toASCIIString() + "META-INF/resources/"
             };
@@ -289,7 +286,7 @@ public class MetaInfConfigurationTest
             List<String> discoveredTlds = tldSet
                 .stream()
                 .map(URL::toExternalForm)
-                .toList();
+                .collect(Collectors.toList());
             String[] expectedTlds = {
                 URIUtil.toJarFileUri(zedTldJar.toUri()).toASCIIString() + "META-INF/zed.tld"
             };
@@ -312,15 +309,13 @@ public class MetaInfConfigurationTest
         FS.ensureDirExists(webinf);
         Path webxml = webinf.resolve("web.xml");
 
-        String web30 = """
-            <?xml version="1.0" encoding="ISO-8859-1"?>
-            <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-                 metadata-complete="false"
-                 version="3.0">
-              <display-name>Test 3.0 WebApp</display-name>
-            </web-app>
-            """;
+        String web30 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+            "<web-app xmlns=\"http://java.sun.com/xml/ns/javaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+            "     xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd\"\n" +
+            "     metadata-complete=\"false\"\n" +
+            "     version=\"3.0\">\n" +
+            "  <display-name>Test 3.0 WebApp</display-name>\n" +
+            "</web-app>\n";
 
         Files.writeString(webxml, web30, StandardCharsets.UTF_8);
         Path libDir = webinf.resolve("lib");
@@ -368,7 +363,7 @@ public class MetaInfConfigurationTest
                 .sorted(ResourceCollators.byName(true))
                 .map(Resource::getURI)
                 .map(URI::toASCIIString)
-                .toList();
+                .collect(Collectors.toList());
             String[] expectedWebInfResources = {
                 fooFragmentJar.toUri().toASCIIString(),
                 barResourceJar.toUri().toASCIIString(),
@@ -382,7 +377,7 @@ public class MetaInfConfigurationTest
             List<String> discoveredFragments = fragmentMap.entrySet()
                 .stream()
                 .map(e -> e.getValue().getURI().toASCIIString())
-                .toList();
+                .collect(Collectors.toList());
             String[] expectedFragments = {
                 URIUtil.toJarFileUri(fooFragmentJar.toUri()).toASCIIString() + "META-INF/web-fragment.xml"
             };
@@ -395,7 +390,7 @@ public class MetaInfConfigurationTest
                 .stream()
                 .map(Resource::getURI)
                 .map(URI::toASCIIString)
-                .toList();
+                .collect(Collectors.toList());
             String[] expectedResources = {
                 URIUtil.toJarFileUri(barResourceJar.toUri()).toASCIIString() + "META-INF/resources/"
             };
@@ -407,7 +402,7 @@ public class MetaInfConfigurationTest
             List<String> discoveredTlds = tldSet
                 .stream()
                 .map(URL::toExternalForm)
-                .toList();
+                .collect(Collectors.toList());
             String[] expectedTlds = {
                 URIUtil.toJarFileUri(zedTldJar.toUri()).toASCIIString() + "META-INF/zed.tld"
             };
@@ -430,15 +425,13 @@ public class MetaInfConfigurationTest
         FS.ensureDirExists(webinf);
         Path webxml = webinf.resolve("web.xml");
 
-        String web31 = """
-            <?xml version="1.0" encoding="ISO-8859-1"?>
-            <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-                 metadata-complete="true"
-                 version="3.1">
-              <display-name>Test 3.1 WebApp</display-name>
-            </web-app>
-            """;
+        String web31 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+            "<web-app xmlns=\"http://java.sun.com/xml/ns/javaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+            "     xsi:schemaLocation=\"http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd\"\n" +
+            "     metadata-complete=\"true\"\n" +
+            "     version=\"3.1\">\n" +
+            "  <display-name>Test 3.1 WebApp</display-name>\n" +
+            "</web-app>\n";
 
         Files.writeString(webxml, web31, StandardCharsets.UTF_8);
         Path libDir = webinf.resolve("lib");
@@ -485,7 +478,7 @@ public class MetaInfConfigurationTest
                 .sorted(ResourceCollators.byName(true))
                 .map(Resource::getURI)
                 .map(URI::toASCIIString)
-                .toList();
+                .collect(Collectors.toList());
             String[] expectedWebInfResources = {
                 fooFragmentJar.toUri().toASCIIString(),
                 barResourceJar.toUri().toASCIIString(),
@@ -504,7 +497,7 @@ public class MetaInfConfigurationTest
                 .stream()
                 .map(Resource::getURI)
                 .map(URI::toASCIIString)
-                .toList();
+                .collect(Collectors.toList());
             String[] expectedResources = {
                 URIUtil.toJarFileUri(barResourceJar.toUri()).toASCIIString() + "META-INF/resources/"
             };
@@ -516,7 +509,7 @@ public class MetaInfConfigurationTest
             List<String> discoveredTlds = tldSet
                 .stream()
                 .map(URL::toExternalForm)
-                .toList();
+                .collect(Collectors.toList());
             String[] expectedTlds = {
                 URIUtil.toJarFileUri(zedTldJar.toUri()).toASCIIString() + "META-INF/zed.tld"
             };
@@ -607,7 +600,7 @@ public class MetaInfConfigurationTest
                 .map(Resource::getURI)
                 .map(URIUtil::unwrapContainer)
                 .map(URI::toASCIIString)
-                .toList();
+                .collect(Collectors.toList());
             // we "correct" the bad file URLs that come from the ClassLoader
             // to be the same as what comes from every non-classloader URL/URI.
             String[] expectedContainerResources = {

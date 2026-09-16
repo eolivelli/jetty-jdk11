@@ -522,7 +522,7 @@ public class HttpTester
                                 int chunkMaxLength = generator.getChunkMaxLength();
                                 if (generator.isChunking() && content.remaining() > chunkMaxLength)
                                 {
-                                    ByteBuffer slice = content.slice(content.position(), chunkMaxLength);
+                                    ByteBuffer slice = BufferUtil.absoluteSlice(content, content.position(), chunkMaxLength);
                                     content.position(content.position() + chunkMaxLength);
                                     content = slice;
                                 }

@@ -94,6 +94,6 @@ public abstract class AbstractStream implements Stream, CyclicTimeouts.Expirable
     @Override
     public String toString()
     {
-        return "%s@%x#%d".formatted(TypeUtil.toShortName(getClass()), hashCode(), getId());
+        return String.format("%s@%x#%d", TypeUtil.toShortName(getClass()), hashCode(), getId());
     }
 }

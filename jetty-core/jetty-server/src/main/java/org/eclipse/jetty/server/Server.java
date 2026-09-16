@@ -338,8 +338,11 @@ public class Server extends Handler.Wrapper implements Attributes
 
     public void setErrorHandler(Request.Handler errorHandler)
     {
-        if (errorHandler instanceof Handler handler)
+        if (errorHandler instanceof Handler)
+        {
+            Handler handler = (Handler)errorHandler;
             handler.setServer(this);
+        }
         updateBean(_errorHandler, errorHandler);
         _errorHandler = errorHandler;
     }
@@ -909,7 +912,50 @@ public class Server extends Handler.Wrapper implements Attributes
         System.err.println(getVersion());
     }
 
-    private record DateField(long seconds, HttpField dateField) {}
+    private static final class DateField
+    {
+        private final long seconds;
+        private final HttpField dateField;
+
+        private DateField(long seconds, HttpField dateField)
+        {
+            this.seconds = seconds;
+            this.dateField = dateField;
+        }
+
+        public long seconds()
+        {
+            return seconds;
+        }
+
+        public HttpField dateField()
+        {
+            return dateField;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            DateField that = (DateField)obj;
+            return seconds == that.seconds && Objects.equals(dateField, that.dateField);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(seconds, dateField);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "DateField[seconds=" + seconds + ", dateField=" + dateField + "]";
+        }
+    }
 
     private static class DynamicErrorHandler extends ErrorHandler {}
 
@@ -1012,7 +1058,7 @@ public class Server extends Handler.Wrapper implements Attributes
         @Override
         public String toString()
         {
-            return "ServerContext@%x".formatted(Server.this.hashCode());
+            return String.format("ServerContext@%x", Server.this.hashCode());
         }
     }
 }

@@ -28,7 +28,7 @@ This file is updated as the work progresses. Legend: ✅ done · 🔄 in progres
 | 6 | jetty-core test suites (all modules) on JDK 11 | 🔄 | running in 3 parallel worktrees: server-stack (session, security, deploy, rewrite, …), http2/fcgi/proxy/alpn/compression, websocket/quic/http3/client-transports |
 | 7 | EE10 / EE9 / EE8 test suites on JDK 11 | ⏳ | |
 | 8 | Integrations, OSGi, session (Docker) test suites | ⏳ | |
-| 9 | jetty-home build, class-file major-version scan of `lib/` (must be ≤ 55), start.jar smoke test on JDK 11 (ee10/ee9/ee8 demos, JSP with ECJ 3.33) | 🔄 | jetty-home builds; scan of `lib/` (198 jars): no class file newer than Java 11; smoke test in progress |
+| 9 | jetty-home build, class-file major-version scan of `lib/` (must be ≤ 55), start.jar smoke test on JDK 11 (ee10/ee9/ee8 demos, JSP with ECJ 3.33) | ✅ | jetty-home builds; scan of `lib/` (198 jars): no class file newer than Java 11; `start.jar` on JDK 11.0.32 with `server,http,http2c,ee10/ee9/ee8-deploy` + simple/jsp/spec demos: all three environments deploy, `dump.jsp` renders (200) on ee10, ee9 and ee8, no errors in the log |
 | 10 | test-distribution, maven-plugin ITs, checkstyle/spotless re-enabled for the final build | ⏳ | |
 
 ## Decisions / known deviations

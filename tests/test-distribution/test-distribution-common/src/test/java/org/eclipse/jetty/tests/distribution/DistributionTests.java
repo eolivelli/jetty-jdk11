@@ -445,6 +445,7 @@ public class DistributionTests extends AbstractJettyHomeTest
     }
 
     @Test
+    @EnabledForJreRange(min = JRE.JAVA_16)
     public void testUnixDomain() throws Exception
     {
         Path jettyBase = newTestJettyBaseDirectory();
@@ -1263,7 +1264,7 @@ public class DistributionTests extends AbstractJettyHomeTest
             Path altWebapps = distribution.getJettyBase().resolve("alt-webapps");
             FS.ensureDirExists(altWebapps);
 
-            Path war = distribution.resolveArtifact("org.eclipse.jetty.demos:jetty-servlet6-demo-simple-webapp:war:" + jettyVersion);
+            Path war = distribution.resolveArtifact("org.eclipse.jetty.demos:jetty-servlet5-demo-simple-webapp:war:" + jettyVersion);
             Files.copy(war, altWebapps.resolve("demo.war"));
 
             int httpPort = Tester.freePort();

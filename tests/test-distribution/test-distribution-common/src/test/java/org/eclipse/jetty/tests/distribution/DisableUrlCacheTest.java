@@ -49,8 +49,7 @@ public class DisableUrlCacheTest extends AbstractJettyHomeTest
     public static Stream<Arguments> tests()
     {
         return Stream.of(
-            Arguments.of("ee10", "Started oeje10w.WebAppContext@"),
-            Arguments.of("Started oeje11w.WebAppContext@")
+            Arguments.of("ee10", "Started oeje10w.WebAppContext@")
         );
     }
 

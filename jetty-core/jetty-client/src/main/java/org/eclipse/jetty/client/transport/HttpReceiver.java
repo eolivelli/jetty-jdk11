@@ -624,8 +624,6 @@ public abstract class HttpReceiver implements Invocable
 
     private class DecodedContentSource implements Content.Source, Invocable
     {
-        private static final Logger LOG = LoggerFactory.getLogger(DecodedContentSource.class);
-
         private final Content.Source source;
         private final Response response;
         private long decodedLength;
@@ -714,8 +712,6 @@ public abstract class HttpReceiver implements Invocable
 
     private class ContentSource implements Content.Source, Invocable
     {
-        private static final Logger LOG = LoggerFactory.getLogger(ContentSource.class);
-
         private final AtomicReference<Runnable> demandCallbackRef = new AtomicReference<>();
         private final AutoLock lock = new AutoLock();
         private final Runnable processDemand = this::processDemand;

@@ -252,7 +252,7 @@ public class DigestAuthentication extends AbstractAuthentication
             request.headers(headers -> headers.add(header, value));
         }
 
-        private static byte[] strictEncode(Charset charset, String value)
+        private byte[] strictEncode(Charset charset, String value)
         {
             try
             {
@@ -270,7 +270,7 @@ public class DigestAuthentication extends AbstractAuthentication
             }
         }
 
-        private static boolean userNameNeedsEncoding(String user)
+        private boolean userNameNeedsEncoding(String user)
         {
             // Should be RFC 9110 quoted-string,
             // but use here a simplified version.
@@ -283,7 +283,7 @@ public class DigestAuthentication extends AbstractAuthentication
             return false;
         }
 
-        private static String encodeUserName(String user, Charset charset)
+        private String encodeUserName(String user, Charset charset)
         {
             byte[] bytes = strictEncode(charset, user);
             StringBuilder builder = new StringBuilder(charset.name()).append("''");

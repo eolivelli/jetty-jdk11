@@ -210,7 +210,7 @@ public class HTTP2ListenersTest extends AbstractTest
                 ((HTTP2Session)session).addEventListener(new PingListener());
             }
 
-            private class PingListener implements HTTP2Session.FrameListener
+            class PingListener implements HTTP2Session.FrameListener
             {
                 private final AtomicBoolean firstPing = new AtomicBoolean();
                 private Scheduler.Task task;

@@ -54,9 +54,11 @@ public class HttpSpiContextHandler extends ContextHandler
             @Override
             public boolean handle(Request request, Response response, Callback callback)
             {
-                try (HttpExchange jettyHttpExchange = request.isSecure()
+                // HttpExchange is AutoCloseable only since Java 17, so it cannot be used in try-with-resources.
+                HttpExchange jettyHttpExchange = request.isSecure()
                     ? new JettyHttpsExchange(_httpContext, request, response)
-                    : new JettyHttpExchange(_httpContext, request, response))
+                    : new JettyHttpExchange(_httpContext, request, response);
+                try
                 {
                     Authenticator auth = _httpContext.getAuthenticator();
                     if (auth != null && handleAuthentication(request, response, callback, jettyHttpExchange, auth))
@@ -70,6 +72,10 @@ public class HttpSpiContextHandler extends ContextHandler
                     if (LOG.isDebugEnabled())
                         LOG.debug("Failed to handle", t);
                     Response.writeError(request, response, callback, 500, null, t);
+                }
+                finally
+                {
+                    jettyHttpExchange.close();
                 }
                 return true;
             }

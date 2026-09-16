@@ -919,7 +919,7 @@ public class ServletHolder extends Holder<Servlet> implements Comparable<Servlet
     {
         if (StringUtil.isBlank(element))
             return;
-        if (!path.isEmpty())
+        if (path.length() > 0)
             path.append(".");
         path.append(element);
     }

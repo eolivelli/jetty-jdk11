@@ -44,3 +44,9 @@ Branch `jetty-12.1.x-jdk11` (from `jetty-12.1.x` @ bdc419f91bd). PR: https://git
 ## Tooling (outside the repo, `/home/eolivelli/dev/jetty-jdk11-tools/`)
 
 `mvn11.sh` (Maven on JDK 11 with a per-worktree local repo), `desugar/` (JavaParser tool), `scan-major.sh` (class-file version scanner), `RECIPE.md` (hand-porting rules given to worker agents).
+
+## Review rounds (automated: picky reviewer agents per commit → worker agents fix → re-review)
+
+| Round | Reviewers | Findings (high/medium/low/nit) | Outcome |
+|---|---|---|---|
+| 1 | 7 reviewers: build/poms, core hand-port, desugar core main, desugar EE main, desugar tests, wave-1 EE, wave-1 core | in progress | |

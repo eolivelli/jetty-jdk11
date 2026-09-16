@@ -300,7 +300,7 @@ public class SerializedInvoker
         }
     }
 
-    private class NamedRunnable extends Invocable.ReadyTask
+    private static class NamedRunnable extends Invocable.ReadyTask
     {
         private static final Logger LOG = LoggerFactory.getLogger(NamedRunnable.class);
 

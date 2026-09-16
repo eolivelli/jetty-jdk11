@@ -59,6 +59,14 @@ public class RFC9110QuotedStringTokenizer implements QuotedStringTokenizer
         return Character.isWhitespace(c);
     }
 
+    private enum State
+    {
+        START,
+        TOKEN,
+        QUOTE,
+        END,
+    }
+
     @Override
     public Iterator<String> tokenize(String string)
     {
@@ -66,14 +74,6 @@ public class RFC9110QuotedStringTokenizer implements QuotedStringTokenizer
 
         return new Iterator<>()
         {
-            private enum State
-            {
-                START,
-                TOKEN,
-                QUOTE,
-                END,
-            }
-
             private final StringBuilder _token = new StringBuilder();
             State _state = State.START;
             private boolean _hasToken;

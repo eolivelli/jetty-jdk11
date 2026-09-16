@@ -19,6 +19,8 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.ProviderNotFoundException;
+import java.nio.file.spi.FileSystemProvider;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -131,7 +133,13 @@ public class MountedPathResourceFactory implements ResourceFactory
         try
         {
             //noinspection resource (handled by MountedPathResource)
-            return FileSystems.newFileSystem(containerPath, ENV_MULTIRELEASE_RUNTIME);
+            // FileSystems.newFileSystem(Path, Map) is only available since Java 13.
+            for (FileSystemProvider provider : FileSystemProvider.installedProviders())
+            {
+                if ("jar".equalsIgnoreCase(provider.getScheme()))
+                    return provider.newFileSystem(containerPath, ENV_MULTIRELEASE_RUNTIME);
+            }
+            throw new ProviderNotFoundException("Provider not found: jar");
         }
         catch (IOException e)
         {

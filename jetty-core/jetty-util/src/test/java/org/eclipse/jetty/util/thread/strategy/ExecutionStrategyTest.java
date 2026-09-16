@@ -235,9 +235,10 @@ public class ExecutionStrategyTest
             CountDownLatch latch = new CountDownLatch(TASKS);
             AtomicReference<ExecutionStrategy> strategyRef = new AtomicReference<>();
             AtomicReference<Throwable> failureRef = new AtomicReference<>();
+            ThreadLocal<Thread> threadLocal = new ThreadLocal<>();
             Producer producer = new TestProducer()
             {
-                private static final ThreadLocal<Thread> THREAD = new ThreadLocal<>();
+                private final ThreadLocal<Thread> THREAD = threadLocal;
                 int tasks = TASKS;
 
                 @Override

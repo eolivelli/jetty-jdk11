@@ -1306,7 +1306,7 @@ public class AsyncJSON
         {
             if (integer == 0)
             {
-                if (builder.isEmpty())
+                if (builder.length() == 0)
                 {
                     builder.append((char)b);
                     return true;

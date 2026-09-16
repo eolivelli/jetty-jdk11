@@ -14,6 +14,7 @@
 package org.eclipse.jetty.websocket.api;
 
 import java.nio.ByteBuffer;
+import java.util.Objects;
 
 /**
  * An immutable websocket frame.
@@ -107,8 +108,49 @@ public interface Frame
         return null;
     }
 
-    record CloseStatus(int statusCode, String reason)
+    final class CloseStatus
     {
+        private final int statusCode;
+        private final String reason;
+
+        public CloseStatus(int statusCode, String reason)
+        {
+            this.statusCode = statusCode;
+            this.reason = reason;
+        }
+
+        public int statusCode()
+        {
+            return statusCode;
+        }
+
+        public String reason()
+        {
+            return reason;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            CloseStatus that = (CloseStatus)obj;
+            return statusCode == that.statusCode && Objects.equals(reason, that.reason);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(statusCode, reason);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "CloseStatus[statusCode=" + statusCode + ", reason=" + reason + "]";
+        }
     }
 
     /**

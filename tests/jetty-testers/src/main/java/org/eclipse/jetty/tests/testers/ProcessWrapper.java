@@ -141,8 +141,15 @@ public class ProcessWrapper implements AutoCloseable
         return false;
     }
 
-    private record ShowLogOnTimeout<T>(ProcessWrapper run) implements ConditionEvaluationListener<T>
+    private static final class ShowLogOnTimeout<T> implements ConditionEvaluationListener<T>
     {
+        private final ProcessWrapper run;
+
+        private ShowLogOnTimeout(ProcessWrapper run)
+        {
+            this.run = run;
+        }
+
         @Override
         public void conditionEvaluated(EvaluatedCondition<T> condition)
         {

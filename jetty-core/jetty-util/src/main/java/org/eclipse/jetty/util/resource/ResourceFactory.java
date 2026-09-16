@@ -244,23 +244,17 @@ public interface ResourceFactory
         if (StringUtil.isBlank(resource))
             throw new IllegalArgumentException("Resource String is invalid: " + resource);
 
-        // We need a local interface to combine static and non-static methods
-        interface Source
-        {
-            Enumeration<URL> getResources(String name) throws IOException;
-        }
-
-        List<Source> sources = new ArrayList<>();
-        sources.add(Thread.currentThread().getContextClassLoader()::getResources);
-        sources.add(ResourceFactory.class.getClassLoader()::getResources);
+        List<ClassLoader> sources = new ArrayList<>();
+        sources.add(Thread.currentThread().getContextClassLoader());
+        sources.add(ResourceFactory.class.getClassLoader());
         if (searchSystemClassLoader)
-            sources.add(ClassLoader::getSystemResources);
+            sources.add(ClassLoader.getSystemClassLoader());
 
         List<Resource> resources = new ArrayList<>();
         String[] names = resource.startsWith("/") ? new String[] {resource, resource.substring(1)} : new String[] {resource};
 
         // For each source of resource
-        for (Source source : sources)
+        for (ClassLoader source : sources)
         {
             // for each variation of the resource name
             for (String name : names)
@@ -268,7 +262,7 @@ public interface ResourceFactory
                 try
                 {
                     // Get all matching URLs
-                    Enumeration<URL> urls = source.getResources(name);
+                    Enumeration<URL> urls = source == null ? ClassLoader.getSystemResources(name) : source.getResources(name);
                     while (urls.hasMoreElements())
                     {
                         // Get the resource

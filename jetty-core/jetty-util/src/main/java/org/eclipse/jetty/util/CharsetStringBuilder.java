@@ -382,7 +382,7 @@ public interface CharsetStringBuilder
                 {
                     CharSequence decoded = _decoder.decode(_buffer.flip());
                     _buffer.clear();
-                    if (_stringBuilder.isEmpty())
+                    if (_stringBuilder.length() == 0)
                         return decoded.toString();
                     _stringBuilder.append(decoded);
                 }

@@ -83,12 +83,12 @@ public class Fields implements Iterable<Fields.Field>
      */
     public Fields(Fields fields)
     {
-        if (fields.fields instanceof TreeMap<String, Field>)
+        if (fields.fields instanceof TreeMap)
         {
             this.fields = new TreeMap<>(String::compareToIgnoreCase);
             this.fields.putAll(fields.fields);
         }
-        else if (fields.fields instanceof LinkedHashMap<String, Field>)
+        else if (fields.fields instanceof LinkedHashMap)
         {
             this.fields = new LinkedHashMap<>(fields.fields);
         }
@@ -559,7 +559,7 @@ public class Fields implements Iterable<Fields.Field>
         if (a == null || a.isEmpty())
             return b;
 
-        Fields fields = new Fields(a.fields instanceof LinkedHashMap<String, Field>);
+        Fields fields = new Fields(a.fields instanceof LinkedHashMap);
         fields.addAll(a);
         fields.addAll(b);
         return fields;

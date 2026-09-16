@@ -248,12 +248,12 @@ class MetaData
         }
 
         if (type instanceof ParameterizedType &&
-            ((ParameterizedType)type).getRawType() instanceof Class<?> clazz &&
-            Collection.class.isAssignableFrom(clazz))
+            ((ParameterizedType)type).getRawType() instanceof Class &&
+            Collection.class.isAssignableFrom((Class<?>)((ParameterizedType)type).getRawType()))
         {
             ParameterizedType parameterizedType = (ParameterizedType)type;
             Type[] genArgs = parameterizedType.getActualTypeArguments();
-            if (genArgs.length == 1 && genArgs[0] instanceof Class<?> klass && klass.isAnnotationPresent(ManagedObject.class))
+            if (genArgs.length == 1 && genArgs[0] instanceof Class && ((Class<?>)genArgs[0]).isAnnotationPresent(ManagedObject.class))
                 return ObjectName[].class;
         }
 

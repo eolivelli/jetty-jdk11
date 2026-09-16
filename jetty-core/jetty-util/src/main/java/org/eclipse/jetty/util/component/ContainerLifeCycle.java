@@ -105,8 +105,9 @@ public class ContainerLifeCycle extends AbstractLifeCycle implements Container, 
             {
                 if (!isStarting())
                     break;
-                if (b._bean instanceof LifeCycle l)
+                if (b._bean instanceof LifeCycle)
                 {
+                    LifeCycle l = (LifeCycle)b._bean;
                     switch (b._managed)
                     {
                         case MANAGED:
@@ -139,8 +140,9 @@ public class ContainerLifeCycle extends AbstractLifeCycle implements Container, 
             Collections.reverse(reverse);
             for (Bean b : reverse)
             {
-                if (b._bean instanceof LifeCycle l && b._managed == Managed.MANAGED)
+                if (b._bean instanceof LifeCycle && b._managed == Managed.MANAGED)
                 {
+                    LifeCycle l = (LifeCycle)b._bean;
                     if (l.isRunning())
                     {
                         try
@@ -196,8 +198,9 @@ public class ContainerLifeCycle extends AbstractLifeCycle implements Container, 
         {
             if (!isStopping())
                 break;
-            if (b._managed == Managed.MANAGED && b._bean instanceof LifeCycle l)
+            if (b._managed == Managed.MANAGED && b._bean instanceof LifeCycle)
             {
+                LifeCycle l = (LifeCycle)b._bean;
                 try
                 {
                     stop(l);
@@ -222,8 +225,9 @@ public class ContainerLifeCycle extends AbstractLifeCycle implements Container, 
         Collections.reverse(reverse);
         for (Bean b : reverse)
         {
-            if (b._bean instanceof Destroyable d && (b._managed == Managed.MANAGED || b._managed == Managed.POJO))
+            if (b._bean instanceof Destroyable && (b._managed == Managed.MANAGED || b._managed == Managed.POJO))
             {
+                Destroyable d = (Destroyable)b._bean;
                 try
                 {
                     d.destroy();

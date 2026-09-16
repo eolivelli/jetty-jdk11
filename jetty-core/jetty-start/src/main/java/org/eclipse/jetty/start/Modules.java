@@ -635,7 +635,7 @@ public class Modules implements Iterable<Module>
                     Set<Module> providers = getAvailableProviders(d);
                     if (providers.stream().noneMatch(Module::isEnabled))
                     {
-                        if (!unsatisfied.isEmpty())
+                        if (unsatisfied.length() > 0)
                             unsatisfied.append(',');
                         unsatisfied.append(m.getName());
                         StartLog.error("Module [%s] requires a module providing [%s] from one of %s%n", m.getName(), d, providers);
@@ -643,7 +643,7 @@ public class Modules implements Iterable<Module>
                 });
         });
 
-        if (!unsatisfied.isEmpty())
+        if (unsatisfied.length() > 0)
             throw new UsageException(-1, "Unsatisfied module dependencies: " + unsatisfied);
     }
 }

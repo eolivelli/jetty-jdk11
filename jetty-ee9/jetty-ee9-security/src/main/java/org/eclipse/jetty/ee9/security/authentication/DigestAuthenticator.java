@@ -265,9 +265,7 @@ public class DigestAuthenticator extends LoginAuthenticator
                         name = null;
                         break;
                     case ' ':
-                    {
                         break;
-                    }
                     default:
                     {
                         value = tok;

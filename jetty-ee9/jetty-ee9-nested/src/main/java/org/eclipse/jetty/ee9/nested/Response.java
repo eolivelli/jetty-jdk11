@@ -160,10 +160,7 @@ public class Response implements HttpServletResponse
         while (true)
         {
             if (servletResponse instanceof Response)
-            {
-                Response response = (Response)servletResponse;
-                return response;
-            }
+                return (Response)servletResponse;
             if (servletResponse instanceof ServletResponseWrapper)
             {
                 ServletResponseWrapper wrapper = (ServletResponseWrapper)servletResponse;

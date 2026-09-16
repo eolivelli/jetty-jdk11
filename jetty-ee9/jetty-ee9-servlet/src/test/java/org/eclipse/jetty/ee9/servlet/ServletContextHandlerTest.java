@@ -2407,11 +2407,11 @@ public class ServletContextHandlerTest
                 switch (mode)
                 {
                     case "forward":
-                        requestDispatcher.forward(req, resp);
-                        break; // This can trigger an exception on bad query
+                        requestDispatcher.forward(req, resp); // This can trigger an exception on bad query
+                        break;
                     case "include":
-                        requestDispatcher.include(req, resp);
-                        break; // This can trigger an exception on bad query
+                        requestDispatcher.include(req, resp); // This can trigger an exception on bad query
+                        break;
                 }
                 // If we reached this point, then the input path isn't sufficiently bad enough to trigger
                 // a BadMessageException.  That means the testcase input is itself not valid, and should be changed or removed.

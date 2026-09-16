@@ -92,15 +92,9 @@ public class QuickStartConfiguration extends AbstractConfiguration
     {
         Object o = context.getAttribute(MODE);
         if (o instanceof Mode)
-        {
-            Mode m = (Mode)o;
-            return m;
-        }
+            return (Mode)o;
         if (o instanceof String)
-        {
-            String s = (String)o;
-            return Mode.valueOf(s);
-        }
+            return Mode.valueOf((String)o);
         else
             return DEFAULT_MODE;
     }

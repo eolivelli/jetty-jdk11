@@ -2191,7 +2191,7 @@ public class Request implements HttpServletRequest
         List<ComplianceViolation.Event> nonComplianceWarnings = _multiParts.getNonComplianceWarnings();
         for (ComplianceViolation.Event nc : nonComplianceWarnings)
         {
-            Object mode = nc.mode();
+            ComplianceViolation.Mode mode = nc.mode();
             if (mode instanceof MultiPartCompliance)
             {
                 MultiPartCompliance multiPartCompliance = (MultiPartCompliance)mode;

@@ -274,7 +274,7 @@ class CrossContextDispatcher implements RequestDispatcher
         baseResponse.resetForForward();
 
         //if forwarding to the same environment we must mutate this request for Object wrapper identity
-        Object targetContextHandler = _targetContext.getTargetContext().getContextHandler();
+        org.eclipse.jetty.server.handler.ContextHandler targetContextHandler = _targetContext.getTargetContext().getContextHandler();
         if (targetContextHandler instanceof ContextHandler.CoreContextHandler)
         {
             ContextHandler.CoreContextHandler coreContextHandler = (ContextHandler.CoreContextHandler)targetContextHandler;
@@ -324,7 +324,7 @@ class CrossContextDispatcher implements RequestDispatcher
         org.eclipse.jetty.server.Response coreResponse = coreContextRequest.getHttpChannel().getCoreResponse();
 
         //if including to the same environment we must mutate this request for Object wrapper identity
-        Object targetContextHandler = _targetContext.getTargetContext().getContextHandler();
+        org.eclipse.jetty.server.handler.ContextHandler targetContextHandler = _targetContext.getTargetContext().getContextHandler();
         if (targetContextHandler instanceof ContextHandler.CoreContextHandler)
         {
             ContextHandler.CoreContextHandler coreContextHandler = (ContextHandler.CoreContextHandler)targetContextHandler;

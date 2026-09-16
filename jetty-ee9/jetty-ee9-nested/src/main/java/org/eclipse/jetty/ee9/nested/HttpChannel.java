@@ -1608,28 +1608,29 @@ public class HttpChannel implements Runnable, HttpOutput.Interceptor
             else
             {
                 //the user has dispatched to a different context
-                if (event.getDispatchContext() instanceof CrossContextServletContext)
+                ServletContext dispatchContext = event.getDispatchContext();
+                if (dispatchContext instanceof CrossContextServletContext)
                 {
-                    dispatchCrossContext((CrossContextServletContext)event.getDispatchContext());
+                    dispatchCrossContext((CrossContextServletContext)dispatchContext);
                 }
                 else
                 {
                     //the container has dispatched us to a different context
-                    ServletContext targetContext = _contextHandler.getServletContext().getContext(event.getDispatchContext().getContextPath());
+                    ServletContext targetContext = _contextHandler.getServletContext().getContext(dispatchContext.getContextPath());
                     if (targetContext instanceof CrossContextServletContext)
                     {
                         CrossContextServletContext crossContextServletContext = (CrossContextServletContext)targetContext;
                         dispatchCrossContext(crossContextServletContext);
                     }
                     else
-                        throw new IllegalStateException("Dispatch " + _contextHandler.getContextPath() + " -> non CrossContextServletContext" + event.getDispatchContext().getContextPath() + event.getDispatchContext());
+                        throw new IllegalStateException("Dispatch " + _contextHandler.getContextPath() + " -> non CrossContextServletContext" + dispatchContext.getContextPath() + dispatchContext);
                 }
             }
         }
 
         private void dispatchCrossContext(CrossContextServletContext crossContextServletContext) throws ServletException, IOException
         {
-            Object targetContextHandler = crossContextServletContext.getTargetContext().getContextHandler();
+            org.eclipse.jetty.server.handler.ContextHandler targetContextHandler = crossContextServletContext.getTargetContext().getContextHandler();
             if (targetContextHandler instanceof ContextHandler.CoreContextHandler)
             {
                 ContextHandler.CoreContextHandler coreContextHandler = (ContextHandler.CoreContextHandler)targetContextHandler;

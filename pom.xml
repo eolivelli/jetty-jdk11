@@ -226,6 +226,7 @@
     <it.debug>false</it.debug>
     <jackson.version>2.22.2</jackson.version>
     <jacoco.maven.plugin.version>0.8.15</jacoco.maven.plugin.version>
+    <jakarta.mail.api.version>2.1.3</jakarta.mail.api.version>
     <javadoc.verbose>false</javadoc.verbose>
     <jboss-logmanager.version>3.2.2.Final</jboss-logmanager.version>
     <jboss-threads.version>2.3.6.Final</jboss-threads.version>
@@ -269,7 +270,6 @@
     <mariadb.docker.version>10.3.6</mariadb.docker.version>
     <mariadb.version>3.5.10</mariadb.version>
     <maven-artifact-transfer.version>0.13.1</maven-artifact-transfer.version>
-    <maven-build-cache.version>1.3.0</maven-build-cache.version>
     <maven-plugin.plugin.version>3.16.0</maven-plugin.plugin.version>
     <maven.antrun.plugin.version>3.2.0</maven.antrun.plugin.version>
     <maven.assembly.plugin.version>3.8.0</maven.assembly.plugin.version>
@@ -303,7 +303,6 @@
     <mongo.docker.version>5.0.26</mongo.docker.version>
     <mongodb.version>5.11.0</mongodb.version>
     <netty.version>4.2.17.Final</netty.version>
-    <njord.version>0.9.10</njord.version>
     <openpojo.version>0.9.1</openpojo.version>
     <org.osgi.annotation.version>8.1.0</org.osgi.annotation.version>
     <org.osgi.core.version>8.0.0</org.osgi.core.version>
@@ -1219,11 +1218,6 @@
         <artifactId>hamcrest</artifactId>
         <version>${hamcrest.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.hibernate.models</groupId>
-        <artifactId>hibernate-models</artifactId>
-        <version>1.3.0</version>
-      </dependency>
       <!-- Hibernate Search 6.1 (used by Infinispan 14) has no BOM: manage the artifacts directly -->
       <dependency>
         <groupId>org.hibernate.search</groupId>
@@ -1526,11 +1520,6 @@
   <build>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>eu.maveniverse.maven.plugins</groupId>
-          <artifactId>njord</artifactId>
-          <version>${njord.version}</version>
-        </plugin>
         <plugin>
           <groupId>net.webtide.tools</groupId>
           <artifactId>webtide-release-tools-plugin</artifactId>

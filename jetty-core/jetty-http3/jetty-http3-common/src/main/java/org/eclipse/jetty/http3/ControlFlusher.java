@@ -17,6 +17,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 
 import org.eclipse.jetty.http3.frames.Frame;
@@ -157,7 +158,48 @@ public class ControlFlusher extends IteratingCallback
         return String.format("%s#%s", super.toString(), endPoint.getStream().getId());
     }
 
-    private record Entry(Frame frame, Callback callback)
+    private static final class Entry
     {
+        private final Frame frame;
+        private final Callback callback;
+
+        private Entry(Frame frame, Callback callback)
+        {
+            this.frame = frame;
+            this.callback = callback;
+        }
+
+        public Frame frame()
+        {
+            return frame;
+        }
+
+        public Callback callback()
+        {
+            return callback;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Entry that = (Entry)obj;
+            return Objects.equals(frame, that.frame) && Objects.equals(callback, that.callback);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(frame, callback);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Entry[frame=" + frame + ", callback=" + callback + "]";
+        }
     }
 }

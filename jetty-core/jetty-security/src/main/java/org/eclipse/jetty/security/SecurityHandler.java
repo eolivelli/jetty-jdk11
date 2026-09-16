@@ -398,8 +398,10 @@ public abstract class SecurityHandler extends Handler.Wrapper implements Configu
             throw new IllegalStateException("No Authenticator");
         }
 
-        if (_authenticator instanceof LoginAuthenticator loginAuthenticator)
+        Authenticator authenticator = _authenticator;
+        if (authenticator instanceof LoginAuthenticator)
         {
+            LoginAuthenticator loginAuthenticator = (LoginAuthenticator)authenticator;
             _deferred = AuthenticationState.defer(loginAuthenticator);
             addBean(_deferred);
         }

@@ -55,8 +55,10 @@ public class SslClientCertAuthenticator extends LoginAuthenticator
     @Override
     public AuthenticationState validateRequest(Request req, Response res, Callback callback) throws ServerAuthException
     {
-        if (!(req.getAttribute(EndPoint.SslSessionData.ATTRIBUTE) instanceof EndPoint.SslSessionData sslSessionData))
+        Object sslSessionDataAttribute = req.getAttribute(EndPoint.SslSessionData.ATTRIBUTE);
+        if (!(sslSessionDataAttribute instanceof EndPoint.SslSessionData))
             return AuthenticationState.writeError(req, res, callback, HttpStatus.FORBIDDEN_403);
+        EndPoint.SslSessionData sslSessionData = (EndPoint.SslSessionData)sslSessionDataAttribute;
 
         X509Certificate[] certs = sslSessionData.peerCertificates();
         

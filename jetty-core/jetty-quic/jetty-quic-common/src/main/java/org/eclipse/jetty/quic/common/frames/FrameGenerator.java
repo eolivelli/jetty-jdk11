@@ -16,6 +16,7 @@ package org.eclipse.jetty.quic.common.frames;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.io.RetainableByteBuffer;
@@ -571,7 +572,48 @@ public class FrameGenerator
         return capacity + reasonLength;
     }
 
-    public record BytesGenerated(int dataBytes, int frameBytes)
+    public static final class BytesGenerated
     {
+        private final int dataBytes;
+        private final int frameBytes;
+
+        public BytesGenerated(int dataBytes, int frameBytes)
+        {
+            this.dataBytes = dataBytes;
+            this.frameBytes = frameBytes;
+        }
+
+        public int dataBytes()
+        {
+            return dataBytes;
+        }
+
+        public int frameBytes()
+        {
+            return frameBytes;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            BytesGenerated that = (BytesGenerated)obj;
+            return dataBytes == that.dataBytes && frameBytes == that.frameBytes;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(dataBytes, frameBytes);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "BytesGenerated[dataBytes=" + dataBytes + ", frameBytes=" + frameBytes + "]";
+        }
     }
 }

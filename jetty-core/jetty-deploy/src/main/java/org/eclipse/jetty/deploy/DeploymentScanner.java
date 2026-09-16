@@ -1096,8 +1096,50 @@ public class DeploymentScanner extends ContainerLifeCycle implements Scanner.Bul
         return String.format("%s@%x[webappsDirs=%s]", TypeUtil.toShortName(getClass()), hashCode(), webappsDirs);
     }
 
-    public record DeployAction(DeployAction.Type type, String name)
+    public static final class DeployAction
     {
+        private final DeployAction.Type type;
+        private final String name;
+
+        public DeployAction(DeployAction.Type type, String name)
+        {
+            this.type = type;
+            this.name = name;
+        }
+
+        public DeployAction.Type type()
+        {
+            return type;
+        }
+
+        public String name()
+        {
+            return name;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            DeployAction that = (DeployAction)obj;
+            return type == that.type && Objects.equals(name, that.name);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(type, name);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "DeployAction[type=" + type + ", name=" + name + "]";
+        }
+
         public enum Type
         {
             UNDEPLOY,

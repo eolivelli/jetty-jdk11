@@ -33,6 +33,7 @@ import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpHeaderValue;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.io.Content;
+import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.util.BufferUtil;
@@ -156,8 +157,9 @@ public class HttpClientLoadTest extends AbstractTest
         int contentLength = random.nextInt(maxContentLength) + 1;
 
         String uri = (ssl ? "https" : "http") + "://" + host;
-        if (connector instanceof NetworkConnector networkConnector)
-            uri += ":" + networkConnector.getLocalPort();
+        AbstractConnector serverConnector = connector;
+        if (serverConnector instanceof NetworkConnector)
+            uri += ":" + ((NetworkConnector)serverConnector).getLocalPort();
         test(uri, method.asString(), clientClose, serverClose, clientTimeout, contentLength, true, latch, failures);
     }
 

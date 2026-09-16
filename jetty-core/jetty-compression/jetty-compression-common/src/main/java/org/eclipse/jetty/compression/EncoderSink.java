@@ -14,6 +14,7 @@
 package org.eclipse.jetty.compression;
 
 import java.nio.ByteBuffer;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.jetty.io.Content;
@@ -25,6 +26,8 @@ import org.slf4j.LoggerFactory;
 
 public abstract class EncoderSink implements Content.Sink
 {
+    private static final Logger LOG = LoggerFactory.getLogger(EncodeBufferCallback.class);
+
     private final Content.Sink sink;
 
     protected EncoderSink(Content.Sink sink)
@@ -59,23 +62,72 @@ public abstract class EncoderSink implements Content.Sink
     {
     }
 
-    public record WriteRecord(boolean last, ByteBuffer output, Callback callback) {}
+    public static final class WriteRecord
+    {
+        private final boolean last;
+        private final ByteBuffer output;
+        private final Callback callback;
+
+        public WriteRecord(boolean last, ByteBuffer output, Callback callback)
+        {
+            this.last = last;
+            this.output = output;
+            this.callback = callback;
+        }
+
+        public boolean last()
+        {
+            return last;
+        }
+
+        public ByteBuffer output()
+        {
+            return output;
+        }
+
+        public Callback callback()
+        {
+            return callback;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            WriteRecord that = (WriteRecord)obj;
+            return last == that.last && Objects.equals(output, that.output) && Objects.equals(callback, that.callback);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(last, output, callback);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "WriteRecord[last=" + last + ", output=" + output + ", callback=" + callback + "]";
+        }
+    }
+
+    private enum State
+    {
+        // Initial state, nothing has been attempted yet
+        INITIAL,
+        // We have started compressing
+        COMPRESSING,
+        // The last content is being encoded and is being flushed
+        FINISHING,
+        // The final content has been sent (final state)
+        FINISHED
+    }
 
     private class EncodeBufferCallback extends IteratingNestedCallback
     {
-        private enum State
-        {
-            // Initial state, nothing has been attempted yet
-            INITIAL,
-            // We have started compressing
-            COMPRESSING,
-            // The last content is being encoded and is being flushed
-            FINISHING,
-            // The final content has been sent (final state)
-            FINISHED
-        }
-
-        private static final Logger LOG = LoggerFactory.getLogger(EncodeBufferCallback.class);
         private final AtomicReference<State> state = new AtomicReference<>(State.INITIAL);
         private final ByteBuffer content;
         private final boolean last;

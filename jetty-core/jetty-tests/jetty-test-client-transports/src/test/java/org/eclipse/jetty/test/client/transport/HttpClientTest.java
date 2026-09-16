@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -1529,8 +1530,56 @@ public class HttpClientTest extends AbstractTest
 
     private static class OnContentSourceListener implements Response.Listener
     {
-        record ClientResponseContent(int status, String body, HttpFields trailers)
+        static final class ClientResponseContent
         {
+            private final int status;
+            private final String body;
+            private final HttpFields trailers;
+
+            ClientResponseContent(int status, String body, HttpFields trailers)
+            {
+                this.status = status;
+                this.body = body;
+                this.trailers = trailers;
+            }
+
+            public int status()
+            {
+                return status;
+            }
+
+            public String body()
+            {
+                return body;
+            }
+
+            public HttpFields trailers()
+            {
+                return trailers;
+            }
+
+            @Override
+            public boolean equals(Object obj)
+            {
+                if (this == obj)
+                    return true;
+                if (obj == null || getClass() != obj.getClass())
+                    return false;
+                ClientResponseContent that = (ClientResponseContent)obj;
+                return status == that.status && Objects.equals(body, that.body) && Objects.equals(trailers, that.trailers);
+            }
+
+            @Override
+            public int hashCode()
+            {
+                return Objects.hash(status, body, trailers);
+            }
+
+            @Override
+            public String toString()
+            {
+                return "ClientResponseContent[status=" + status + ", body=" + body + ", trailers=" + trailers + "]";
+            }
         }
 
         final CompletableFuture<ClientResponseContent> clientResponseContent = new CompletableFuture<>();

@@ -107,8 +107,10 @@ public class PackageAdminServiceListener implements ServiceListener
                     bActivator.start(_bootBundleContext);
 
                     // if the activator has bundles to contribute to the server classpath register them
-                    if (bActivator instanceof ServerClasspathContributor.Source && _bootBundleActivator instanceof ServerClasspathContributor.Registry registry)
+                    BundleActivator bootBundleActivator = _bootBundleActivator;
+                    if (bActivator instanceof ServerClasspathContributor.Source && bootBundleActivator instanceof ServerClasspathContributor.Registry)
                     {
+                        ServerClasspathContributor.Registry registry = (ServerClasspathContributor.Registry)bootBundleActivator;
                         ServerClasspathContributor.Source source = (ServerClasspathContributor.Source)bActivator;
                         source.registerServerClasspathContributors(registry);
                     }
@@ -132,8 +134,10 @@ public class PackageAdminServiceListener implements ServiceListener
         {
             try
             {
-                if (fragmentActivator instanceof ServerClasspathContributor.Source && _bootBundleActivator instanceof ServerClasspathContributor.Registry registry)
+                BundleActivator bootBundleActivator = _bootBundleActivator;
+                if (fragmentActivator instanceof ServerClasspathContributor.Source && bootBundleActivator instanceof ServerClasspathContributor.Registry)
                 {
+                    ServerClasspathContributor.Registry registry = (ServerClasspathContributor.Registry)bootBundleActivator;
                     ServerClasspathContributor.Source source = (ServerClasspathContributor.Source)fragmentActivator;
                     source.unregisterServerClasspathContributors(registry);
                 }

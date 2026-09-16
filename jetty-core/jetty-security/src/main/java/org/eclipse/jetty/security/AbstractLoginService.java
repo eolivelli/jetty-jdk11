@@ -13,6 +13,7 @@
 
 package org.eclipse.jetty.security;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -124,8 +125,9 @@ public abstract class AbstractLoginService extends ContainerLifeCycle implements
         if (fresh == null)
             return false; // User no longer exists.
 
-        if (user.getUserPrincipal() instanceof UserPrincipal userPrincipal)
-            return fresh.authenticate(userPrincipal);
+        Principal userPrincipal = user.getUserPrincipal();
+        if (userPrincipal instanceof UserPrincipal)
+            return fresh.authenticate((UserPrincipal)userPrincipal);
         return false; // Unable to validate credentials without a UserPrincipal.
     }
 

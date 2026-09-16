@@ -46,8 +46,9 @@ public class DecompressionRequest extends Request.Wrapper implements Destroyable
 
     public void destroy()
     {
-        if (decoderSource instanceof Destroyable destroyable)
-            destroyable.destroy();
+        DecoderSource source = decoderSource;
+        if (source instanceof Destroyable)
+            ((Destroyable)source).destroy();
     }
 
     @Override

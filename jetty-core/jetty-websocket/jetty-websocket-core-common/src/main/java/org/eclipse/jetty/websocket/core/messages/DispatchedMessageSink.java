@@ -88,8 +88,9 @@ public abstract class DispatchedMessageSink extends AbstractMessageSink
                 try
                 {
                     getMethodHolder().invoke(typeSink);
-                    if (typeSink instanceof Closeable closeable)
-                        IO.close(closeable);
+                    MessageSink sink = typeSink;
+                    if (sink instanceof Closeable)
+                        IO.close((Closeable)sink);
                     dispatchComplete.complete(null);
                 }
                 catch (Throwable throwable)

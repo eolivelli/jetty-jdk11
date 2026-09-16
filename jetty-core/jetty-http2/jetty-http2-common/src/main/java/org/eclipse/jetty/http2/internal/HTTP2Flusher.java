@@ -33,6 +33,7 @@ import org.eclipse.jetty.http2.HTTP2Stream;
 import org.eclipse.jetty.http2.frames.FrameType;
 import org.eclipse.jetty.http2.frames.WindowUpdateFrame;
 import org.eclipse.jetty.http2.hpack.HpackException;
+import org.eclipse.jetty.io.Connection;
 import org.eclipse.jetty.io.EndPoint;
 import org.eclipse.jetty.io.EofException;
 import org.eclipse.jetty.io.RetainableByteBuffer;
@@ -63,7 +64,8 @@ public class HTTP2Flusher extends IteratingCallback implements Dumpable
     {
         this.session = session;
         EndPoint endPoint = session.getEndPoint();
-        boolean direct = endPoint != null && endPoint.getConnection() instanceof HTTP2Connection http2Connection && http2Connection.isUseOutputDirectByteBuffers();
+        Connection connection = endPoint == null ? null : endPoint.getConnection();
+        boolean direct = connection instanceof HTTP2Connection && ((HTTP2Connection)connection).isUseOutputDirectByteBuffers();
         this.accumulator = new RetainableByteBuffer.DynamicCapacity(session.getGenerator().getByteBufferPool(), direct, -1);
     }
 

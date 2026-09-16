@@ -215,8 +215,10 @@ public interface AuthenticationState extends Request.AuthenticationState
 
     static AuthenticationState writeError(Request request, Response response, Callback callback, int code)
     {
-        if (request.getContext().getErrorHandler() instanceof ErrorHandler errorHandler)
+        Request.Handler contextErrorHandler = request.getContext().getErrorHandler();
+        if (contextErrorHandler instanceof ErrorHandler)
         {
+            ErrorHandler errorHandler = (ErrorHandler)contextErrorHandler;
             return errorHandler.writeError(request, response, callback, code)
                     ? AuthenticationState.SEND_FAILURE 
                     : new AuthenticationState.ServeAs(request.getHttpURI());

@@ -44,6 +44,8 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractEEActivator implements BundleActivator, ServerClasspathContributor.Registry
 {
+    private static final Logger LOG = LoggerFactory.getLogger(ServerTracker.class);
+
     private BundleContext _bootBundleContext;
     private ServiceTracker<Server, Object> _serverTracker;
     private PackageAdminServiceListener _packageAdminServiceListener;
@@ -128,7 +130,6 @@ public abstract class AbstractEEActivator implements BundleActivator, ServerClas
      */
     public class ServerTracker implements ServiceTrackerCustomizer<Server, Object>
     {
-        private static final Logger LOG = LoggerFactory.getLogger(ServerTracker.class);
         private Bundle _myBundle = null;
 
         public ServerTracker(Bundle bundle)

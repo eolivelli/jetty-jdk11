@@ -606,8 +606,41 @@ public class QuicheStream extends AbstractStream
         return String.format("%s[%s,writer=%s]", super.toString(), closeState, writer);
     }
 
-    private record Writer(boolean last, List<ByteBuffer> buffers, Promise.Invocable<Stream> promise, boolean pending)
+    private static final class Writer
     {
+        private final boolean last;
+        private final List<ByteBuffer> buffers;
+        private final Promise.Invocable<Stream> promise;
+        private final boolean pending;
+
+        private Writer(boolean last, List<ByteBuffer> buffers, Promise.Invocable<Stream> promise, boolean pending)
+        {
+            this.last = last;
+            this.buffers = buffers;
+            this.promise = promise;
+            this.pending = pending;
+        }
+
+        public boolean last()
+        {
+            return last;
+        }
+
+        public List<ByteBuffer> buffers()
+        {
+            return buffers;
+        }
+
+        public Promise.Invocable<Stream> promise()
+        {
+            return promise;
+        }
+
+        public boolean pending()
+        {
+            return pending;
+        }
+
         private static Writer forWriting(boolean last, List<ByteBuffer> buffers, Promise.Invocable<Stream> promise)
         {
             return new Writer(last, buffers, promise, false);
@@ -616,6 +649,24 @@ public class QuicheStream extends AbstractStream
         public static Writer forPending(Writer writer)
         {
             return new Writer(writer.last, writer.buffers, writer.promise, true);
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Writer that = (Writer)obj;
+            return last == that.last && pending == that.pending && Objects.equals(buffers, that.buffers) &&
+                Objects.equals(promise, that.promise);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(last, buffers, promise, pending);
         }
 
         @Override

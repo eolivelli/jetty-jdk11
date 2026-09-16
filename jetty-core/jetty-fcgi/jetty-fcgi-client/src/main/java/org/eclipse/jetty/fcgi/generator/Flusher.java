@@ -18,6 +18,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.CountDownLatch;
 
@@ -247,8 +248,27 @@ public class Flusher
         }
     }
 
-    private record Entry(ByteBufferPool.Accumulator accumulator, Callback callback)
+    private static final class Entry
     {
+        private final ByteBufferPool.Accumulator accumulator;
+        private final Callback callback;
+
+        private Entry(ByteBufferPool.Accumulator accumulator, Callback callback)
+        {
+            this.accumulator = accumulator;
+            this.callback = callback;
+        }
+
+        public ByteBufferPool.Accumulator accumulator()
+        {
+            return accumulator;
+        }
+
+        public Callback callback()
+        {
+            return callback;
+        }
+
         public void succeeded()
         {
             callback.succeeded();
@@ -263,6 +283,29 @@ public class Flusher
         {
             if (accumulator != null)
                 accumulator.release();
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Entry that = (Entry)obj;
+            return Objects.equals(accumulator, that.accumulator) && Objects.equals(callback, that.callback);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(accumulator, callback);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Entry[accumulator=" + accumulator + ", callback=" + callback + "]";
         }
     }
 }

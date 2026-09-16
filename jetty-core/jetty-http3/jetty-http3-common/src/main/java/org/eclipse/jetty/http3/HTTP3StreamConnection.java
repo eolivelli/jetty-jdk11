@@ -14,6 +14,7 @@
 package org.eclipse.jetty.http3;
 
 import java.io.UncheckedIOException;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -152,9 +153,10 @@ public abstract class HTTP3StreamConnection extends AbstractConnection
                                 FrameAction action = frameAction.getAndSet(null);
 
                                 boolean interim = false;
-                                if (action.frame() instanceof HeadersFrame headers)
+                                Frame actionFrame = action.frame();
+                                if (actionFrame instanceof HeadersFrame)
                                 {
-                                    MetaData metaData = headers.getMetaData();
+                                    MetaData metaData = ((HeadersFrame)actionFrame).getMetaData();
                                     if (metaData instanceof MetaData.Response)
                                     {
                                         MetaData.Response response = (MetaData.Response)metaData;
@@ -481,8 +483,49 @@ public abstract class HTTP3StreamConnection extends AbstractConnection
         EOF
     }
 
-    private record FrameAction(Frame frame, Runnable task)
+    private static final class FrameAction
     {
+        private final Frame frame;
+        private final Runnable task;
+
+        private FrameAction(Frame frame, Runnable task)
+        {
+            this.frame = frame;
+            this.task = task;
+        }
+
+        public Frame frame()
+        {
+            return frame;
+        }
+
+        public Runnable task()
+        {
+            return task;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            FrameAction that = (FrameAction)obj;
+            return Objects.equals(frame, that.frame) && Objects.equals(task, that.task);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(frame, task);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "FrameAction[frame=" + frame + ", task=" + task + "]";
+        }
     }
 
     private class FillableCallback implements Callback

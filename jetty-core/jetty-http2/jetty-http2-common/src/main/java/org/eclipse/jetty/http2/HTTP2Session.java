@@ -2871,11 +2871,11 @@ public abstract class HTTP2Session extends AbstractLifeCycle implements Session,
                 );
             }
         }
+    }
 
-        private static class Slot
-        {
-            private volatile List<Entry> entries;
-        }
+    private static class Slot
+    {
+        private volatile List<Entry> entries;
     }
 
     private class StreamTimeouts extends CyclicTimeouts<HTTP2Stream>

@@ -148,10 +148,16 @@ public class AbstractClientServerTest
         clientConnector.setByteBufferPool(byteBufferPool);
         clientConnector.setSslContextFactory(new SslContextFactory.Client(true));
 
-        ClientQuicConfiguration clientQuicConfig = HTTP3ClientQuicConfiguration.configure(switch (transportType)
+        ClientQuicConfiguration quicConfiguration;
+        switch (transportType)
         {
-            case H3_QUICHE -> new QuicheClientQuicConfiguration();
-        });
+            case H3_QUICHE:
+                quicConfiguration = new QuicheClientQuicConfiguration();
+                break;
+            default:
+                throw new IllegalStateException();
+        }
+        ClientQuicConfiguration clientQuicConfig = HTTP3ClientQuicConfiguration.configure(quicConfiguration);
 
         http3Client = new HTTP3Client(clientQuicConfig, clientConnector);
 

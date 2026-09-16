@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -1528,7 +1529,56 @@ public class HttpClientStreamTest extends AbstractTest
         }
     }
 
-    private record HandlerContext(Request request, org.eclipse.jetty.server.Response response, Callback callback)
+    private static final class HandlerContext
     {
+        private final Request request;
+        private final org.eclipse.jetty.server.Response response;
+        private final Callback callback;
+
+        private HandlerContext(Request request, org.eclipse.jetty.server.Response response, Callback callback)
+        {
+            this.request = request;
+            this.response = response;
+            this.callback = callback;
+        }
+
+        public Request request()
+        {
+            return request;
+        }
+
+        public org.eclipse.jetty.server.Response response()
+        {
+            return response;
+        }
+
+        public Callback callback()
+        {
+            return callback;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            HandlerContext that = (HandlerContext)obj;
+            return Objects.equals(request, that.request) && Objects.equals(response, that.response) &&
+                Objects.equals(callback, that.callback);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(request, response, callback);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "HandlerContext[request=" + request + ", response=" + response + ", callback=" + callback + "]";
+        }
     }
 }

@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -45,15 +46,66 @@ public class RewriteEncodingRule extends Rule
         return context.getBaseResource().resolve(pathInContext);
     }
 
-    protected record Encoding(String encoding, String extension, HttpField contentEncodingField)
+    protected static final class Encoding
     {
+        private final String encoding;
+        private final String extension;
+        private final HttpField contentEncodingField;
+
+        protected Encoding(String encoding, String extension, HttpField contentEncodingField)
+        {
+            this.encoding = encoding;
+            this.extension = extension;
+            this.contentEncodingField = contentEncodingField;
+        }
+
         public static Encoding of(String encoding, String extension)
         {
            return new Encoding(encoding, extension, new PreEncodedHttpField(HttpHeader.CONTENT_ENCODING, encoding));
         }
+
+        public String encoding()
+        {
+            return encoding;
+        }
+
+        public String extension()
+        {
+            return extension;
+        }
+
+        public HttpField contentEncodingField()
+        {
+            return contentEncodingField;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Encoding that = (Encoding)obj;
+            return Objects.equals(encoding, that.encoding) && Objects.equals(extension, that.extension) &&
+                Objects.equals(contentEncodingField, that.contentEncodingField);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(encoding, extension, contentEncodingField);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Encoding[encoding=" + encoding + ", extension=" + extension + ", contentEncodingField=" + contentEncodingField + "]";
+        }
     }
 
     private static final HttpField VARY_ACCEPT_ENCODING = new PreEncodedHttpField(HttpHeader.VARY, HttpHeader.ACCEPT_ENCODING.asString());
+    private static final EnumSet<HttpHeader> IF_MATCHES = EnumSet.of(HttpHeader.IF_MATCH, HttpHeader.IF_NONE_MATCH);
     private final BiFunction<Context, String, Resource> _getResource;
     private final Map<String, Encoding> _encodings = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
@@ -150,7 +202,7 @@ public class RewriteEncodingRule extends Rule
                         acceptEncoding = true;
                         break loop;
                     }
-                    if (!vary.isEmpty())
+                    if (vary.length() != 0)
                         vary.append(", ");
                     vary.append(value);
                 }
@@ -181,7 +233,6 @@ public class RewriteEncodingRule extends Rule
 
     protected class EncodingHandler extends Handler
     {
-        private static final EnumSet<HttpHeader> IF_MATCHES = EnumSet.of(HttpHeader.IF_MATCH, HttpHeader.IF_NONE_MATCH);
         private final Encoding _encoding;
         private final String _dashEncoding;
         private final HttpURI _encodingURI;

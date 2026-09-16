@@ -1383,20 +1383,59 @@ public abstract class AbstractSessionManager extends ContainerLifeCycle implemen
 
     /**
      * Details of the requested session.
-     * Session implementations should make an instance of this record available as a hidden (not in name set) request
+     * Session implementations should make an instance of this class available as a hidden (not in name set) request
      * attribute for the name "org.eclipse.jetty.session.AbstractSessionManager$RequestedSession"
-     * @param session The {@link Session} associated with the ID, which may have been invalidated or changed ID since the
-     *                request was received; or {@code null} if no session existed matching the requested ID.
-     * @param sessionId The requested session ID.
-     * @param sessionIdFrom A {@link String} representing the source of the session ID.  Common values include:
-     *                      {@link #ID_FROM_COOKIE} or {@link #ID_FROM_URI_PARAMETER} if there is no ID.
      */
-    public record RequestedSession(ManagedSession session, String sessionId, String sessionIdFrom)
+    public static final class RequestedSession
     {
         public static final RequestedSession NO_REQUESTED_SESSION = new RequestedSession(null, null, null);
         public static final String ATTRIBUTE = "org.eclipse.jetty.session.RequestedSession";
         public static final String ID_FROM_COOKIE = "cookie";
         public static final String ID_FROM_URI_PARAMETER = "uri";
+
+        private final ManagedSession session;
+        private final String sessionId;
+        private final String sessionIdFrom;
+
+        /**
+         * @param session The {@link Session} associated with the ID, which may have been invalidated or changed ID since the
+         *                request was received; or {@code null} if no session existed matching the requested ID.
+         * @param sessionId The requested session ID.
+         * @param sessionIdFrom A {@link String} representing the source of the session ID.  Common values include:
+         *                      {@link #ID_FROM_COOKIE} or {@link #ID_FROM_URI_PARAMETER} if there is no ID.
+         */
+        public RequestedSession(ManagedSession session, String sessionId, String sessionIdFrom)
+        {
+            this.session = session;
+            this.sessionId = sessionId;
+            this.sessionIdFrom = sessionIdFrom;
+        }
+
+        /**
+         * @return The {@link Session} associated with the ID, which may have been invalidated or changed ID since the
+         *         request was received; or {@code null} if no session existed matching the requested ID.
+         */
+        public ManagedSession session()
+        {
+            return session;
+        }
+
+        /**
+         * @return The requested session ID.
+         */
+        public String sessionId()
+        {
+            return sessionId;
+        }
+
+        /**
+         * @return A {@link String} representing the source of the session ID.  Common values include:
+         *         {@link #ID_FROM_COOKIE} or {@link #ID_FROM_URI_PARAMETER} if there is no ID.
+         */
+        public String sessionIdFrom()
+        {
+            return sessionIdFrom;
+        }
 
         /**
          * Get the {@code RequestedSession} by attribute
@@ -1465,6 +1504,30 @@ public abstract class AbstractSessionManager extends ContainerLifeCycle implemen
         public boolean isSessionIdFrom(String source)
         {
             return source != null && source.equals(sessionIdFrom);
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            RequestedSession that = (RequestedSession)obj;
+            return Objects.equals(session, that.session) && Objects.equals(sessionId, that.sessionId) &&
+                Objects.equals(sessionIdFrom, that.sessionIdFrom);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(session, sessionId, sessionIdFrom);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "RequestedSession[session=" + session + ", sessionId=" + sessionId + ", sessionIdFrom=" + sessionIdFrom + "]";
         }
     }
 

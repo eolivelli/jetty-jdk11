@@ -153,8 +153,51 @@ public class MessageFlusher extends IteratingCallback
         return Objects.requireNonNullElse(entry.callback(), NOOP).getInvocationType();
     }
 
-    private record Entry(StreamEndPoint endPoint, Frame frame, Callback callback)
+    private static final class Entry
     {
+        private final StreamEndPoint endPoint;
+        private final Frame frame;
+        private final Callback callback;
+
+        private Entry(StreamEndPoint endPoint, Frame frame, Callback callback)
+        {
+            this.endPoint = endPoint;
+            this.frame = frame;
+            this.callback = callback;
+        }
+
+        public StreamEndPoint endPoint()
+        {
+            return endPoint;
+        }
+
+        public Frame frame()
+        {
+            return frame;
+        }
+
+        public Callback callback()
+        {
+            return callback;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Entry that = (Entry)obj;
+            return Objects.equals(endPoint, that.endPoint) && Objects.equals(frame, that.frame) && Objects.equals(callback, that.callback);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(endPoint, frame, callback);
+        }
+
         @Override
         public String toString()
         {

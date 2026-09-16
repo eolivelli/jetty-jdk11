@@ -172,7 +172,7 @@ public interface Constraint
             {
                 if (_roles == null)
                     _roles = new HashSet<>();
-                else if (!(_roles instanceof HashSet<String>))
+                else if (!(_roles instanceof HashSet))
                     _roles = new HashSet<>(_roles);
                 _roles.addAll(Arrays.asList(roles));
             }

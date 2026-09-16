@@ -21,6 +21,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
@@ -201,8 +202,49 @@ public abstract class Quiche
 
     public abstract byte[] getPeerCertificate();
 
-    public record CloseInfo(long error, String reason)
+    public static final class CloseInfo
     {
+        private final long error;
+        private final String reason;
+
+        public CloseInfo(long error, String reason)
+        {
+            this.error = error;
+            this.reason = reason;
+        }
+
+        public long error()
+        {
+            return error;
+        }
+
+        public String reason()
+        {
+            return reason;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            CloseInfo that = (CloseInfo)obj;
+            return error == that.error && Objects.equals(reason, that.reason);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(error, reason);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "CloseInfo[error=" + error + ", reason=" + reason + "]";
+        }
     }
 
     public interface TokenMinter

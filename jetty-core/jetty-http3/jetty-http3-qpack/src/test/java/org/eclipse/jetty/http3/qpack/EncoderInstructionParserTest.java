@@ -80,7 +80,7 @@ public class EncoderInstructionParserTest
         buffer = BufferUtil.toBuffer(StringUtil.fromHexString(encoded));
         while (buffer.hasRemaining())
         {
-            ByteBuffer oneByte = buffer.slice(buffer.position(), 1);
+            ByteBuffer oneByte = BufferUtil.absoluteSlice(buffer, buffer.position(), 1);
             _instructionParser.parse(oneByte);
             buffer.position(buffer.position() + 1);
         }

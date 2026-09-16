@@ -182,8 +182,10 @@ public class HTTP2ServerSession extends HTTP2Session implements ServerParser.Lis
 
     private void notifyStreamFailure(Stream stream, Throwable failure, Callback callback)
     {
-        if (listener instanceof Listener l)
+        ServerSessionListener sessionListener = listener;
+        if (sessionListener instanceof Listener)
         {
+            Listener l = (Listener)sessionListener;
             try
             {
                 l.onStreamFailure(stream, failure, callback);

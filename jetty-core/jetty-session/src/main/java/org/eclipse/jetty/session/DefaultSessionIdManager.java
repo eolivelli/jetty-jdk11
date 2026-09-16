@@ -238,8 +238,12 @@ public class DefaultSessionIdManager extends ContainerLifeCycle implements Sessi
                 {
                     if (LOG.isDebugEnabled())
                         LOG.debug("Reseeding {}", this);
-                    if (_random instanceof SecureRandom secure)
+                    Random random = _random;
+                    if (random instanceof SecureRandom)
+                    {
+                        SecureRandom secure = (SecureRandom)random;
                         secure.setSeed(secure.generateSeed(8));
+                    }
                     else
                         _random.setSeed(_random.nextLong() ^ System.currentTimeMillis() ^ seedTerm ^ Runtime.getRuntime().freeMemory());
                 }

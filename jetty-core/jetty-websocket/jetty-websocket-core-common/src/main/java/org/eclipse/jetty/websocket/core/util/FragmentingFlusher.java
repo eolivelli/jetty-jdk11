@@ -15,6 +15,7 @@ package org.eclipse.jetty.websocket.core.util;
 
 import java.nio.ByteBuffer;
 
+import org.eclipse.jetty.util.BufferUtil;
 import org.eclipse.jetty.websocket.core.Configuration;
 import org.eclipse.jetty.websocket.core.Frame;
 import org.eclipse.jetty.websocket.core.OpCode;
@@ -69,7 +70,7 @@ public abstract class FragmentingFlusher extends WebSocketFlusher
         else
         {
             // Slice the fragmented payload from the buffer.
-            fragment.setPayload(payload.slice(payload.position(), fragmentSize));
+            fragment.setPayload(BufferUtil.absoluteSlice(payload, payload.position(), fragmentSize));
             payload.position(payload.position() + fragmentSize);
             if (LOG.isDebugEnabled())
                 LOG.debug("Fragmented {}->{}", frame, fragment);

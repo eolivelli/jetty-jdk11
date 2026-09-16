@@ -16,6 +16,7 @@ package org.eclipse.jetty.fcgi.parser;
 import java.nio.ByteBuffer;
 
 import org.eclipse.jetty.fcgi.FCGI;
+import org.eclipse.jetty.util.BufferUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ public class StreamContentParser extends ContentParser
                 case CONTENT:
                 {
                     int length = Math.min(contentLength, buffer.remaining());
-                    ByteBuffer slice = buffer.slice(buffer.position(), length);
+                    ByteBuffer slice = BufferUtil.absoluteSlice(buffer, buffer.position(), length);
                     // Only parse the content of this FCGI frame.
                     boolean result = onContent(slice);
                     // Not all the content may have been parsed.

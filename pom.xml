@@ -229,7 +229,7 @@
     <invoker.mergeUserSettings>false</invoker.mergeUserSettings>
     <it.debug>false</it.debug>
     <jackson.version>2.22.2</jackson.version>
-    <jacoco.maven.plugin.version>0.8.15</jacoco.maven.plugin.version>
+    <jacoco.maven.plugin.version>0.8.16</jacoco.maven.plugin.version>
     <javadoc.verbose>false</javadoc.verbose>
     <jboss-logmanager.version>3.2.2.Final</jboss-logmanager.version>
     <jboss-threads.version>3.10.1</jboss-threads.version>
@@ -284,8 +284,8 @@
     <maven.compiler.plugin.version>3.16.0</maven.compiler.plugin.version>
     <maven.dependency.plugin.version>3.11.0</maven.dependency.plugin.version>
     <maven.deploy.plugin.version>3.2.0</maven.deploy.plugin.version>
-    <maven.deps.version>3.9.16</maven.deps.version>
-    <maven.enforcer.plugin.version>3.6.3</maven.enforcer.plugin.version>
+    <maven.deps.version>3.10.0</maven.deps.version>
+    <maven.enforcer.plugin.version>3.7.0</maven.enforcer.plugin.version>
     <maven.exec.plugin.version>3.6.4</maven.exec.plugin.version>
     <maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
     <maven.install.plugin.version>3.2.0</maven.install.plugin.version>
@@ -300,10 +300,10 @@
     <maven.retryFailedDeploymentCount>10</maven.retryFailedDeploymentCount>
     <maven.shade.plugin.version>3.6.2</maven.shade.plugin.version>
     <maven.source.plugin.version>3.4.0</maven.source.plugin.version>
-    <maven.surefire.plugin.version>3.6.0</maven.surefire.plugin.version>
+    <maven.surefire.plugin.version>3.6.1</maven.surefire.plugin.version>
     <maven.version>3.9.9</maven.version>
     <maven.war.plugin.version>3.5.1</maven.war.plugin.version>
-    <modify-sources-plugin.version>1.0.14</modify-sources-plugin.version>
+    <modify-sources-plugin.version>1.0.15</modify-sources-plugin.version>
     <mongo.docker.version>5.0.26</mongo.docker.version>
     <mongodb.version>5.11.0</mongodb.version>
     <netty.version>4.2.17.Final</netty.version>
@@ -349,7 +349,7 @@
     <testng-engine.version>1.1.0</testng-engine.version>
     <testng.version>7.12.0</testng.version>
     <tinybundles.version>4.0.1</tinybundles.version>
-    <versions.maven.plugin.version>2.22.0</versions.maven.plugin.version>
+    <versions.maven.plugin.version>2.23.0</versions.maven.plugin.version>
     <wildfly.common.version>2.0.1</wildfly.common.version>
     <wildfly.elytron.version>2.9.2.Final</wildfly.elytron.version>
     <xmemcached.version>2.4.9</xmemcached.version>
